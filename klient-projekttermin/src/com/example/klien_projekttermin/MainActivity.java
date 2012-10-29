@@ -27,11 +27,11 @@ public class MainActivity extends ListActivity {
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
+			
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent;
-				//Har man lagt till ett nytt menyval lŠgger man till en action fšr dessa hŠr.
+				//Har man lagt till ett nytt menyval lï¿½gger man till en action fï¿½r dessa hï¿½r.
 				switch (arg2) {
 				case 0:
 					// myIntent= new Intent(from.this,
@@ -53,16 +53,16 @@ public class MainActivity extends ListActivity {
 		});
 	}
 	/**
-	 * Genererar de menyval som ska gŒ att gšra.
+	 * Genererar de menyval som ska gï¿½ att gï¿½ra.
 	 * @return
-	 * En List<HashMap<String, String>> dŠr varje map bara har tvŒ vŠrden. Ett fšr fšrsta raden och ett fšr andra.
+	 * En List<HashMap<String, String>> dï¿½r varje map bara har tvï¿½ vï¿½rden. Ett fï¿½r fï¿½rsta raden och ett fï¿½r andra.
 	 */
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
-		//Om menyn ska utškas ska man lŠgga till de nya valen i dessa arrayer. Nptera att det krŠvs en subtitle till varje item.
+		//Om menyn ska utï¿½kas ska man lï¿½gga till de nya valen i dessa arrayer. Nptera att det krï¿½vs en subtitle till varje item.
 		String[] menuItems={"Karta","Uppdragshanterare","Kontakter"};
-		String[] menuSubtitle={"Visar en karta","LŠgg till, ta bort eller Šndra uppdrag","Visar kontaktlista"};
-		//€ndra inget hŠr under
+		String[] menuSubtitle={"Visar en karta","Lï¿½gg till, ta bort eller ï¿½ndra uppdrag","Visar kontaktlista"};
+		//ï¿½ndra inget hï¿½r under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
 			hashMap.put("line1",menuItems[i] );
