@@ -28,12 +28,15 @@ public class MainActivity extends ListActivity {
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent;
 				//Har man lagt till ett nytt menyval l�gger man till en action f�r dessa h�r.
 =======
+=======
+>>>>>>> cca801f... Add map activity
 <<<<<<< HEAD
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
@@ -44,7 +47,15 @@ public class MainActivity extends ListActivity {
 				Intent myIntent;
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 >>>>>>> e102b58... Add map activity
+<<<<<<< HEAD
 >>>>>>> 10d02d7... Removed .classpath, .settings/
+=======
+=======
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3){
+				Intent myIntent;
+				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
+>>>>>>> 3beeec9... Add map activity
+>>>>>>> cca801f... Add map activity
 				switch (arg2) {
 				case 0:
 					// myIntent= new Intent(from.this,
@@ -67,8 +78,11 @@ public class MainActivity extends ListActivity {
 	}
 	/**
 <<<<<<< HEAD
+<<<<<<< HEAD
 	 * Genererar de menyval som ska g� att g�ra.
 =======
+=======
+>>>>>>> cca801f... Add map activity
 <<<<<<< HEAD
 	 * Genererar de menyval som ska g� att g�ra.
 >>>>>>> 10d02d7... Removed .classpath, .settings/
@@ -86,6 +100,8 @@ public class MainActivity extends ListActivity {
 		String[] menuSubtitle={"Visar en karta","L�gg till, ta bort eller �ndra uppdrag","Visar kontaktlista"};
 		//�ndra inget h�r under
 =======
+=======
+>>>>>>> 3beeec9... Add map activity
 	 * Genererar de menyval som ska gå att göra.
 	 * @return
 	 * En List<HashMap<String, String>> där varje map bara har två värden. Ett för första raden och ett för andra.
@@ -96,8 +112,14 @@ public class MainActivity extends ListActivity {
 		String[] menuItems={"Karta","Uppdragshanterare","Kontakter"};
 		String[] menuSubtitle={"Visar en karta","Lägg till, ta bort eller ändra uppdrag","Visar kontaktlista"};
 		//Ändra inget här under
+<<<<<<< HEAD
 >>>>>>> e102b58... Add map activity
+<<<<<<< HEAD
 >>>>>>> 10d02d7... Removed .classpath, .settings/
+=======
+=======
+>>>>>>> 3beeec9... Add map activity
+>>>>>>> cca801f... Add map activity
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
 			hashMap.put("line1",menuItems[i] );
