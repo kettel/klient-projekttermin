@@ -58,7 +58,7 @@ public class MapActivity extends Activity {
         		final LocationSource locationSource = new AndroidGPSProvider(
         		(LocationManager) getSystemService(Context.LOCATION_SERVICE), 1000L);
         		Bitmap icon = BitmapFactory.decodeResource(getResources(),
-        		R.drawable.icon);
+        		R.drawable.ic_launcher);
         		final LocationMarker marker = new NutiteqLocationMarker(new PlaceIcon(Image
         		.createImage(icon), icon.getWidth()/2, icon.getHeight()), 3000, true);
         		locationSource.setLocationMarker(marker);

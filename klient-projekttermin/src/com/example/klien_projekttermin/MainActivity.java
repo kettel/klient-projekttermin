@@ -50,11 +50,10 @@ public class MainActivity extends ListActivity {
 		});
 	}
 	/**
-<<<<<<< HEAD
 	 * Genererar de menyval som ska gå att göra.
 	 * @return
 	 * En List<HashMap<String, String>> där varje map bara har två värden. Ett för första raden och ett för andra.
-	
+	**/
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
 		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Nptera att det krävs en subtitle till varje item.
