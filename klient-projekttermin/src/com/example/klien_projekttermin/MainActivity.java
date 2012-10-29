@@ -26,10 +26,9 @@ public class MainActivity extends ListActivity {
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
-
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3){
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
 				Intent myIntent;
-				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
 					// myIntent= new Intent(from.this,
@@ -51,10 +50,11 @@ public class MainActivity extends ListActivity {
 		});
 	}
 	/**
+<<<<<<< HEAD
 	 * Genererar de menyval som ska gå att göra.
 	 * @return
 	 * En List<HashMap<String, String>> där varje map bara har två värden. Ett för första raden och ett för andra.
-	 */
+	
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
 		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Nptera att det krävs en subtitle till varje item.
