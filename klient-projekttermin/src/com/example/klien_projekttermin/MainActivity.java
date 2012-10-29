@@ -27,35 +27,9 @@ public class MainActivity extends ListActivity {
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent;
-				//Har man lagt till ett nytt menyval lŠgger man till en action fšr dessa hŠr.
-=======
-=======
->>>>>>> cca801f... Add map activity
-<<<<<<< HEAD
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				Intent myIntent;
-				//Har man lagt till ett nytt menyval lï¿½gger man till en action fï¿½r dessa hï¿½r.
-=======
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3){
-				Intent myIntent;
-				//Har man lagt till ett nytt menyval lÃ¤gger man till en action fÃ¶r dessa hÃ¤r.
->>>>>>> e102b58... Add map activity
-<<<<<<< HEAD
->>>>>>> 10d02d7... Removed .classpath, .settings/
-=======
-=======
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3){
-				Intent myIntent;
-				//Har man lagt till ett nytt menyval lÃ¤gger man till en action fÃ¶r dessa hÃ¤r.
->>>>>>> 3beeec9... Add map activity
->>>>>>> cca801f... Add map activity
 				switch (arg2) {
 				case 0:
 					// myIntent= new Intent(from.this,
@@ -77,49 +51,18 @@ public class MainActivity extends ListActivity {
 		});
 	}
 	/**
-<<<<<<< HEAD
-<<<<<<< HEAD
-	 * Genererar de menyval som ska gŒ att gšra.
-=======
-=======
->>>>>>> cca801f... Add map activity
-<<<<<<< HEAD
 	 * Genererar de menyval som ska gï¿½ att gï¿½ra.
->>>>>>> 10d02d7... Removed .classpath, .settings/
-	 * @return
-	 * En List<HashMap<String, String>> dŠr varje map bara har tvŒ vŠrden. Ett fšr fšrsta raden och ett fšr andra.
+	 * Genererar de menyval som ska gï¿½ att gï¿½ra.
+	 * En List<HashMap<String, String>> dï¿½r varje map bara har tvï¿½ vï¿½rden. Ett fï¿½r fï¿½rsta raden och ett fï¿½r andra.
 	 */
-	private List<HashMap<String, String>> generateMenuContent(){
-		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
-		//Om menyn ska utškas ska man lŠgga till de nya valen i dessa arrayer. Nptera att det krŠvs en subtitle till varje item.
-		String[] menuItems={"Karta","Uppdragshanterare","Kontakter"};
-<<<<<<< HEAD
-		String[] menuSubtitle={"Visar en karta","LŠgg till, ta bort eller Šndra uppdrag","Visar kontaktlista"};
-		//€ndra inget hŠr under
-=======
-		String[] menuSubtitle={"Visar en karta","Lï¿½gg till, ta bort eller ï¿½ndra uppdrag","Visar kontaktlista"};
-		//ï¿½ndra inget hï¿½r under
-=======
-=======
->>>>>>> 3beeec9... Add map activity
-	 * Genererar de menyval som ska gÃ¥ att gÃ¶ra.
-	 * @return
-	 * En List<HashMap<String, String>> dÃ¤r varje map bara har tvÃ¥ vÃ¤rden. Ett fÃ¶r fÃ¶rsta raden och ett fÃ¶r andra.
-	 */
+	
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
 		//Om menyn ska utÃ¶kas ska man lÃ¤gga till de nya valen i dessa arrayer. Nptera att det krÃ¤vs en subtitle till varje item.
 		String[] menuItems={"Karta","Uppdragshanterare","Kontakter"};
 		String[] menuSubtitle={"Visar en karta","LÃ¤gg till, ta bort eller Ã¤ndra uppdrag","Visar kontaktlista"};
 		//Ã„ndra inget hÃ¤r under
-<<<<<<< HEAD
->>>>>>> e102b58... Add map activity
-<<<<<<< HEAD
->>>>>>> 10d02d7... Removed .classpath, .settings/
-=======
-=======
->>>>>>> 3beeec9... Add map activity
->>>>>>> cca801f... Add map activity
+
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
 			hashMap.put("line1",menuItems[i] );
