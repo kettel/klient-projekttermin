@@ -52,7 +52,6 @@ public class MainActivity extends ListActivity {
 	}
 	/**
 	 * Genererar de menyval som ska g� att g�ra.
-	 * Genererar de menyval som ska g� att g�ra.
 	 * En List<HashMap<String, String>> d�r varje map bara har tv� v�rden. Ett f�r f�rsta raden och ett f�r andra.
 	 */
 	
