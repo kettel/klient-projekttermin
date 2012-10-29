@@ -26,7 +26,6 @@ public class MainActivity extends ListActivity {
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
-
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent;
@@ -55,13 +54,16 @@ public class MainActivity extends ListActivity {
 	 * En List<HashMap<String, String>> d�r varje map bara har tv� v�rden. Ett f�r f�rsta raden och ett f�r andra.
 	 */
 	
+	 * Genererar de menyval som ska gå att göra.
+	 * @return
+	 * En List<HashMap<String, String>> där varje map bara har två värden. Ett för första raden och ett för andra.
+	**/
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
 		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Nptera att det krävs en subtitle till varje item.
 		String[] menuItems={"Karta","Uppdragshanterare","Kontakter"};
 		String[] menuSubtitle={"Visar en karta","Lägg till, ta bort eller ändra uppdrag","Visar kontaktlista"};
 		//Ändra inget här under
-
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
 			hashMap.put("line1",menuItems[i] );
