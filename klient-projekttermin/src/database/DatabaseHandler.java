@@ -42,7 +42,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Uppgradera databasen
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Om en äldre version existerar, ta bort den
+        // Om en √§ldre version existerar, ta bort den
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
  
         // Skapa sedan databasen igen
@@ -54,8 +54,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
     
     /**
-     * Lägg till en kontakt
-     * @param contact	Den kontakt som ska läggas till i databasen
+     * L√§gg till en kontakt
+     * @param contact	Den kontakt som ska l√§ggas till i databasen
      */
     public void addContact(Contact contact) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -64,15 +64,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_NAME, contact.getName()); // Kontaktens namn
         values.put(KEY_PH_NO, contact.getPhoneNumber()); // Kontaktens telefon
  
-        // Lägg till kontakten i databasen
+        // L√§gg till kontakten i databasen
         db.insert(TABLE_CONTACTS, null, values);
-        // Stäng databasen. MYCKET VIKTIGT!!
+        // St√§ng databasen. MYCKET VIKTIGT!!
         db.close(); 
     }
  
     /**
-     * Hämta en kontakt
-     * @param id	id för den sökta kontakten
+     * H√§mta en kontakt
+     * @param id	id f√∂r den s√∂kta kontakten
      * @return	Contact
      */
     public Contact getContact(int id) {
@@ -91,18 +91,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
  
     /**
-     * Hämta alla kontakter
+     * H√§mta alla kontakter
      * @return	List<Contact>	En lista med Contact-objekt
      */
     public List<Contact> getAllContacts() {
         List<Contact> contactList = new ArrayList<Contact>();
-        // Select All frågan. Ze classic!
+        // Select All fr√•gan. Ze classic!
         String selectQuery = "SELECT  * FROM " + TABLE_CONTACTS;
  
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
  
-        // Loopa igenom alla rader och lägg till dem i listan 
+        // Loopa igenom alla rader och l√§gg till dem i listan 
         if (cursor.moveToFirst()) {
             do {
                 Contact contact = new Contact();
@@ -120,8 +120,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
  
     /**
      * Uppdatera en kontakt
-     * @param contact	Kontakten som önskas uppdateras
-     * @return	int		id för den kontakt som uppdaterades
+     * @param contact	Kontakten som √∂nskas uppdateras
+     * @return	int		id f√∂r den kontakt som uppdaterades
      */
     public int updateContact(Contact contact) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -130,7 +130,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_NAME, contact.getName());
         values.put(KEY_PH_NO, contact.getPhoneNumber());
  
-        // Uppdatera rad för kontakten som ska uppdateras
+        // Uppdatera rad f√∂r kontakten som ska uppdateras
         return db.update(TABLE_CONTACTS, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(contact.getID()) });
     }
@@ -147,7 +147,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
  
     /**
-     * Räkna antal kontakter i databasen
+     * R√§kna antal kontakter i databasen
      * @return	int	Antal kontakter
      */
     public int getContactsCount() {

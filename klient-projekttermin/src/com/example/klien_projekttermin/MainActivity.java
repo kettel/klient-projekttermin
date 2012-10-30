@@ -33,11 +33,11 @@ public class MainActivity extends Activity {
     }
     
     /**
-     * Testa att skriva lite skräpdata till databasen i appen. I detta fall en 
+     * Testa att skriva lite skr√§pdata till databasen i appen. I detta fall en 
      * improviserad kontakt-databas.
      * 
-     * @param context 	Programkontexten så att rätt databas används (alltså den 
-     * 					databas som används för denna app)
+     * @param context 	Programkontexten s√• att r√§tt databas anv√§nds (allts√• den 
+     * 					databas som anv√§nds f√∂r denna app)
      * 					
      */
     public void testWriteReadToDB(Context context){
@@ -46,14 +46,14 @@ public class MainActivity extends Activity {
 	    /**
 	     * CRUD Operations
 	     * */
-	    // Lägg till kontakter
+	    // L√§gg till kontakter
 	    Log.d("Insert: ", "Inserting ..");
 	    db.addContact(new Contact("Ravi", "9100000000"));
 	    db.addContact(new Contact("Jarmo", "9199999999"));
 	    db.addContact(new Contact("Lasse", "9522222222"));
-	    db.addContact(new Contact("Kött och video", "9533333333"));
+	    db.addContact(new Contact("KÔøΩtt och video", "9533333333"));
 	
-	    // Läs alla kontakter
+	    // L√§s alla kontakter
 	    Log.d("Reading: ", "Reading all contacts..");
 	    List<Contact> contacts = db.getAllContacts();       
 	
