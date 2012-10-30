@@ -34,15 +34,15 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     // Contacts tabellkolumnnamn
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
-    private static long KEY_LAT;
-	private static long KEY_LON;
-	private static String KEY_RECEIVER;
-	private static String KEY_SENDER;
-	private static String KEY_ASSIGNMENTDESCRIPTION;
-	private static Time KEY_TIMESPAN;
-	private static String KEY_ASSIGNMENTSTATUS;
-	private static String KEY_STREETNAME;
-	private static String KEY_ITENAME;
+    private static final String KEY_LAT = "lat";
+	private static final String KEY_LON = "long";
+	private static final String KEY_RECEIVER = "receiver";
+	private static final String KEY_SENDER = "sender";
+	private static final String KEY_ASSIGNMENTDESCRIPTION = "description";
+	private static final String KEY_TIMESPAN = "timespan";
+	private static final String KEY_ASSIGNMENTSTATUS = "assignmentstatus";
+	private static final String KEY_STREETNAME ="streetname";
+	private static final String KEY_SITENAME = "sitename";
  
     public DatabaseHandlerAssignment(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -51,15 +51,23 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     // Skapa tabell
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_ASSIGNMENTS + "("
+        String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_ASSIGNMENTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
         		+ KEY_NAME + " TEXT,"
-                + KEY_PH_NO + " TEXT" + ")";
-        db.execSQL(CREATE_CONTACTS_TABLE);
+                + KEY_LAT + " TEXT,"
+        		+ KEY_LON + " TEXT,"
+                + KEY_RECEIVER + " TEXT,"
+                + KEY_SENDER + " TEXT,"
+                + KEY_ASSIGNMENTDESCRIPTION + " TEXT,"
+                + KEY_TIMESPAN + " TEXT,"
+                + KEY_ASSIGNMENTSTATUS + " TEXT,"
+                + KEY_STREETNAME + " TEXT,"
+                + KEY_SITENAME + "TEXT" + ")";
+        db.execSQL(CREATE_ASSIGNMENTS_TABLE);
     	//executeSQLScript(db, "assignments.sql", this);
     }
  
-    // Uppgradera databasen
+    // Uppgradera databasen vid behov (om en äldre version existerar)
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Om en äldre version existerar, ta bort den
@@ -74,15 +82,23 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
      */
     
     /**
-     * Lägg till en kontakt
-     * @param contact	Den kontakt som ska läggas till i databasen
+     * Lägg till ett uppdrag
+     * @param assignment	Det uppdrag som ska läggas till i databasen
      */
     public void addAssignment(Assignment assignment) {
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, assignment.getName()); // Kontaktens namn
-        values.put(KEY_PH_NO, assignment.getPhoneNumber()); // Kontaktens telefon
+        values.put(KEY_NAME, assignment.getName()); 
+        values.put(KEY_LAT, assignment.getLat());
+        values.put(KEY_LON, assignment.getLon());
+        values.put(KEY_RECEIVER, assignment.getReceiver());
+        values.put(KEY_SENDER, assignment.getSender());
+        values.put(KEY_ASSIGNMENTDESCRIPTION, assignment.getAssignmentDescription());
+        values.put(KEY_TIMESPAN, assignment.getTimeSpan().toString());
+        values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus());
+        values.put(KEY_STREETNAME, assignment.getStreetName());
+        values.put(KEY_SITENAME, assignment.getSiteName());
  
         // Lägg till kontakten i databasen
         db.insert(TABLE_ASSIGNMENTS, null, values);
@@ -91,23 +107,38 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     }
  
     /**
-     * Hämta en kontakt
-     * @param id	id för den sökta kontakten
-     * @return	Contact
+     * Hämta ett uppdrag
+     * @param id	id för det sökta uppdraget
+     * @return	Assignment	det funna uppdraget
      */
-    public Contact getContact(int id) {
+    public Assignment getAssignment(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
  
-        Cursor cursor = db.query(TABLE_ASSIGNMENTS, new String[] { KEY_ID,
-                KEY_NAME, KEY_PH_NO }, KEY_ID + "=?",
+        Cursor cursor = db.query(TABLE_ASSIGNMENTS, 
+        		new String[] {KEY_ID, KEY_NAME, KEY_LAT, KEY_LON, 
+        		KEY_RECEIVER, KEY_SENDER, KEY_ASSIGNMENTDESCRIPTION, 
+        		KEY_TIMESPAN, KEY_ASSIGNMENTSTATUS, KEY_STREETNAME, 
+        		KEY_SITENAME}, KEY_ID + "=?",
+        		// Rätt antal null?? (antar att det är antal strängar i arrayen + sista KEY_ID vilket är 12
                 new String[] { String.valueOf(id) }, null, null, null, null);
+        
         if (cursor != null)
             cursor.moveToFirst();
  
-        Contact contact = new Contact(Integer.parseInt(cursor.getString(0)),
-                cursor.getString(1), cursor.getString(2));
+        // Ignorera cursors första element då det är ID-nummer från databasen för assignment
+        // Vad vi har sagt än så är det irrelevant.
+        Assignment assignment = new Assignment(cursor.getString(1),
+        									Long.parseLong(cursor.getString(2)), 
+        									Long.parseLong(cursor.getString(3)),
+        									cursor.getString(4),
+        									cursor.getString(5),
+        									cursor.getString(6),
+        									new Time(cursor.getString(7)),
+        									cursor.getString(8),
+        									cursor.getString(9),
+        									cursor.getString(10));
         // Returnera den funna kontakten
-        return contact;
+        return assignment;
     }
  
     /**

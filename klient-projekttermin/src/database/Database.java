@@ -1,6 +1,7 @@
 package database;
 
 import android.content.Context;
+import model.Assignment;
 import model.Model;
 
 public class Database{
@@ -10,7 +11,7 @@ public class Database{
 		// Assignment
 		case 1:
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.addAssignment(m);
+			dha.addAssignment((Assignment)m);
 			break;
 
 		// Contacts
