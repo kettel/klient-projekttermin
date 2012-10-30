@@ -10,43 +10,36 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     private static final int DATABASE_VERSION = 1;
  
     // Databasens namn
-    private static final String DATABASE_NAME = "assignmentManager";
+    private static final String DATABASE_NAME = "contactManager";
  
     // Contacts tabellnamn
-    private static final String TABLE_ASSIGNMENTS = "assignment";
+    private static final String TABLE_CONTACTS = "contacts";
 
     // Contacts tabellkolumnnamn
     private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_LAT = "lat";
-	private static final String KEY_LON = "long";
-	private static final String KEY_RECEIVER = "receiver";
-	private static final String KEY_SENDER = "sender";
-	private static final String KEY_ASSIGNMENTDESCRIPTION = "description";
-	private static final String KEY_TIMESPAN = "timespan";
-	private static final String KEY_ASSIGNMENTSTATUS = "assignmentstatus";
-	private static final String KEY_STREETNAME ="streetname";
-	private static final String KEY_SITENAME = "sitename";
+    private static final String KEY_CONTACT_NAME = "contact name";
+    private static final String KEY_PH_NO = "phone number";
+	private static final String KEY_EMAIL = "email";
+	private static final String KEY_CLEARANCE_LEVEL = "clearance level";
+	private static final String KEY_CLASSIFICATION = "classification";
+	private static final String KEY_COMMENT = "comment";
+
  
-    public DatabaseHandlerAssignment(Context context) {
+    public DatabaseHandlerContacts(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
  
     // Skapa tabell
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_ASSIGNMENTS + "("
+        String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
-        		+ KEY_NAME + " TEXT,"
-                + KEY_LAT + " TEXT,"
-        		+ KEY_LON + " TEXT,"
-                + KEY_RECEIVER + " TEXT,"
-                + KEY_SENDER + " TEXT,"
-                + KEY_ASSIGNMENTDESCRIPTION + " TEXT,"
-                + KEY_TIMESPAN + " TEXT,"
-                + KEY_ASSIGNMENTSTATUS + " TEXT,"
-                + KEY_STREETNAME + " TEXT,"
-                + KEY_SITENAME + "TEXT" + ")";
+        		+ KEY_CONTACT_NAME + " TEXT,"
+                + KEY_PH_NO + " TEXT,"
+        		+ KEY_EMAIL + " TEXT,"
+                + KEY_CLEARANCE_LEVEL + " TEXT,"
+                + KEY_CLASSIFICATION + " TEXT,"
+                + KEY_COMMENT + ")";
         db.execSQL(CREATE_ASSIGNMENTS_TABLE);
     	//executeSQLScript(db, "assignments.sql", this);
     }

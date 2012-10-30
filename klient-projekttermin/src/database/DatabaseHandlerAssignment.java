@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Assignment;
+import models.Assignment;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -25,10 +25,10 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     // Databasens namn
     private static final String DATABASE_NAME = "assignmentManager";
  
-    // Contacts tabellnamn
+    // Assignments tabellnamn
     private static final String TABLE_ASSIGNMENTS = "assignment";
 
-    // Contacts tabellkolumnnamn
+    // Assignmenst tabellkolumnnamn
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
     private static final String KEY_LAT = "lat";
