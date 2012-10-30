@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Assignment;
-import model.Model;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,8 +16,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.format.Time;
-
-import database.DatabaseHelpers;
 
 public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	// Alla statiska variabler
@@ -118,9 +115,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         		new String[] {KEY_ID, KEY_NAME, KEY_LAT, KEY_LON, 
         		KEY_RECEIVER, KEY_SENDER, KEY_ASSIGNMENTDESCRIPTION, 
         		KEY_TIMESPAN, KEY_ASSIGNMENTSTATUS, KEY_STREETNAME, 
-        		KEY_SITENAME}, KEY_ID + "=?",
-        		// Rätt antal null?? (antar att det är antal strängar i arrayen + sista KEY_ID vilket är 12
-                new String[] { String.valueOf(id) }, null, null, null, null);
+        		KEY_SITENAME}, KEY_ID + "=?", new String[] { String.valueOf(id) }
+        		, null, null, null, null);
         
         if (cursor != null)
             cursor.moveToFirst();
@@ -142,12 +138,13 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     }
  
     /**
-     * Hämta alla kontakter
-     * @return	List<Contact>	En lista med Contact-objekt
+     * Hämta alla uppdrag i databasen
+     * @return	List<Assignment>	En lista med Assignment-objekt
      */
-    public List<Contact> getAllContacts() {
-        List<Contact> contactList = new ArrayList<Contact>();
-        // Select All frågan. Ze classic!
+    public List<Assignment> getAllAssignments() {
+        List<Assignment> assignmentList = new ArrayList<Assignment>();
+        
+        // Select All frågan. Ze classic! Dvs, hämta allt från ASSIGNMENTS-databasen
         String selectQuery = "SELECT  * FROM " + TABLE_ASSIGNMENTS;
  
         SQLiteDatabase db = this.getWritableDatabase();
@@ -156,50 +153,72 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         // Loopa igenom alla rader och lägg till dem i listan 
         if (cursor.moveToFirst()) {
             do {
-                Contact contact = new Contact();
-                contact.setID(Integer.parseInt(cursor.getString(0)));
-                contact.setName(cursor.getString(1));
-                contact.setPhoneNumber(cursor.getString(2));
-                // Adding contact to list
-                contactList.add(contact);
+                Assignment assignment = new Assignment(cursor.getString(1),
+						Long.parseLong(cursor.getString(2)), 
+						Long.parseLong(cursor.getString(3)),
+						cursor.getString(4),
+						cursor.getString(5),
+						cursor.getString(6),
+						new Time(cursor.getString(7)),
+						cursor.getString(8),
+						cursor.getString(9),
+						cursor.getString(10));
+                
+                assignmentList.add(assignment);
             } while (cursor.moveToNext());
         }
  
         // Returnera kontaktlistan
-        return contactList;
+        return assignmentList;
     }
  
     /**
-     * Uppdatera en kontakt
-     * @param contact	Kontakten som önskas uppdateras
-     * @return	int		id för den kontakt som uppdaterades
+     * Uppdatera ett uppdrag
+     * @param assignment	Uppdraget som önskas uppdateras
+     * @return	int			id för den kontakt som uppdaterades
+     * TODO: Lägg till ID för assignment för att det ska gå att uppdatera ett uppdrag 
+     * på ett tillfredsställande vis
      */
-    public int updateContact(Contact contact) {
+    public int updateAssignment(Assignment assignment) {
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, contact.getName());
-        values.put(KEY_PH_NO, contact.getPhoneNumber());
+        values.put(KEY_NAME, assignment.getName()); 
+        values.put(KEY_LAT, assignment.getLat());
+        values.put(KEY_LON, assignment.getLon());
+        values.put(KEY_RECEIVER, assignment.getReceiver());
+        values.put(KEY_SENDER, assignment.getSender());
+        values.put(KEY_ASSIGNMENTDESCRIPTION, assignment.getAssignmentDescription());
+        values.put(KEY_TIMESPAN, assignment.getTimeSpan().toString());
+        values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus());
+        values.put(KEY_STREETNAME, assignment.getStreetName());
+        values.put(KEY_SITENAME, assignment.getSiteName());
  
         // Uppdatera rad för kontakten som ska uppdateras
-        return db.update(TABLE_ASSIGNMENTS, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(contact.getID()) });
+        //return db.update(TABLE_ASSIGNMENTS, values, KEY_ID + " = ?",
+        		// TODO: ID för ett assignments behövs för att kunna uppdateras
+                //new String[] { String.valueOf(contact.getID()) });
+        // Returnera -1 så länge som metoden är KASS!
+        return -1;
     }
  
     /**
      * Ta bort en kontakt
      * @param contact	Kontakten som ska tas bort
+     * TODO: Kirra ID för assignments för att kunna ta bort assignments
      */
-    public void deleteContact(Contact contact) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_ASSIGNMENTS, KEY_ID + " = ?",
-                new String[] { String.valueOf(contact.getID()) });
-        db.close();
+    public void deleteAssignment(Assignment assignment) {
+        //SQLiteDatabase db = this.getWritableDatabase();
+        //db.delete(TABLE_ASSIGNMENTS, KEY_ID + " = ?",
+        		// TODO: Assignment behöver visst ID för att man på ett tillfredsställande
+        		// 		 vis ska kunna radera assignments.
+        //        new String[] { String.valueOf(assignment.getID()) });
+        //db.close();
     }
  
     /**
-     * Räkna antal kontakter i databasen
-     * @return	int	Antal kontakter
+     * Räkna antal assignments i databasen
+     * @return	int		Antal assignments
      */
     public int getContactsCount() {
         String countQuery = "SELECT  * FROM " + TABLE_ASSIGNMENTS;
@@ -207,10 +226,17 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
  
-        // Returnera antalet kontakter
+        // Returnera antalet assignments
         return cursor.getCount();
     }
     
+    /**
+     * Tanken med denna metod är att man ska läsa SQL-kommandon från fil och exekvera dessa 
+     * istället för att hårdkoda dessa i Java.
+     * @param database
+     * @param dbname
+     * @param context
+     */
     private void executeSQLScript(SQLiteDatabase database, String dbname, Context context) {
     	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte buf[] = new byte[1024];

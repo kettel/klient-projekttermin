@@ -15,6 +15,8 @@ public class Assignment implements Model{
 	private String streetName;
 	private String siteName;
 
+	// Tom konstruktor. Gör set-objekten användbara
+	public Assignment(){}
 
 public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, Time timeSpan, String assignmentStatus, String streetName, String siteName){
 		this.lat=lat;
