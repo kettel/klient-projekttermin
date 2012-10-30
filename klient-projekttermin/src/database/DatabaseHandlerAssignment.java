@@ -1,50 +1,69 @@
 package database;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Assignment;
 import model.Model;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.format.Time;
 
-public class GeneralisedDatabaseHandler extends SQLiteOpenHelper {
+import database.DatabaseHelpers;
+
+public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	// Alla statiska variabler
     // Databas version
     private static final int DATABASE_VERSION = 1;
  
     // Databasens namn
-    private static final String DATABASE_NAME = "contactsManager";
+    private static final String DATABASE_NAME = "assignmentManager";
  
     // Contacts tabellnamn
-    private static final String TABLE_CONTACTS = "contacts";
+    private static final String TABLE_ASSIGNMENTS = "assignment";
 
     // Contacts tabellkolumnnamn
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
-    private static final String KEY_PH_NO = "phone_number";
+    private static long KEY_LAT;
+	private static long KEY_LON;
+	private static String KEY_RECEIVER;
+	private static String KEY_SENDER;
+	private static String KEY_ASSIGNMENTDESCRIPTION;
+	private static Time KEY_TIMESPAN;
+	private static String KEY_ASSIGNMENTSTATUS;
+	private static String KEY_STREETNAME;
+	private static String KEY_ITENAME;
  
-    public GeneralisedDatabaseHandler(Context context, Model model) {
+    public DatabaseHandlerAssignment(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
  
     // Skapa tabell
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_CONTACTS + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
+        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_ASSIGNMENTS + "("
+                + KEY_ID + " INTEGER PRIMARY KEY,"  
+        		+ KEY_NAME + " TEXT,"
                 + KEY_PH_NO + " TEXT" + ")";
         db.execSQL(CREATE_CONTACTS_TABLE);
+    	//executeSQLScript(db, "assignments.sql", this);
     }
  
     // Uppgradera databasen
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Om en äldre version existerar, ta bort den
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSIGNMENTS);
  
         // Skapa sedan databasen igen
         onCreate(db);
@@ -58,15 +77,15 @@ public class GeneralisedDatabaseHandler extends SQLiteOpenHelper {
      * Lägg till en kontakt
      * @param contact	Den kontakt som ska läggas till i databasen
      */
-    public void addContact(Contact contact) {
+    public void addAssignment(Assignment assignment) {
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, contact.getName()); // Kontaktens namn
-        values.put(KEY_PH_NO, contact.getPhoneNumber()); // Kontaktens telefon
+        values.put(KEY_NAME, assignment.getName()); // Kontaktens namn
+        values.put(KEY_PH_NO, assignment.getPhoneNumber()); // Kontaktens telefon
  
         // Lägg till kontakten i databasen
-        db.insert(TABLE_CONTACTS, null, values);
+        db.insert(TABLE_ASSIGNMENTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
         db.close(); 
     }
@@ -79,7 +98,7 @@ public class GeneralisedDatabaseHandler extends SQLiteOpenHelper {
     public Contact getContact(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
  
-        Cursor cursor = db.query(TABLE_CONTACTS, new String[] { KEY_ID,
+        Cursor cursor = db.query(TABLE_ASSIGNMENTS, new String[] { KEY_ID,
                 KEY_NAME, KEY_PH_NO }, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
@@ -98,7 +117,7 @@ public class GeneralisedDatabaseHandler extends SQLiteOpenHelper {
     public List<Contact> getAllContacts() {
         List<Contact> contactList = new ArrayList<Contact>();
         // Select All frågan. Ze classic!
-        String selectQuery = "SELECT  * FROM " + TABLE_CONTACTS;
+        String selectQuery = "SELECT  * FROM " + TABLE_ASSIGNMENTS;
  
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -132,7 +151,7 @@ public class GeneralisedDatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_PH_NO, contact.getPhoneNumber());
  
         // Uppdatera rad för kontakten som ska uppdateras
-        return db.update(TABLE_CONTACTS, values, KEY_ID + " = ?",
+        return db.update(TABLE_ASSIGNMENTS, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(contact.getID()) });
     }
  
@@ -142,7 +161,7 @@ public class GeneralisedDatabaseHandler extends SQLiteOpenHelper {
      */
     public void deleteContact(Contact contact) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_CONTACTS, KEY_ID + " = ?",
+        db.delete(TABLE_ASSIGNMENTS, KEY_ID + " = ?",
                 new String[] { String.valueOf(contact.getID()) });
         db.close();
     }
@@ -152,12 +171,42 @@ public class GeneralisedDatabaseHandler extends SQLiteOpenHelper {
      * @return	int	Antal kontakter
      */
     public int getContactsCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_CONTACTS;
+        String countQuery = "SELECT  * FROM " + TABLE_ASSIGNMENTS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
  
         // Returnera antalet kontakter
         return cursor.getCount();
+    }
+    
+    private void executeSQLScript(SQLiteDatabase database, String dbname, Context context) {
+    	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte buf[] = new byte[1024];
+        int len;
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = null;
+             
+        try{
+            inputStream = assetManager.open(dbname);
+            while ((len = inputStream.read(buf)) != -1) {
+                outputStream.write(buf, 0, len);
+            }
+            outputStream.close();
+            inputStream.close();
+                 
+            String[] createScript = outputStream.toString().split(";");
+            for (int i = 0; i < createScript.length; i++) {
+                 String sqlStatement = createScript[i].trim();
+                // TODO You may want to parse out comments here
+                if (sqlStatement.length() > 0) {
+                        database.execSQL(sqlStatement + ";");
+                }
+            }
+        } catch (IOException e){
+            // TODO Handle Script Failed to Load
+        } catch (SQLException e) {
+            // TODO Handle Script Failed to Execute
+        }
     }
 }
