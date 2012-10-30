@@ -11,17 +11,17 @@ import android.database.sqlite.SQLiteOpenHelper;
  
 public class DatabaseHandler extends SQLiteOpenHelper {
  
-    // All Static variables
-    // Database Version
+    // Alla statiska variabler
+    // Databas version
     private static final int DATABASE_VERSION = 1;
  
-    // Database Name
+    // Databasens namn
     private static final String DATABASE_NAME = "contactsManager";
  
-    // Contacts table name
+    // Contacts tabellnamn
     private static final String TABLE_CONTACTS = "contacts";
  
-    // Contacts Table Columns names
+    // Contacts tabellkolumnnamn
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
     private static final String KEY_PH_NO = "phone_number";
@@ -30,7 +30,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
  
-    // Creating Tables
+    // Skapa tabell
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_CONTACTS + "("
@@ -39,35 +39,43 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
  
-    // Upgrading database
+    // Uppgradera databasen
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
+        // Om en äldre version existerar, ta bort den
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
  
-        // Create tables again
+        // Skapa sedan databasen igen
         onCreate(db);
     }
  
     /**
-     * All CRUD(Create, Read, Update, Delete) Operations
+     * Alla CRUD(Create, Read, Update, Delete) operationer
      */
- 
-    public // Adding new contact
-    void addContact(Contact contact) {
+    
+    /**
+     * Lägg till en kontakt
+     * @param contact	Den kontakt som ska läggas till i databasen
+     */
+    public void addContact(Contact contact) {
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, contact.getName()); // Contact Name
-        values.put(KEY_PH_NO, contact.getPhoneNumber()); // Contact Phone
+        values.put(KEY_NAME, contact.getName()); // Kontaktens namn
+        values.put(KEY_PH_NO, contact.getPhoneNumber()); // Kontaktens telefon
  
-        // Inserting Row
+        // Lägg till kontakten i databasen
         db.insert(TABLE_CONTACTS, null, values);
-        db.close(); // Closing database connection
+        // Stäng databasen. MYCKET VIKTIGT!!
+        db.close(); 
     }
  
-    // Getting single contact
-    Contact getContact(int id) {
+    /**
+     * Hämta en kontakt
+     * @param id	id för den sökta kontakten
+     * @return	Contact
+     */
+    public Contact getContact(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
  
         Cursor cursor = db.query(TABLE_CONTACTS, new String[] { KEY_ID,
@@ -78,20 +86,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
  
         Contact contact = new Contact(Integer.parseInt(cursor.getString(0)),
                 cursor.getString(1), cursor.getString(2));
-        // return contact
+        // Returnera den funna kontakten
         return contact;
     }
  
-    // Getting All Contacts
+    /**
+     * Hämta alla kontakter
+     * @return	List<Contact>	En lista med Contact-objekt
+     */
     public List<Contact> getAllContacts() {
         List<Contact> contactList = new ArrayList<Contact>();
-        // Select All Query
+        // Select All frågan. Ze classic!
         String selectQuery = "SELECT  * FROM " + TABLE_CONTACTS;
  
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
  
-        // looping through all rows and adding to list
+        // Loopa igenom alla rader och lägg till dem i listan 
         if (cursor.moveToFirst()) {
             do {
                 Contact contact = new Contact();
@@ -103,11 +114,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
  
-        // return contact list
+        // Returnera kontaktlistan
         return contactList;
     }
  
-    // Updating single contact
+    /**
+     * Uppdatera en kontakt
+     * @param contact	Kontakten som önskas uppdateras
+     * @return	int		id för den kontakt som uppdaterades
+     */
     public int updateContact(Contact contact) {
         SQLiteDatabase db = this.getWritableDatabase();
  
@@ -115,12 +130,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_NAME, contact.getName());
         values.put(KEY_PH_NO, contact.getPhoneNumber());
  
-        // updating row
+        // Uppdatera rad för kontakten som ska uppdateras
         return db.update(TABLE_CONTACTS, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(contact.getID()) });
     }
  
-    // Deleting single contact
+    /**
+     * Ta bort en kontakt
+     * @param contact	Kontakten som ska tas bort
+     */
     public void deleteContact(Contact contact) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_CONTACTS, KEY_ID + " = ?",
@@ -128,14 +146,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
  
-    // Getting contacts Count
+    /**
+     * Räkna antal kontakter i databasen
+     * @return	int	Antal kontakter
+     */
     public int getContactsCount() {
         String countQuery = "SELECT  * FROM " + TABLE_CONTACTS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         cursor.close();
  
-        // return count
+        // Returnera antalet kontakter
         return cursor.getCount();
     }
  
