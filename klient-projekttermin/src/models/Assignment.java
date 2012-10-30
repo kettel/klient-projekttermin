@@ -3,7 +3,7 @@ package models;
 import java.awt.Image;
 import java.sql.Time;
 
-public class Assignment{
+public class Assignment implements ModelInterface{
 	private String name;
 	private long lat;
 	private long lon;
@@ -15,6 +15,7 @@ public class Assignment{
 	private Image cameraImage;
 	private String streetName;
 	private String siteName;
+	private String databasetRepresentation = "assignment";
 	
 	
 public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, Time timeSpan, String assignmentStatus, Image cameraImage, String streetName, String siteName){
@@ -117,5 +118,10 @@ public Assignment(String name, long lat, long lon, String receiver, String sende
 	
 	public void setAssignmentStatus(String assignmentStatusToBeSet){
 		this.assignmentStatus=assignmentStatusToBeSet;
+	}
+
+	@Override
+	public String getDatabaseRepresentation() {
+		return databasetRepresentation;
 	}
 }

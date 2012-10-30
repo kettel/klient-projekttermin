@@ -1,6 +1,6 @@
 package models;
 
-public class Contact {
+public class Contact implements ModelInterface {
 
 	private String contactName;
 	private Long contactPhoneNumber;
@@ -8,6 +8,8 @@ public class Contact {
 	private String contactClearanceLevel;
 	private String contactClassification;
 	private String contactComment;
+	private String databasetRepresentation = "contact";
+
 	
 	
 	public Contact(String contactName, Long contactPhoneNumber, String contactEmail, String contactClearanceLevel, String contactClassification, String contactComment){
@@ -66,5 +68,11 @@ public class Contact {
 	
 	public void setContactComment(String contactCommentToBeSet){
 		this.contactComment=contactCommentToBeSet;
+	}
+
+	@Override
+	public String getDatabaseRepresentation() {
+		// TODO Auto-generated method stub
+		return databasetRepresentation;
 	}
 }

@@ -2,12 +2,14 @@ package models;
 
 import java.sql.Time;
 
-public class Message {
+public class Message implements ModelInterface {
 
 	private String messageContent;
 	private String reciever;
 	private Long messageID;
 	private Time messageTimeStamp;
+	private String databasetRepresentation = "message";
+
 	
 	
 	public Message(String messageContent, String reciever, Long messageID, Time messageTimeStamp){
@@ -48,5 +50,11 @@ public class Message {
 	
 	public void setMessageTimeStamp(Time messageTimeStampToBeSet){
 		this.messageTimeStamp=messageTimeStampToBeSet;
+	}
+
+	@Override
+	public String getDatabaseRepresentation() {
+		// TODO Auto-generated method stub
+		return databasetRepresentation;
 	}
 }
