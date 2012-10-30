@@ -16,11 +16,14 @@ public class Database{
 
 		// Contacts
 		case 2:
-			
+			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
+			dhc.addContact((Contact)m);
 			break;
 		
 		// Messages
 		case 3:
+			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
+			dhm.addMessage((Message)m);
 			break;
 		}
 	}
