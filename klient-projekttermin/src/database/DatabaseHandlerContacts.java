@@ -48,7 +48,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Om en äldre version existerar, ta bort den
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSIGNMENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
  
         // Skapa sedan databasen igen
         onCreate(db);
