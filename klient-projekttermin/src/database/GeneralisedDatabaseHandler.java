@@ -2,16 +2,17 @@ package database;
 
 import java.util.ArrayList;
 import java.util.List;
- 
+
+import model.Model;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
- 
-public class DatabaseHandler extends SQLiteOpenHelper {
- 
-    // Alla statiska variabler
+
+public class GeneralisedDatabaseHandler extends SQLiteOpenHelper {
+	// Alla statiska variabler
     // Databas version
     private static final int DATABASE_VERSION = 1;
  
@@ -26,7 +27,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_NAME = "name";
     private static final String KEY_PH_NO = "phone_number";
  
-    public DatabaseHandler(Context context) {
+    public GeneralisedDatabaseHandler(Context context, Model model) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
  
@@ -159,5 +160,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Returnera antalet kontakter
         return cursor.getCount();
     }
- 
 }
