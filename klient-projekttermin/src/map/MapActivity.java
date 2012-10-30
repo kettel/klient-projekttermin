@@ -29,7 +29,8 @@ import com.nutiteq.wrappers.Image;
 public class MapActivity extends Activity {
 
 	private BasicMapComponent mapComponent;
-//	private ArrayList<Assignment> assignmentList;
+
+	// private ArrayList<Assignment> assignmentList;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class MapActivity extends Activity {
 		mapComponent.setMap(OpenStreetMap.MAPNIK);
 		mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		mapComponent.startMapping();
-		
+
 		// get the mapview that was defined in main.xml
 		MapView mapView = (MapView) findViewById(R.id.mapview);
 		// mapview requires a mapcomponent
@@ -58,8 +59,12 @@ public class MapActivity extends Activity {
 				mapComponent.zoomOut();
 			}
 		});
-
-		// GPS Location
+		activateGPS();
+	}
+	/**
+	 * Aktiverar GPS:en
+	 */
+	private void activateGPS() {
 		final LocationSource locationSource = new AndroidGPSProvider(
 				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 				1000L);
