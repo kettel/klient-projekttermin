@@ -32,6 +32,39 @@ public class Contact {
 		return contactPhoneNumber;
 	}
 	
-	public String
+	public void setContactPhoneNumber(Long contactPhoneNumberToBeSet){
+		this.contactPhoneNumber=contactPhoneNumberToBeSet;
+	}
 	
+	public String getContactEmail(){
+		return contactEmail;
+	}
+	
+	public void setContactEmail(String contactEmailToBeSet){
+		this.contactEmail=contactEmailToBeSet;
+	}
+	
+	public String getContactClearanceLevel(){
+		return contactClearanceLevel;
+	}
+	
+	public void setContactClearanceLevel(String clearanceLevelToBeSet){
+		this.contactClearanceLevel=clearanceLevelToBeSet;
+	}
+	
+	public String getContactClassification(){
+		return contactClassification;
+	}
+	
+	public void setContactClassification(String contactClassificationToBeSet){
+		this.contactClassification=contactClassificationToBeSet;
+	}
+	
+	public String getContactComment(){
+		return contactComment;
+	}
+	
+	public void setContactComment(String contactCommentToBeSet){
+		this.contactComment=contactCommentToBeSet;
+	}
 }
