@@ -96,8 +96,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus());
         values.put(KEY_STREETNAME, assignment.getStreetName());
         values.put(KEY_SITENAME, assignment.getSiteName());
- 
-        // Lägg till kontakten i databasen
+
+        // Lägg till assignment i databasen
         db.insert(TABLE_ASSIGNMENTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
         db.close(); 

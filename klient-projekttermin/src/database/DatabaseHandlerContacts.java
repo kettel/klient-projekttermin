@@ -1,5 +1,8 @@
 package database;
 
+import models.Assignment;
+import models.Contact;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -52,5 +55,26 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
  
         // Skapa sedan databasen igen
         onCreate(db);
+    }
+    
+    /**
+     * Lägg till en kontakt
+     * @param Contact	Den kontakt som ska läggas till i databasen
+     */
+    public void addAssignment(Contact contact) {
+        SQLiteDatabase db = this.getWritableDatabase();
+ 
+        ContentValues values = new ContentValues();
+        values.put(KEY_CONTACT_NAME, contact.getContactName());
+        values.put(KEY_PH_NO, contact.getContactPhoneNumber());
+        values.put(KEY_EMAIL, contact.getContactEmail());
+        values.put(KEY_CLEARANCE_LEVEL, contact.getContactClearanceLevel());
+        values.put(KEY_CLASSIFICATION, contact.getContactClassification());
+        values.put(KEY_COMMENT, contact.getContactComment());
+
+        // Lägg till kontakter i databasen
+        db.insert(TABLE_CONTACTS, null, values);
+        // Stäng databasen. MYCKET VIKTIGT!!
+        db.close(); 
     }
 }
