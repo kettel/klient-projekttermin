@@ -1,30 +1,41 @@
 package database;
 
+import models.Assignment;
+import models.Contact;
+import models.MessageModel;
+import models.ModelInterface;
 import android.content.Context;
-import model.Assignment;
-import model.Model;
+import android.util.Log;
 
+/**
+ * En klass med metoder för Create, Remove, Update, Delete (CRUD)
+ * operationer på databasen.
+ * @author kettel
+ *
+ */
 public class Database{
-	public void addToDB(Model m, Context context){
-		int dbRep = m.getDBRep();
-		switch (dbRep) {
-		// Assignment
-		case 1:
+	/**
+	 * Lägg till ett uppdrag/kontakt/meddelande till rätt databas
+	 * @param m			ModellInterface av objekt som ska läggas till
+	 * @param context	Aktivitetens kontext så data läggs i rätt databas
+	 */
+	public void addToDB(ModelInterface m, Context context){
+		Log.d("DB","Försöker adda skit till databasen..");
+		String dbRep = m.getDatabaseRepresentation();
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			Log.d("DB","Det är en assignment som ska läggas till");
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
 			dha.addAssignment((Assignment)m);
-			break;
-
-		// Contacts
-		case 2:
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			Log.d("DB","Det är en contact som ska läggas till");
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
 			dhc.addContact((Contact)m);
-			break;
-		
-		// Messages
-		case 3:
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			Log.d("DB","Det är ett message som ska läggas till");
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
 			dhm.addMessage((MessageModel)m);
-			break;
 		}
 	}
 }

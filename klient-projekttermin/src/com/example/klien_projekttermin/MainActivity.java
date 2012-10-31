@@ -1,9 +1,10 @@
 package com.example.klien_projekttermin;
 
-import java.util.List;
 
-import database.Contact;
-import database.DatabaseHandler;
+import database.Database;
+
+import models.Contact;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,7 +19,6 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d("Startar: ", "Main");
     }
 
     @Override
@@ -41,17 +41,25 @@ public class MainActivity extends Activity {
      * 					
      */
     public void testWriteReadToDB(Context context){
-		DatabaseHandler db = new DatabaseHandler(context);
-	 
+		Contact testContact = new Contact("Nisse", Long.valueOf(12345), "nallecom","A","A","lirare");
+		
+	
+    	
+    	//DatabaseHandler db = new DatabaseHandler(context);
+		
+		Database db = new Database();
+		db.addToDB(testContact, context);
+		
 	    /**
 	     * CRUD Operations
 	     * */
-	    // Lägg till kontakter
+	    /*
+		// Lägg till kontakter
 	    Log.d("Insert: ", "Inserting ..");
 	    db.addContact(new Contact("Ravi", "9100000000"));
 	    db.addContact(new Contact("Jarmo", "9199999999"));
 	    db.addContact(new Contact("Lasse", "9522222222"));
-	    db.addContact(new Contact("K�tt och video", "9533333333"));
+	    db.addContact(new Contact("Kött och video", "9533333333"));
 	
 	    // Läs alla kontakter
 	    Log.d("Reading: ", "Reading all contacts..");
@@ -62,5 +70,6 @@ public class MainActivity extends Activity {
 	        // Skriv kontakter till debug-loggen
 	        Log.d("Name: ", log);
 	    }
+	    */
 	}
 }

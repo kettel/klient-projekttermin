@@ -22,13 +22,13 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     // Databas version
     private static final int DATABASE_VERSION = 1;
  
-    // Databasens namn
+    // Databasens namn - > assignmentManager
     private static final String DATABASE_NAME = "assignmentManager";
  
     // Assignments tabellnamn
     private static final String TABLE_ASSIGNMENTS = "assignment";
 
-    // Assignmenst tabellkolumnnamn
+    // Assignments tabellkolumnnamn
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
     private static final String KEY_LAT = "lat";
