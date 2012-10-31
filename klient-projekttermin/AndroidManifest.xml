@@ -21,8 +21,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DBTest"
-            android:label="@string/title_activity_dbtest" >
+            android:name="logger.LogViewer"
+            android:label="@string/title_activity_log_viewer" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
