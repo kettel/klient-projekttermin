@@ -23,7 +23,7 @@ public class Database{
 		// Messages
 		case 3:
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.addMessage((Message)m);
+			dhm.addMessage((MessageModel)m);
 			break;
 		}
 	}

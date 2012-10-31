@@ -1,6 +1,5 @@
 package database;
 
-import models.Assignment;
 import models.Contact;
 import android.content.ContentValues;
 import android.content.Context;
@@ -42,7 +41,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         		+ KEY_EMAIL + " TEXT,"
                 + KEY_CLEARANCE_LEVEL + " TEXT,"
                 + KEY_CLASSIFICATION + " TEXT,"
-                + KEY_COMMENT + ")";
+                + KEY_COMMENT + " TEXT"+")";
         db.execSQL(CREATE_ASSIGNMENTS_TABLE);
     	//executeSQLScript(db, "assignments.sql", this);
     }
@@ -61,7 +60,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
      * Lägg till en kontakt
      * @param Contact	Den kontakt som ska läggas till i databasen
      */
-    public void addAssignment(Contact contact) {
+    public void addContact(Contact contact) {
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();

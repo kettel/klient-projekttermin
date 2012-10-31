@@ -70,7 +70,6 @@ public class Contact implements ModelInterface {
 		this.contactComment=contactCommentToBeSet;
 	}
 
-	@Override
 	public String getDatabaseRepresentation() {
 		// TODO Auto-generated method stub
 		return databasetRepresentation;
