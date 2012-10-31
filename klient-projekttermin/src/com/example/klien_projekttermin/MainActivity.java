@@ -3,12 +3,15 @@ package com.example.klien_projekttermin;
 
 import database.Database;
 
+import models.Assignment;
 import models.Contact;
 
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -28,7 +31,6 @@ public class MainActivity extends Activity {
     }
     
     public void testDB(View view){
-    	Log.d("Startar: ", "TestDB");
     	testWriteReadToDB((Context)this);
     }
     
@@ -41,15 +43,25 @@ public class MainActivity extends Activity {
      * 					
      */
     public void testWriteReadToDB(Context context){
-		Contact testContact = new Contact("Nisse", Long.valueOf(12345), "nallecom","A","A","lirare");
-		
-	
-    	
-    	//DatabaseHandler db = new DatabaseHandler(context);
-		
+    	Log.d("DB","Börjar att testa");
+    	// Skapa en tom database för att skriva godtycklig datatyp (assignment, contact, message) 
+    	// till rätt databas
 		Database db = new Database();
-		db.addToDB(testContact, context);
-		Log.d("DB","Contacts DB size: "+db.getDBCount(testContact, context));
+		Log.d("DB", "Klarade av att skapa en tom databas");
+		// Testa contacts
+		//Contact testContact = new Contact("Nisse", Long.valueOf(12345), "nallecom","A","A","lirare");
+		//db.addToDB(testContact, context);
+		//Log.d("DB","Contacts DB size: "+db.getDBCount(testContact, context));
+		
+		// Testa assignments
+		int w = 100, h = 100;
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+		Bitmap bmp = Bitmap.createBitmap(w, h, conf);
+		Time time = new Time();
+		time.setToNow();
+		Assignment testAssignment = new Assignment("uppdrag", Long.valueOf(123456), Long.valueOf(654321), "Mott", "Sandare", "Katt i trad", time,"Status", bmp,"Allgatan 1","Ryd");
+		db.addToDB(testAssignment,context);
+		Log.d("DB","Assignment DB size: "+db.getDBCount(testAssignment, context));
 		
 	    /**
 	     * CRUD Operations

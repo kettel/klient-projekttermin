@@ -1,8 +1,5 @@
 package database;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +7,10 @@ import models.Assignment;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.format.Time;
+import android.util.Log;
 
 public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	// Alla statiska variabler
@@ -30,16 +25,16 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 
     // Assignments tabellkolumnnamn
     private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
+    /*private static final String KEY_NAME = "name";
     private static final String KEY_LAT = "lat";
 	private static final String KEY_LON = "long";
 	private static final String KEY_RECEIVER = "receiver";
 	private static final String KEY_SENDER = "sender";
 	private static final String KEY_ASSIGNMENTDESCRIPTION = "description";
 	private static final String KEY_TIMESPAN = "timespan";
-	private static final String KEY_ASSIGNMENTSTATUS = "assignmentstatus";
-	private static final String KEY_CAMERAIMAGE = "camera image";
-	private static final String KEY_STREETNAME ="streetname";
+	private static final String KEY_ASSIGNMENTSTATUS = "assignment_status";
+	private static final String KEY_CAMERAIMAGE = "camera_image";
+	private static final String KEY_STREETNAME ="streetname";*/
 	private static final String KEY_SITENAME = "sitename";
  
     public DatabaseHandlerAssignment(Context context) {
@@ -51,7 +46,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_ASSIGNMENTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
-        		+ KEY_NAME + " TEXT,"
+        		/*+ KEY_NAME + " TEXT,"
                 + KEY_LAT + " TEXT,"
         		+ KEY_LON + " TEXT,"
                 + KEY_RECEIVER + " TEXT,"
@@ -60,10 +55,9 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
                 + KEY_TIMESPAN + " TEXT,"
                 + KEY_ASSIGNMENTSTATUS + " TEXT,"
                 + KEY_CAMERAIMAGE + "BLOB,"
-                + KEY_STREETNAME + " TEXT,"
-                + KEY_SITENAME + "TEXT" + ")";
+                + KEY_STREETNAME + " TEXT,"*/
+                + KEY_SITENAME + " TEXT" + ")";
         db.execSQL(CREATE_ASSIGNMENTS_TABLE);
-    	//executeSQLScript(db, "assignments.sql", this);
     }
  
     // Uppgradera databasen vid behov (om en äldre version existerar)
@@ -85,12 +79,13 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
      * @param assignment	Det uppdrag som ska läggas till i databasen
      */
     public void addAssignment(Assignment assignment) {
+    	Log.d("DB","Börjar med att lägga till assignment");
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, assignment.getName()); 
-        values.put(KEY_LAT, assignment.getLat());
-        values.put(KEY_LON, assignment.getLon());
+        /*values.put(KEY_NAME, assignment.getName()); 
+        values.put(KEY_LAT, Long.toString(assignment.getLat()));
+        values.put(KEY_LON, Long.toString(assignment.getLon()));
         values.put(KEY_RECEIVER, assignment.getReceiver());
         values.put(KEY_SENDER, assignment.getSender());
         values.put(KEY_ASSIGNMENTDESCRIPTION, assignment.getAssignmentDescription());
@@ -98,9 +93,9 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus());
         // Hmm.. Hur i H-E kommer detta att fungera? Bild -> String -> Binär -> .. -> ???
         values.put(KEY_CAMERAIMAGE, assignment.getCameraImage().toString());
-        values.put(KEY_STREETNAME, assignment.getStreetName());
+        values.put(KEY_STREETNAME, assignment.getStreetName());*/
         values.put(KEY_SITENAME, assignment.getSiteName());
-
+        Log.d("DB","Values att inserta: " + values.toString());
         // Lägg till assignment i databasen
         db.insert(TABLE_ASSIGNMENTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
@@ -113,7 +108,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
      * @return	Assignment	det funna uppdraget
      */
     public Assignment getAssignment(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        /*SQLiteDatabase db = this.getReadableDatabase();
  
         Cursor cursor = db.query(TABLE_ASSIGNMENTS, 
         		new String[] {KEY_ID, KEY_NAME, KEY_LAT, KEY_LON, 
@@ -191,7 +186,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
      * på ett tillfredsställande vis
      */
     public int updateAssignment(Assignment assignment) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        /*SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, assignment.getName()); 
@@ -209,7 +204,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         //return db.update(TABLE_ASSIGNMENTS, values, KEY_ID + " = ?",
         		// TODO: ID för ett assignments behövs för att kunna uppdateras
                 //new String[] { String.valueOf(contact.getID()) });
-        // Returnera -1 så länge som metoden är KASS!
+        // Returnera -1 så länge som metoden är KASS!*/
         return -1;
     }
  
@@ -232,13 +227,14 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
      * @return	int		Antal assignments
      */
     public int getAssignmentCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_ASSIGNMENTS;
+        String countQuery = "SELECT * FROM " + TABLE_ASSIGNMENTS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        int returnCount = cursor.getCount();
         cursor.close();
  
         // Returnera antalet assignments
-        return cursor.getCount();
+        return returnCount;
     }
     
     /**
@@ -248,6 +244,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
      * @param dbname
      * @param context
      */
+    /*
     private void executeSQLScript(SQLiteDatabase database, String dbname, Context context) {
     	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte buf[] = new byte[1024];
@@ -276,5 +273,5 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         } catch (SQLException e) {
             // TODO Handle Script Failed to Execute
         }
-    }
+    }*/
 }

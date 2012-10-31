@@ -36,7 +36,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     // Skapa tabell
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_CONTACTS + "("
+        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
         		+ KEY_CONTACT_NAME + " TEXT,"
                 + KEY_PH_NO + " TEXT,"
@@ -44,7 +44,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
                 + KEY_CLEARANCE_LEVEL + " TEXT,"
                 + KEY_CLASSIFICATION + " TEXT,"
                 + KEY_COMMENT + " TEXT"+")";
-        db.execSQL(CREATE_ASSIGNMENTS_TABLE);
+        db.execSQL(CREATE_CONTACTS_TABLE);
     	//executeSQLScript(db, "assignments.sql", this);
     }
  
@@ -78,7 +78,6 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         db.insert(TABLE_CONTACTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
         db.close(); 
-        Log.d("DB", "Skrev till databasen..");
     }
 
 	public int getContactCount() {
