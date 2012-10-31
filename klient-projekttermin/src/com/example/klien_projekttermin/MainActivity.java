@@ -5,12 +5,14 @@ import database.Database;
 
 import models.Assignment;
 import models.Contact;
+import models.MessageModel;
 
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Message;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
@@ -54,35 +56,18 @@ public class MainActivity extends Activity {
 		//Log.d("DB","Contacts DB size: "+db.getDBCount(testContact, context));
 		
 		// Testa assignments
-		int w = 100, h = 100;
-		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-		Bitmap bmp = Bitmap.createBitmap(w, h, conf);
+		//int w = 100, h = 100;
+		//Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+		//Bitmap bmp = Bitmap.createBitmap(w, h, conf);
 		Time time = new Time();
 		time.setToNow();
-		Assignment testAssignment = new Assignment("uppdrag", Long.valueOf(123456), Long.valueOf(654321), "Mott", "Sandare", "Katt i trad", time,"Status", bmp,"Allgatan 1","Ryd");
-		db.addToDB(testAssignment,context);
-		Log.d("DB","Assignment DB size: "+db.getDBCount(testAssignment, context));
+		//Assignment testAssignment = new Assignment("uppdrag", Long.valueOf(123456), Long.valueOf(654321), "Mott", "Sandare", "Katt i trad", time,"Status", bmp,"Allgatan 1","Ryd");
+		//db.addToDB(testAssignment,context);
+		//Log.d("DB","Assignment DB size: "+db.getDBCount(testAssignment, context));
 		
-	    /**
-	     * CRUD Operations
-	     * */
-	    /*
-		// Lägg till kontakter
-	    Log.d("Insert: ", "Inserting ..");
-	    db.addContact(new Contact("Ravi", "9100000000"));
-	    db.addContact(new Contact("Jarmo", "9199999999"));
-	    db.addContact(new Contact("Lasse", "9522222222"));
-	    db.addContact(new Contact("Kött och video", "9533333333"));
-	
-	    // Läs alla kontakter
-	    Log.d("Reading: ", "Reading all contacts..");
-	    List<Contact> contacts = db.getAllContacts();       
-	
-	    for (Contact cn : contacts) {
-	        String log = "Id: "+cn.getID()+" ,Name: " + cn.getName() + " ,Phone: " + cn.getPhoneNumber();
-	        // Skriv kontakter till debug-loggen
-	        Log.d("Name: ", log);
-	    }
-	    */
+		// Testa messages
+		MessageModel testMessage = new MessageModel("Hej hej", "Kalle",time.toString());
+		db.addToDB(testMessage, context);
+		Log.d("DB","Message DB size: " + db.getDBCount(testMessage, context));
 	}
 }

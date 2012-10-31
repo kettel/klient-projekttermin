@@ -3,8 +3,10 @@ package database;
 import models.MessageModel;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseHandlerMessages extends SQLiteOpenHelper{
 	// Alla statiska variabler
@@ -19,9 +21,9 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
 
     // Contacts tabellkolumnnamn
     private static final String KEY_ID = "id";
-    private static final String KEY_MESSAGE_CONTENT = "message content";
+    private static final String KEY_MESSAGE_CONTENT = "content";
     private static final String KEY_RECEIVER = "receiver";
-	private static final String KEY_MESSAGE_TIMESTAMP = "message timestamp";
+	private static final String KEY_MESSAGE_TIMESTAMP = "timestamp";
 
  
     public DatabaseHandlerMessages(Context context) {
@@ -31,12 +33,12 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
     // Skapa tabell
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_MESSAGES + "("
+        String CREATE_MESSAGES_TABLE = "CREATE TABLE " + TABLE_MESSAGES + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
         		+ KEY_MESSAGE_CONTENT + " TEXT,"
                 + KEY_RECEIVER + " TEXT,"
                 + KEY_MESSAGE_TIMESTAMP + " TEXT" + ")";
-        db.execSQL(CREATE_ASSIGNMENTS_TABLE);
+        db.execSQL(CREATE_MESSAGES_TABLE);
     	//executeSQLScript(db, "assignments.sql", this);
     }
  
@@ -67,9 +69,17 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         // Stäng databasen. MYCKET VIKTIGT!!
         db.close(); 
     }
-
+    
+    /**
+     * Räkna antal meddelanden i messages-databasen
+     * @return int 		Antal meddelanden
+     */
 	public int getMessageCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		String countQuery = "SELECT * FROM " + TABLE_MESSAGES;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
 	}
 }
