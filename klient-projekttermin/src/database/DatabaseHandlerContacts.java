@@ -63,7 +63,6 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
      * @param Contact	Den kontakt som ska läggas till i databasen
      */
     public void addContact(Contact contact) {
-    	Log.d("DB","DatabaseHandlerContact, addContact()");
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
@@ -73,7 +72,6 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         values.put(KEY_CLEARANCE_LEVEL, contact.getContactClearanceLevel());
         values.put(KEY_CLASSIFICATION, contact.getContactClassification());
         values.put(KEY_COMMENT, contact.getContactComment());
-        Log.d("DB",values.toString());
         // Lägg till kontakter i databasen
         db.insert(TABLE_CONTACTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
@@ -87,7 +85,6 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         int count = cursor.getCount();
         cursor.close();
         
-        Log.d("DB", "Antal poster i db: "+Integer.toString(count));
         return count;
 	}
 }

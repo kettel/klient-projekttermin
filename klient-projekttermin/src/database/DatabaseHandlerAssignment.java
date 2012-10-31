@@ -79,7 +79,6 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
      * @param assignment	Det uppdrag som ska läggas till i databasen
      */
     public void addAssignment(Assignment assignment) {
-    	Log.d("DB","Börjar med att lägga till assignment");
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
@@ -95,7 +94,6 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         values.put(KEY_CAMERAIMAGE, assignment.getCameraImage().toString());
         values.put(KEY_STREETNAME, assignment.getStreetName());
         values.put(KEY_SITENAME, assignment.getSiteName());
-        Log.d("DB","Values att inserta: " + values.toString());
         // Lägg till assignment i databasen
         db.insert(TABLE_ASSIGNMENTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
