@@ -1,21 +1,18 @@
 package models;
 
-import java.sql.Time;
 
 public class MessageModel implements ModelInterface {
 
 	private CharSequence messageContent;
 	private CharSequence reciever;
-	private Long messageID;
-	private Time messageTimeStamp;
+	private String messageTimeStamp;
 	private String databasetRepresentation = "message";
 
 	
 	//Mesage borde döpas om till något annat liknande
-	public MessageModel(CharSequence charSequence, CharSequence charSequence2, Long messageID){
-		this.messageContent=charSequence;
-		this.reciever=charSequence2;
-		this.messageID=messageID;
+	public MessageModel(CharSequence messageContent, CharSequence reciever, String messageTimeStamp){
+		this.messageContent=messageContent;
+		this.reciever=reciever;
 		this.messageTimeStamp=messageTimeStamp;
 		
 	}
@@ -36,19 +33,11 @@ public class MessageModel implements ModelInterface {
 		this.reciever=recieverToBeSet;
 	}
 	
-	public Long getMessageID(){
-		return messageID;
-	}
-	
-	public void setMessageID(Long messageIDToBeSet){
-		this.messageID=messageIDToBeSet;
-	}
-	
-	public Time getMessageTimeStamp(){
+	public String getMessageTimeStamp(){
 		return messageTimeStamp;
 	}
 	
-	public void setMessageTimeStamp(Time messageTimeStampToBeSet){
+	public void setMessageTimeStamp(String messageTimeStampToBeSet){
 		this.messageTimeStamp=messageTimeStampToBeSet;
 	}
 
