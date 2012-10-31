@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
+import android.widget.SimpleCursorAdapter;
 import android.widget.ZoomControls;
 
 import com.example.klien_projekttermin.R;
@@ -44,7 +45,9 @@ public class MapActivity extends Activity implements Observer,
 	private int[] to = { android.R.id.text1, android.R.id.text2 };
 	private ListView lv;
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
-
+	private SimpleAdapter sm;
+	private MapView mapView;
+	private ZoomControls zoomControls;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -57,15 +60,15 @@ public class MapActivity extends Activity implements Observer,
 		mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		mapComponent.startMapping();
 		lv=(ListView) findViewById(R.id.mylist);
-
-		MapView mapView = (MapView) findViewById(R.id.mapview);
+		sm=new SimpleAdapter(this, searchSuggestions.getList(),
+				android.R.layout.simple_list_item_2, from, to);
+		lv.setAdapter(sm);
+		 mapView = (MapView) findViewById(R.id.mapview);
 		mapView.setMapComponent(mapComponent);
 
-		searchSuggestions.addObserver(g());
-		lv.setAdapter(new SimpleAdapter(this, searchSuggestions.getList(),
-				android.R.layout.simple_list_item_2, from, to));
+		searchSuggestions.addObserver(this);
 		
-		ZoomControls zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
+		 zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
 		// set zoomcontrols listeners to enable zooming
 		zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
 			public void onClick(final View v) {
@@ -92,10 +95,6 @@ public class MapActivity extends Activity implements Observer,
 
 	}
 
-	private MapActivity g() {
-		return this;
-	}
-
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
 		MenuInflater inflater = getMenuInflater();
@@ -113,23 +112,15 @@ public class MapActivity extends Activity implements Observer,
 	public boolean onQueryTextChange(String newText) {
 		searchSuggestions.updateSearch(newText);
 		System.out.println("change");
-		lv.setAdapter(new SimpleAdapter(this, searchSuggestions.getList(),
-				android.R.layout.simple_list_item_2, from, to));
-		
-		MapView mapView = (MapView) findViewById(R.id.mapview);
-		mapView.setVisibility(MapView.GONE);
-		ZoomControls zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
-		zoomControls.setVisibility(ZoomControls.GONE);
-//		lv.bringToFront();
 		lv.setVisibility(ListView.VISIBLE);
+		mapView.setVisibility(MapView.GONE);
+		zoomControls.setVisibility(ZoomControls.GONE);
 		return true;
 	}
 
 	public boolean onQueryTextSubmit(String query) {
 		
 		System.out.println("query");
-		
-		//
 		return true;
 	}
 
@@ -146,17 +137,14 @@ public class MapActivity extends Activity implements Observer,
 
 	public void update(Observable observable, Object data) {
 		System.out.println("observed");
-		SimpleAdapter s=(SimpleAdapter)lv.getAdapter();
-		s.notifyDataSetChanged();
-		lv.invalidate();
+		
+		sm.notifyDataSetChanged();
 	}
 
 	public boolean onClose() {
 		System.out.println("ONCLOSE");
 		lv.setVisibility(ListView.GONE);
-		MapView mapView = (MapView) findViewById(R.id.mapview);
 		mapView.setVisibility(MapView.VISIBLE);
-		ZoomControls zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
 		zoomControls.setVisibility(ZoomControls.VISIBLE);
 		return false;
 	}
