@@ -21,7 +21,6 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
     private static final String KEY_ID = "id";
     private static final String KEY_MESSAGE_CONTENT = "message content";
     private static final String KEY_RECEIVER = "receiver";
-	private static final String KEY_MESSAGE_ID = "message id";
 	private static final String KEY_MESSAGE_TIMESTAMP = "message timestamp";
 
  
@@ -36,7 +35,6 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
         		+ KEY_MESSAGE_CONTENT + " TEXT,"
                 + KEY_RECEIVER + " TEXT,"
-        		+ KEY_MESSAGE_ID + " TEXT,"
                 + KEY_MESSAGE_TIMESTAMP + " TEXT" + ")";
         db.execSQL(CREATE_ASSIGNMENTS_TABLE);
     	//executeSQLScript(db, "assignments.sql", this);
@@ -60,10 +58,9 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        values.put(KEY_MESSAGE_CONTENT, message.getMessageContent());
-        values.put(KEY_RECEIVER, message.getReciever());
-        values.put(KEY_MESSAGE_ID, message.getMessageID());
-        values.put(KEY_MESSAGE_TIMESTAMP, message.getMessageTimeStamp().toString());
+        values.put(KEY_MESSAGE_CONTENT, message.getMessageContent().toString());
+        values.put(KEY_RECEIVER, message.getReciever().toString());
+        values.put(KEY_MESSAGE_TIMESTAMP, message.getMessageTimeStamp());
 
         // Lägg till kontakter i databasen
         db.insert(TABLE_MESSAGES, null, values);

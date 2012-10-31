@@ -1,7 +1,8 @@
 package models;
 
-import java.awt.Image;
-import java.sql.Time;
+import android.text.format.Time;
+
+import android.graphics.Bitmap;
 
 public class Assignment implements ModelInterface{
 	private String name;
@@ -12,13 +13,13 @@ public class Assignment implements ModelInterface{
 	private String assignmentDescription;
 	private Time timeSpan;
 	private String assignmentStatus;
-	private Image cameraImage;
+	private Bitmap cameraImage;
 	private String streetName;
 	private String siteName;
 	private String databasetRepresentation = "assignment";
 
 
-public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, Time timeSpan, String assignmentStatus, Image cameraImage, String streetName, String siteName){
+public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, Time timeSpan, String assignmentStatus, Bitmap cameraImage, String streetName, String siteName){
 		this.lat=lat;
 		this.lon=lon;
 		this.name=name;
@@ -88,11 +89,11 @@ public Assignment(String name, long lat, long lon, String receiver, String sende
 		this.sender = senderToBeSet;
 	}
 
-	public Image getCameraImage(){
+	public Bitmap getCameraImage(){
 		return cameraImage;
 	}
 
-	public void captureCameraImage(Image cameraImageToBeSet){
+	public void captureCameraImage(Bitmap cameraImageToBeSet){
 		this.cameraImage=cameraImageToBeSet;
 	}
 
@@ -120,7 +121,6 @@ public Assignment(String name, long lat, long lon, String receiver, String sende
 		this.assignmentStatus=assignmentStatusToBeSet;
 	}
 
-	@Override
 	public String getDatabaseRepresentation() {
 		return databasetRepresentation;
 	}
