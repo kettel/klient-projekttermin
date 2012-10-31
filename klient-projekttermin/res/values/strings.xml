@@ -1,8 +1,19 @@
 <resources>
 
     <string name="app_name">klien-projekttermin</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_create_new_message">CreateNewMessage</string>
+    <string name="Mottagare"></string>
+    <string name="Meddelande"></string>
+    <string name="SkapaMeddelande"></string>
+    <string name="Cancel"></string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_startsida_meddelanden">StartsidaMeddelanden</string>
+    <string name="CreateNewMessage">Skapa Nytt Meddelande</string>
+    <string name="Inbox">Inkorg</string>
+    <string name="Draft">Utkast</string>
+    <string name="SavedMessages">Sparade Meddelanden</string>
+    <string name="title_activity_inbox">Inbox</string>
 
 </resources>

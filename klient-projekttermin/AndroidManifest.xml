@@ -14,11 +14,23 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
+        </activity>
+        <activity
+            android:name=".CreateNewMessage"
+            android:label="@string/title_activity_create_new_message" >
+        </activity>
+        <activity
+            android:name=".StartsidaMeddelanden"
+            android:label="@string/title_activity_startsida_meddelanden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".Inbox"
+            android:label="@string/title_activity_inbox" >
         </activity>
     </application>
 
