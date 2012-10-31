@@ -30,9 +30,6 @@ public class MainActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-
-		testWriteReadToDB(this);
-		
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 
@@ -90,31 +87,5 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	
-	 public void testWriteReadToDB(Context context){
-	    	// Skapa en tom database för att skriva godtycklig datatyp (assignment, contact, message) 
-	    	// till rätt databas
-			Database db = new Database();
-
-			// Testa contacts
-			Contact testContact = new Contact("Nisse", Long.valueOf(12345), "nallecom","A","A","lirare");
-			db.addToDB(testContact, context);
-			Log.d("DB","Contacts DB size: "+db.getDBCount(testContact, context));
-
-			// Testa assignments
-			int w = 100, h = 100;
-			Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-			Bitmap bmp = Bitmap.createBitmap(w, h, conf);
-			Time time = new Time();
-			time.setToNow();
-			Assignment testAssignment = new Assignment("uppdrag", Long.valueOf(123456), Long.valueOf(654321), "Mott", "Sandare", "Katt i trad", time,"Status", bmp,"Allgatan 1","Ryd");
-			db.addToDB(testAssignment,context);
-			Log.d("DB","Assignment DB size: "+db.getDBCount(testAssignment, context));
-
-			// Testa messages
-			MessageModel testMessage = new MessageModel("Hej hej", "Kalle",time.toString());
-			db.addToDB(testMessage, context);
-			Log.d("DB","Message DB size: " + db.getDBCount(testMessage, context));
-		}
 
 }
