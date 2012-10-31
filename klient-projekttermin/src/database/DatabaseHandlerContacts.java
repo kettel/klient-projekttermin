@@ -3,6 +3,7 @@ package database;
 import models.Contact;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -20,8 +21,8 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
 
     // Contacts tabellkolumnnamn
     private static final String KEY_ID = "id";
-    /*private static final String KEY_CONTACT_NAME = "contact_name";
-    private static final String KEY_PH_NO = "phone_number";*/
+    private static final String KEY_CONTACT_NAME = "contact_name";
+    private static final String KEY_PH_NO = "phone_number";
 	private static final String KEY_EMAIL = "email";
 	private static final String KEY_CLEARANCE_LEVEL = "clearance_level";
 	private static final String KEY_CLASSIFICATION = "classification";
@@ -37,8 +38,8 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
-        		/*+ KEY_CONTACT_NAME + " TEXT,"
-                + KEY_PH_NO + " TEXT,"*/
+        		+ KEY_CONTACT_NAME + " TEXT,"
+                + KEY_PH_NO + " TEXT,"
         		+ KEY_EMAIL + " TEXT,"
                 + KEY_CLEARANCE_LEVEL + " TEXT,"
                 + KEY_CLASSIFICATION + " TEXT,"
@@ -66,8 +67,8 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        /*values.put(KEY_CONTACT_NAME, contact.getContactName());
-        values.put(KEY_PH_NO, contact.getContactPhoneNumber().toString());*/
+        values.put(KEY_CONTACT_NAME, contact.getContactName());
+        values.put(KEY_PH_NO, contact.getContactPhoneNumber().toString());
         values.put(KEY_EMAIL, contact.getContactEmail());
         values.put(KEY_CLEARANCE_LEVEL, contact.getContactClearanceLevel());
         values.put(KEY_CLASSIFICATION, contact.getContactClassification());
@@ -77,5 +78,17 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         db.insert(TABLE_CONTACTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
         db.close(); 
+        Log.d("DB", "Skrev till databasen..");
+        //Log.d("DB","Antal poster i DB: "+Integer.toString(getContactCount()));
     }
+
+	public int getContactCount() {
+		String countQuery = "SELECT  * FROM " + TABLE_CONTACTS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.close();
+ 
+        // return count
+        return cursor.getCount();
+	}
 }

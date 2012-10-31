@@ -67,4 +67,9 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         // Stäng databasen. MYCKET VIKTIGT!!
         db.close(); 
     }
+
+	public int getMessageCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

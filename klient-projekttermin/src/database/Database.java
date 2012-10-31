@@ -20,7 +20,6 @@ public class Database{
 	 * @param context	Aktivitetens kontext så data läggs i rätt databas
 	 */
 	public void addToDB(ModelInterface m, Context context){
-		Log.d("DB","Försöker adda skit till databasen..");
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			Log.d("DB","Det är en assignment som ska läggas till");
@@ -37,5 +36,25 @@ public class Database{
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
 			dhm.addMessage((MessageModel)m);
 		}
+	}
+	public int getDBCount(ModelInterface m, Context context){
+		String dbRep = m.getDatabaseRepresentation();
+		int returnCount = 0;
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			Log.d("DB","Det är en assignment som ska läggas till");
+			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
+			returnCount = dha.getAssignmentCount();
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			Log.d("DB","Det är en contact som ska läggas till");
+			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
+			returnCount = dhc.getContactCount();
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			Log.d("DB","Det är ett message som ska läggas till");
+			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
+			returnCount = dhm.getMessageCount();
+		}
+		return returnCount;
 	}
 }
