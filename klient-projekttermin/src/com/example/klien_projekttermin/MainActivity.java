@@ -5,6 +5,7 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
+import logger.LogViewer;
 import logger.logger;
 
 import android.app.ListActivity;
@@ -19,12 +20,15 @@ import android.widget.SimpleAdapter;
 
 public class MainActivity extends ListActivity {
 
+	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		final logger testlogger = new logger((Context)this);
+		final logger testlogger = new logger((Context)this,"log.txt"); 
 		String[] from = { "line1", "line2" };
+		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
 		
@@ -40,11 +44,10 @@ public class MainActivity extends ListActivity {
 				switch (arg2) {
 				case 0:
 					try {
-						testlogger.writeToLog("testentry 1");
-						testlogger.writeToLog("testentry 2");
-						testlogger.writeToLog("testentry 3");
+						testlogger.writeToLog("Nisse","testentry 1");
+						testlogger.writeToLog(null,"testentry 2");
+						testlogger.writeToLog("Nisse","testentry 3");
 					} catch (Exception e) {
-						System.out.println("något crasha: " + e.toString() );
 					}
 					// myIntent= new Intent(from.this,
 					// to.class);
@@ -59,10 +62,9 @@ public class MainActivity extends ListActivity {
 					break;
 				case 3:
 					try {
-						
-//						testlogger.readFromLog();
+						openLoggerIntent.putExtra(LOGCONTENT,testlogger.readFromLog());
+						startActivity(openLoggerIntent);
 					} catch (Exception e) {
-						System.out.println("något crasha när läsa: " + e.toString());
 					}
 					break;
 				default:
