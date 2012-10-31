@@ -38,6 +38,12 @@ public class Database{
 			dhm.addMessage((MessageModel)m);
 		}
 	}
+	/**
+	 * Räkna antal poster i vald databas
+	 * @param m			datatypen för den databas som ska räknas samman
+	 * @param context	programkontexten så rätt databas kan väljas
+	 * @return
+	 */
 	public int getDBCount(ModelInterface m, Context context){
 		String dbRep = m.getDatabaseRepresentation();
 		int returnCount = 0;
