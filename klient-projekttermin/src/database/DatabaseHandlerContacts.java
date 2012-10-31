@@ -1,6 +1,9 @@
 package database;
 
+import java.util.List;
+
 import models.Contact;
+import models.ModelInterface;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -86,5 +89,10 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         cursor.close();
         
         return count;
+	}
+
+	public List<ModelInterface> getAllContacts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

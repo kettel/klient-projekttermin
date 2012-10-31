@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.Assignment;
+import models.ModelInterface;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -141,8 +142,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
      * Hämta alla uppdrag i databasen
      * @return	List<Assignment>	En lista med Assignment-objekt
      */
-    public List<Assignment> getAllAssignments() {
-        List<Assignment> assignmentList = new ArrayList<Assignment>();
+    public List<ModelInterface> getAllAssignments() {
+        List<ModelInterface> assignmentList = new ArrayList<ModelInterface>();
         
         // Select All frågan. Ze classic! Dvs, hämta allt från ASSIGNMENTS-databasen
         String selectQuery = "SELECT  * FROM " + TABLE_ASSIGNMENTS;

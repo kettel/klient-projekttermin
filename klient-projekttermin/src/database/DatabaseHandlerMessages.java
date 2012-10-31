@@ -1,6 +1,10 @@
 package database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import models.MessageModel;
+import models.ModelInterface;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -81,5 +85,12 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         int count = cursor.getCount();
         cursor.close();
         return count;
+	}
+
+	public List<ModelInterface> getAllMessages() {
+		List<ModelInterface> messageList = new ArrayList<ModelInterface>();
+		
+
+		return messageList;
 	}
 }
