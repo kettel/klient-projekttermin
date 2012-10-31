@@ -5,6 +5,8 @@ import android.text.format.Time;
 import android.graphics.Bitmap;
 
 public class Assignment implements ModelInterface{
+	
+	private String databasetRepresentation = "assignment";
 	private String name;
 	private long lat;
 	private long lon;
@@ -16,7 +18,6 @@ public class Assignment implements ModelInterface{
 	private Bitmap cameraImage;
 	private String streetName;
 	private String siteName;
-	private String databasetRepresentation = "assignment";
 
 
 public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, Time timeSpan, String assignmentStatus, Bitmap cameraImage, String streetName, String siteName){

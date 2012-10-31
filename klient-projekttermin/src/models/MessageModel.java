@@ -3,17 +3,17 @@ package models;
 
 public class MessageModel implements ModelInterface {
 
-	private CharSequence messageContent;
-	private CharSequence reciever;
+	private String databaseRepresentation = "message";
+	private String messageContent;
+	private String reciever;
 	private String messageTimeStamp;
-	private String databasetRepresentation = "message";
 
 
 	//Mesage borde döpas om till något annat liknande
-	public MessageModel(CharSequence messageContent, CharSequence reciever, String messageTimeStamp){
-		this.messageContent=messageContent;
-		this.reciever=reciever;
-		this.messageTimeStamp=messageTimeStamp;
+	public MessageModel(CharSequence messageContent, CharSequence reciever, CharSequence messageTimeStamp){
+		this.messageContent = (String) messageContent;
+		this.reciever = (String) reciever;
+		this.messageTimeStamp = (String) messageTimeStamp;
 
 	}
 
@@ -21,28 +21,28 @@ public class MessageModel implements ModelInterface {
 		return messageContent;
 	}
 
-	public void setMessageContent(String messageContentToBeSet){
-		this.messageContent=messageContentToBeSet;
+	public void setMessageContent(CharSequence messageContentToBeSet){
+		this.messageContent = (String) messageContentToBeSet;
 	}
 
 	public CharSequence getReciever(){
-		return reciever;
+		return (CharSequence) reciever;
 	}
 
-	public void setReciever(String recieverToBeSet){
-		this.reciever=recieverToBeSet;
+	public void setReciever(CharSequence recieverToBeSet){
+		this.reciever = (String) recieverToBeSet;
 	}
 
-	public String getMessageTimeStamp(){
+	public CharSequence getMessageTimeStamp(){
 		return messageTimeStamp;
 	}
 
-	public void setMessageTimeStamp(String messageTimeStampToBeSet){
-		this.messageTimeStamp=messageTimeStampToBeSet;
+	public void setMessageTimeStamp(CharSequence messageTimeStampToBeSet){
+		this.messageTimeStamp = (String) messageTimeStampToBeSet;
 	}
 
 	public String getDatabaseRepresentation() {
 		// TODO Auto-generated method stub
-		return databasetRepresentation;
+		return databaseRepresentation;
 	}
 }
