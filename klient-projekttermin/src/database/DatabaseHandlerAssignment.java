@@ -38,6 +38,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	private static final String KEY_ASSIGNMENTDESCRIPTION = "description";
 	private static final String KEY_TIMESPAN = "timespan";
 	private static final String KEY_ASSIGNMENTSTATUS = "assignmentstatus";
+	private static final String KEY_CAMERAIMAGE = "camera image";
 	private static final String KEY_STREETNAME ="streetname";
 	private static final String KEY_SITENAME = "sitename";
  
@@ -58,6 +59,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
                 + KEY_ASSIGNMENTDESCRIPTION + " TEXT,"
                 + KEY_TIMESPAN + " TEXT,"
                 + KEY_ASSIGNMENTSTATUS + " TEXT,"
+                + KEY_CAMERAIMAGE + "BLOB,"
                 + KEY_STREETNAME + " TEXT,"
                 + KEY_SITENAME + "TEXT" + ")";
         db.execSQL(CREATE_ASSIGNMENTS_TABLE);
@@ -94,6 +96,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         values.put(KEY_ASSIGNMENTDESCRIPTION, assignment.getAssignmentDescription());
         values.put(KEY_TIMESPAN, assignment.getTimeSpan().toString());
         values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus());
+        // Hmm.. Hur i H-E kommer detta att fungera? Bild -> String -> Binär -> .. -> ???
+        values.put(KEY_CAMERAIMAGE, assignment.getCameraImage().toString());
         values.put(KEY_STREETNAME, assignment.getStreetName());
         values.put(KEY_SITENAME, assignment.getSiteName());
 
@@ -123,7 +127,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
  
         // Ignorera cursors första element då det är ID-nummer från databasen för assignment
         // Vad vi har sagt än så är det irrelevant.
-        Assignment assignment = new Assignment(cursor.getString(1),
+        /*Assignment assignment = new Assignment(cursor.getString(1),
         									Long.parseLong(cursor.getString(2)), 
         									Long.parseLong(cursor.getString(3)),
         									cursor.getString(4),
@@ -134,7 +138,10 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         									cursor.getString(9),
         									cursor.getString(10));
         // Returnera den funna kontakten
-        return assignment;
+        //return assignment;
+         * */
+         
+        return null;
     }
  
     /**
@@ -151,6 +158,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
  
         // Loopa igenom alla rader och lägg till dem i listan 
+        // TODO: Få ordning på BLOB, dvs hämta och dona med bild.
+        /*
         if (cursor.moveToFirst()) {
             do {
                 Assignment assignment = new Assignment(cursor.getString(1),
@@ -167,9 +176,11 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
                 assignmentList.add(assignment);
             } while (cursor.moveToNext());
         }
- 
+ 		
         // Returnera kontaktlistan
         return assignmentList;
+        */
+        return null;
     }
  
     /**
@@ -220,7 +231,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
      * Räkna antal assignments i databasen
      * @return	int		Antal assignments
      */
-    public int getContactsCount() {
+    public int getAssignmentCount() {
         String countQuery = "SELECT  * FROM " + TABLE_ASSIGNMENTS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
