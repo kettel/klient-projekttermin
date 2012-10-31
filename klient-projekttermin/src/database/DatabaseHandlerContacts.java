@@ -79,16 +79,16 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         // Stäng databasen. MYCKET VIKTIGT!!
         db.close(); 
         Log.d("DB", "Skrev till databasen..");
-        //Log.d("DB","Antal poster i DB: "+Integer.toString(getContactCount()));
     }
 
 	public int getContactCount() {
-		String countQuery = "SELECT  * FROM " + TABLE_CONTACTS;
+		String countQuery = "SELECT * FROM " + TABLE_CONTACTS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
         cursor.close();
- 
-        // return count
-        return cursor.getCount();
+        
+        Log.d("DB", "Antal poster i db: "+Integer.toString(count));
+        return count;
 	}
 }

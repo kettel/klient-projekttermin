@@ -14,6 +14,7 @@ import android.util.Log;
  *
  */
 public class Database{
+	
 	/**
 	 * Lägg till ett uppdrag/kontakt/meddelande till rätt databas
 	 * @param m			ModellInterface av objekt som ska läggas till

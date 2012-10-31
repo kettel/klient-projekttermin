@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
 		
 		Database db = new Database();
 		db.addToDB(testContact, context);
-		//Log.d("DB","Contacts DB size: "+db.getDBCount(testContact, context));
+		Log.d("DB","Contacts DB size: "+db.getDBCount(testContact, context));
 		
 	    /**
 	     * CRUD Operations
