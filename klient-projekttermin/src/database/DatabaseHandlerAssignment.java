@@ -25,7 +25,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 
     // Assignments tabellkolumnnamn
     private static final String KEY_ID = "id";
-    /*private static final String KEY_NAME = "name";
+    private static final String KEY_NAME = "name";
     private static final String KEY_LAT = "lat";
 	private static final String KEY_LON = "long";
 	private static final String KEY_RECEIVER = "receiver";
@@ -34,7 +34,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	private static final String KEY_TIMESPAN = "timespan";
 	private static final String KEY_ASSIGNMENTSTATUS = "assignment_status";
 	private static final String KEY_CAMERAIMAGE = "camera_image";
-	private static final String KEY_STREETNAME ="streetname";*/
+	private static final String KEY_STREETNAME ="streetname";
 	private static final String KEY_SITENAME = "sitename";
  
     public DatabaseHandlerAssignment(Context context) {
@@ -46,7 +46,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_ASSIGNMENTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
-        		/*+ KEY_NAME + " TEXT,"
+        		+ KEY_NAME + " TEXT,"
                 + KEY_LAT + " TEXT,"
         		+ KEY_LON + " TEXT,"
                 + KEY_RECEIVER + " TEXT,"
@@ -54,8 +54,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
                 + KEY_ASSIGNMENTDESCRIPTION + " TEXT,"
                 + KEY_TIMESPAN + " TEXT,"
                 + KEY_ASSIGNMENTSTATUS + " TEXT,"
-                + KEY_CAMERAIMAGE + "BLOB,"
-                + KEY_STREETNAME + " TEXT,"*/
+                + KEY_CAMERAIMAGE + " BLOB,"
+                + KEY_STREETNAME + " TEXT,"
                 + KEY_SITENAME + " TEXT" + ")";
         db.execSQL(CREATE_ASSIGNMENTS_TABLE);
     }
@@ -83,7 +83,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
-        /*values.put(KEY_NAME, assignment.getName()); 
+        values.put(KEY_NAME, assignment.getName()); 
         values.put(KEY_LAT, Long.toString(assignment.getLat()));
         values.put(KEY_LON, Long.toString(assignment.getLon()));
         values.put(KEY_RECEIVER, assignment.getReceiver());
@@ -93,7 +93,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus());
         // Hmm.. Hur i H-E kommer detta att fungera? Bild -> String -> Binär -> .. -> ???
         values.put(KEY_CAMERAIMAGE, assignment.getCameraImage().toString());
-        values.put(KEY_STREETNAME, assignment.getStreetName());*/
+        values.put(KEY_STREETNAME, assignment.getStreetName());
         values.put(KEY_SITENAME, assignment.getSiteName());
         Log.d("DB","Values att inserta: " + values.toString());
         // Lägg till assignment i databasen
