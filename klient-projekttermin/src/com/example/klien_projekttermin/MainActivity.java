@@ -31,7 +31,7 @@ public class MainActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent;
-				//Har man lagt till ett nytt menyval l�gger man till en action f�r dessa h�r.
+				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
 					// myIntent= new Intent(from.this,
@@ -53,16 +53,16 @@ public class MainActivity extends ListActivity {
 		});
 	}
 	/**
-	 * Genererar de menyval som ska g� att g�ra.
+	 * Genererar de menyval som ska gå att göra.
 	 * @return
-	 * En List<HashMap<String, String>> d�r varje map bara har tv� v�rden. Ett f�r f�rsta raden och ett f�r andra.
+	 * En List<HashMap<String, String>> där varje map bara har två värden. Ett för första raden och ett för andra.
 	 */
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
-		//Om menyn ska ut�kas ska man l�gga till de nya valen i dessa arrayer. Nptera att det kr�vs en subtitle till varje item.
+		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Notera att det krävs en subtitle till varje item.
 		String[] menuItems={"Karta","Uppdragshanterare","Kontakter"};
-		String[] menuSubtitle={"Visar en karta","L�gg till, ta bort eller �ndra uppdrag","Visar kontaktlista"};
-		//�ndra inget h�r under
+		String[] menuSubtitle={"Visar en karta","Lägg till, ta bort eller ändra uppdrag","Visar kontaktlista"};
+		//Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
 			hashMap.put("line1",menuItems[i] );

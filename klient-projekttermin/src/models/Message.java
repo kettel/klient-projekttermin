@@ -52,7 +52,6 @@ public class Message implements ModelInterface {
 		this.messageTimeStamp=messageTimeStampToBeSet;
 	}
 
-	@Override
 	public String getDatabaseRepresentation() {
 		// TODO Auto-generated method stub
 		return databasetRepresentation;
