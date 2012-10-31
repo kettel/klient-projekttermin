@@ -23,8 +23,8 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     /*private static final String KEY_CONTACT_NAME = "contact_name";
     private static final String KEY_PH_NO = "phone_number";
 	private static final String KEY_EMAIL = "email";
-	private static final String KEY_CLEARANCE_LEVEL = "clearance_level";
-	private static final String KEY_CLASSIFICATION = "classification";*/
+	private static final String KEY_CLEARANCE_LEVEL = "clearance_level";*/
+	private static final String KEY_CLASSIFICATION = "classification";
 	private static final String KEY_COMMENT = "comment";
 
  
@@ -40,8 +40,8 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         		/*+ KEY_CONTACT_NAME + " TEXT,"
                 + KEY_PH_NO + " TEXT,"
         		+ KEY_EMAIL + " TEXT,"
-                + KEY_CLEARANCE_LEVEL + " TEXT,"
-                + KEY_CLASSIFICATION + " TEXT,"*/
+                + KEY_CLEARANCE_LEVEL + " TEXT,"*/
+                + KEY_CLASSIFICATION + " TEXT,"
                 + KEY_COMMENT + " TEXT"+")";
         db.execSQL(CREATE_ASSIGNMENTS_TABLE);
     	//executeSQLScript(db, "assignments.sql", this);
@@ -69,8 +69,8 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         /*values.put(KEY_CONTACT_NAME, contact.getContactName());
         values.put(KEY_PH_NO, contact.getContactPhoneNumber().toString());
         values.put(KEY_EMAIL, contact.getContactEmail());
-        values.put(KEY_CLEARANCE_LEVEL, contact.getContactClearanceLevel());
-        values.put(KEY_CLASSIFICATION, contact.getContactClassification());*/
+        values.put(KEY_CLEARANCE_LEVEL, contact.getContactClearanceLevel());*/
+        values.put(KEY_CLASSIFICATION, contact.getContactClassification());
         values.put(KEY_COMMENT, contact.getContactComment());
         Log.d("DB",values.toString());
         // Lägg till kontakter i databasen
