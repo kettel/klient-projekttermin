@@ -15,12 +15,12 @@ public class Assignment implements ModelInterface{
 	private String assignmentDescription;
 	private String timeSpan;
 	private String assignmentStatus;
-	private Image cameraImage;
+	private byte[] cameraImage;
 	private String streetName;
 	private String siteName;
 
 
-public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, Image cameraImage, String streetName, String siteName){
+public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, byte[] cameraImage, String streetName, String siteName){
 		this.lat=lat;
 		this.lon=lon;
 		this.name=name;
@@ -90,11 +90,11 @@ public Assignment(String name, long lat, long lon, String receiver, String sende
 		this.sender = senderToBeSet;
 	}
 
-	public Image getCameraImage(){
+	public byte[] getCameraImage(){
 		return cameraImage;
 	}
 
-	public void captureCameraImage(Image cameraImageToBeSet){
+	public void captureCameraImage(byte[] cameraImageToBeSet){
 		this.cameraImage=cameraImageToBeSet;
 	}
 
