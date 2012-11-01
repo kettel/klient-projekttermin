@@ -56,7 +56,8 @@ public class MainActivity extends ListActivity {
 					try {
 						System.out.println("testing");
 						CommunicationModule testCom = new CommunicationModule();
-//						testCom.sendMessage(new MessageModel("Detta är ett medelande", "Kent", "1:10:32"));
+						testCom.sendMessage(new MessageModel("Gayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy","in gaytown"));
+						
 					} catch (Exception e) {
 					}
 					// myIntent= new Intent(from.this,
