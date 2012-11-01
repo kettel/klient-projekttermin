@@ -1,8 +1,8 @@
 package models;
 
-import android.text.format.Time;
 
-import android.graphics.Bitmap;
+import java.awt.Image;
+
 
 public class Assignment implements ModelInterface{
 	
@@ -13,14 +13,14 @@ public class Assignment implements ModelInterface{
 	private String receiver;
 	private String sender;
 	private String assignmentDescription;
-	private Time timeSpan;
+	private String timeSpan;
 	private String assignmentStatus;
-	private Bitmap cameraImage;
+	private Image cameraImage;
 	private String streetName;
 	private String siteName;
 
 
-public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, Time timeSpan, String assignmentStatus, Bitmap cameraImage, String streetName, String siteName){
+public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, Image cameraImage, String streetName, String siteName){
 		this.lat=lat;
 		this.lon=lon;
 		this.name=name;
@@ -90,11 +90,11 @@ public Assignment(String name, long lat, long lon, String receiver, String sende
 		this.sender = senderToBeSet;
 	}
 
-	public Bitmap getCameraImage(){
+	public Image getCameraImage(){
 		return cameraImage;
 	}
 
-	public void captureCameraImage(Bitmap cameraImageToBeSet){
+	public void captureCameraImage(Image cameraImageToBeSet){
 		this.cameraImage=cameraImageToBeSet;
 	}
 
@@ -106,11 +106,11 @@ public Assignment(String name, long lat, long lon, String receiver, String sende
 		this.assignmentDescription=assignmentDescriptionToBeSet;
 	}
 
-	public Time getTimeSpan(){
+	public String getTimeSpan(){
 		return timeSpan;
 	}
 
-	public void setTimeSpan(Time timeSpanToBeSet){
+	public void setTimeSpan(String timeSpanToBeSet){
 		this.timeSpan=timeSpanToBeSet;
 	}
 

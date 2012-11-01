@@ -3,44 +3,39 @@ package models;
 import android.text.format.Time;
 
 
+import java.util.Date;
+
 public class MessageModel implements ModelInterface {
 
 	private String databaseRepresentation = "message";
 	private String messageContent;
 	private String reciever;
-	private String messageTimeStamp;
+	private Date messageTimeStamp;
 
-
-	//Mesage borde döpas om till något annat liknande
-	public MessageModel(CharSequence messageContent, CharSequence reciever, CharSequence messageTimeStamp){
+	// Mesage borde döpas om till något annat liknande
+	public MessageModel(CharSequence messageContent, CharSequence reciever) {
 		this.messageContent = (String) messageContent;
 		this.reciever = (String) reciever;
-		this.messageTimeStamp = (String) messageTimeStamp;
-
+		messageTimeStamp = new Date();
 	}
 
-	public CharSequence getMessageContent(){
+	public MessageModel(CharSequence messageContent, CharSequence reciever,
+			Date timeStamp) {
+		this.messageContent = (String) messageContent;
+		this.reciever = (String) reciever;
+		this.messageTimeStamp = timeStamp;
+	}
+
+	public CharSequence getMessageContent() {
 		return messageContent;
 	}
 
-	public void setMessageContent(CharSequence messageContentToBeSet){
-		this.messageContent = (String) messageContentToBeSet;
-	}
-
-	public CharSequence getReciever(){
+	public CharSequence getReciever() {
 		return (CharSequence) reciever;
 	}
 
-	public void setReciever(CharSequence recieverToBeSet){
-		this.reciever = (String) recieverToBeSet;
-	}
-
-	public CharSequence getMessageTimeStamp(){
+	public Date getMessageTimeStamp() {
 		return messageTimeStamp;
-	}
-
-	public void setMessageTimeStamp(CharSequence messageTimeStampToBeSet){
-		this.messageTimeStamp = (String) messageTimeStampToBeSet;
 	}
 
 	public String getDatabaseRepresentation() {
