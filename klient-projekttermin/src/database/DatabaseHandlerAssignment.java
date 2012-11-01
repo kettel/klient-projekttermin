@@ -1,5 +1,7 @@
 package database;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.text.format.Time;
 import android.util.Log;
 
 public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
@@ -82,6 +87,12 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     public void addAssignment(Assignment assignment) {
         SQLiteDatabase db = this.getWritableDatabase();
  
+        // Konvertera Bitmap -> Byte[] -> BLOB
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+        Bitmap bmp = assignment.getCameraImage();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);   
+        byte[] photo = baos.toByteArray(); 
+        
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, assignment.getName()); 
         values.put(KEY_LAT, Long.toString(assignment.getLat()));
@@ -92,7 +103,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         values.put(KEY_TIMESPAN, assignment.getTimeSpan().toString());
         values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus());
         // Hmm.. Hur i H-E kommer detta att fungera? Bild -> String -> Binär -> .. -> ???
-        values.put(KEY_CAMERAIMAGE, assignment.getCameraImage().toString());
+        values.put(KEY_CAMERAIMAGE, photo);
         values.put(KEY_STREETNAME, assignment.getStreetName());
         values.put(KEY_SITENAME, assignment.getSiteName());
         // Lägg till assignment i databasen
@@ -152,11 +163,16 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
  
         // Loopa igenom alla rader och lägg till dem i listan 
-        // TODO: Få ordning på BLOB, dvs hämta och dona med bild.
-        /*
+        
         if (cursor.moveToFirst()) {
             do {
-                Assignment assignment = new Assignment(cursor.getString(1),
+            	// Konvertera BLOB -> Bitmap
+            	byte[] image = cursor.getBlob(9);
+            	ByteArrayInputStream imageStream = new ByteArrayInputStream(image);
+            	Bitmap theImage= BitmapFactory.decodeStream(imageStream);
+            	
+                Assignment assignment = new Assignment(
+                		cursor.getString(1),
 						Long.parseLong(cursor.getString(2)), 
 						Long.parseLong(cursor.getString(3)),
 						cursor.getString(4),
@@ -164,8 +180,9 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 						cursor.getString(6),
 						new Time(cursor.getString(7)),
 						cursor.getString(8),
-						cursor.getString(9),
-						cursor.getString(10));
+						theImage,
+						cursor.getString(10),
+						cursor.getString(11));
                 
                 assignmentList.add(assignment);
             } while (cursor.moveToNext());
@@ -173,8 +190,6 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
  		
         // Returnera kontaktlistan
         return assignmentList;
-        */
-        return null;
     }
  
     /**
