@@ -1,9 +1,12 @@
 package com.example.klien_projekttermin;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
+import logger.LogViewer;
+import logger.logger;
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
@@ -26,16 +29,18 @@ import android.widget.SimpleAdapter;
 
 public class MainActivity extends ListActivity {
 
+	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		testWriteReadToDB(this);
-		
+		final logger testlogger = new logger((Context)this,"log.txt"); 
 		String[] from = { "line1", "line2" };
+		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-
+		
+		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -47,6 +52,12 @@ public class MainActivity extends ListActivity {
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
+					try {
+						testlogger.writeToLog("Nisse","testentry 1");
+						testlogger.writeToLog(null,"testentry 2");
+						testlogger.writeToLog("Nisse","testentry 3");
+					} catch (Exception e) {
+					}
 					// myIntent= new Intent(from.this,
 					// to.class);
 					break;
@@ -54,7 +65,17 @@ public class MainActivity extends ListActivity {
 					// myIntent= new Intent(from.this,
 					// to.class);
 					break;
-
+				case 2:
+					// myIntent= new Intent(from.this,
+					// to.class);
+					break;
+				case 3:
+					try {
+						openLoggerIntent.putExtra(LOGCONTENT,testlogger.readFromLog());
+						startActivity(openLoggerIntent);
+					} catch (Exception e) {
+					}
+					break;
 				default:
 					// myIntent= new Intent(from.this,
 					// to.class);
@@ -90,52 +111,6 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	public void testWriteReadToDB(Context context){
-    	// Skapa en tom database för att skriva godtycklig datatyp (assignment, contact, message) 
-    	// till rätt databas
-		Database db = new Database();
-
-		// Testa contacts
-		Contact testContact = new Contact("Nisse Böörje", Long.valueOf(12345), "nalle@nisse.com","A","A","skön lirare");
-		db.addToDB(testContact, context);
-		Log.d("DB","Contacts DB size: "+db.getDBCount(testContact, context));
-
-		// Testa assignments
-		int w = 100, h = 100;
-		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-		Bitmap bmp = Bitmap.createBitmap(w, h, conf);
-		Time time = new Time();
-		time.setToNow();
-		Assignment testAssignment = new Assignment("uppdrag", Long.valueOf(123456), Long.valueOf(654321), "Mott", "Sandare", "Katt i trad", time,"Status", bmp,"Allgatan 1","Ryd");
-		db.addToDB(testAssignment,context);
-		Log.d("DB","Assignment DB size: "+db.getDBCount(testAssignment, context));
-
-		// Testa messages
-		MessageModel testMessage = new MessageModel("Hej hej", "Kalle",time.toString());
-		db.addToDB(testMessage, context);
-		Log.d("DB","Message DB size: " + db.getDBCount(testMessage, context));
-		
-		List<ModelInterface> testList = db.getAllFromDB(testAssignment, context);
-		
-		
-		
-		for (ModelInterface m : testList){
-			Assignment ass = (Assignment) m;
-			String log = "Desc: " + ass.getAssignmentDescription() +
-						"\nLong: " + Long.toString(ass.getLat()) +
-						"\nLat: " + Long.toString(ass.getLon()) +
-						"\nName: " + ass.getName() + 
-						"\nStatus: " + ass.getAssignmentStatus() + 
-						"\nSändare: " + ass.getSender() + 
-						"\nMottagare: " + ass.getReceiver() + 
-						"\nSitename: " + ass.getSiteName() + 
-						"\nGatunamn: " + ass.getStreetName()+
-						"\n******************************\n";
-						
-						
-			Log.d("DB",log);
-		}
-		
-	}
+	
 
 }

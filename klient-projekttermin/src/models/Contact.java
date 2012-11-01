@@ -1,15 +1,15 @@
 package models;
 
-public class Contact implements ModelInterface {
 
+public class Contact implements ModelInterface {
+	
+	private String databasetRepresentation = "contact";
 	private String contactName;
 	private Long contactPhoneNumber;
 	private String contactEmail;
 	private String contactClearanceLevel;
 	private String contactClassification;
 	private String contactComment;
-	private String databasetRepresentation = "contact";
-
 
 
 	public Contact(String contactName, Long contactPhoneNumber, String contactEmail, String contactClearanceLevel, String contactClassification, String contactComment){

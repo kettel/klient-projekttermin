@@ -1,48 +1,43 @@
 package models;
 
 
+import java.util.Date;
+
 public class MessageModel implements ModelInterface {
 
-	private CharSequence messageContent;
-	private CharSequence reciever;
-	private String messageTimeStamp;
-	private String databasetRepresentation = "message";
+	private String databaseRepresentation = "message";
+	private String messageContent;
+	private String reciever;
+	private Date messageTimeStamp;
 
-
-	//Mesage borde döpas om till något annat liknande
-	public MessageModel(CharSequence messageContent, CharSequence reciever, String messageTimeStamp){
-		this.messageContent=messageContent;
-		this.reciever=reciever;
-		this.messageTimeStamp=messageTimeStamp;
-
+	// Mesage borde döpas om till något annat liknande
+	public MessageModel(CharSequence messageContent, CharSequence reciever) {
+		this.messageContent = (String) messageContent;
+		this.reciever = (String) reciever;
+		messageTimeStamp = new Date();
 	}
 
-	public CharSequence getMessageContent(){
+	public MessageModel(CharSequence messageContent, CharSequence reciever,
+			Date timeStamp) {
+		this.messageContent = (String) messageContent;
+		this.reciever = (String) reciever;
+		this.messageTimeStamp = timeStamp;
+	}
+
+	public CharSequence getMessageContent() {
 		return messageContent;
 	}
 
-	public void setMessageContent(String messageContentToBeSet){
-		this.messageContent=messageContentToBeSet;
+	public CharSequence getReciever() {
+		return (CharSequence) reciever;
 	}
 
-	public CharSequence getReciever(){
-		return reciever;
-	}
-
-	public void setReciever(String recieverToBeSet){
-		this.reciever=recieverToBeSet;
-	}
-
-	public String getMessageTimeStamp(){
+	public Date getMessageTimeStamp() {
 		return messageTimeStamp;
-	}
-
-	public void setMessageTimeStamp(String messageTimeStampToBeSet){
-		this.messageTimeStamp=messageTimeStampToBeSet;
 	}
 
 	public String getDatabaseRepresentation() {
 		// TODO Auto-generated method stub
-		return databasetRepresentation;
+		return databaseRepresentation;
 	}
 }
