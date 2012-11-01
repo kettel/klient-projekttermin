@@ -1,5 +1,6 @@
 package models;
 
+
 public class Contact implements ModelInterface {
 	
 	private String databasetRepresentation = "contact";
