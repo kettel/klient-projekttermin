@@ -12,13 +12,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MenuItem.OnActionExpandListener;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
-import android.widget.SimpleCursorAdapter;
 import android.widget.ZoomControls;
 
 import com.example.klien_projekttermin.R;
@@ -48,9 +46,11 @@ public class MapActivity extends Activity implements Observer,
 	private SimpleAdapter sm;
 	private MapView mapView;
 	private ZoomControls zoomControls;
+	private SearchView searchView;
+	
+	private InputMethodManager mgr;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
@@ -67,6 +67,7 @@ public class MapActivity extends Activity implements Observer,
 		mapView.setMapComponent(mapComponent);
 
 		searchSuggestions.addObserver(this);
+		mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
 		 zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
 		// set zoomcontrols listeners to enable zooming
@@ -99,27 +100,36 @@ public class MapActivity extends Activity implements Observer,
 		
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
+		
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) menu.findItem(R.id.menu_search)
+		searchView = (SearchView) menu.findItem(R.id.menu_search)
 				.getActionView();
 		searchView.setSearchableInfo(searchManager
 				.getSearchableInfo(getComponentName()));
 		searchView.setOnCloseListener(this);
 		searchView.setOnQueryTextListener(this);
+
 		return super.onCreateOptionsMenu(menu);
-	}
+		}
 
 	public boolean onQueryTextChange(String newText) {
 		searchSuggestions.updateSearch(newText);
 		System.out.println("change");
 		lv.setVisibility(ListView.VISIBLE);
+		mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
 		mapView.setVisibility(MapView.GONE);
 		zoomControls.setVisibility(ZoomControls.GONE);
 		return true;
 	}
 
 	public boolean onQueryTextSubmit(String query) {
-		
+//		searchView.setIconified(true);
+//		searchSuggestions.updateSearch(query);
+//		System.out.println("change");
+//		lv.setVisibility(ListView.VISIBLE);
+//		mapView.setVisibility(MapView.GONE);
+//		zoomControls.setVisibility(ZoomControls.GONE);
+//		searchView.onActionViewCollapsed();
 		System.out.println("query");
 		return true;
 	}
@@ -137,8 +147,17 @@ public class MapActivity extends Activity implements Observer,
 
 	public void update(Observable observable, Object data) {
 		System.out.println("observed");
-		
+//		searchView.setVisibility(SearchView.GONE);
+		searchView.onActionViewCollapsed();
 		sm.notifyDataSetChanged();
+		sm.notifyDataSetInvalidated();
+		searchView.setSelected(true);
+		searchView.onActionViewExpanded();
+		searchView.setSelected(true);	
+		mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
+		searchView.setSelected(true);
+//		searchView.setVisibility(SearchView.VISIBLE);
+//		searchView.bringToFront();
 	}
 
 	public boolean onClose() {

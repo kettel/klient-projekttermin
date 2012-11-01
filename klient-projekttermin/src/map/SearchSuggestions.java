@@ -22,15 +22,13 @@ public class SearchSuggestions extends Observable implements
 	}
 
 	public void errors(int arg0) {
-		// TODO Auto-generated method stub
-		System.out.println("SOMETHING WENT WRONG: " + arg0);
 	}
 
 	public void searchResults(KmlPlace[] kmlPlaces) {
 		list.clear();
 		int results=kmlPlaces.length;
-		if (results>5){
-			results=5;
+		if (results>10){
+			results=10;
 		}
 		for (int i = 0; i < results; i++) {
 			HashMap<String, String> item = new HashMap<String, String>();
