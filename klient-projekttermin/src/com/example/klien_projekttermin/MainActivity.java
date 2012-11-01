@@ -96,7 +96,7 @@ public class MainActivity extends ListActivity {
 		Database db = new Database();
 
 		// Testa contacts
-		Contact testContact = new Contact("Nisse", Long.valueOf(12345), "nallecom","A","A","lirare");
+		Contact testContact = new Contact("Nisse Böörje", Long.valueOf(12345), "nalle@nisse.com","A","A","skön lirare");
 		db.addToDB(testContact, context);
 		Log.d("DB","Contacts DB size: "+db.getDBCount(testContact, context));
 
@@ -115,15 +115,18 @@ public class MainActivity extends ListActivity {
 		db.addToDB(testMessage, context);
 		Log.d("DB","Message DB size: " + db.getDBCount(testMessage, context));
 		
-		List<ModelInterface> messageList = db.getAllFromDB(testMessage, context);
+		List<ModelInterface> testList = db.getAllFromDB(testContact, context);
 		
 		
 		
-		for (ModelInterface m : messageList){
-			MessageModel message = (MessageModel) m;
-			String log = "Meddelande: " + message.getMessageContent() + 
-						 "\nMottagare: " + message.getReciever() + 
-						 "\nTidsstämpel: " + message.getMessageTimeStamp();
+		for (ModelInterface m : testList){
+			Contact contact = (Contact) m;
+			String log = "Namn: " + contact.getContactName() + 
+						 "\nTelefonnummer: " + contact.getContactPhoneNumber().toString() + 
+						 "\nEmail: " + contact.getContactEmail()+
+						 "\nClearance: " + contact.getContactClearanceLevel()+
+						 "\nClassification: " + contact.getContactClassification()+
+						 "\nComment: " + contact.getContactComment();
 			Log.d("DB",log);
 		}
 		
