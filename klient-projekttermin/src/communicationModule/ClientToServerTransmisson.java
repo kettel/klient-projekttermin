@@ -18,12 +18,10 @@ public class ClientToServerTransmisson extends AsyncTask<String, Void, Void> {
 	
 	public ClientToServerTransmisson(String JsonString){
 		this.transmisson = JsonString;
-		System.out.println("gayyy");
 	}
 	
 	@Override
 	protected Void doInBackground(String... params) {
-		System.out.println("GAYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
 		try{
 			requestSocet = new Socket(ServerIP,ServerPort);
 			output = new PrintWriter(requestSocet.getOutputStream(), true);

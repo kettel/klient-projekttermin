@@ -5,27 +5,38 @@ import java.net.Socket;
 
 import com.google.gson.Gson;
 
+import models.Assignment;
+import models.Contact;
 import models.MessageModel;
 
 public class CommunicationModule {
+	private Gson gson = new Gson();
+	private String transmisson = null;
 	//konstruktorn
 	public CommunicationModule(){
 		
 	}
 	
 	public void sendMessage(MessageModel message){
-		System.out.println("Starting");
-		Gson gson = new Gson();
-		System.out.println("Gson created");
-		String transmisson = gson.toJson(message);
-		System.out.println(transmisson);
-		ClientToServerTransmisson test = new ClientToServerTransmisson(transmisson);
-		test.execute(transmisson);
-//		sendToServer(transmisson);
+		
+		transmisson = gson.toJson(message);
+		ClientToServerTransmisson messageToServer = new ClientToServerTransmisson(transmisson);
+		messageToServer.execute(transmisson);
+
 	}
 	
-	private void sendToServer(String transmisson){
+	public void sendAssignment(Assignment assignment){
 		
+		transmisson = gson.toJson(assignment);
+		ClientToServerTransmisson assignmentToServer = new ClientToServerTransmisson(transmisson);
+		assignmentToServer.execute(transmisson);
+		
+	}
+	
+	public void sendContact (Contact contact){
+		transmisson = gson.toJson(contact);
+		ClientToServerTransmisson contactToServer = new ClientToServerTransmisson(transmisson);
+		contactToServer.execute(transmisson);
 	}
 	
 }
