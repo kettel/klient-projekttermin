@@ -15,5 +15,8 @@
     <string name="Draft">Utkast</string>
     <string name="SavedMessages">Sparade Meddelanden</string>
     <string name="title_activity_inbox">Inbox</string>
+    <string name="title_activity_log_viewer">LogViewer</string>
+    <string name="title_activity_display_of_conversation">DisplayOfConversation</string>
+    <string name="title_activity_message_view">MessageView</string>
 
 </resources>

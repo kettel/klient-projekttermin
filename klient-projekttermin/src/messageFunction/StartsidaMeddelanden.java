@@ -1,5 +1,9 @@
-package com.example.klien_projekttermin;
+package messageFunction;
 
+
+import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.R.layout;
+import com.example.klien_projekttermin.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -21,35 +25,33 @@ public class StartsidaMeddelanden extends Activity {
 		return true;    
 	}
 
-	/**
-	 * Metoden startar en ny aktivitet där meddelanden går att skapa
-	 * @param v
+	/*
+	 * Skapar ett nytt intent och startar aktiviteten CreateNewMessage
+	 * Metoden skickar också med namnet på den användare som är inloggad på enheten. 
 	 */
 	public void openMessageCreator(View v){
 		Intent intent = new Intent(this, CreateNewMessage.class);
+		intent.putExtra("USER", "ANVÄNDARE1");
         startActivity(intent);
 	}
 	
-	/**
-	 * Metoden öppnar en ny aktivitet som heter inkorgen
-	 * @param v
+	/*
+	 * Metoden startar aktiviteten Inbox
 	 */
 	public void openInbox(View v){
 		Intent intent = new Intent(this, Inbox.class);
         startActivity(intent);
 	}
 	
-	/**
-	 * Metoden öppnar en ny aktivitet som heter utkast
-	 * @param v
+	/*
+	 * Metoden startad aktiviteten Draft
 	 */
 	public void openDraft(View v){
 
 	}
 	
-	/**
-	 * Metoden öppnar en ny aktivitet som heter sparade meddelanden
-	 * @param v
+	/*
+	 * Metoden startar aktiviteten savedMessages
 	 */
 	public void openSavedMessages(View v){
 

@@ -1,10 +1,19 @@
 package com.example.klien_projekttermin;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
+import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.R.layout;
+import com.example.klien_projekttermin.R.menu;
+
+import logger.LogViewer;
+import logger.logger;
+
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,14 +24,18 @@ import android.widget.SimpleAdapter;
 
 public class MainActivity extends ListActivity {
 
+	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+		final logger testlogger = new logger((Context)this,"log.txt"); 
 		String[] from = { "line1", "line2" };
+		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-
+		
+		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -31,9 +44,17 @@ public class MainActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent;
-				//Har man lagt till ett nytt menyval l�gger man till en action f�r dessa h�r.
+
+				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
+
 				switch (arg2) {
 				case 0:
+					try {
+						testlogger.writeToLog("Nisse","testentry 1");
+						testlogger.writeToLog(null,"testentry 2");
+						testlogger.writeToLog("Nisse","testentry 3");
+					} catch (Exception e) {
+					}
 					// myIntent= new Intent(from.this,
 					// to.class);
 					break;
@@ -41,7 +62,17 @@ public class MainActivity extends ListActivity {
 					// myIntent= new Intent(from.this,
 					// to.class);
 					break;
-
+				case 2:
+					// myIntent= new Intent(from.this,
+					// to.class);
+					break;
+				case 3:
+					try {
+						openLoggerIntent.putExtra(LOGCONTENT,testlogger.readFromLog());
+						startActivity(openLoggerIntent);
+					} catch (Exception e) {
+					}
+					break;
 				default:
 					// myIntent= new Intent(from.this,
 					// to.class);
@@ -53,16 +84,16 @@ public class MainActivity extends ListActivity {
 		});
 	}
 	/**
-	 * Genererar de menyval som ska g� att g�ra.
+	 * Genererar de menyval som ska gå att göra.
 	 * @return
-	 * En List<HashMap<String, String>> d�r varje map bara har tv� v�rden. Ett f�r f�rsta raden och ett f�r andra.
+	 * En List<HashMap<String, String>> där varje map bara har två värden. Ett för första raden och ett för andra.
 	 */
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
-		//Om menyn ska ut�kas ska man l�gga till de nya valen i dessa arrayer. Nptera att det kr�vs en subtitle till varje item.
-		String[] menuItems={"Karta","Uppdragshanterare","Kontakter"};
-		String[] menuSubtitle={"Visar en karta","L�gg till, ta bort eller �ndra uppdrag","Visar kontaktlista"};
-		//�ndra inget h�r under
+		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Nptera att det krävs en subtitle till varje item.
+		String[] menuItems={"Karta","Uppdragshanterare","Kontakter","Test logger"};
+		String[] menuSubtitle={"Visar en karta","Lägg till, ta bort eller ändra uppdrag","Visar kontaktlista","testa loggern"};
+		//Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
 			hashMap.put("line1",menuItems[i] );

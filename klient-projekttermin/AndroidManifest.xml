@@ -16,11 +16,11 @@
             android:label="@string/title_activity_main" >
         </activity>
         <activity
-            android:name=".CreateNewMessage"
+            android:name="messageFunction.CreateNewMessage"
             android:label="@string/title_activity_create_new_message" >
         </activity>
         <activity
-            android:name=".StartsidaMeddelanden"
+            android:name="messageFunction.StartsidaMeddelanden"
             android:label="@string/title_activity_startsida_meddelanden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,8 +29,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Inbox"
+            android:name="messageFunction.Inbox"
             android:label="@string/title_activity_inbox" >
+        </activity>
+        <activity
+            android:name="logger.LogViewer"
+            android:label="@string/title_activity_log_viewer" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.klien_projekttermin.MainActivity" />
+        </activity>
+        <activity
+            android:name="messageFunction.DisplayOfConversation"
+            android:label="@string/title_activity_display_of_conversation" >
+        </activity>
+        <activity
+            android:name="messageFunction.DisplayMessage"
+            android:label="@string/title_activity_message_view" >
         </activity>
     </application>
 
