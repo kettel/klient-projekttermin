@@ -115,18 +115,24 @@ public class MainActivity extends ListActivity {
 		db.addToDB(testMessage, context);
 		Log.d("DB","Message DB size: " + db.getDBCount(testMessage, context));
 		
-		List<ModelInterface> testList = db.getAllFromDB(testContact, context);
+		List<ModelInterface> testList = db.getAllFromDB(testAssignment, context);
 		
 		
 		
 		for (ModelInterface m : testList){
-			Contact contact = (Contact) m;
-			String log = "Namn: " + contact.getContactName() + 
-						 "\nTelefonnummer: " + contact.getContactPhoneNumber().toString() + 
-						 "\nEmail: " + contact.getContactEmail()+
-						 "\nClearance: " + contact.getContactClearanceLevel()+
-						 "\nClassification: " + contact.getContactClassification()+
-						 "\nComment: " + contact.getContactComment();
+			Assignment ass = (Assignment) m;
+			String log = "Desc: " + ass.getAssignmentDescription() +
+						"\nLong: " + Long.toString(ass.getLat()) +
+						"\nLat: " + Long.toString(ass.getLon()) +
+						"\nName: " + ass.getName() + 
+						"\nStatus: " + ass.getAssignmentStatus() + 
+						"\nSändare: " + ass.getSender() + 
+						"\nMottagare: " + ass.getReceiver() + 
+						"\nSitename: " + ass.getSiteName() + 
+						"\nGatunamn: " + ass.getStreetName()+
+						"\n******************************\n";
+						
+						
 			Log.d("DB",log);
 		}
 		
