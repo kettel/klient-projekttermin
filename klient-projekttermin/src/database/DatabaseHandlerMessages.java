@@ -62,7 +62,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         values.put(KEY_MESSAGE_CONTENT, message.getMessageContent().toString());
         values.put(KEY_RECEIVER, message.getReciever().toString());
-        values.put(KEY_MESSAGE_TIMESTAMP, message.getMessageTimeStamp());
+        values.put(KEY_MESSAGE_TIMESTAMP, message.getMessageTimeStamp().toString());
 
         // Lägg till kontakter i databasen
         db.insert(TABLE_MESSAGES, null, values);

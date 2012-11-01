@@ -20,7 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
+        <activity 
             android:name="logger.LogViewer"
             android:label="@string/title_activity_log_viewer" >
             <meta-data

@@ -5,6 +5,8 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
+import communicationModule.CommunicationModule;
+
 import logger.LogViewer;
 import logger.logger;
 import models.Assignment;
@@ -52,9 +54,9 @@ public class MainActivity extends ListActivity {
 				switch (arg2) {
 				case 0:
 					try {
-						testlogger.writeToLog("Nisse","testentry 1");
-						testlogger.writeToLog(null,"testentry 2");
-						testlogger.writeToLog("Nisse","testentry 3");
+						System.out.println("testing");
+						CommunicationModule testCom = new CommunicationModule();
+						testCom.sendMessage(new MessageModel("Detta är ett medelande", "Kent", "1:10:32"));
 					} catch (Exception e) {
 					}
 					// myIntent= new Intent(from.this,
