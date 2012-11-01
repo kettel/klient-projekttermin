@@ -7,6 +7,7 @@ import java.util.List;
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
+import models.ModelInterface;
 
 import database.Database;
 
@@ -113,6 +114,19 @@ public class MainActivity extends ListActivity {
 		MessageModel testMessage = new MessageModel("Hej hej", "Kalle",time.toString());
 		db.addToDB(testMessage, context);
 		Log.d("DB","Message DB size: " + db.getDBCount(testMessage, context));
+		
+		List<ModelInterface> messageList = db.getAllFromDB(testMessage, context);
+		
+		
+		
+		for (ModelInterface m : messageList){
+			MessageModel message = (MessageModel) m;
+			String log = "Meddelande: " + message.getMessageContent() + 
+						 "\nMottagare: " + message.getReciever() + 
+						 "\nTidsstämpel: " + message.getMessageTimeStamp();
+			Log.d("DB",log);
+		}
+		
 	}
 
 }

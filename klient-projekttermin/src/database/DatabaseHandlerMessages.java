@@ -89,8 +89,27 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
 
 	public List<ModelInterface> getAllMessages() {
 		List<ModelInterface> messageList = new ArrayList<ModelInterface>();
-		
-
+		// Select All frågan. Ze classic! Dvs, hämta allt från MESSAGES-databasen
+        String selectQuery = "SELECT  * FROM " + TABLE_MESSAGES;
+ 
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+ 
+        // Loopa igenom alla rader och lägg till dem i listan 
+        // TODO: Få ordning på BLOB, dvs hämta och dona med bild.
+        
+        if (cursor.moveToFirst()) {
+            do {
+                MessageModel message = new MessageModel(
+                		cursor.getString(1),
+                		cursor.getString(2),
+                		cursor.getString(3));
+                
+                messageList.add(message);
+            } while (cursor.moveToNext());
+        }
+ 		
+        // Returnera meddelandelistan
 		return messageList;
 	}
 }
