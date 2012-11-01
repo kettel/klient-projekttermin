@@ -1,7 +1,7 @@
 package models;
 
 
-import java.awt.Image;
+import android.graphics.Bitmap;
 
 
 public class Assignment implements ModelInterface{
@@ -15,12 +15,12 @@ public class Assignment implements ModelInterface{
 	private String assignmentDescription;
 	private String timeSpan;
 	private String assignmentStatus;
-	private byte[] cameraImage;
+	private Bitmap cameraImage;
 	private String streetName;
 	private String siteName;
 
 
-public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, byte[] cameraImage, String streetName, String siteName){
+public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, Bitmap cameraImage, String streetName, String siteName){
 		this.lat=lat;
 		this.lon=lon;
 		this.name=name;
@@ -90,11 +90,11 @@ public Assignment(String name, long lat, long lon, String receiver, String sende
 		this.sender = senderToBeSet;
 	}
 
-	public byte[] getCameraImage(){
+	public Bitmap getCameraImage(){
 		return cameraImage;
 	}
 
-	public void captureCameraImage(byte[] cameraImageToBeSet){
+	public void captureCameraImage(Bitmap cameraImageToBeSet){
 		this.cameraImage=cameraImageToBeSet;
 	}
 
