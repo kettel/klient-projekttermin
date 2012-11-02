@@ -178,7 +178,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 						cursor.getString(4),
 						cursor.getString(5),
 						cursor.getString(6),
-						new Time(cursor.getString(7)),
+						cursor.getString(7),
 						cursor.getString(8),
 						theImage,
 						cursor.getString(10),
@@ -190,50 +190,6 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
  		
         // Returnera kontaktlistan
         return assignmentList;
-    }
- 
-    /**
-     * Uppdatera ett uppdrag
-     * @param assignment	Uppdraget som önskas uppdateras
-     * @return	int			id för den kontakt som uppdaterades
-     * TODO: Lägg till ID för assignment för att det ska gå att uppdatera ett uppdrag 
-     * på ett tillfredsställande vis
-     */
-    public int updateAssignment(Assignment assignment) {
-        /*SQLiteDatabase db = this.getWritableDatabase();
- 
-        ContentValues values = new ContentValues();
-        values.put(KEY_NAME, assignment.getName()); 
-        values.put(KEY_LAT, assignment.getLat());
-        values.put(KEY_LON, assignment.getLon());
-        values.put(KEY_RECEIVER, assignment.getReceiver());
-        values.put(KEY_SENDER, assignment.getSender());
-        values.put(KEY_ASSIGNMENTDESCRIPTION, assignment.getAssignmentDescription());
-        values.put(KEY_TIMESPAN, assignment.getTimeSpan().toString());
-        values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus());
-        values.put(KEY_STREETNAME, assignment.getStreetName());
-        values.put(KEY_SITENAME, assignment.getSiteName());
- 
-        // Uppdatera rad för kontakten som ska uppdateras
-        //return db.update(TABLE_ASSIGNMENTS, values, KEY_ID + " = ?",
-        		// TODO: ID för ett assignments behövs för att kunna uppdateras
-                //new String[] { String.valueOf(contact.getID()) });
-        // Returnera -1 så länge som metoden är KASS!*/
-        return -1;
-    }
- 
-    /**
-     * Ta bort en kontakt
-     * @param contact	Kontakten som ska tas bort
-     * TODO: Kirra ID för assignments för att kunna ta bort assignments
-     */
-    public void deleteAssignment(Assignment assignment) {
-        //SQLiteDatabase db = this.getWritableDatabase();
-        //db.delete(TABLE_ASSIGNMENTS, KEY_ID + " = ?",
-        		// TODO: Assignment behöver visst ID för att man på ett tillfredsställande
-        		// 		 vis ska kunna radera assignments.
-        //        new String[] { String.valueOf(assignment.getID()) });
-        //db.close();
     }
  
     /**
@@ -251,41 +207,4 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         return returnCount;
     }
     
-    /**
-     * Tanken med denna metod är att man ska läsa SQL-kommandon från fil och exekvera dessa 
-     * istället för att hårdkoda dessa i Java.
-     * @param database
-     * @param dbname
-     * @param context
-     */
-    /*
-    private void executeSQLScript(SQLiteDatabase database, String dbname, Context context) {
-    	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte buf[] = new byte[1024];
-        int len;
-        AssetManager assetManager = context.getAssets();
-        InputStream inputStream = null;
-             
-        try{
-            inputStream = assetManager.open(dbname);
-            while ((len = inputStream.read(buf)) != -1) {
-                outputStream.write(buf, 0, len);
-            }
-            outputStream.close();
-            inputStream.close();
-                 
-            String[] createScript = outputStream.toString().split(";");
-            for (int i = 0; i < createScript.length; i++) {
-                 String sqlStatement = createScript[i].trim();
-                // TODO You may want to parse out comments here
-                if (sqlStatement.length() > 0) {
-                        database.execSQL(sqlStatement + ";");
-                }
-            }
-        } catch (IOException e){
-            // TODO Handle Script Failed to Load
-        } catch (SQLException e) {
-            // TODO Handle Script Failed to Execute
-        }
-    }*/
 }

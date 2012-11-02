@@ -1,5 +1,6 @@
 package database;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class DatabaseHandlerMessages extends SQLiteOpenHelper{
 	// Alla statiska variabler
@@ -43,7 +43,6 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
                 + KEY_RECEIVER + " TEXT,"
                 + KEY_MESSAGE_TIMESTAMP + " TEXT" + ")";
         db.execSQL(CREATE_MESSAGES_TABLE);
-    	//executeSQLScript(db, "assignments.sql", this);
     }
  
     // Uppgradera databasen vid behov (om en äldre version existerar)
@@ -66,7 +65,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         values.put(KEY_MESSAGE_CONTENT, message.getMessageContent().toString());
         values.put(KEY_RECEIVER, message.getReciever().toString());
-        values.put(KEY_MESSAGE_TIMESTAMP, message.getMessageTimeStamp());
+        values.put(KEY_MESSAGE_TIMESTAMP, message.getMessageTimeStamp().toString());
 
         // Lägg till kontakter i databasen
         db.insert(TABLE_MESSAGES, null, values);
@@ -100,11 +99,8 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         
         if (cursor.moveToFirst()) {
             do {
-                MessageModel message = new MessageModel(
-                		cursor.getString(1),
-                		cursor.getString(2),
-                		cursor.getString(3));
-                
+            	Time time = new Time(Long.valueOf(cursor.getString(3)));
+                MessageModel message = new MessageModel(cursor.getString(1),cursor.getString(2),time);
                 messageList.add(message);
             } while (cursor.moveToNext());
         }
