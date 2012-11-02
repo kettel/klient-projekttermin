@@ -1,6 +1,5 @@
 package models;
 
-
 import java.util.Calendar;
 
 public class MessageModel implements ModelInterface {
@@ -9,7 +8,14 @@ public class MessageModel implements ModelInterface {
 	private String messageContent;
 	private String reciever;
 	private long messageTimeStamp;
+	
+	/**
+	 * Tom konstruktor. Används för att hämta från databasen.
+	 */
+	public MessageModel() {
 
+	}
+	
 	/**
 	 * Konstruktor för att skapa ett nytt meddelande
 	 * @param messageContent
@@ -20,6 +26,7 @@ public class MessageModel implements ModelInterface {
 		this.reciever = reciever;
 		messageTimeStamp = Calendar.getInstance().getTimeInMillis();
 	}
+
 
 	/**
 	 * Konstruktor för att återskapa ett existerande meddelande
