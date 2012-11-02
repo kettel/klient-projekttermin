@@ -56,7 +56,9 @@ public class MainActivity extends ListActivity {
 					try {
 						System.out.println("testing");
 						CommunicationModule testCom = new CommunicationModule();
-						testCom.sendMessage(new MessageModel("Gayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy","in gaytown"));
+						testCom.sendMessage(new MessageModel("Arne har gått vilse i skogen. Arne Är en äldre man i 80 års oldern och trors ha på sig en röd jacka","vilse i skogen gruppen"));
+						testCom.sendContact(new Contact("Agent 47", (long)00000000012, "ICA@ICA.se", "hög", "hög", "han är skallig"));
+						testCom.sendAssignment(new Assignment("Operation flashpoint", (long) 20, (long) 10, "vilse i skogen teamet", "kungen", "You know the drill", null, null, null, "Ollegaran", "tekannan"));
 						
 					} catch (Exception e) {
 					}
