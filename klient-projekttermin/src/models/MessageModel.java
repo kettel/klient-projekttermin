@@ -2,8 +2,6 @@ package models;
 
 import android.text.format.Time;
 
-
-
 import java.util.Calendar;
 import java.util.Date;
 
@@ -12,8 +10,14 @@ public class MessageModel implements ModelInterface {
 	private String databaseRepresentation = "message";
 	private String messageContent;
 	private String reciever;
-	private Date messageTimeStamp;
+	private long messageTimeStamp;
+	/**
+	 * Tom konstruktor. Används för att hämta från databasen.
+	 */
+	public MessageModel() {
 
+	}
+	
 	/**
 	 * Konstruktor för att skapa ett nytt meddelande
 	 * @param messageContent
@@ -22,10 +26,9 @@ public class MessageModel implements ModelInterface {
 	public MessageModel(String messageContent, String reciever) {
 		this.messageContent =  messageContent;
 		this.reciever = reciever;
-		Calendar c = Calendar.getInstance();
-		Date now = new Date(c.getTimeInMillis());
-		messageTimeStamp = now;
+		messageTimeStamp = Calendar.getInstance().getTimeInMillis();
 	}
+
 
 	/**
 	 * Konstruktor för att återskapa ett existerande meddelande
@@ -33,8 +36,8 @@ public class MessageModel implements ModelInterface {
 	 * @param reciever
 	 * @param timeStamp
 	 */
-	public MessageModel(String messageContent, String reciever,
-			Date timeStamp) {
+
+	public MessageModel(String messageContent, String reciever,	long timeStamp) {
 		this.messageContent = messageContent;
 		this.reciever = reciever;
 		this.messageTimeStamp = timeStamp;
@@ -48,7 +51,8 @@ public class MessageModel implements ModelInterface {
 		return (CharSequence) reciever;
 	}
 
-	public Date getMessageTimeStamp() {
+
+	public long getMessageTimeStamp() {
 		return messageTimeStamp;
 	}
 
