@@ -1,6 +1,7 @@
 package model;
 
-import java.util.Date;
+import java.sql.Time;
+import java.util.Calendar;
 
 public class MessageModel implements ModelInterface {
 
@@ -20,22 +21,28 @@ public class MessageModel implements ModelInterface {
 		messageTimeStamp = new Date();
 	}
 
-	public MessageModel(CharSequence messageContent, CharSequence reciever,
-			Date timeStamp) {
-		this.messageContent = (String) messageContent;
-		this.reciever = (String) reciever;
+	/**
+	 * Konstruktor för att återskapa ett existerande meddelande
+	 * @param messageContent
+	 * @param reciever
+	 * @param timeStamp
+	 */
+	public MessageModel(String messageContent, String reciever,
+			Time timeStamp) {
+		this.messageContent = messageContent;
+		this.reciever = reciever;
 		this.messageTimeStamp = timeStamp;
 	}
 
 	public CharSequence getMessageContent() {
-		return messageContent;
+		return (CharSequence) messageContent;
 	}
 
 	public CharSequence getReciever() {
 		return (CharSequence) reciever;
 	}
 
-	public Date getMessageTimeStamp() {
+	public Time getMessageTimeStamp() {
 		return messageTimeStamp;
 	}
 

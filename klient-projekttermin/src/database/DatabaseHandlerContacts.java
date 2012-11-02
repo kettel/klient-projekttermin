@@ -1,6 +1,11 @@
 package database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import models.Contact;
+import models.MessageModel;
+import models.ModelInterface;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -86,5 +91,34 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         cursor.close();
         
         return count;
+	}
+
+	public List<ModelInterface> getAllContacts() {
+		List<ModelInterface> contactList = new ArrayList<ModelInterface>();
+		// Select All frågan. Ze classic! Dvs, hämta allt från MESSAGES-databasen
+        String selectQuery = "SELECT  * FROM " + TABLE_CONTACTS;
+ 
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+ 
+        // Loopa igenom alla rader och lägg till dem i listan 
+        // TODO: Få ordning på BLOB, dvs hämta och dona med bild.
+        
+        if (cursor.moveToFirst()) {
+            do {
+                Contact contact = new Contact(
+                		cursor.getString(1),
+                		Long.valueOf(cursor.getString(2)),
+                		cursor.getString(3),
+                		cursor.getString(4),
+                		cursor.getString(5),
+                		cursor.getString(6));
+                
+                contactList.add(contact);
+            } while (cursor.moveToNext());
+        }
+ 		
+        // Returnera meddelandelistan
+		return contactList;
 	}
 }
