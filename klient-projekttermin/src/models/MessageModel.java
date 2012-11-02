@@ -1,5 +1,4 @@
-package models;
-
+package model;
 
 import java.util.Date;
 
@@ -9,6 +8,10 @@ public class MessageModel implements ModelInterface {
 	private String messageContent;
 	private String reciever;
 	private Date messageTimeStamp;
+
+	public MessageModel() {
+
+	}
 
 	// Mesage borde döpas om till något annat liknande
 	public MessageModel(CharSequence messageContent, CharSequence reciever) {
