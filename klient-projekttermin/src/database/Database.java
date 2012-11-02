@@ -1,5 +1,8 @@
 package database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
@@ -57,5 +60,23 @@ public class Database{
 			returnCount = dhm.getMessageCount();
 		}
 		return returnCount;
+	}
+	
+	public List<ModelInterface> getAllFromDB(ModelInterface m, Context context){
+		String dbRep = m.getDatabaseRepresentation();
+		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
+			returnList = dha.getAllAssignments();
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
+			returnList = dhc.getAllContacts();
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
+			returnList = dhm.getAllMessages();
+		}
+		return returnList;
 	}
 }

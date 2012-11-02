@@ -12,6 +12,7 @@ import logger.logger;
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
+import models.ModelInterface;
 
 import database.Database;
 
@@ -115,5 +116,6 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	
 
 }

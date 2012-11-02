@@ -3,38 +3,51 @@ package models;
 import android.text.format.Time;
 
 
-import java.util.Date;
+import java.sql.Time;
+import java.util.Calendar;
 
 public class MessageModel implements ModelInterface {
 
 	private String databaseRepresentation = "message";
 	private String messageContent;
 	private String reciever;
-	private Date messageTimeStamp;
+	private Time messageTimeStamp;
 
-	// Mesage borde döpas om till något annat liknande
-	public MessageModel(CharSequence messageContent, CharSequence reciever) {
-		this.messageContent = (String) messageContent;
-		this.reciever = (String) reciever;
-		messageTimeStamp = new Date();
+	/**
+	 * Konstruktor för att skapa ett nytt meddelande
+	 * @param messageContent
+	 * @param reciever
+	 */
+	public MessageModel(String messageContent, String reciever) {
+		this.messageContent =  messageContent;
+		this.reciever = reciever;
+		Calendar c = Calendar.getInstance();
+		Time now = new Time(c.getTimeInMillis());
+		messageTimeStamp = now;
 	}
 
-	public MessageModel(CharSequence messageContent, CharSequence reciever,
-			Date timeStamp) {
-		this.messageContent = (String) messageContent;
-		this.reciever = (String) reciever;
+	/**
+	 * Konstruktor för att återskapa ett existerande meddelande
+	 * @param messageContent
+	 * @param reciever
+	 * @param timeStamp
+	 */
+	public MessageModel(String messageContent, String reciever,
+			Time timeStamp) {
+		this.messageContent = messageContent;
+		this.reciever = reciever;
 		this.messageTimeStamp = timeStamp;
 	}
 
 	public CharSequence getMessageContent() {
-		return messageContent;
+		return (CharSequence) messageContent;
 	}
 
 	public CharSequence getReciever() {
 		return (CharSequence) reciever;
 	}
 
-	public Date getMessageTimeStamp() {
+	public Time getMessageTimeStamp() {
 		return messageTimeStamp;
 	}
 
