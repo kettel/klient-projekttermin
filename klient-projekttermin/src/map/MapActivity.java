@@ -25,6 +25,7 @@ import com.nutiteq.android.MapView;
 import com.nutiteq.components.Place;
 import com.nutiteq.components.PlaceIcon;
 import com.nutiteq.components.PlaceLabel;
+import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
@@ -47,6 +48,7 @@ public class MapActivity extends Activity implements Observer,
 	private MapView mapView;
 	private ZoomControls zoomControls;
 	private SearchView searchView;
+	private final WgsPoint LINKÖPING=new WgsPoint(15.5826,58.427);
 	
 	private InputMethodManager mgr;
 	@Override
@@ -55,7 +57,7 @@ public class MapActivity extends Activity implements Observer,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
 		mapComponent = new BasicMapComponent("tutorial", new AppContext(this),
-				1, 1, new WgsPoint(24.764580, 59.437420), 10);
+				1, 1, LINKÖPING, 10);
 		mapComponent.setMap(OpenStreetMap.MAPNIK);
 		mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		mapComponent.startMapping();
@@ -93,7 +95,9 @@ public class MapActivity extends Activity implements Observer,
 						icon.getHeight()), 3000, true);
 		locationSource.setLocationMarker(marker);
 		mapComponent.setLocationSource(locationSource);
-
+		WgsPoint[] region={new WgsPoint(16.1938481,58.563669),new WgsPoint(16.105957,59.143262),new WgsPoint(15.710449,58.853826)};
+		addRegion(region);
+		addInterestPoint(LINKÖPING, "Linkan");
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -145,6 +149,9 @@ public class MapActivity extends Activity implements Observer,
 
 		Place p = new Place(1, poiLabel, poiImage, pointLocation);
 		mapComponent.addPlace(p);
+	}
+	public void addRegion(WgsPoint[] region){
+		mapComponent.addPolygon(new Polygon(region));
 	}
 
 	public void update(Observable observable, Object data) {
