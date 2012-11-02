@@ -11,11 +11,20 @@ import com.example.klien_projekttermin.R.menu;
 
 import logger.LogViewer;
 import logger.logger;
+import models.Assignment;
+import models.Contact;
+import models.MessageModel;
+import models.ModelInterface;
+
+import database.Database;
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,8 +53,6 @@ public class MainActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent;
-
-				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 
 				switch (arg2) {
 				case 0:
@@ -90,9 +97,9 @@ public class MainActivity extends ListActivity {
 	 */
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
-		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Nptera att det krävs en subtitle till varje item.
-		String[] menuItems={"Karta","Uppdragshanterare","Kontakter","Test logger"};
-		String[] menuSubtitle={"Visar en karta","Lägg till, ta bort eller ändra uppdrag","Visar kontaktlista","testa loggern"};
+		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Notera att det krävs en subtitle till varje item.
+		String[] menuItems={"Karta","Uppdragshanterare","Kontakter"};
+		String[] menuSubtitle={"Visar en karta","Lägg till, ta bort eller ändra uppdrag","Visar kontaktlista"};
 		//Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -108,4 +115,6 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	
+
 }

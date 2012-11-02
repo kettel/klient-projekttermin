@@ -1,58 +1,62 @@
+
 package models;
 
 
+import java.sql.Time;
+import java.util.Calendar;
+
 public class MessageModel implements ModelInterface {
 
-	private CharSequence messageContent;
-	private CharSequence reciever;
-	private CharSequence sender;
-	private String messageTimeStamp;
-	private String databasetRepresentation = "message";
+	private String databaseRepresentation = "message";
+	private String messageContent;
+	private String reciever;
+	private Calendar messageTimeStamp;
 
-	
-	//Mesage borde döpas om till något annat liknande
-	public MessageModel(CharSequence messageContent,CharSequence sender, CharSequence reciever, String messageTimeStamp){
-		this.messageContent=messageContent;
-		this.sender=sender;
-		this.reciever=reciever;
-		this.messageTimeStamp=messageTimeStamp;
+	/**
+	 * Tom konstruktor for MessageModel
+	 */
+	public MessageModel(){
 		
 	}
 	
-	public CharSequence getMessageContent(){
-		return messageContent;
+	/**
+	 * Konstruktor fÃ¶r att skapa ett nytt meddelande
+	 * @param messageContent
+	 * @param reciever
+	 */
+	public MessageModel(String messageContent, String reciever) {
+		this.messageContent =  messageContent;
+		this.reciever = reciever;
+		Calendar c = Calendar.getInstance();
 	}
-	
-	public void setMessageContent(String messageContentToBeSet){
-		this.messageContent=messageContentToBeSet;
+
+	/**
+	 * Konstruktor fÃ¶r att Ã¥terskapa ett existerande meddelande
+	 * @param messageContent
+	 * @param reciever
+	 * @param timeStamp
+	 */
+	public MessageModel(String messageContent, String reciever,
+			Calendar timeStamp) {
+		this.messageContent = messageContent;
+		this.reciever = reciever;
+		this.messageTimeStamp = timeStamp;
 	}
-	
-	public CharSequence getSender(){
-		return sender;
+
+	public CharSequence getMessageContent() {
+		return (CharSequence) messageContent;
 	}
-	
-	public void setSender(String senderToBeSet){
-		this.sender=senderToBeSet;
+
+	public CharSequence getReciever() {
+		return (CharSequence) reciever;
 	}
-	
-	public CharSequence getReciever(){
-		return reciever;
-	}
-	
-	public void setReciever(String recieverToBeSet){
-		this.reciever=recieverToBeSet;
-	}
-	
-	public String getMessageTimeStamp(){
+
+	public Calendar getMessageTimeStamp() {
 		return messageTimeStamp;
-	}
-	
-	public void setMessageTimeStamp(String messageTimeStampToBeSet){
-		this.messageTimeStamp=messageTimeStampToBeSet;
 	}
 
 	public String getDatabaseRepresentation() {
 		// TODO Auto-generated method stub
-		return databasetRepresentation;
+		return databaseRepresentation;
 	}
 }

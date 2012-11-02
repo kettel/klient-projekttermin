@@ -5,6 +5,8 @@ import com.example.klien_projekttermin.R.id;
 import com.example.klien_projekttermin.R.layout;
 import com.example.klien_projekttermin.R.menu;
 
+import database.Database;
+
 import models.MessageModel;
 import android.app.Activity;
 import android.content.Context;
@@ -26,11 +28,14 @@ public class CreateNewMessage extends Activity {
 	private Time timeStamp;
 	private String sender;
 	private String storageFile = "massorMedText.txt";
+	private Database dataBase;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
        setContentView(R.layout.activity_create_new_message);
+       
+       dataBase = new Database();
        
        Bundle extras = getIntent().getExtras();
        if (extras != null) {
@@ -53,7 +58,7 @@ public class CreateNewMessage extends Activity {
      * @param v
      */
     public void sendMessage(View v){
-    	messageObject = new MessageModel(message.getText(),sender, reciever.getText(),"tidsStämpel");
+    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());
     	Toast.makeText(getApplicationContext(),"Meddelandet är skickat", Toast.LENGTH_LONG).show();
     	
     	//Skicka till kommunikationsmoduloch spara på databasen.	
@@ -66,10 +71,14 @@ public class CreateNewMessage extends Activity {
      * @param v
      */
     public void saveMessage(View v){
-    	messageObject = new MessageModel(message.getText(),sender, reciever.getText(), "tidsStämpel");
-    	Toast.makeText(getApplicationContext(),"Meddelandet är sparat", Toast.LENGTH_LONG).show();
+    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());    
     	
-    	// Spara meddelandet på databas
+    	//Sparar messageObject i databasen
+    	dataBase.addToDB(messageObject,this);
+    	
+    	//Meddelar att meddelandet har sparats
+    	Toast.makeText(getApplicationContext(),"Meddelandet är sparat", Toast.LENGTH_LONG).show();
+
     	
     }
     
@@ -78,7 +87,7 @@ public class CreateNewMessage extends Activity {
     * @param v
     */
     public void cancelMessage(View v){
-    	messageObject = new MessageModel(message.getText(),sender, reciever.getText(), "tidsStämpel");
+    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());
     	Toast.makeText(getApplicationContext(),"Meddelandet avbröts", Toast.LENGTH_LONG).show();
 
     	// Spara meddelandet på databasen och avsluta funktionen

@@ -31,7 +31,6 @@ public class DisplayOfConversation extends Activity {
 		if (extras != null) {
 			chosenContact = extras.getString("ChosenContact");
 		}	 
-
 		loadConversation(chosenContact);
 	}
 
