@@ -114,22 +114,24 @@ public class MapActivity extends Activity implements Observer,
 
 	public boolean onQueryTextChange(String newText) {
 		searchSuggestions.updateSearch(newText);
-		System.out.println("change");
-		lv.setVisibility(ListView.VISIBLE);
-		mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
-		mapView.setVisibility(MapView.GONE);
-		zoomControls.setVisibility(ZoomControls.GONE);
+		
+//		System.out.println("change");
+//		lv.setVisibility(ListView.VISIBLE);
+//		mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
+//		mapView.setVisibility(MapView.GONE);
+//		zoomControls.setVisibility(ZoomControls.GONE);
+		
 		return true;
 	}
 
 	public boolean onQueryTextSubmit(String query) {
-//		searchView.setIconified(true);
-//		searchSuggestions.updateSearch(query);
-//		System.out.println("change");
-//		lv.setVisibility(ListView.VISIBLE);
-//		mapView.setVisibility(MapView.GONE);
-//		zoomControls.setVisibility(ZoomControls.GONE);
-//		searchView.onActionViewCollapsed();
+		searchView.setVisibility(SearchView.GONE);
+		searchSuggestions.updateSearch(query);
+		System.out.println("change");
+		lv.setVisibility(ListView.VISIBLE);
+		mapView.setVisibility(MapView.GONE);
+		zoomControls.setVisibility(ZoomControls.GONE);
+		searchView.setVisibility(SearchView.VISIBLE);
 		System.out.println("query");
 		return true;
 	}
@@ -148,14 +150,11 @@ public class MapActivity extends Activity implements Observer,
 	public void update(Observable observable, Object data) {
 		System.out.println("observed");
 //		searchView.setVisibility(SearchView.GONE);
-		searchView.onActionViewCollapsed();
+//		searchView.onActionViewCollapsed();
 		sm.notifyDataSetChanged();
 		sm.notifyDataSetInvalidated();
-		searchView.setSelected(true);
-		searchView.onActionViewExpanded();
-		searchView.setSelected(true);	
-		mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
-		searchView.setSelected(true);
+//		searchView.onActionViewExpanded();	
+//		searchView.setSelected(true);	
 //		searchView.setVisibility(SearchView.VISIBLE);
 //		searchView.bringToFront();
 	}
