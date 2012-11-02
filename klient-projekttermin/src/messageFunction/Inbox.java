@@ -26,16 +26,13 @@ import android.widget.Toast;
 public class Inbox extends Activity {
 
 	private ListView listOfPeopleEngagedInConversation;
-	private List<ModelInterface> peopleEngagedInConversation;
-	private String[] arrayOfPeopleEngagedInConversation;
-	private Database dataBase;
+	private String[] peopleIveBeenTalkingTo;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
-		
-		//Ropar på en metod som skapar en lista över alla kontakter som användaren har haft en konversation med.
+		//Ropar pï¿½ en metod som skapar en lista ï¿½ver alla kontakter som anvï¿½ndaren har haft en konversation med.
 		loadListOfSenders();
 	}
 
@@ -47,55 +44,59 @@ public class Inbox extends Activity {
 
 	/*
 	 * Metoden laddar en ListView med alla kontakter man har haft en konversation med.
-	 * Metoden sätter också en lyssnare som undersöker om någon trycker på något i listan
+	 * Metoden sï¿½tter ocksï¿½ en lyssnare som undersï¿½ker om nï¿½gon trycker pï¿½ nï¿½got i listan
 	 */
 	public void loadListOfSenders(){
-		dataBase = new Database();
 		
-		peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(), getApplicationContext());
+		peopleIveBeenTalkingTo = getInformationFromDatabase();
 		
-		//Be om lista över personer som man har konverserat med.
-		//Arraylist med personerna returneras
-
-		//Den listview som kontakterna kommerpresenteras i
-		listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
+		//		// First paramenter - Context
+		//		// Second parameter - Layout for the row
+		//		// Third parameter - ID of the TextView to which the data is written
+		//		// Forth - the Array of data
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+						android.R.layout.simple_list_item_1, android.R.id.text1, peopleIveBeenTalkingTo);
 		
-		//String array över användare
-//		peopleEngagedInConversation = new String[] {"Anna", "Fredrik", "Wiktor",
-//				"Erik L", "Erik K", "Rasmus", "Niko", "Nicke",
-//				"Kristoffer", "Bosse","Steffe","Bengan","Glenn","Alban","Laban"};
+		//		// Assign adapter to ListView
+				listOfPeopleEngagedInConversation.setAdapter(adapter); 
+		//
+				listOfPeopleEngagedInConversation.setOnItemClickListener(new OnItemClickListener() {
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		
-		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
-			arrayOfPeopleEngagedInConversation[i]=peopleEngagedInConversation.get(i).toString();
-		}
-
-		// First paramenter - Context
-		// Second parameter - Layout for the row
-		// Third parameter - ID of the TextView to which the data is written
-		// Forth - the Array of data
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1, arrayOfPeopleEngagedInConversation);
-
-		// Assign adapter to ListView
-		listOfPeopleEngagedInConversation.setAdapter(adapter); 
-
-		listOfPeopleEngagedInConversation.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-				//ropar på metoden skapar en aktivitet som visar meddelanden från den kontakt man tryckt på
-				openConversation(arrayOfPeopleEngagedInConversation[position]);
-			}
-		});
+						//ropar pï¿½ metoden skapar en aktivitet som visar meddelanden frï¿½n den kontakt man tryckt pï¿½
+						openConversation(peopleIveBeenTalkingTo[position]);
+					}
+				});
 	}
-	
+
 	/*
-	 * Metoden skapar en ny aktivitet som visar alla meddelanden som användaren har skickat och tagit emot från den kontakten som klickades på i listan
+	 * Metoden skapar en ny aktivitet som visar alla meddelanden som anvï¿½ndaren har skickat och tagit emot frï¿½n den kontakten som klickades pï¿½ i listan
 	 */
 	public void openConversation(String chosenContact){
 		Intent intent = new Intent(this, DisplayOfConversation.class);
-		
-		//Metoden skickar med namnet på den kontakt som klickades på.
+
+		//Metoden skickar med namnet pï¿½ den kontakt som klickades pï¿½.
 		intent.putExtra("ChosenContact", chosenContact);
 		startActivity(intent);
+	}
+	
+	public String[] getInformationFromDatabase(){
+		Database dataBase = new Database();
+		MessageModel messageModel;
+		
+		//HÃ¤mtar en lista med alla MessageModels som finns lagrade i databasen
+		List<ModelInterface> peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());;
+		
+		//Skapar en string[] som Ã¤r lika lÃ¥ng som listan som hÃ¤mtades.
+		String[] arrayOfPeopleEngagedInConversation = new String[peopleEngagedInConversation.size()];;
+		
+				listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
+		//		//String array ï¿½ver anvï¿½ndare
+
+		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
+				messageModel = (MessageModel) peopleEngagedInConversation.get(i);
+				arrayOfPeopleEngagedInConversation[i] = messageModel.getReciever().toString();
+		}
+		return arrayOfPeopleEngagedInConversation;
 	}
 }

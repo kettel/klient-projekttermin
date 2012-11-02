@@ -1,5 +1,7 @@
 package messageFunction;
 
+import java.util.List;
+
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.R.id;
 import com.example.klien_projekttermin.R.layout;
@@ -8,6 +10,7 @@ import com.example.klien_projekttermin.R.menu;
 import database.Database;
 
 import models.MessageModel;
+import models.ModelInterface;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,10 +75,10 @@ public class CreateNewMessage extends Activity {
      * @param v
      */
     public void saveMessage(View v){
-    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());    
+    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString()); 
     	
     	//Sparar messageObject i databasen
-    	dataBase.addToDB(messageObject,this);
+    	dataBase.addToDB(messageObject,getApplicationContext());
     	
     	//Meddelar att meddelandet har sparats
     	Toast.makeText(getApplicationContext(),"Meddelandet är sparat", Toast.LENGTH_LONG).show();
@@ -87,8 +91,16 @@ public class CreateNewMessage extends Activity {
     * @param v
     */
     public void cancelMessage(View v){
-    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());
-    	Toast.makeText(getApplicationContext(),"Meddelandet avbröts", Toast.LENGTH_LONG).show();
+    	
+    	List<ModelInterface> peopleEngagedInConversation;
+    	Integer a;
+    	 
+ 		peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(), getApplicationContext());
+ 		a=peopleEngagedInConversation.size();
+    	Toast.makeText(getApplicationContext(),peopleEngagedInConversation.size(), Toast.LENGTH_LONG).show();
+
+//    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());
+//    	Toast.makeText(getApplicationContext(),"Meddelandet avbröts", Toast.LENGTH_LONG).show();
 
     	// Spara meddelandet på databasen och avsluta funktionen
 

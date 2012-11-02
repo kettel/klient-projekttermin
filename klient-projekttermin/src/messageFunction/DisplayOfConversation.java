@@ -1,8 +1,15 @@
 package messageFunction;
 
+import java.util.List;
+
+import models.MessageModel;
+import models.ModelInterface;
+
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.R.layout;
 import com.example.klien_projekttermin.R.menu;
+
+import database.Database;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -18,15 +25,19 @@ import android.widget.AdapterView.OnItemClickListener;
 public class DisplayOfConversation extends Activity {
 
 	private ListView ListOfConversationInputs;
-	private String [] converationContent;
+	private List<ModelInterface> conversationContent;
+	private String [] arrayOfconverationContent;
 	private String chosenContact;
+	private Database dataBase;
+	private MessageModel messageModel;
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_of_conversation);
 
-		//Metoden testar om nÂgonting skickades med frÂn Inbox och skriver i sÂ fall ut det till str‰ngen chosenContact
+		//Metoden testar om n√•gonting skickades med fr√•n Inbox och skriver i s√• fall ut det till str√§ngen chosenContact
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			chosenContact = extras.getString("ChosenContact");
@@ -41,37 +52,45 @@ public class DisplayOfConversation extends Activity {
 	}
 
 	/*
-	 * Metoden skapar en listView ˆver alla meddelanden som skickats och tagits emot. Dessa efterfrÂgas frÂn databasen.
-	 * Om ett meddelande klickas pÂ sÂ kallar metoden pÂ en ny metod som startar en ny aktivitet d‰r det valda meddelandet visas.
+	 * Metoden skapar en listView √∂ver alla meddelanden som skickats och tagits emot. Dessa efterfr√•gas fr√•n databasen.
+	 * Om ett meddelande klickas p√• s√• kallar metoden p√• en ny metod som startar en ny aktivitet d√§r det valda meddelandet visas.
 	 */
 	public void loadConversation(String contact){
-		
-		//Be om lista ˆver meddelanden som skickats och tagits emot frÂn en specifik person.
-		//Arraylist med meddelandena returneras
-		
-		//Listan ˆver skickade och mottagna meddelanden.
-		ListOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
-		
-		// En array som kommer frÂn servern med det skickade och mottagna meddelandena.
-		converationContent = new String[] { "÷÷L", "Var ‰r jag?", "vem ‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰‰r du?",
-				"Erik L", "Erik K", "Rasmus", "Niko", "Nicke",
-				"FEEEEZZzT", "KODAKODAKODA","Steffe","Bengan","Glenn","Alban","Laban" };
+		dataBase = new Database();
+		conversationContent = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
+		arrayOfconverationContent = new String[conversationContent.size()];
 
-		// First paramenter - Context
-		// Second parameter - Layout for the row
-		// Third parameter - ID of the TextView to which the data is written
-		// Forth - the Array of data
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1, converationContent);
+		
+		//Be om lista ÔøΩver personer som man har konverserat med.
+		//Arraylist med personerna returneras
 
-		// Assign adapter to ListView
-		ListOfConversationInputs.setAdapter(adapter); 
+		//Den listview som kontakterna kommerpresenteras i
+		//		Toast.makeText(getApplicationContext(),"H√ÑR √ÑR DU", Toast.LENGTH_LONG).show();
+
+				ListOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
+		//		//String array ÔøΩver anvÔøΩndare
+
+		for (int i = 0; i < conversationContent.size(); i++) {
+				messageModel = (MessageModel) conversationContent.get(i);
+				arrayOfconverationContent[i] = messageModel.getMessageContent().toString();
+		}
+
+		
+		//		// First paramenter - Context
+		//		// Second parameter - Layout for the row
+		//		// Third parameter - ID of the TextView to which the data is written
+		//		// Forth - the Array of data
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+						android.R.layout.simple_list_item_1, android.R.id.text1, arrayOfconverationContent);
+		
+		//		// Assign adapter to ListView
+				ListOfConversationInputs.setAdapter(adapter); 
 		ListOfConversationInputs.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-				Toast.makeText(getApplicationContext(),converationContent[position], Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(),arrayOfconverationContent[position], Toast.LENGTH_LONG).show();
 
-				openMessage(converationContent[position]);
+				openMessage(arrayOfconverationContent[position]);
 			}
 		});
 	}
