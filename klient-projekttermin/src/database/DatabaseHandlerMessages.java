@@ -1,6 +1,5 @@
 package database;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +64,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         ContentValues values = new ContentValues();
         values.put(KEY_MESSAGE_CONTENT, message.getMessageContent().toString());
         values.put(KEY_RECEIVER, message.getReciever().toString());
-        values.put(KEY_MESSAGE_TIMESTAMP, message.getMessageTimeStamp().toString());
+        values.put(KEY_MESSAGE_TIMESTAMP, Long.toString(message.getMessageTimeStamp()));
 
         // Lägg till kontakter i databasen
         db.insert(TABLE_MESSAGES, null, values);
@@ -99,8 +98,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         
         if (cursor.moveToFirst()) {
             do {
-            	Time time = new Time(Long.valueOf(cursor.getString(3)));
-                MessageModel message = new MessageModel(cursor.getString(1),cursor.getString(2),time);
+            	MessageModel message = new MessageModel(cursor.getString(1),cursor.getString(2),Long.valueOf(cursor.getString(3)));
                 messageList.add(message);
             } while (cursor.moveToNext());
         }

@@ -1,7 +1,6 @@
 package models;
 
 
-import java.sql.Time;
 import java.util.Calendar;
 
 public class MessageModel implements ModelInterface {
@@ -9,7 +8,7 @@ public class MessageModel implements ModelInterface {
 	private String databaseRepresentation = "message";
 	private String messageContent;
 	private String reciever;
-	private Time messageTimeStamp;
+	private long messageTimeStamp;
 
 	/**
 	 * Konstruktor för att skapa ett nytt meddelande
@@ -19,9 +18,7 @@ public class MessageModel implements ModelInterface {
 	public MessageModel(String messageContent, String reciever) {
 		this.messageContent =  messageContent;
 		this.reciever = reciever;
-		Calendar c = Calendar.getInstance();
-		Time now = new Time(c.getTimeInMillis());
-		messageTimeStamp = now;
+		messageTimeStamp = Calendar.getInstance().getTimeInMillis();
 	}
 
 	/**
@@ -30,8 +27,7 @@ public class MessageModel implements ModelInterface {
 	 * @param reciever
 	 * @param timeStamp
 	 */
-	public MessageModel(String messageContent, String reciever,
-			Time timeStamp) {
+	public MessageModel(String messageContent, String reciever,	long timeStamp) {
 		this.messageContent = messageContent;
 		this.reciever = reciever;
 		this.messageTimeStamp = timeStamp;
@@ -45,7 +41,7 @@ public class MessageModel implements ModelInterface {
 		return (CharSequence) reciever;
 	}
 
-	public Time getMessageTimeStamp() {
+	public long getMessageTimeStamp() {
 		return messageTimeStamp;
 	}
 
