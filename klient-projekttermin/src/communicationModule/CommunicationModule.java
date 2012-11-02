@@ -16,11 +16,16 @@ public class CommunicationModule {
 	private Gson gson = new Gson();
 	private String transmisson = null;
 	private logger comLog = null;
-	private boolean acceptTransmisson;
+	private boolean acceptTransmissons;
 	//konstruktorn
-	public CommunicationModule(logger comLog, boolean acceptTransmisson){
+	public CommunicationModule(logger comLog, boolean acceptTransmissons){
 		this.comLog = comLog;
-		this.acceptTransmisson = acceptTransmisson;
+		this.acceptTransmissons = acceptTransmissons;
+		if(acceptTransmissons){
+			ServerToClientTransmisson test = new ServerToClientTransmisson();
+			test.execute();
+			System.out.println("hej");
+		}
 	}
 	
 	public void sendMessage(MessageModel message){
@@ -31,7 +36,6 @@ public class CommunicationModule {
 	}
 	
 	public void sendAssignment(Assignment assignment){
-		
 		transmisson = gson.toJson(assignment);
 		ClientToServerTransmisson assignmentToServer = new ClientToServerTransmisson(transmisson);
 		assignmentToServer.execute(transmisson);

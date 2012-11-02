@@ -10,8 +10,8 @@ import android.util.Log;
 
 public class ClientToServerTransmisson extends AsyncTask<String, Void, Void> {
 	
-	private String ServerIP = "94.254.72.38";
-	private int ServerPort = 17234;
+	private String ServerIP = "10.0.2.2";
+	private int ServerPort = 4576;
 	private Socket requestSocet = null;
 	private PrintWriter output = null;
 	private String transmisson = null;
