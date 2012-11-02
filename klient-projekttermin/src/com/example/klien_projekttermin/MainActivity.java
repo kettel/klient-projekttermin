@@ -56,7 +56,7 @@ public class MainActivity extends ListActivity {
 				case 0:
 					try {
 						System.out.println("testing");
-						CommunicationModule testCom = new CommunicationModule();
+						CommunicationModule testCom = new CommunicationModule(new logger(getApplicationContext(), "comlog"),true);
 						testCom.sendMessage(new MessageModel("Arne har gått vilse i skogen. Arne Är en äldre man i 80 års oldern och trors ha på sig en röd jacka","vilse i skogen gruppen"));
 						testCom.sendContact(new Contact("Agent 47", (long)00000000012, "ICA@ICA.se", "hög", "hög", "han är skallig"));
 						testCom.sendAssignment(new Assignment("Operation flashpoint", (long) 20, (long) 10, "vilse i skogen teamet", "kungen", "You know the drill", null, null, null, "Ollegaran", "tekannan"));

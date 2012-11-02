@@ -3,8 +3,11 @@ package communicationModule;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 
+import logger.logger;
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
@@ -12,17 +15,19 @@ import models.MessageModel;
 public class CommunicationModule {
 	private Gson gson = new Gson();
 	private String transmisson = null;
+	private logger comLog = null;
+	private boolean acceptTransmisson;
 	//konstruktorn
-	public CommunicationModule(){
-		
+	public CommunicationModule(logger comLog, boolean acceptTransmisson){
+		this.comLog = comLog;
+		this.acceptTransmisson = acceptTransmisson;
 	}
 	
 	public void sendMessage(MessageModel message){
-		
 		transmisson = gson.toJson(message);
 		ClientToServerTransmisson messageToServer = new ClientToServerTransmisson(transmisson);
 		messageToServer.execute(transmisson);
-
+		
 	}
 	
 	public void sendAssignment(Assignment assignment){
@@ -38,5 +43,7 @@ public class CommunicationModule {
 		ClientToServerTransmisson contactToServer = new ClientToServerTransmisson(transmisson);
 		contactToServer.execute(transmisson);
 	}
+	
+	
 	
 }
