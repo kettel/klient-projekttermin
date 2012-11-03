@@ -1,5 +1,6 @@
 package messageFunction;
 
+import java.util.HashSet;
 import java.util.List;
 
 import models.MessageModel;
@@ -25,11 +26,9 @@ import android.widget.AdapterView.OnItemClickListener;
 public class DisplayOfConversation extends Activity {
 
 	private ListView ListOfConversationInputs;
-	private List<ModelInterface> conversationContent;
-	private String [] arrayOfconverationContent;
+	private String [] conversationContent;
 	private String chosenContact;
-	private Database dataBase;
-	private MessageModel messageModel;
+	
 
 
 	@Override
@@ -56,41 +55,24 @@ public class DisplayOfConversation extends Activity {
 	 * Om ett meddelande klickas på så kallar metoden på en ny metod som startar en ny aktivitet där det valda meddelandet visas.
 	 */
 	public void loadConversation(String contact){
-		dataBase = new Database();
-		conversationContent = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
-		arrayOfconverationContent = new String[conversationContent.size()];
-
 		
-		//Be om lista �ver personer som man har konverserat med.
-		//Arraylist med personerna returneras
-
-		//Den listview som kontakterna kommerpresenteras i
-		//		Toast.makeText(getApplicationContext(),"HÄR ÄR DU", Toast.LENGTH_LONG).show();
-
-				ListOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
-		//		//String array �ver anv�ndare
-
-		for (int i = 0; i < conversationContent.size(); i++) {
-				messageModel = (MessageModel) conversationContent.get(i);
-				arrayOfconverationContent[i] = messageModel.getMessageContent().toString();
-		}
-
+		conversationContent = getInformationFromDatabase(contact);
 		
 		//		// First paramenter - Context
 		//		// Second parameter - Layout for the row
 		//		// Third parameter - ID of the TextView to which the data is written
 		//		// Forth - the Array of data
 				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-						android.R.layout.simple_list_item_1, android.R.id.text1, arrayOfconverationContent);
+						android.R.layout.simple_list_item_1, android.R.id.text1, conversationContent);
 		
 		//		// Assign adapter to ListView
 				ListOfConversationInputs.setAdapter(adapter); 
 		ListOfConversationInputs.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-				Toast.makeText(getApplicationContext(),arrayOfconverationContent[position], Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(),conversationContent[position], Toast.LENGTH_LONG).show();
 
-				openMessage(arrayOfconverationContent[position]);
+				openMessage(conversationContent[position]);
 			}
 		});
 	}
@@ -104,5 +86,43 @@ public class DisplayOfConversation extends Activity {
 		intent.putExtra("specifiedMessage", specifiedMessage);
 		intent.putExtra("correspondant", chosenContact);
 		startActivity(intent);
+	}
+	
+	public String[] getInformationFromDatabase(String Contact){
+		Database dataBase = new Database();
+		MessageModel messageModel;
+		List<ModelInterface> conversationContent;
+		String[] arrayOfConversationContent;
+		Object[] objectsInSetOfConversations;
+		HashSet<String> setOfConversations = new HashSet<String>();
+				
+		
+		conversationContent = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
+
+		//Den listview som kontakterna kommerpresenteras i
+		//		Toast.makeText(getApplicationContext(),"HÄR ÄR DU", Toast.LENGTH_LONG).show();
+
+				ListOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
+		//		//String array �ver anv�ndare
+
+		// Sorterar ut meddelanden kopplade till den person man tryckt på.
+		for (int i = 0; i < conversationContent.size(); i++) {
+				messageModel = (MessageModel) conversationContent.get(i);
+				
+				if(messageModel.getReciever().toString().equals(Contact)){
+					setOfConversations.add(messageModel.getMessageContent().toString());
+				}
+		}
+		
+		//Skapar en string[] som är lika lång som listan som hämtades.
+				arrayOfConversationContent = new String[setOfConversations.size()];
+				objectsInSetOfConversations = new Object[setOfConversations.size()];
+				objectsInSetOfConversations = setOfConversations.toArray();
+				
+				for (int i = 0; i < objectsInSetOfConversations.length; i++) {
+					arrayOfConversationContent[i] = objectsInSetOfConversations[i].toString();
+				}
+		
+		return arrayOfConversationContent;
 	}
 }

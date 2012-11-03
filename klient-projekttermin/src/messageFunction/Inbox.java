@@ -1,5 +1,6 @@
 package messageFunction;
 
+import java.util.HashSet;
 import java.util.List;
 
 import models.MessageModel;
@@ -47,26 +48,26 @@ public class Inbox extends Activity {
 	 * Metoden s�tter ocks� en lyssnare som unders�ker om n�gon trycker p� n�got i listan
 	 */
 	public void loadListOfSenders(){
-		
+
 		peopleIveBeenTalkingTo = getInformationFromDatabase();
-		
+
 		//		// First paramenter - Context
 		//		// Second parameter - Layout for the row
 		//		// Third parameter - ID of the TextView to which the data is written
 		//		// Forth - the Array of data
-				ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-						android.R.layout.simple_list_item_1, android.R.id.text1, peopleIveBeenTalkingTo);
-		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1, peopleIveBeenTalkingTo);
+
 		//		// Assign adapter to ListView
-				listOfPeopleEngagedInConversation.setAdapter(adapter); 
+		listOfPeopleEngagedInConversation.setAdapter(adapter); 
 		//
-				listOfPeopleEngagedInConversation.setOnItemClickListener(new OnItemClickListener() {
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		
-						//ropar p� metoden skapar en aktivitet som visar meddelanden fr�n den kontakt man tryckt p�
-						openConversation(peopleIveBeenTalkingTo[position]);
-					}
-				});
+		listOfPeopleEngagedInConversation.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+				//ropar p� metoden skapar en aktivitet som visar meddelanden fr�n den kontakt man tryckt p�
+				openConversation(peopleIveBeenTalkingTo[position]);
+			}
+		});
 	}
 
 	/*
@@ -79,24 +80,36 @@ public class Inbox extends Activity {
 		intent.putExtra("ChosenContact", chosenContact);
 		startActivity(intent);
 	}
-	
+
 	public String[] getInformationFromDatabase(){
+		String[] arrayOfPeopleEngagedInConversation;
+		Object[] objectsInSetOfPeople;
 		Database dataBase = new Database();
 		MessageModel messageModel;
-		
+		HashSet<String> setOfPeople = new HashSet<String>();
+
 		//Hämtar en lista med alla MessageModels som finns lagrade i databasen
 		List<ModelInterface> peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());;
-		
-		//Skapar en string[] som är lika lång som listan som hämtades.
-		String[] arrayOfPeopleEngagedInConversation = new String[peopleEngagedInConversation.size()];;
-		
-				listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
-		//		//String array �ver anv�ndare
+
+		listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
+		//String array över användare
 
 		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
-				messageModel = (MessageModel) peopleEngagedInConversation.get(i);
-				arrayOfPeopleEngagedInConversation[i] = messageModel.getReciever().toString();
+			messageModel = (MessageModel) peopleEngagedInConversation.get(i);
+
+			if (!setOfPeople.contains(messageModel.getReciever().toString())) {
+				setOfPeople.add(messageModel.getReciever().toString());
+			}	
 		}
+		//Skapar en string[] som är lika lång som listan som hämtades.
+		arrayOfPeopleEngagedInConversation = new String[setOfPeople.size()];
+		objectsInSetOfPeople = new Object[setOfPeople.size()];
+		objectsInSetOfPeople = setOfPeople.toArray();
+		
+		for (int i = 0; i < objectsInSetOfPeople.length; i++) {
+			arrayOfPeopleEngagedInConversation[i] = objectsInSetOfPeople[i].toString();
+		}
+		
 		return arrayOfPeopleEngagedInConversation;
 	}
 }
