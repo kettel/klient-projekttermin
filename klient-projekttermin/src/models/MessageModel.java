@@ -2,7 +2,6 @@ package models;
 
 import java.util.Calendar;
 
-import android.R.bool;
 
 public class MessageModel implements ModelInterface {
 
@@ -13,7 +12,6 @@ public class MessageModel implements ModelInterface {
 	private String messageContent;
 	private String reciever;
 	private long messageTimeStamp;
-	
 	
 	/**
 	 * Tom konstruktor. Används för att hämta från databasen.

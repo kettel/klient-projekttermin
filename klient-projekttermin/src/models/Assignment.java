@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 public class Assignment implements ModelInterface{
 	
 	private String databasetRepresentation = "assignment";
+	private long id = -1;
+	
 	private String name;
 	private long lat;
 	private long lon;
@@ -19,8 +21,21 @@ public class Assignment implements ModelInterface{
 	private String streetName;
 	private String siteName;
 
-
-public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, Bitmap cameraImage, String streetName, String siteName){
+	/**
+	 * 
+	 * @param name	String	Namn på uppdrag
+	 * @param lat	long	Latitud för uppdraget
+	 * @param lon	long	Longitud för uppdraget
+	 * @param receiver	String	Mottagare av uppgradet
+	 * @param sender	String	Sändare av uppdraget
+	 * @param assignmentDescription	String	Beskrivning av uppdraget
+	 * @param timeSpan	String	Hur lång tid uppdraget väntas ta
+	 * @param assignmentStatus	String	Status för uppdraget
+	 * @param cameraImage	Bitmap	En bifogad bild på uppdragsplatsen
+	 * @param streetName	String	Gatunamn
+	 * @param siteName	String	Platsnamn
+	 */
+	public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, Bitmap cameraImage, String streetName, String siteName){
 		this.lat=lat;
 		this.lon=lon;
 		this.name=name;
@@ -33,6 +48,26 @@ public Assignment(String name, long lat, long lon, String receiver, String sende
 		this.streetName=streetName;
 		this.siteName=siteName;
 	}
+	
+	public Assignment(long id, String name, long lat, long lon,
+			String receiver, String sender, String assignmentDescription,
+			String timeSpan, String assignmentStatus, Bitmap cameraImage,
+			String streetName, String siteName) {
+		this.id = id;
+		this.name = name;
+		this.lat = lat;
+		this.lon = lon;
+		this.receiver = receiver;
+		this.sender = sender;
+		this.assignmentDescription = assignmentDescription;
+		this.timeSpan = timeSpan;
+		this.assignmentStatus = assignmentStatus;
+		this.cameraImage = cameraImage;
+		this.streetName = streetName;
+		this.siteName = siteName;
+	}
+
+
 
 	public String getName() {
 		return name;
@@ -124,5 +159,9 @@ public Assignment(String name, long lat, long lon, String receiver, String sende
 
 	public String getDatabaseRepresentation() {
 		return databasetRepresentation;
+	}
+
+	public long getId() {
+		return id;
 	}
 }
