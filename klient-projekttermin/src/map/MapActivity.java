@@ -100,6 +100,7 @@ public class MapActivity extends Activity implements Observer,
 			}
 		});
 		activateGPS();
+	}
 
 	/**
 	 * Aktiverar GPS:en
