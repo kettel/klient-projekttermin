@@ -27,6 +27,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
     private static final String KEY_MESSAGE_CONTENT = "content";
     private static final String KEY_RECEIVER = "receiver";
 	private static final String KEY_MESSAGE_TIMESTAMP = "timestamp";
+	private static final String KEY_IS_READ = "isRead";
 
  
     public DatabaseHandlerMessages(Context context) {
@@ -40,7 +41,8 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
         		+ KEY_MESSAGE_CONTENT + " TEXT,"
                 + KEY_RECEIVER + " TEXT,"
-                + KEY_MESSAGE_TIMESTAMP + " TEXT" + ")";
+                + KEY_MESSAGE_TIMESTAMP + " TEXT," 
+                + KEY_IS_READ + " TEXT"+ ")";
         db.execSQL(CREATE_MESSAGES_TABLE);
     }
  
@@ -65,11 +67,26 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         values.put(KEY_MESSAGE_CONTENT, message.getMessageContent().toString());
         values.put(KEY_RECEIVER, message.getReciever().toString());
         values.put(KEY_MESSAGE_TIMESTAMP, Long.toString(message.getMessageTimeStamp()));
-
-        // Lägg till kontakter i databasen
+        
+        // Lägg till isRead som en String, TRUE om true, FALSE om false.
+        values.put(KEY_IS_READ, (message.isRead()? "TRUE" : "FALSE"));
+        
+        // Lägg till meddelanden i databasen
         db.insert(TABLE_MESSAGES, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
         db.close(); 
+    }
+    
+    /**
+     * Ta bort ett meddelande från databasen
+     * @param message
+     */
+    public void removeMessage(MessageModel message){
+    	SQLiteDatabase db = this.getWritableDatabase();
+    	db.delete(TABLE_MESSAGES, KEY_ID + " = ?",
+                new String[] { String.valueOf(message.getId()) });
+        db.close();
+    	
     }
     
     /**
@@ -84,7 +101,12 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         cursor.close();
         return count;
 	}
-
+	
+	/**
+	 * Returnerar alla meddelanden i en Array-lista. Meddelanden har nu ett ID från 
+	 * databasen.
+	 * @return
+	 */
 	public List<ModelInterface> getAllMessages() {
 		List<ModelInterface> messageList = new ArrayList<ModelInterface>();
 		// Select All frågan. Ze classic! Dvs, hämta allt från MESSAGES-databasen
@@ -98,7 +120,11 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         
         if (cursor.moveToFirst()) {
             do {
-            	MessageModel message = new MessageModel(cursor.getString(1),cursor.getString(2),Long.valueOf(cursor.getString(3)));
+            	MessageModel message = new MessageModel(Long.valueOf(cursor.getString(0)),
+            											cursor.getString(1),
+            											cursor.getString(2),
+            											Long.valueOf(cursor.getString(3)),
+            											Boolean.valueOf(cursor.getString(4)));
                 messageList.add(message);
             } while (cursor.moveToNext());
         }
