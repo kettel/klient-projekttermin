@@ -113,7 +113,10 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     }
  
     public void removeAssignment(Assignment ass){
-    	
+    	SQLiteDatabase db = this.getWritableDatabase();
+    	db.delete(TABLE_ASSIGNMENTS, KEY_ID + " = ?",
+                new String[] { String.valueOf(ass.getId()) });
+        db.close();
     }
     
     /**
@@ -139,6 +142,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
             	Bitmap theImage= BitmapFactory.decodeStream(imageStream);
             	
                 Assignment assignment = new Assignment(
+                		Long.valueOf(cursor.getString(0)),
                 		cursor.getString(1),
 						Long.parseLong(cursor.getString(2)), 
 						Long.parseLong(cursor.getString(3)),
