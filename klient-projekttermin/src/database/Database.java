@@ -66,11 +66,11 @@ public class Database{
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.getAssignmentCount();
+			dha.removeAssignment((Assignment)m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			returnCount = dhc.getContactCount();
+			dhc.removeContact((Contact)m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);

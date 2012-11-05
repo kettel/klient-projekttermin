@@ -4,6 +4,8 @@ package models;
 public class Contact implements ModelInterface {
 	
 	private String databasetRepresentation = "contact";
+	private long id = -1;
+	
 	private String contactName;
 	private Long contactPhoneNumber;
 	private String contactEmail;
@@ -21,6 +23,20 @@ public class Contact implements ModelInterface {
 		this.contactComment=contactComment;
 
 	}
+	
+	public Contact(long id, String contactName, Long contactPhoneNumber,
+			String contactEmail, String contactClearanceLevel,
+			String contactClassification, String contactComment) {
+		this.id = id;
+		this.contactName = contactName;
+		this.contactPhoneNumber = contactPhoneNumber;
+		this.contactEmail = contactEmail;
+		this.contactClearanceLevel = contactClearanceLevel;
+		this.contactClassification = contactClassification;
+		this.contactComment = contactComment;
+	}
+
+
 
 	public String getContactName(){
 		return contactName;
@@ -73,5 +89,9 @@ public class Contact implements ModelInterface {
 	public String getDatabaseRepresentation() {
 		// TODO Auto-generated method stub
 		return databasetRepresentation;
+	}
+
+	public long getId() {
+		return id;
 	}
 }
