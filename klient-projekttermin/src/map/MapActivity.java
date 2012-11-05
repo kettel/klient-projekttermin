@@ -25,6 +25,7 @@ import com.nutiteq.android.MapView;
 import com.nutiteq.components.Place;
 import com.nutiteq.components.PlaceIcon;
 import com.nutiteq.components.PlaceLabel;
+import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
@@ -54,34 +55,34 @@ public class MapActivity extends Activity implements Observer,
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
-		mapComponent = new BasicMapComponent("tutorial", new AppContext(this),
+		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(this),
 				1, 1, new WgsPoint(24.764580, 59.437420), 10);
-		mapComponent.setMap(OpenStreetMap.MAPNIK);
-		mapComponent.setPanningStrategy(new ThreadDrivenPanning());
-		mapComponent.startMapping();
+		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
+		this.mapComponent.startMapping();
 
 
 		// get the mapview that was defined in main.xml
-		MapView mapView = (MapView) findViewById(R.id.mapview);
+		this.mapView = (MapView) findViewById(R.id.mapview);
 		// mapview requires a mapcomponent
-		lv=(ListView) findViewById(R.id.mylist);
-		sm=new SimpleAdapter(this, searchSuggestions.getList(),
+		this.lv=(ListView) findViewById(R.id.mylist);
+		this.sm=new SimpleAdapter(this, searchSuggestions.getList(),
 				android.R.layout.simple_list_item_2, from, to);
-		lv.setAdapter(sm);
-		 mapView = (MapView) findViewById(R.id.mapview);
-		mapView.setMapComponent(mapComponent);
+		this.lv.setAdapter(sm);
+		this.mapView = (MapView) findViewById(R.id.mapview);
+		this.mapView.setMapComponent(mapComponent);
 
-		searchSuggestions.addObserver(this);
+		this.searchSuggestions.addObserver(this);
 		mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
-		 zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
+		this.zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
 		// set zoomcontrols listeners to enable zooming
-		zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
+		this.zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
 			public void onClick(final View v) {
 				mapComponent.zoomIn();
 			}
 		});
-		zoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
+		this.zoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
 			public void onClick(final View v) {
 				mapComponent.zoomOut();
 			}
@@ -154,6 +155,11 @@ public class MapActivity extends Activity implements Observer,
 
 		Place p = new Place(1, poiLabel, poiImage, pointLocation);
 		mapComponent.addPlace(p);
+	}
+	public void drawRegion(WgsPoint point){
+		point=new WgsPoint(24.764580, 59.437420);
+		WgsPoint[] temp={point};
+		mapComponent.addPolygon(new Polygon(temp));
 	}
 
 	public void update(Observable observable, Object data) {
