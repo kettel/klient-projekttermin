@@ -48,8 +48,10 @@ public class MapActivity extends Activity implements Observer,
 	private MapView mapView;
 	private ZoomControls zoomControls;
 	private SearchView searchView;
-	
+	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
+
 	private InputMethodManager mgr;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		
@@ -89,6 +91,7 @@ public class MapActivity extends Activity implements Observer,
 		});
 		activateGPS();
 	}
+
 	/**
 	 * Aktiverar GPS:en
 	 */
@@ -103,14 +106,18 @@ public class MapActivity extends Activity implements Observer,
 						icon.getHeight()), 3000, true);
 		locationSource.setLocationMarker(marker);
 		mapComponent.setLocationSource(locationSource);
-
+		WgsPoint[] region = { new WgsPoint(16.1938481, 58.563669),
+				new WgsPoint(16.105957, 59.143262),
+				new WgsPoint(15.710449, 58.853826) };
+		addRegion(region);
+		addInterestPoint(LINKÖPING, "Linkan");
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
-		
+
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
-		
+
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 		searchView = (SearchView) menu.findItem(R.id.menu_search)
 				.getActionView();
@@ -120,17 +127,17 @@ public class MapActivity extends Activity implements Observer,
 		searchView.setOnQueryTextListener(this);
 
 		return super.onCreateOptionsMenu(menu);
-		}
+	}
 
 	public boolean onQueryTextChange(String newText) {
 		searchSuggestions.updateSearch(newText);
-		
-//		System.out.println("change");
-//		lv.setVisibility(ListView.VISIBLE);
-//		mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
-//		mapView.setVisibility(MapView.GONE);
-//		zoomControls.setVisibility(ZoomControls.GONE);
-		
+
+		// System.out.println("change");
+		// lv.setVisibility(ListView.VISIBLE);
+		// mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
+		// mapView.setVisibility(MapView.GONE);
+		// zoomControls.setVisibility(ZoomControls.GONE);
+
 		return true;
 	}
 
@@ -156,22 +163,27 @@ public class MapActivity extends Activity implements Observer,
 		Place p = new Place(1, poiLabel, poiImage, pointLocation);
 		mapComponent.addPlace(p);
 	}
-	public void drawRegion(WgsPoint point){
-		point=new WgsPoint(24.764580, 59.437420);
-		WgsPoint[] temp={point};
+
+	public void drawRegion(WgsPoint point) {
+		point = new WgsPoint(24.764580, 59.437420);
+		WgsPoint[] temp = { point };
 		mapComponent.addPolygon(new Polygon(temp));
+	}
+
+	public void addRegion(WgsPoint[] region) {
+		mapComponent.addPolygon(new Polygon(region));
 	}
 
 	public void update(Observable observable, Object data) {
 		System.out.println("observed");
-//		searchView.setVisibility(SearchView.GONE);
-//		searchView.onActionViewCollapsed();
+		// searchView.setVisibility(SearchView.GONE);
+		// searchView.onActionViewCollapsed();
 		sm.notifyDataSetChanged();
 		sm.notifyDataSetInvalidated();
-//		searchView.onActionViewExpanded();	
-//		searchView.setSelected(true);	
-//		searchView.setVisibility(SearchView.VISIBLE);
-//		searchView.bringToFront();
+		// searchView.onActionViewExpanded();
+		// searchView.setSelected(true);
+		// searchView.setVisibility(SearchView.VISIBLE);
+		// searchView.bringToFront();
 	}
 
 	public boolean onClose() {
