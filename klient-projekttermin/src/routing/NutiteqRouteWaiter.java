@@ -1,11 +1,9 @@
 package routing;
 
-import android.graphics.Bitmap;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.components.Line;
 import com.nutiteq.components.LineStyle;
 import com.nutiteq.components.Place;
-import com.nutiteq.components.PlaceLabel;
 import com.nutiteq.components.Route;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.log.Log;
@@ -37,17 +35,13 @@ public class NutiteqRouteWaiter implements DirectionsWaiter {
 	 * @param start
 	 * @param dest
 	 */
-	public NutiteqRouteWaiter(WgsPoint startCoordinates, WgsPoint endCoordinates, BasicMapComponent map, Bitmap start, Bitmap dest) {
+	public NutiteqRouteWaiter(WgsPoint startCoordinates, WgsPoint endCoordinates, BasicMapComponent map, Image start, Image dest) {
 		instance = this;
 		this.startCoordinates = startCoordinates;
 		this.endCoordinates = endCoordinates;
 		this.map = map;
-		Image st = Image.createImage(start);
-		Image end = Image.createImage(dest);
-		PlaceLabel poiLabel = new PlaceLabel("START");
-		Place startMarker = new Place(1, poiLabel, st, startCoordinates);
-		poiLabel = new PlaceLabel("DESTINATION");
-		Place destinationMarker = new Place(1, poiLabel, end, endCoordinates);
+		Place startMarker = new Place(1, "START", start, startCoordinates);
+		Place destinationMarker = new Place(1, "END", dest, endCoordinates);
 		this.map.addPlace(startMarker);
 		this.map.addPlace(destinationMarker);
 		starter = new Thread(new Routingstarter(this));

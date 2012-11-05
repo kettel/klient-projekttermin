@@ -11,7 +11,7 @@
           android:onClick="gpsStatus"
           />
     <item android:id="@+id/menu_add_region"
-          android:title="mode"
+          android:title="@string/mark_region"
           android:showAsAction="ifRoom|withText"
           android:onClick="changeAddRegionMode"
           />

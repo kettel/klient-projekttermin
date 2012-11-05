@@ -7,8 +7,6 @@ import routing.NutiteqRouteWaiter;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -34,14 +32,16 @@ import com.nutiteq.location.NutiteqLocationMarker;
 import com.nutiteq.location.providers.AndroidGPSProvider;
 import com.nutiteq.maps.OpenStreetMap;
 import com.nutiteq.ui.ThreadDrivenPanning;
+import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
 
 /**
- * En aktivitet som skapar en karta med en meny där de olika alternativen för kartan finns
+ * En aktivitet som skapar en karta med en meny där de olika alternativen för
+ * kartan finns
  * 
  * @author nicklas
- *
+ * 
  */
 public class MapActivity extends Activity implements Observer,
 		SearchView.OnCloseListener, SearchView.OnQueryTextListener, MapListener {
@@ -55,22 +55,19 @@ public class MapActivity extends Activity implements Observer,
 	private MapView mapView;
 	private ZoomControls zoomControls;
 	private SearchView searchView;
-	private Bitmap redPin;
-	private Bitmap greenPin;
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
 	private final WgsPoint STHLM = new WgsPoint(18.07, 59.33);
 	private boolean isInAddMode = false;
 	private boolean gpsOnOff = true;
 	private ArrayList<WgsPoint> points = new ArrayList<WgsPoint>();
 	private ArrayList<Place> regionCorners = new ArrayList<Place>();
+	private static Image[] icons = { Utils.createImage("/res/drawable-hdpi/pin.png"),
+			Utils.createImage("/res/drawable-hdpi/pin_green.png"),
+			Utils.createImage("/res/drawable-hdpi/pos_arrow_liten.png") };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		redPin = BitmapFactory.decodeResource(getResources(), R.drawable.pin);
-		greenPin = BitmapFactory.decodeResource(getResources(),
-				R.drawable.pin_green);
-
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
@@ -130,9 +127,8 @@ public class MapActivity extends Activity implements Observer,
 					(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 					1000L);
 			final LocationMarker marker = new NutiteqLocationMarker(
-					new PlaceIcon(Image.createImage(redPin),
-							redPin.getWidth() / 2, redPin.getHeight()), 3000,
-					true);
+					new PlaceIcon(icons[0], icons[0].getWidth() / 2,
+							icons[0].getHeight()), 3000, true);
 			locationSource.setLocationMarker(marker);
 			mapComponent.setLocationSource(locationSource);
 		} else {
@@ -189,7 +185,7 @@ public class MapActivity extends Activity implements Observer,
 	 * @param map
 	 */
 	public void navigateToLocation(WgsPoint destination, BasicMapComponent map) {
-		new NutiteqRouteWaiter(destination, STHLM, map, redPin, greenPin);
+		new NutiteqRouteWaiter(destination, STHLM, map, icons[2], icons[2]);
 	}
 
 	/**
@@ -200,8 +196,7 @@ public class MapActivity extends Activity implements Observer,
 	 */
 	public void addInterestPoint(WgsPoint pointLocation, String label) {
 		PlaceLabel poiLabel = new PlaceLabel(label);
-		Image poiImage = Image.createImage(redPin);
-		Place p = new Place(1, poiLabel, poiImage, pointLocation);
+		Place p = new Place(1, poiLabel, icons[2], pointLocation);
 		mapComponent.addPlace(p);
 	}
 
@@ -241,7 +236,8 @@ public class MapActivity extends Activity implements Observer,
 	}
 
 	/**
-	 * Ändrar tillstånd för GPS:en 
+	 * Ändrar tillstånd för GPS:en
+	 * 
 	 * @param m
 	 */
 	public void gpsStatus(MenuItem m) {
@@ -256,7 +252,8 @@ public class MapActivity extends Activity implements Observer,
 	}
 
 	/**
-	 * Notifierar sökresultatens listviews adapter om att sökresultaten har ändrats
+	 * Notifierar sökresultatens listviews adapter om att sökresultaten har
+	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
 		sm.notifyDataSetChanged();
@@ -264,7 +261,8 @@ public class MapActivity extends Activity implements Observer,
 	}
 
 	/**
-	 * När sökningsview stängs dölj listview och visa kartan med zoom kontrollerna
+	 * När sökningsview stängs dölj listview och visa kartan med zoom
+	 * kontrollerna
 	 */
 	public boolean onClose() {
 		lv.setVisibility(ListView.GONE);
@@ -274,13 +272,13 @@ public class MapActivity extends Activity implements Observer,
 	}
 
 	/**
-	 * Om i markeringsläge lägg till de markerade punkterna i points array, samt på kartan och även som hörn i regionerna
+	 * Om i markeringsläge lägg till de markerade punkterna i points array, samt
+	 * på kartan och även som hörn i regionerna
 	 */
 	public void mapClicked(WgsPoint arg0) {
 		if (isInAddMode) {
 			points.add(arg0);
-			Image poiImage = Image.createImage(redPin);
-			Place temp = new Place(1, "dummy", poiImage, arg0);
+			Place temp = new Place(1, "dummy", icons[2], arg0);
 			mapComponent.addPlace(temp);
 			regionCorners.add(temp);
 		}
