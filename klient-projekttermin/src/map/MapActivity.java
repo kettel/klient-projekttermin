@@ -25,6 +25,7 @@ import com.nutiteq.android.MapView;
 import com.nutiteq.components.Place;
 import com.nutiteq.components.PlaceIcon;
 import com.nutiteq.components.PlaceLabel;
+import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
@@ -49,6 +50,10 @@ public class MapActivity extends Activity implements Observer,
 	private SearchView searchView;
 	private MapApplication app;
 	
+	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
+
+	private InputMethodManager mgr;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		
@@ -56,35 +61,46 @@ public class MapActivity extends Activity implements Observer,
 		app = new MapApplication();
 
 		setContentView(R.layout.activity_map);
-		mapComponent = new BasicMapComponent("tutorial", new AppContext(this),
+		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(this),
 				1, 1, new WgsPoint(24.764580, 59.437420), 10);
-		mapComponent.setMap(OpenStreetMap.MAPNIK);
-		mapComponent.setPanningStrategy(new ThreadDrivenPanning());
-		mapComponent.startMapping();
 		navigateToLocation(new WgsPoint(24.964580, 59.637420), app, mapComponent);
 		lv=(ListView) findViewById(R.id.mylist);
 		sm=new SimpleAdapter(this, searchSuggestions.getList(),
-				android.R.layout.simple_list_item_2, from, to);
-		lv.setAdapter(sm);
-		 mapView = (MapView) findViewById(R.id.mapview);
-		mapView.setMapComponent(mapComponent);
+		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
+		this.mapComponent.startMapping();
 
-		searchSuggestions.addObserver(this);
+
+		// get the mapview that was defined in main.xml
+		// mapview requires a mapcomponent
+		this.lv=(ListView) findViewById(R.id.mylist);
+		this.sm=new SimpleAdapter(this, searchSuggestions.getList(),
+				android.R.layout.simple_list_item_2, from, to);
+		this.lv.setAdapter(sm);
+		this.mapView = (MapView) findViewById(R.id.mapview);
+		this.mapView.setMapComponent(mapComponent);
+		this.searchSuggestions.addObserver(this);
+		mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
-		 zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
+		this.zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
 		// set zoomcontrols listeners to enable zooming
-		zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
+		this.zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
 			public void onClick(final View v) {
 				mapComponent.zoomIn();
 			}
 		});
-		zoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
+		this.zoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
 			public void onClick(final View v) {
 				mapComponent.zoomOut();
 			}
 		});
+		activateGPS();
+	}
 
-		// GPS Location
+	/**
+	 * Aktiverar GPS:en
+	 */
+	private void activateGPS() {
 		final LocationSource locationSource = new AndroidGPSProvider(
 				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 				1000L);
@@ -95,15 +111,19 @@ public class MapActivity extends Activity implements Observer,
 						icon.getHeight()), 3000, true);
 		locationSource.setLocationMarker(marker);
 		mapComponent.setLocationSource(locationSource);
-
+		WgsPoint[] region = { new WgsPoint(16.1938481, 58.563669),
+				new WgsPoint(16.105957, 59.143262),
+				new WgsPoint(15.710449, 58.853826) };
+		addRegion(region);
+		addInterestPoint(LINKÖPING, "Linkan");
 	}
 
 
 	public boolean onCreateOptionsMenu(Menu menu) {
-		
+
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
-		
+
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 		searchView = (SearchView) menu.findItem(R.id.menu_search)
 				.getActionView();
@@ -113,17 +133,17 @@ public class MapActivity extends Activity implements Observer,
 		searchView.setOnQueryTextListener(this);
 
 		return super.onCreateOptionsMenu(menu);
-		}
+	}
 
 	public boolean onQueryTextChange(String newText) {
 		searchSuggestions.updateSearch(newText);
-		
-//		System.out.println("change");
-//		lv.setVisibility(ListView.VISIBLE);
-//		mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
-//		mapView.setVisibility(MapView.GONE);
-//		zoomControls.setVisibility(ZoomControls.GONE);
-		
+
+		// System.out.println("change");
+		// lv.setVisibility(ListView.VISIBLE);
+		// mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
+		// mapView.setVisibility(MapView.GONE);
+		// zoomControls.setVisibility(ZoomControls.GONE);
+
 		return true;
 	}
 
@@ -155,16 +175,26 @@ public class MapActivity extends Activity implements Observer,
 		mapComponent.addPlace(p);
 	}
 
+	public void drawRegion(WgsPoint point) {
+		point = new WgsPoint(24.764580, 59.437420);
+		WgsPoint[] temp = { point };
+		mapComponent.addPolygon(new Polygon(temp));
+	}
+
+	public void addRegion(WgsPoint[] region) {
+		mapComponent.addPolygon(new Polygon(region));
+	}
+
 	public void update(Observable observable, Object data) {
 		System.out.println("observed");
-//		searchView.setVisibility(SearchView.GONE);
-//		searchView.onActionViewCollapsed();
+		// searchView.setVisibility(SearchView.GONE);
+		// searchView.onActionViewCollapsed();
 		sm.notifyDataSetChanged();
 		sm.notifyDataSetInvalidated();
-//		searchView.onActionViewExpanded();	
-//		searchView.setSelected(true);	
-//		searchView.setVisibility(SearchView.VISIBLE);
-//		searchView.bringToFront();
+		// searchView.onActionViewExpanded();
+		// searchView.setSelected(true);
+		// searchView.setVisibility(SearchView.VISIBLE);
+		// searchView.bringToFront();
 	}
 
 	public boolean onClose() {
