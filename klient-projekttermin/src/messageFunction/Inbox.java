@@ -2,6 +2,8 @@ package messageFunction;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import models.MessageModel;
 import models.ModelInterface;
@@ -24,7 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class Inbox extends Activity {
+public class Inbox extends Activity implements Observer {
 
 	private ListView listOfPeopleEngagedInConversation;
 	private String[] peopleIveBeenTalkingTo;
@@ -33,8 +35,8 @@ public class Inbox extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
+		
 		//Ropar p� en metod som skapar en lista �ver alla kontakter som anv�ndaren har haft en konversation med.
-		loadListOfSenders();
 	}
 
 	@Override
@@ -43,6 +45,12 @@ public class Inbox extends Activity {
 		return true;
 	}
 
+	@Override
+	public void onResume(){
+		super.onResume();	
+		loadListOfSenders();
+	}
+	
 	/*
 	 * Metoden laddar en ListView med alla kontakter man har haft en konversation med.
 	 * Metoden s�tter ocks� en lyssnare som unders�ker om n�gon trycker p� n�got i listan
@@ -111,5 +119,20 @@ public class Inbox extends Activity {
 		}
 		
 		return arrayOfPeopleEngagedInConversation;
+	}
+	
+	/*
+	 * Skapar ett nytt intent och startar aktiviteten CreateNewMessage
+	 * Metoden skickar ocks� med namnet p� den anv�ndare som �r inloggad p� enheten. 
+	 */
+	public void createNewMessage(View v){
+		Intent intent = new Intent(this, CreateNewMessage.class);
+		intent.putExtra("USER", "ANVÄNDARE1");
+        startActivity(intent);
+	}
+
+	public void update(Observable observable, Object data) {
+		// TODO Auto-generated method stub
+		
 	}
 }

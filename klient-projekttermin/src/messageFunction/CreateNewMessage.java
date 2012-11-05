@@ -58,36 +58,34 @@ public class CreateNewMessage extends Activity {
     }
     
     /**
-     * Metoden skapar ett meddelande objekt och skickar det vidare till komunikationsmodulen. Metoden sparar också de skapade meddelandena i skickat mappen
+     * Metoden skapar ett meddelande objekt och skickar det vidare till komunikationsmodulen. Metoden sparar ocksï¿½ de skapade meddelandena i skickat mappen
      * @param v
      */
     public void sendMessage(View v){
     	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());
-    	Toast.makeText(getApplicationContext(),"Meddelandet är skickat", Toast.LENGTH_LONG).show();
+    	Toast.makeText(getApplicationContext(),"Meddelandet Ã¤r skickat", Toast.LENGTH_LONG).show();
     	
-    	//Skicka till kommunikationsmoduloch spara på databasen.	
+    	//Skicka till kommunikationsmoduloch spara pï¿½ databasen.	
     }  
     
     /**
      * Metoden skapar ett meddelandeobjekt av inmatad information och skapar en ny instans av saveMessage-klassen som sparar meddelandet
-     * AAVSÄNDARE MÅSTE LÄGGAS TILL
+     * AAVSï¿½NDARE Mï¿½STE Lï¿½GGAS TILL
      * Problem med timestamp 
      * @param v
      */
     public void saveMessage(View v){
     	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString()); 
-    	
-    	//Sparar messageObject i databasen
-    	dataBase.addToDB(messageObject,getApplicationContext());
-    	
-    	//Meddelar att meddelandet har sparats
-    	Toast.makeText(getApplicationContext(),"Meddelandet är sparat", Toast.LENGTH_LONG).show();
 
-    	
+		//Sparar messageObject i databasen
+		dataBase.addToDB(messageObject,getApplicationContext());
+
+		//Meddelar att meddelandet har sparats
+		Toast.makeText(getApplicationContext(),"Meddelandet ï¿½r sparat", Toast.LENGTH_LONG).show();
     }
     
    /**
-    * Metoden skapar ett meddelandeobjekt av inmatad information och sparar det i utkastmappen på enheten
+    * Metoden skapar ett meddelandeobjekt av inmatad information och sparar det i utkastmappen pï¿½ enheten
     * @param v
     */
     public void cancelMessage(View v){
@@ -100,9 +98,9 @@ public class CreateNewMessage extends Activity {
     	Toast.makeText(getApplicationContext(),peopleEngagedInConversation.size(), Toast.LENGTH_LONG).show();
 
 //    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());
-//    	Toast.makeText(getApplicationContext(),"Meddelandet avbröts", Toast.LENGTH_LONG).show();
+//    	Toast.makeText(getApplicationContext(),"Meddelandet avbrï¿½ts", Toast.LENGTH_LONG).show();
 
-    	// Spara meddelandet på databasen och avsluta funktionen
+    	// Spara meddelandet pï¿½ databasen och avsluta funktionen
 
     }
 }

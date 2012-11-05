@@ -27,11 +27,11 @@ public class StartsidaMeddelanden extends Activity {
 
 	/*
 	 * Skapar ett nytt intent och startar aktiviteten CreateNewMessage
-	 * Metoden skickar också med namnet på den användare som är inloggad på enheten. 
+	 * Metoden skickar ocksï¿½ med namnet pï¿½ den anvï¿½ndare som ï¿½r inloggad pï¿½ enheten. 
 	 */
 	public void openMessageCreator(View v){
 		Intent intent = new Intent(this, CreateNewMessage.class);
-		intent.putExtra("USER", "ANVÄNDARE1");
+		intent.putExtra("USER", "ANVÃ„NDARE1");
         startActivity(intent);
 	}
 	

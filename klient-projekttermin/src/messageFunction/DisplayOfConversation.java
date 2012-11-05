@@ -29,8 +29,6 @@ public class DisplayOfConversation extends Activity {
 	private String [] conversationContent;
 	private String chosenContact;
 	
-
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -124,5 +122,10 @@ public class DisplayOfConversation extends Activity {
 				}
 		
 		return arrayOfConversationContent;
+	}
+	
+	//Metoden skapar en messageModel och skickar den till kommunikationsmodulen.
+	public void sendMessage(){
+		
 	}
 }

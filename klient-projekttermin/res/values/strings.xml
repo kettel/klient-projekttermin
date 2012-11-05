@@ -20,5 +20,7 @@
     <string name="title_activity_message_view">MessageView</string>
      <string name="title_activity_dbtest">DBTest</string>
     <string name="Button">Test DB</string>
+    <string name="sendMessage">Skicka</string>
+    <string name="CreateANewMessage">Skapa nytt meddelande</string>
 
 </resources>
