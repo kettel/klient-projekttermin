@@ -3,6 +3,7 @@ package map;
 import java.util.Observable;
 import java.util.Observer;
 
+import routing.NutiteqRouteWaiter;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
@@ -13,7 +14,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
@@ -47,18 +47,21 @@ public class MapActivity extends Activity implements Observer,
 	private MapView mapView;
 	private ZoomControls zoomControls;
 	private SearchView searchView;
+	private MapApplication app;
 	
-	private InputMethodManager mgr;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
+		app = new MapApplication();
+
 		setContentView(R.layout.activity_map);
 		mapComponent = new BasicMapComponent("tutorial", new AppContext(this),
 				1, 1, new WgsPoint(24.764580, 59.437420), 10);
 		mapComponent.setMap(OpenStreetMap.MAPNIK);
 		mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		mapComponent.startMapping();
+		navigateToLocation(new WgsPoint(24.964580, 59.637420), app, mapComponent);
 		lv=(ListView) findViewById(R.id.mylist);
 		sm=new SimpleAdapter(this, searchSuggestions.getList(),
 				android.R.layout.simple_list_item_2, from, to);
@@ -67,7 +70,6 @@ public class MapActivity extends Activity implements Observer,
 		mapView.setMapComponent(mapComponent);
 
 		searchSuggestions.addObserver(this);
-		mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
 		 zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
 		// set zoomcontrols listeners to enable zooming
@@ -95,6 +97,7 @@ public class MapActivity extends Activity implements Observer,
 		mapComponent.setLocationSource(locationSource);
 
 	}
+
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		
@@ -134,6 +137,11 @@ public class MapActivity extends Activity implements Observer,
 		searchView.setVisibility(SearchView.VISIBLE);
 		System.out.println("query");
 		return true;
+	}
+	
+	public void navigateToLocation(WgsPoint destination, MapApplication app2, BasicMapComponent map){
+		WgsPoint start = new WgsPoint(25.764580, 59.437420);
+		new NutiteqRouteWaiter(destination, start, app2, map);
 	}
 
 	public void addInterestPoint(WgsPoint pointLocation, String label) {
