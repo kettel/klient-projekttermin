@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.ZoomControls;
-
 import com.example.klien_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
@@ -48,24 +47,25 @@ public class MapActivity extends Activity implements Observer,
 	private MapView mapView;
 	private ZoomControls zoomControls;
 	private SearchView searchView;
-	private MapApplication app;
+	private Bitmap icon;
+	private Bitmap icon2;
 	
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
+	private final WgsPoint STHLM = new WgsPoint(18.07, 59.33);
 
-	private InputMethodManager mgr;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
 		super.onCreate(savedInstanceState);
-		app = new MapApplication();
+		icon = BitmapFactory.decodeResource(getResources(),
+				R.drawable.pin);
+		icon2 = BitmapFactory.decodeResource(getResources(),
+				R.drawable.pin_green);
 
 		setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(this),
-				1, 1, new WgsPoint(24.764580, 59.437420), 10);
-		navigateToLocation(new WgsPoint(24.964580, 59.637420), app, mapComponent);
-		lv=(ListView) findViewById(R.id.mylist);
-		sm=new SimpleAdapter(this, searchSuggestions.getList(),
+				1, 1, LINKÖPING, 10);
+		navigateToLocation(LINKÖPING, mapComponent);
 		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
@@ -80,7 +80,6 @@ public class MapActivity extends Activity implements Observer,
 		this.mapView = (MapView) findViewById(R.id.mapview);
 		this.mapView.setMapComponent(mapComponent);
 		this.searchSuggestions.addObserver(this);
-		mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
 		this.zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
 		// set zoomcontrols listeners to enable zooming
@@ -94,7 +93,7 @@ public class MapActivity extends Activity implements Observer,
 				mapComponent.zoomOut();
 			}
 		});
-		activateGPS();
+//		activateGPS();
 	}
 
 	/**
@@ -104,7 +103,7 @@ public class MapActivity extends Activity implements Observer,
 		final LocationSource locationSource = new AndroidGPSProvider(
 				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 				1000L);
-		Bitmap icon = BitmapFactory.decodeResource(getResources(),
+		icon = BitmapFactory.decodeResource(getResources(),
 				R.drawable.ic_launcher);
 		final LocationMarker marker = new NutiteqLocationMarker(
 				new PlaceIcon(Image.createImage(icon), icon.getWidth() / 2,
@@ -159,9 +158,9 @@ public class MapActivity extends Activity implements Observer,
 		return true;
 	}
 	
-	public void navigateToLocation(WgsPoint destination, MapApplication app2, BasicMapComponent map){
-		WgsPoint start = new WgsPoint(25.764580, 59.437420);
-		new NutiteqRouteWaiter(destination, start, app2, map);
+	public void navigateToLocation(WgsPoint destination, BasicMapComponent map){
+//		WgsPoint start = new WgsPoint(25.764580, 59.437420);
+		new NutiteqRouteWaiter(destination, STHLM, map, icon, icon2);
 	}
 
 	public void addInterestPoint(WgsPoint pointLocation, String label) {

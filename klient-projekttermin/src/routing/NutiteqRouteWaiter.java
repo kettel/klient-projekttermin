@@ -1,15 +1,17 @@
 package routing;
 
-import map.MapApplication;
-
+import android.graphics.Bitmap;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.components.Line;
 import com.nutiteq.components.LineStyle;
+import com.nutiteq.components.Place;
+import com.nutiteq.components.PlaceLabel;
 import com.nutiteq.components.Route;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.log.Log;
 import com.nutiteq.services.DirectionsService;
 import com.nutiteq.services.DirectionsWaiter;
+import com.nutiteq.wrappers.Image;
 
 public class NutiteqRouteWaiter implements DirectionsWaiter {
 	public static NutiteqRouteWaiter instance;
@@ -17,29 +19,29 @@ public class NutiteqRouteWaiter implements DirectionsWaiter {
 	private WgsPoint endCoordinates;
 	private Thread starter;
 	private int routingService;
-//	private MapApplication app;
 	private BasicMapComponent map;
 
-	public NutiteqRouteWaiter(WgsPoint startCoordinates, WgsPoint endCoordinates, MapApplication app, BasicMapComponent map) {
+	public NutiteqRouteWaiter(WgsPoint startCoordinates, WgsPoint endCoordinates, BasicMapComponent map, Bitmap start, Bitmap dest) {
 		instance = this;
 		this.startCoordinates = startCoordinates;
 		this.endCoordinates = endCoordinates;
-//		this.app = app;
 		this.map = map;
-		starter = new Thread(new Routingstarter(this, app));
+		Image st = Image.createImage(start);
+		Image end = Image.createImage(dest);
+		PlaceLabel poiLabel = new PlaceLabel("START");
+		PlaceLabel poiLabel2 = new PlaceLabel("DESTINATION");
+		Place startMarker = new Place(1, poiLabel, st, startCoordinates);
+		Place destinationMarker = new Place(1, poiLabel2, end, endCoordinates);
+		this.map.addPlace(startMarker);
+		this.map.addPlace(destinationMarker);
+		starter = new Thread(new Routingstarter(this));
 		starter.start();
 	}
 
 	public void routeFound(Route route) {
-//		app.setRoute(route);
-		// pass route to Application
-
-		// add route as line to map
 		Line routeLine = route.getRouteLine();
 		int[] lineColors = { 0xFF0000FF, 0xFF00FF00 };
-
-		routeLine.setStyle(new LineStyle(lineColors[routingService], 2));
-
+		routeLine.setStyle(new LineStyle(lineColors[routingService], 5));
 		map.addLine(routeLine);
 	}
 

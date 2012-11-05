@@ -1,20 +1,19 @@
 package routing;
 
-import map.MapApplication;
-
 import com.nutiteq.services.YourNavigationDirections;
+
 
 public class Routingstarter implements Runnable {
 	private final NutiteqRouteWaiter nutiteqRouteWaiter;
 //	private MapApplication app;
 
-	public Routingstarter(NutiteqRouteWaiter nutiteqRouteWaiter, MapApplication app) {
+	public Routingstarter(NutiteqRouteWaiter nutiteqRouteWaiter) {
 		this.nutiteqRouteWaiter =nutiteqRouteWaiter;
-//		this.app = app;
 	}
 
 	public void run() {
 
+		System.out.println("RUN IN ROUTIGN STARTER");
 		new YourNavigationDirections(nutiteqRouteWaiter,
 				nutiteqRouteWaiter.getStartCoordinates(),
 				nutiteqRouteWaiter.getEndCoordinates(),
