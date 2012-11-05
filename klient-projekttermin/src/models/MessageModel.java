@@ -2,7 +2,6 @@ package models;
 
 import java.util.Calendar;
 
-import android.R.bool;
 
 public class MessageModel implements ModelInterface {
 
@@ -62,7 +61,6 @@ public class MessageModel implements ModelInterface {
 	}
 
 	public String getDatabaseRepresentation() {
-		// TODO Auto-generated method stub
 		return databaseRepresentation;
 	}
 

@@ -65,6 +65,7 @@ public class Assignment implements ModelInterface{
 	 * @param streetName
 	 * @param siteName
 	 */
+
 	public Assignment(long id, String name, long lat, long lon,
 			String receiver, String sender, String assignmentDescription,
 			String timeSpan, String assignmentStatus, Bitmap cameraImage,
@@ -82,7 +83,7 @@ public class Assignment implements ModelInterface{
 		this.streetName = streetName;
 		this.siteName = siteName;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
