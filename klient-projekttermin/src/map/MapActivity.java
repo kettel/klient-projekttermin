@@ -3,7 +3,6 @@ package map;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-
 import routing.NutiteqRouteWaiter;
 import android.app.Activity;
 import android.app.SearchManager;
@@ -52,11 +51,10 @@ public class MapActivity extends Activity implements Observer,
 	private SearchView searchView;
 	private Bitmap icon;
 	private Bitmap icon2;
-	
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
 	private final WgsPoint STHLM = new WgsPoint(18.07, 59.33);
-
 	private Boolean isInAddMode=false;
+	private boolean gpsOnOff=true;
 	private ArrayList<WgsPoint> points=new ArrayList<WgsPoint>();
 	private ArrayList<Place> regionCorners=new ArrayList<Place>();
 
@@ -88,7 +86,6 @@ public class MapActivity extends Activity implements Observer,
 		this.searchSuggestions.addObserver(this);
 		
 		this.zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
-		// set zoomcontrols listeners to enable zooming
 		this.zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
 			public void onClick(final View v) {
 				mapComponent.zoomIn();
@@ -99,26 +96,29 @@ public class MapActivity extends Activity implements Observer,
 				mapComponent.zoomOut();
 			}
 		});
-		activateGPS();
+		System.out.println(gpsOnOff);
+		activateGPS(gpsOnOff);
 	}
 
 	/**
 	 * Aktiverar GPS:en
 	 */
-	private void activateGPS() {
+	private void activateGPS(boolean on) {
+		if(on){
 		final LocationSource locationSource = new AndroidGPSProvider(
 				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
 				1000L);
 		final LocationMarker marker = new NutiteqLocationMarker(
 				new PlaceIcon(Image.createImage(icon), icon.getWidth() / 2,
 						icon.getHeight()), 3000, true);
-		locationSource.setLocationMarker(marker);
-		mapComponent.setLocationSource(locationSource);
+			locationSource.setLocationMarker(marker);
+			mapComponent.setLocationSource(locationSource);
+		} else {
+			mapComponent.setLocationSource(null);
+		}
 	}
 
-
 	public boolean onCreateOptionsMenu(Menu menu) {
-
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
 
@@ -180,6 +180,19 @@ public class MapActivity extends Activity implements Observer,
 			}
 		}
 	}
+	
+	public void gpsStatus(MenuItem m){
+		System.out.println("GPS");
+		if(gpsOnOff){
+			gpsOnOff=false;
+			m.setTitle("GPS/off");
+			activateGPS(gpsOnOff);
+		} else {
+			gpsOnOff=true;
+			m.setTitle("GPS/on");
+			activateGPS(gpsOnOff);
+		}
+	}
 
 	public void update(Observable observable, Object data) {
 		System.out.println("observed");
@@ -200,6 +213,7 @@ public class MapActivity extends Activity implements Observer,
 		zoomControls.setVisibility(ZoomControls.VISIBLE);
 		return false;
 	}
+	
 	public void mapClicked(WgsPoint arg0) {
 		// TODO Auto-generated method stub
 		if (isInAddMode) {
