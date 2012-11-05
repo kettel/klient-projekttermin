@@ -54,6 +54,8 @@ public class MapActivity extends Activity implements Observer,
 
 	private Boolean isInAddMode=false;
 	private ArrayList<WgsPoint> points=new ArrayList<WgsPoint>();
+	private ArrayList<Place> regionCorners=new ArrayList<Place>();
+	private Bitmap icon;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +94,9 @@ public class MapActivity extends Activity implements Observer,
 			}
 		});
 		activateGPS();
+		
+		icon = BitmapFactory.decodeResource(getResources(),
+				R.drawable.ic_launcher);
 	}
 
 	/**
@@ -144,12 +149,9 @@ public class MapActivity extends Activity implements Observer,
 	}
 
 	public void addInterestPoint(WgsPoint pointLocation, String label) {
-		Bitmap icon = BitmapFactory.decodeResource(getResources(),
-				R.drawable.ic_launcher);
-
-		Image poiImage = Image.createImage(icon);
+		
 		PlaceLabel poiLabel = new PlaceLabel(label);
-
+		Image poiImage = Image.createImage(icon);
 		Place p = new Place(1, poiLabel, poiImage, pointLocation);
 		mapComponent.addPlace(p);
 	}
@@ -164,6 +166,10 @@ public class MapActivity extends Activity implements Observer,
 			if (!points.isEmpty()) {
 				WgsPoint[] p=(WgsPoint[])points.toArray(new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
+			}
+			if (!regionCorners.isEmpty()) {
+				Place[] corners=(Place[])regionCorners.toArray(new Place[regionCorners.size()]);
+				mapComponent.removePlaces(corners);
 			}
 		}
 	}
@@ -191,7 +197,10 @@ public class MapActivity extends Activity implements Observer,
 		// TODO Auto-generated method stub
 		if (isInAddMode) {
 			points.add(arg0);
-			addInterestPoint(arg0, "dummy");
+			Image poiImage = Image.createImage(icon);
+			Place temp=new Place(1, "dummy", poiImage, arg0);
+			mapComponent.addPlace(temp);
+			regionCorners.add(temp);
 		}
 	}
 
