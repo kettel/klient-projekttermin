@@ -13,6 +13,12 @@ import com.nutiteq.services.DirectionsService;
 import com.nutiteq.services.DirectionsWaiter;
 import com.nutiteq.wrappers.Image;
 
+/**
+ * Förser Routingstarter med nödvändig information för att starta en ruttberäkning.
+ * 
+ * @author nicklas
+ *
+ */
 public class NutiteqRouteWaiter implements DirectionsWaiter {
 	public static NutiteqRouteWaiter instance;
 	private WgsPoint startCoordinates;
@@ -21,6 +27,16 @@ public class NutiteqRouteWaiter implements DirectionsWaiter {
 	private int routingService;
 	private BasicMapComponent map;
 
+	/**
+	 * Läser in start- och slutkoordinater för rutten. Markerar dessa punkter på kartan.
+	 * Säger åt Routingstarter att starta en ruttberäkning i en ny tråd.
+	 * 
+	 * @param startCoordinates
+	 * @param endCoordinates
+	 * @param map
+	 * @param start
+	 * @param dest
+	 */
 	public NutiteqRouteWaiter(WgsPoint startCoordinates, WgsPoint endCoordinates, BasicMapComponent map, Bitmap start, Bitmap dest) {
 		instance = this;
 		this.startCoordinates = startCoordinates;
@@ -29,15 +45,18 @@ public class NutiteqRouteWaiter implements DirectionsWaiter {
 		Image st = Image.createImage(start);
 		Image end = Image.createImage(dest);
 		PlaceLabel poiLabel = new PlaceLabel("START");
-		PlaceLabel poiLabel2 = new PlaceLabel("DESTINATION");
 		Place startMarker = new Place(1, poiLabel, st, startCoordinates);
-		Place destinationMarker = new Place(1, poiLabel2, end, endCoordinates);
+		poiLabel = new PlaceLabel("DESTINATION");
+		Place destinationMarker = new Place(1, poiLabel, end, endCoordinates);
 		this.map.addPlace(startMarker);
 		this.map.addPlace(destinationMarker);
 		starter = new Thread(new Routingstarter(this));
 		starter.start();
 	}
 
+	/**
+	 * När en rutt är funnen rita ut den på kartan. 
+	 */
 	public void routeFound(Route route) {
 		Line routeLine = route.getRouteLine();
 		int[] lineColors = { 0xFF0000FF, 0xFF00FF00 };
@@ -45,6 +64,9 @@ public class NutiteqRouteWaiter implements DirectionsWaiter {
 		map.addLine(routeLine);
 	}
 
+	/**
+	 * Skriver ut vilket fel som uppstått
+	 */
 	public void routingErrors(final int errorCodes) {
 		final StringBuffer errors = new StringBuffer("Errors: ");
 		if ((errorCodes & DirectionsService.ERROR_DESTINATION_ADDRESS_NOT_FOUND) != 0) {
