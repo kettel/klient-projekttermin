@@ -53,7 +53,7 @@ public class MapActivity extends Activity implements Observer,
 	private Bitmap icon2;
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
 	private final WgsPoint STHLM = new WgsPoint(18.07, 59.33);
-	private Boolean isInAddMode=false;
+	private boolean isInAddMode=false;
 	private boolean gpsOnOff=true;
 	private ArrayList<WgsPoint> points=new ArrayList<WgsPoint>();
 	private ArrayList<Place> regionCorners=new ArrayList<Place>();
