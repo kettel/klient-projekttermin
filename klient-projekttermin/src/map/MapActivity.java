@@ -1,5 +1,6 @@
 package map;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -12,8 +13,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
@@ -27,6 +28,7 @@ import com.nutiteq.components.PlaceIcon;
 import com.nutiteq.components.PlaceLabel;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
+import com.nutiteq.listeners.MapListener;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
 import com.nutiteq.location.NutiteqLocationMarker;
@@ -37,7 +39,7 @@ import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
 
 public class MapActivity extends Activity implements Observer,
-		SearchView.OnCloseListener, SearchView.OnQueryTextListener {
+		SearchView.OnCloseListener, SearchView.OnQueryTextListener,MapListener {
 
 	private BasicMapComponent mapComponent;
 	private String[] from = { "line1", "line2" };
@@ -50,7 +52,8 @@ public class MapActivity extends Activity implements Observer,
 	private SearchView searchView;
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
 
-	private InputMethodManager mgr;
+	private Boolean isInAddMode=false;
+	private ArrayList<WgsPoint> points=new ArrayList<WgsPoint>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,11 +61,11 @@ public class MapActivity extends Activity implements Observer,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(this),
-				1, 1, new WgsPoint(24.764580, 59.437420), 10);
+				1, 1, LINKÖPING, 10);
 		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
-
+		this.mapComponent.setMapListener(this);
 
 		// get the mapview that was defined in main.xml
 		this.mapView = (MapView) findViewById(R.id.mapview);
@@ -75,7 +78,6 @@ public class MapActivity extends Activity implements Observer,
 		this.mapView.setMapComponent(mapComponent);
 
 		this.searchSuggestions.addObserver(this);
-		mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		
 		this.zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
 		// set zoomcontrols listeners to enable zooming
@@ -106,11 +108,6 @@ public class MapActivity extends Activity implements Observer,
 						icon.getHeight()), 3000, true);
 		locationSource.setLocationMarker(marker);
 		mapComponent.setLocationSource(locationSource);
-		WgsPoint[] region = { new WgsPoint(16.1938481, 58.563669),
-				new WgsPoint(16.105957, 59.143262),
-				new WgsPoint(15.710449, 58.853826) };
-		addRegion(region);
-		addInterestPoint(LINKÖPING, "Linkan");
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -131,13 +128,6 @@ public class MapActivity extends Activity implements Observer,
 
 	public boolean onQueryTextChange(String newText) {
 		searchSuggestions.updateSearch(newText);
-
-		// System.out.println("change");
-		// lv.setVisibility(ListView.VISIBLE);
-		// mgr.showSoftInput(searchView, InputMethodManager.SHOW_FORCED);
-		// mapView.setVisibility(MapView.GONE);
-		// zoomControls.setVisibility(ZoomControls.GONE);
-
 		return true;
 	}
 
@@ -164,14 +154,18 @@ public class MapActivity extends Activity implements Observer,
 		mapComponent.addPlace(p);
 	}
 
-	public void drawRegion(WgsPoint point) {
-		point = new WgsPoint(24.764580, 59.437420);
-		WgsPoint[] temp = { point };
-		mapComponent.addPolygon(new Polygon(temp));
-	}
-
-	public void addRegion(WgsPoint[] region) {
-		mapComponent.addPolygon(new Polygon(region));
+	public void changeAddRegionMode(MenuItem m){
+		isInAddMode=!isInAddMode;
+		if (isInAddMode) {
+			m.setTitle("active");
+			points.clear();
+		}else {
+			m.setTitle("mode");
+			if (!points.isEmpty()) {
+				WgsPoint[] p=(WgsPoint[])points.toArray(new WgsPoint[points.size()]);
+				mapComponent.addPolygon(new Polygon(p));
+			}
+		}
 	}
 
 	public void update(Observable observable, Object data) {
@@ -192,5 +186,20 @@ public class MapActivity extends Activity implements Observer,
 		mapView.setVisibility(MapView.VISIBLE);
 		zoomControls.setVisibility(ZoomControls.VISIBLE);
 		return false;
+	}
+	public void mapClicked(WgsPoint arg0) {
+		// TODO Auto-generated method stub
+		if (isInAddMode) {
+			points.add(arg0);
+			addInterestPoint(arg0, "dummy");
+		}
+	}
+
+	public void mapMoved() {
+		// TODO Auto-generated method stub
+	}
+
+	public void needRepaint(boolean arg0) {
+		// TODO Auto-generated method stub
 	}
 }

@@ -5,4 +5,9 @@
           android:showAsAction="ifRoom|withText"
           android:actionViewClass="android.widget.SearchView"
           />
+    <item android:id="@+id/menu_add_region"
+          android:title="mode"
+          android:showAsAction="ifRoom|withText"
+          android:onClick="changeAddRegionMode"
+          />
 </menu>
