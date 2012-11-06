@@ -41,13 +41,13 @@ public class MainActivity extends ListActivity {
 		String[] from = { "line1", "line2" };
 		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-		
-		
+
+
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 
-			
+
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent;
@@ -55,11 +55,12 @@ public class MainActivity extends ListActivity {
 				switch (arg2) {
 				case 0:
 					try {
+						System.out.println("testing");
 						CommunicationModule testCom = new CommunicationModule(new logger(getApplicationContext(), "comlog"),true);
-						testCom.sendMessage(new MessageModel("\"databasetRepresentation\":\"assignment\"","klösamaja"));
+						testCom.sendMessage(new MessageModel("Arne har gått vilse i skogen. Arne Är en äldre man i 80 års oldern och trors ha på sig en röd jacka","vilse i skogen gruppen"));
 						testCom.sendContact(new Contact("Agent 47", (long)00000000012, "ICA@ICA.se", "hög", "hög", "han är skallig"));
 						testCom.sendAssignment(new Assignment("Operation flashpoint", (long) 20, (long) 10, "vilse i skogen teamet", "kungen", "You know the drill", null, null, null, "Ollegaran", "tekannan"));
-						
+
 					} catch (Exception e) {
 					}
 					// myIntent= new Intent(from.this,
@@ -115,6 +116,6 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	
+
 
 }
