@@ -1,7 +1,6 @@
 package com.example.klien_projekttermin;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,14 +11,13 @@ import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
 
-import database.Database;
+import databaseEncrypted.DatabaseHandler;
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -30,7 +28,9 @@ import android.widget.SimpleAdapter;
 public class MainActivity extends ListActivity {
 
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-
+	
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,7 +41,10 @@ public class MainActivity extends ListActivity {
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
 		// Testa DB
-		testDBFull(this);
+		//testDBFull(this);
+		// Hämta instans av databasen
+		DatabaseHandler db = new DatabaseHandler(this);
+		db.addToDB(new Contact());
 		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
@@ -113,7 +116,7 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	
+	/*
 	public void testDBFull(Context context){
 		Database db = new Database();
 		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
@@ -191,7 +194,7 @@ public class MainActivity extends ListActivity {
 		}
 		testList = db.getAllFromDB(new Assignment(),context);
 		Log.d("DB","Storlek: " + testList.size());
-	}
+	}*/
 	
 
 }

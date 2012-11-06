@@ -63,7 +63,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
                 + KEY_SITENAME + " TEXT" + ")";
         db.execSQL(CREATE_ASSIGNMENTS_TABLE);
     }
- 
+    
     // Uppgradera databasen vid behov (om en äldre version existerar)
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
