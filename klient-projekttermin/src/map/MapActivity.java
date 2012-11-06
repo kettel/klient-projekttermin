@@ -61,7 +61,8 @@ public class MapActivity extends Activity implements Observer,
 	private boolean gpsOnOff = true;
 	private ArrayList<WgsPoint> points = new ArrayList<WgsPoint>();
 	private ArrayList<Place> regionCorners = new ArrayList<Place>();
-	private static Image[] icons = { Utils.createImage("/res/drawable-hdpi/pin.png"),
+	private static Image[] icons = {
+			Utils.createImage("/res/drawable-hdpi/pin.png"),
 			Utils.createImage("/res/drawable-hdpi/pin_green.png"),
 			Utils.createImage("/res/drawable-hdpi/pos_arrow_liten.png") };
 
@@ -71,14 +72,15 @@ public class MapActivity extends Activity implements Observer,
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
+		System.out.println("ON CREATE");
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
-		navigateToLocation(LINKÖPING, mapComponent);
 		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
+		navigateToLocation(LINKÖPING, mapComponent);
 
 		/**
 		 * Hämtar listview till sökförslagen samt lägger till en adapter. Lägger
@@ -114,18 +116,22 @@ public class MapActivity extends Activity implements Observer,
 		 */
 		activateGPS(gpsOnOff);
 	}
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+	}
 
 	/**
 	 * Aktiverar GPS:en
 	 */
 	private void activateGPS(boolean on) {
 		/**
-		 * Om GPS är på, hämta position sen placera en ikon på positionen
+		 * Om GPS är på centrera kartan vid gps positionen
 		 */
+		final LocationSource locationSource = new AndroidGPSProvider(
+				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
+				1000L);
 		if (on) {
-			final LocationSource locationSource = new AndroidGPSProvider(
-					(LocationManager) getSystemService(Context.LOCATION_SERVICE),
-					1000L);
 			final LocationMarker marker = new NutiteqLocationMarker(
 					new PlaceIcon(icons[0], icons[0].getWidth() / 2,
 							icons[0].getHeight()), 3000, true);
@@ -185,7 +191,7 @@ public class MapActivity extends Activity implements Observer,
 	 * @param map
 	 */
 	public void navigateToLocation(WgsPoint destination, BasicMapComponent map) {
-		new NutiteqRouteWaiter(destination, STHLM, map, icons[2], icons[2]);
+		new NutiteqRouteWaiter(STHLM, LINKÖPING, map, icons[2], icons[2]);
 	}
 
 	/**
@@ -220,8 +226,8 @@ public class MapActivity extends Activity implements Observer,
 		else {
 			m.setTitle("Markera region");
 			if (!points.isEmpty()) {
-				WgsPoint[] p = (WgsPoint[]) points.toArray(new WgsPoint[points
-						.size()]);
+				WgsPoint[] p = (WgsPoint[]) (points).toArray(
+						new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
 			}
 			/**
@@ -234,12 +240,13 @@ public class MapActivity extends Activity implements Observer,
 			}
 		}
 	}
-
+	
 	/**
 	 * Ändrar tillstånd för GPS:en
 	 * 
 	 * @param m
 	 */
+
 	public void gpsStatus(MenuItem m) {
 		if (gpsOnOff) {
 			m.setTitle("GPS/off");
