@@ -10,8 +10,8 @@ public class Assignment implements ModelInterface{
 	private long id = -1;
 
 	private String name;
-	private long lat;
-	private long lon;
+	private double lat;
+	private double lon;
 	private String receiver;
 	private String sender;
 	private String assignmentDescription;
@@ -35,7 +35,7 @@ public class Assignment implements ModelInterface{
 	 * @param streetName	String	Gatunamn
 	 * @param siteName	String	Platsnamn
 	 */
-	public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, Bitmap cameraImage, String streetName, String siteName){
+	public Assignment(String name, double lat, double lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, Bitmap cameraImage, String streetName, String siteName){
 		this.lat=lat;
 		this.lon=lon;
 		this.name=name;
@@ -66,7 +66,7 @@ public class Assignment implements ModelInterface{
 	 * @param siteName
 	 */
 
-	public Assignment(long id, String name, long lat, long lon,
+	public Assignment(long id, String name, double lat, double lon,
 			String receiver, String sender, String assignmentDescription,
 			String timeSpan, String assignmentStatus, Bitmap cameraImage,
 			String streetName, String siteName) {
@@ -83,13 +83,12 @@ public class Assignment implements ModelInterface{
 		this.streetName = streetName;
 		this.siteName = siteName;
 	}
-	
-	public Assignment(){
-		
-	}
 
+	/**
+	 * Använd för att hämta infomtion
+	 */
 	public Assignment() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getName() {
@@ -116,19 +115,19 @@ public class Assignment implements ModelInterface{
 		this.siteName=siteNameToBeSet;
 	}
 
-	public long getLat() {
+	public double getLat() {
 		return lat;
 	}
 
-	public void setLat(long latToBeSet) {
+	public void setLat(double latToBeSet) {
 		this.lat = latToBeSet;
 	}
 
-	public long getLon() {
+	public double getLon() {
 		return lon;
 	}
 
-	public void setLon(long lonToBeSet) {
+	public void setLon(double lonToBeSet) {
 		this.lon = lonToBeSet;
 	}
 

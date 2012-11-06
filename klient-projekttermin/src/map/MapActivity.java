@@ -1,27 +1,17 @@
 package map;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
 import models.Assignment;
 import models.ModelInterface;
-
 import routing.NutiteqRouteWaiter;
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,9 +20,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 import android.widget.ZoomControls;
-
 import com.example.klien_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
@@ -129,27 +117,32 @@ public class MapActivity extends Activity implements Observer,
 			}
 		});
 		/**
-		 * GPS:en ska vara påslagen vid start
+		 * Hämta information från databasen om aktuella uppdrag
 		 */
 		getDatabaseInformation();
+		/**
+		 * GPS:en ska vara påslagen vid start
+		 */
 		activateGPS(gpsOnOff);
 	}
 
+	/**
+	 * Hämtar alla uppdrag från databasen
+	 * och markerar ut dessa på kartan 
+	 */
 	public void getDatabaseInformation() {
-		System.out.println("DATABAS -----------------------------------");
 		Assignment a = new Assignment();
 		Database db = new Database();
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
 		Bitmap bmp = Bitmap.createBitmap(2, 23, conf);
-		db.addToDB(new Assignment("dummy", (long)10.0, (long)12.2, "eric", "nicke", "dummy", "12.0.5", "on", bmp, "test", "dummy"), getBaseContext());
+		db.addToDB(new Assignment("dummyn", 15.5826, 58.527, "eric", "nicke", "dummy", "12.0.5", "on", bmp, "test", "dummy"), getBaseContext());
 		List<ModelInterface> hej = db.getAllFromDB(a, getBaseContext());
-		a = (Assignment) hej.get(0);
-		long lon = a.getLon();
-		long lat = a.getLat();
-		System.out.println("LAT: " + lat);
-		System.out.println("LON: " + lon);
+		System.out.println(db.getDBCount(a, getBaseContext()));
+		for (int i = 0; i<db.getDBCount(a, getBaseContext()); i++) {
+			a = (Assignment) hej.get(i);
+			addInterestPoint(new WgsPoint(a.getLat(), a.getLon()), a.getName());	
+		}
 	}
-
 	/**
 	 * Aktiverar GPS:en
 	 */
@@ -232,8 +225,8 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Starta navigation till destination
 	 * 
-	 * @param destination
-	 * @param map
+	 * @param destination WgsPoint
+	 * @param map Kart objektet
 	 */
 	public void navigateToLocation(WgsPoint destination, BasicMapComponent map) {
 		new NutiteqRouteWaiter(STHLM, LINKÖPING, map, icons[2], icons[2]);
@@ -242,8 +235,8 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Markera en punkt på kartan
 	 * 
-	 * @param pointLocation
-	 * @param label
+	 * @param pointLocation Position för punkten WgsPoint
+	 * @param label Namn som syns om man klickar på punkten
 	 */
 	public void addInterestPoint(WgsPoint pointLocation, String label) {
 		PlaceLabel poiLabel = new PlaceLabel(label);
@@ -254,7 +247,7 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Ändrar tillståndet för att markera regioner på kartan
 	 * 
-	 * @param m
+	 * @param m klickbart menuItem
 	 */
 	public boolean changeAddRegionMode(MenuItem m) {
 		isInAddMode = !isInAddMode;
@@ -290,7 +283,7 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Ändrar tillstånd för GPS:en
 	 * 
-	 * @param m
+	 * @param m klickbart menuItem
 	 */
 
 	public boolean gpsStatus(MenuItem m) {
