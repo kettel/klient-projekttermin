@@ -66,6 +66,10 @@ public class Assignment implements ModelInterface{
 		this.streetName = streetName;
 		this.siteName = siteName;
 	}
+	
+	public Assignment(){
+		
+	}
 
 
 
