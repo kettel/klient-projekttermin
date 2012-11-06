@@ -1,12 +1,15 @@
 package map;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-
+import models.Assignment;
+import models.ModelInterface;
 import routing.NutiteqRouteWaiter;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,7 +21,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.ZoomControls;
-
 import com.example.klien_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
@@ -37,6 +39,8 @@ import com.nutiteq.ui.ThreadDrivenPanning;
 import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
+
+import database.Database;
 
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för
@@ -63,7 +67,8 @@ public class MapActivity extends Activity implements Observer,
 	private boolean gpsOnOff = true;
 	private ArrayList<WgsPoint> points = new ArrayList<WgsPoint>();
 	private ArrayList<Place> regionCorners = new ArrayList<Place>();
-	private static Image[] icons = { Utils.createImage("/res/drawable-hdpi/pin.png"),
+	private static Image[] icons = {
+			Utils.createImage("/res/drawable-hdpi/pin.png"),
 			Utils.createImage("/res/drawable-hdpi/pin_green.png"),
 			Utils.createImage("/res/drawable-hdpi/pos_arrow_liten.png") };
 	private CustomACTV actv;
@@ -78,11 +83,11 @@ public class MapActivity extends Activity implements Observer,
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
-		navigateToLocation(LINKÖPING, mapComponent);
 		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
+		navigateToLocation(LINKÖPING, mapComponent);
 
 		/**
 		 * Hämtar listview till sökförslagen samt lägger till en adapter. Lägger
@@ -110,22 +115,43 @@ public class MapActivity extends Activity implements Observer,
 			}
 		});
 		/**
+		 * Hämta information från databasen om aktuella uppdrag
+		 */
+		getDatabaseInformation();
+		/**
 		 * GPS:en ska vara påslagen vid start
 		 */
 		activateGPS(gpsOnOff);
 	}
 
 	/**
+	 * Hämtar alla uppdrag från databasen
+	 * och markerar ut dessa på kartan 
+	 */
+	public void getDatabaseInformation() {
+		Assignment a = new Assignment();
+		Database db = new Database();
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+		Bitmap bmp = Bitmap.createBitmap(2, 23, conf);
+		db.addToDB(new Assignment("dummyn", 15.5826, 58.527, "eric", "nicke", "dummy", "12.0.5", "on", bmp, "test", "dummy"), getBaseContext());
+		List<ModelInterface> hej = db.getAllFromDB(a, getBaseContext());
+		System.out.println(db.getDBCount(a, getBaseContext()));
+		for (int i = 0; i<db.getDBCount(a, getBaseContext()); i++) {
+			a = (Assignment) hej.get(i);
+			addInterestPoint(new WgsPoint(a.getLat(), a.getLon()), a.getName());	
+		}
+	}
+	/**
 	 * Aktiverar GPS:en
 	 */
 	private void activateGPS(boolean on) {
 		/**
-		 * Om GPS är på, hämta position sen placera en ikon på positionen
+		 * Om GPS är på centrera kartan vid gps positionen
 		 */
+		final LocationSource locationSource = new AndroidGPSProvider(
+				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
+				1000L);
 		if (on) {
-			final LocationSource locationSource = new AndroidGPSProvider(
-					(LocationManager) getSystemService(Context.LOCATION_SERVICE),
-					1000L);
 			final LocationMarker marker = new NutiteqLocationMarker(
 					new PlaceIcon(icons[0], icons[0].getWidth() / 2,
 							icons[0].getHeight()), 3000, true);
@@ -140,8 +166,28 @@ public class MapActivity extends Activity implements Observer,
 	 * Skapa meny i actionbar
 	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
+		final Menu m = menu;
+		runOnUiThread(new Runnable() {
+			public void run() {
+				MenuInflater inflater = getMenuInflater();
+				inflater.inflate(R.menu.menu, m);
+				MenuItem item = m.findItem(R.id.menu_deactivate_gps);
+				item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						return gpsStatus(item);
+					}
+				});
+				item = m.findItem(R.id.menu_add_region);
+				item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						return changeAddRegionMode(item);
+					}
+				});
+				View v = m.findItem(R.id.menu_search).getActionView();
+				AutoCompleteTextView actv = (AutoCompleteTextView) v
+						.findViewById(R.id.ab_Search);
+			}
+		});
 		View v=(View)menu.findItem(R.id.menu_search).getActionView();
 		this.actv=(CustomACTV)v.findViewById(R.id.ab_Search);
 		this.actv.addTextChangedListener(new TextWatcher() {
@@ -174,7 +220,6 @@ public class MapActivity extends Activity implements Observer,
 		});
 		sm=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		actv.setAdapter(sm);
-
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -186,7 +231,6 @@ public class MapActivity extends Activity implements Observer,
 		new Thread(new Runnable() {
 
 			public void run() {
-				// TODO Auto-generated method stub
 				searchSuggestions.updateSearch(str);
 			}
 		}).start();
@@ -197,12 +241,11 @@ public class MapActivity extends Activity implements Observer,
 	 * Vid sökning dölj allt förutom listview:n med sökresultat.
 	 */
 	public boolean onQueryTextSubmit(String query) {
-		//searchView.setVisibility(SearchView.GONE);
+		// searchView.setVisibility(SearchView.GONE);
 		final String str = query;
 		new Thread(new Runnable() {
 
 			public void run() {
-				// TODO Auto-generated method stub
 				searchSuggestions.updateSearch(str);
 			}
 		}).start();
@@ -212,18 +255,18 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Starta navigation till destination
 	 * 
-	 * @param destination
-	 * @param map
+	 * @param destination WgsPoint
+	 * @param map Kart objektet
 	 */
 	public void navigateToLocation(WgsPoint destination, BasicMapComponent map) {
-		new NutiteqRouteWaiter(destination, STHLM, map, icons[2], icons[2]);
+		new NutiteqRouteWaiter(STHLM, LINKÖPING, map, icons[2], icons[2]);
 	}
 
 	/**
 	 * Markera en punkt på kartan
 	 * 
-	 * @param pointLocation
-	 * @param label
+	 * @param pointLocation Position för punkten WgsPoint
+	 * @param label Namn som syns om man klickar på punkten
 	 */
 	public void addInterestPoint(WgsPoint pointLocation, String label) {
 		PlaceLabel poiLabel = new PlaceLabel(label);
@@ -234,9 +277,9 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Ändrar tillståndet för att markera regioner på kartan
 	 * 
-	 * @param m
+	 * @param m klickbart menuItem
 	 */
-	public void changeAddRegionMode(MenuItem m) {
+	public boolean changeAddRegionMode(MenuItem m) {
 		isInAddMode = !isInAddMode;
 		/**
 		 * När klar med markering nollställ listan med punkter
@@ -251,8 +294,8 @@ public class MapActivity extends Activity implements Observer,
 		else {
 			m.setTitle("Markera region");
 			if (!points.isEmpty()) {
-				WgsPoint[] p = (WgsPoint[]) points.toArray(new WgsPoint[points
-						.size()]);
+				WgsPoint[] p = (WgsPoint[]) (points)
+						.toArray(new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
 			}
 			/**
@@ -264,21 +307,25 @@ public class MapActivity extends Activity implements Observer,
 				mapComponent.removePlaces(corners);
 			}
 		}
+		return true;
 	}
+
 	/**
 	 * Ändrar tillstånd för GPS:en
 	 * 
-	 * @param m
+	 * @param m klickbart menuItem
 	 */
-	public void gpsStatus(MenuItem m) {
-		if (gpsOnOff) {
+
+	public boolean gpsStatus(MenuItem m) {
+		gpsOnOff = !gpsOnOff;
+		if (!gpsOnOff) {
 			m.setTitle("GPS/off");
 			activateGPS(gpsOnOff);
 		} else {
 			m.setTitle("GPS/on");
 			activateGPS(gpsOnOff);
 		}
-		gpsOnOff = !gpsOnOff;
+		return true;
 	}
 
 	/**
