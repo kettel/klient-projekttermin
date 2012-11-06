@@ -8,7 +8,7 @@ public class Assignment implements ModelInterface{
 	
 	private String databasetRepresentation = "assignment";
 	private long id = -1;
-	
+
 	private String name;
 	private long lat;
 	private long lon;
@@ -49,6 +49,23 @@ public class Assignment implements ModelInterface{
 		this.siteName=siteName;
 	}
 	
+	/**
+	 * Konstruktor för att återskapa ett meddelande från databasen med ett Id som
+	 * hämtas från databasen
+	 * @param id
+	 * @param name
+	 * @param lat
+	 * @param lon
+	 * @param receiver
+	 * @param sender
+	 * @param assignmentDescription
+	 * @param timeSpan
+	 * @param assignmentStatus
+	 * @param cameraImage
+	 * @param streetName
+	 * @param siteName
+	 */
+
 	public Assignment(long id, String name, long lat, long lon,
 			String receiver, String sender, String assignmentDescription,
 			String timeSpan, String assignmentStatus, Bitmap cameraImage,
@@ -66,8 +83,6 @@ public class Assignment implements ModelInterface{
 		this.streetName = streetName;
 		this.siteName = siteName;
 	}
-
-
 
 	public Assignment() {
 		// TODO Auto-generated constructor stub

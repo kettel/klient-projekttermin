@@ -90,7 +90,6 @@ public class Contact implements ModelInterface {
 	}
 
 	public String getDatabaseRepresentation() {
-		// TODO Auto-generated method stub
 		return databasetRepresentation;
 	}
 

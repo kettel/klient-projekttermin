@@ -68,6 +68,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
         values.put(KEY_MESSAGE_CONTENT, message.getMessageContent().toString());
         values.put(KEY_RECEIVER, message.getReciever().toString());
         values.put(KEY_MESSAGE_TIMESTAMP, Long.toString(message.getMessageTimeStamp()));
+
         // Lägg till isRead som en String, TRUE om true, FALSE om false.
         values.put(KEY_IS_READ, (message.isRead()? "TRUE" : "FALSE"));
         
