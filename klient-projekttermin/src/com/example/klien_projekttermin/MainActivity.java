@@ -41,7 +41,7 @@ public class MainActivity extends ListActivity {
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
 		// Testa DB
-		testDBPartial(this);
+		testDBFull(this);
 		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
@@ -117,7 +117,9 @@ public class MainActivity extends ListActivity {
 	public void testDBFull(Context context){
 		Database db = new Database();
 		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
-		Bitmap fakeImage = null;
+		int w = 600, h = 600;
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+		Bitmap fakeImage = Bitmap.createBitmap(w, h, conf);
 		db.addToDB(new Assignment("Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats"),context);
 		db.addToDB(new MessageModel("Hejsan svejsan jättemycket!!!", "Kalle"),context);
 
@@ -132,6 +134,8 @@ public class MainActivity extends ListActivity {
 
 			// Skriv det uppdaterade objektet till databasen
 			db.updateModel(messUpdate,context);
+			
+			db.deleteFromDB(messUpdate, context);
 		}
 
 		testList = db.getAllFromDB(new Contact(),context);
@@ -140,6 +144,8 @@ public class MainActivity extends ListActivity {
 
 			Contact contUpd = new Contact(cont.getId(),"Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Dålig lirare");
 			db.updateModel(contUpd,context);
+			
+			db.deleteFromDB(contUpd, context);
 		}
 
 
@@ -150,6 +156,8 @@ public class MainActivity extends ListActivity {
 			Assignment assUpd = new Assignment(ass.getId(),"Katt i hav", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats");
 
 			db.updateModel(assUpd,context);
+			
+			db.deleteFromDB(assUpd, context);
 		}
 
 		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel(),context));
@@ -160,7 +168,6 @@ public class MainActivity extends ListActivity {
 	public void testDBPartial(Context context){
 		Database db = new Database();
 		int w = 600, h = 600;
-
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
 		Bitmap fakeImage = Bitmap.createBitmap(w, h, conf);
 		db.addToDB(new Assignment("Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats"),context);
