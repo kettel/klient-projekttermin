@@ -1,15 +1,15 @@
 package messageFunction;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import models.MessageModel;
 import models.ModelInterface;
 
-import com.example.klien_projekttermin.MainActivity;
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.R.layout;
-import com.example.klien_projekttermin.R.menu;
 
 import database.Database;
 
@@ -21,25 +21,34 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class DisplayOfConversation extends Activity {
 
-	private ListView ListOfConversationInputs;
-	private String [] conversationContent;
+	private ListView listViewOfConversationInputs;
+	private TextView message;
+	private List<ModelInterface> listOfMassageModels;
+	private String [] conversationContentArray;
+	private HashMap<String, Long> messageAndIdMap = new HashMap<String, Long>();
 	private String chosenContact;
+	private Database dataBase;
+	private String user = "Steffe";
+	private MessageModel messageObject;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_of_conversation);
 
+		message = (TextView) this.findViewById(R.id.messageBox);
+
+		dataBase = new Database();
 		//Metoden testar om någonting skickades med från Inbox och skriver i så fall ut det till strängen chosenContact
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -65,12 +74,12 @@ public class DisplayOfConversation extends Activity {
 	 * Tillsätt lyssnare i meddelandelistan som lyssnar efter tryckningar på listobjekt
 	 */
 	public void addOnClickListener(){
-		ListOfConversationInputs.setOnItemClickListener(new OnItemClickListener() {
+		listViewOfConversationInputs.setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-				Toast.makeText(getApplicationContext(),conversationContent[position], Toast.LENGTH_LONG).show();
-				openMessage(conversationContent[position]);
+				Toast.makeText(getApplicationContext(),conversationContentArray[position], Toast.LENGTH_LONG).show();
+				openMessage(conversationContentArray[position]);
 			}
 		});
 	}
@@ -80,11 +89,11 @@ public class DisplayOfConversation extends Activity {
 	 */
 	public void addOnLongClickListener(){
 		//Skapar en lyssnare som lyssnar efter långa intryckningar 
-		ListOfConversationInputs.setOnItemLongClickListener(new OnItemLongClickListener() {
+		listViewOfConversationInputs.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				showEraseOption();
+				showEraseOption(position);
 				return true;
 			}
 		});	
@@ -97,24 +106,25 @@ public class DisplayOfConversation extends Activity {
 	 */
 	public void loadConversation(String contact){
 
-		conversationContent = getInformationFromDatabase(contact);
+		conversationContentArray = getInformationFromDatabase(contact);
 
 		// First paramenter - Context
 		// Second parameter - Layout for the row
 		// Third parameter - ID of the TextView to which the data is written
 		// Forth - the Array of data
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1, conversationContent);
+				android.R.layout.simple_list_item_1, android.R.id.text1, conversationContentArray);
 
 		// Assign adapter to ListView
-		ListOfConversationInputs.setAdapter(adapter); 
+		listViewOfConversationInputs.setAdapter(adapter); 
 	}
 
 	/*
 	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort en konversation
 	 * Metoden ger också användaren två valmöjligheter, JA eller Avbryt
 	 */
-	public void showEraseOption(){
+	public void showEraseOption(int position){
+		final int messageNumber = position;
 
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("RADERA?");
@@ -123,7 +133,7 @@ public class DisplayOfConversation extends Activity {
 
 			//Om användaren trycker på ja så körs metoden eraseMessage()
 			public void onClick(DialogInterface dialog, int which) {
-				eraseMessage();
+				eraseMessage(conversationContentArray[messageNumber]);
 			}
 		});
 		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "AVBRYT", new DialogInterface.OnClickListener() {
@@ -136,8 +146,19 @@ public class DisplayOfConversation extends Activity {
 
 	}
 
-	public void eraseMessage(){
-			// Peka på ett objekt i databasen och ta bort det.
+	public void eraseMessage(String messageText){
+		MessageModel messageModelInList;
+		long id = messageAndIdMap.get(messageText);
+
+		for (int i = 0; i < listOfMassageModels.size(); i++) {
+			messageModelInList = (MessageModel) listOfMassageModels.get(i);
+
+			if(messageModelInList.getId()==id){
+				dataBase.deleteFromDB(messageModelInList, getApplicationContext());
+				break;
+			}
+		}
+		loadConversation(chosenContact);
 	}
 
 	/*
@@ -152,43 +173,51 @@ public class DisplayOfConversation extends Activity {
 	}
 
 	public String[] getInformationFromDatabase(String Contact){
-		Database dataBase = new Database();
 		MessageModel messageModel;
-		List<ModelInterface> conversationContent;
-		String[] arrayOfConversationContent;
-		Object[] objectsInSetOfConversations;
-		HashSet<String> setOfConversations = new HashSet<String>();
+		String[] stringArrayOfConversationContent;
+		LinkedList<String> listOfConversations = new LinkedList<String>();
+		Iterator<String> listIterator;
 
 
 		//Hämtar en lista med alla messagemodels som finns i databasen.
-		conversationContent = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
-
+		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
+		
 		//		Den listview som kontakterna kommerpresenteras i
-		//		Toast.makeText(getApplicationContext(),"HÄR ÄR DU", Toast.LENGTH_LONG).show();
-
-		ListOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
+		listViewOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
 		//		//String array �ver anv�ndare
 
 		// Sorterar ut meddelanden kopplade till den person man tryckt på.
-		for (int i = 0; i < conversationContent.size(); i++) {
-			messageModel = (MessageModel) conversationContent.get(i);
+		for (int i = 0; i < listOfMassageModels.size(); i++) {
+			messageModel = (MessageModel) listOfMassageModels.get(i);
 
 			if(messageModel.getReciever().toString().equals(Contact)){
-				setOfConversations.add(messageModel.getMessageContent().toString());
+				listOfConversations.add(messageModel.getMessageContent().toString());
+				messageAndIdMap.put(messageModel.getMessageContent().toString(), messageModel.getId());
 			}
 		}
-
+		
 		//Skapar en string[] som är lika lång som listan som hämtades.
-		arrayOfConversationContent = new String[setOfConversations.size()];
-		objectsInSetOfConversations = new Object[setOfConversations.size()];
-		objectsInSetOfConversations = setOfConversations.toArray();
-
-		for (int i = 0; i < objectsInSetOfConversations.length; i++) {
-			arrayOfConversationContent[i] = objectsInSetOfConversations[i].toString();
+		stringArrayOfConversationContent = new String[listOfConversations.size()];
+		listIterator = listOfConversations.descendingIterator();
+		for (int i = 0; i < listOfConversations.size(); i++) {
+			stringArrayOfConversationContent[i] = listIterator.next();
 		}
-
-		return arrayOfConversationContent;
+		
+		return stringArrayOfConversationContent;
 	}
 
+	public void sendMessage(View v){
+		messageObject = new MessageModel(user+": "+message.getText().toString(), chosenContact); 
 
+		//Sparar messageObject i databasen
+		dataBase.addToDB(messageObject,getApplicationContext());
+		
+		message.clearFocus();
+		message.clearComposingText();
+//		message.
+		
+		loadConversation(chosenContact);
+
+		//Skicka meddelande till server
+	}
 }

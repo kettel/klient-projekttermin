@@ -13,5 +13,4 @@ public interface ModelInterface {
 	 * @return
 	 */
 	public long getId();
-	
 }

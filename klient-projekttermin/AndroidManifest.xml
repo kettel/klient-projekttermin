@@ -47,7 +47,7 @@
         <activity
             android:name="messageFunction.DisplayOfConversation"
             android:label="@string/title_activity_display_of_conversation"
-            android:windowSoftInputMode="adjustPan" >
+            >
         </activity>
         <activity
             android:name="messageFunction.DisplayMessage"

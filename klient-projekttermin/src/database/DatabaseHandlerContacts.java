@@ -129,4 +129,9 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
                 new String[] { String.valueOf(contact.getId()) });
         db.close();
 	}
+
+	public void updateModel(Contact m) {
+		// TODO Auto-generated method stub
+		
+	}
 }

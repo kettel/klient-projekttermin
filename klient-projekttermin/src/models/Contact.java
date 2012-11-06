@@ -50,8 +50,6 @@ public class Contact implements ModelInterface {
 		this.contactComment = contactComment;
 	}
 
-
-
 	public String getContactName(){
 		return contactName;
 	}

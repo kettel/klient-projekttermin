@@ -1,49 +1,32 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="470dp"
-        android:orientation="horizontal"
-        android:layout_gravity="top"
-        android:gravity="top">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
         <ListView
             android:id="@+id/displayOfConversation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </ListView>
-        
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="bottom"
-        android:gravity="bottom"
-        android:orientation="horizontal" >
-
+    
         <EditText
             android:id="@+id/messageBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ems="10"
-            android:inputType="textMultiLine" >
-
-            <requestFocus />
+            android:inputType="textMultiLine"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/sendButton" >
         </EditText>
 
         <Button
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
             android:onClick="sendMessage"
-            android:text="@string/sendMessage" />
-    </LinearLayout>
+            android:text="@string/sendMessage"
+            android:layout_alignParentBottom="true" 
+            android:layout_alignParentRight="true"/>
 
-</LinearLayout>
+</RelativeLayout>

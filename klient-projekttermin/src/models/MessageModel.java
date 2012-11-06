@@ -50,7 +50,6 @@ public class MessageModel implements ModelInterface {
 	 * @param reciever
 	 * @param timeStamp
 	 */
-
 	public MessageModel(long id, String messageContent, String reciever,
 			long messageTimeStamp, boolean isRead) {
 		this.id = id;
@@ -85,4 +84,3 @@ public class MessageModel implements ModelInterface {
 		return isRead;
 	}
 }
-
