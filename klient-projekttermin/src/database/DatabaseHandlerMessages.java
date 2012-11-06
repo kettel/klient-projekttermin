@@ -54,6 +54,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
  
         // Skapa sedan databasen igen
         onCreate(db);
+        
     }
     
     /**
@@ -98,6 +99,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(countQuery, null);
         int count = cursor.getCount();
         cursor.close();
+        db.close();
         return count;
 	}
 	
@@ -115,7 +117,6 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
  
         // Loopa igenom alla rader och lägg till dem i listan 
-        // TODO: Få ordning på BLOB, dvs hämta och dona med bild.
         
         if (cursor.moveToFirst()) {
             do {
@@ -127,13 +128,25 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
                 messageList.add(message);
             } while (cursor.moveToNext());
         }
+        
+        cursor.close();
+        db.close();
  		
         // Returnera meddelandelistan
 		return messageList;
 	}
 
 	public void updateModel(MessageModel m) {
-		// TODO Auto-generated method stub
+		SQLiteDatabase db = this.getReadableDatabase();
 		
+		String UPDATE_MESSAGES = "UPDATE " + TABLE_MESSAGES + " SET "
+        		+ KEY_MESSAGE_CONTENT + " = \""+ m.getMessageContent() + "\" ,"
+                + KEY_RECEIVER + " = \""+ m.getReciever() + "\" ,"
+                + KEY_IS_READ + " = \""+ (m.isRead()? "TRUE" : "FALSE") + "\" "
+                + "WHERE " + KEY_ID + " = " + Long.toString(m.getId());
+		
+        db.execSQL(UPDATE_MESSAGES);
+        
+        db.close();
 	}
 }

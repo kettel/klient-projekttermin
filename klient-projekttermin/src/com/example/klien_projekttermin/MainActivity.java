@@ -41,7 +41,7 @@ public class MainActivity extends ListActivity {
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
 		// Testa DB
-		testDB(this);
+		testDBPartial(this);
 		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
@@ -114,7 +114,7 @@ public class MainActivity extends ListActivity {
 		return true;
 	}
 	
-	public void testDB(Context context){
+	public void testDBFull(Context context){
 		Database db = new Database();
 		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
 		Bitmap fakeImage = null;
@@ -155,6 +155,28 @@ public class MainActivity extends ListActivity {
 		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel(),context));
 		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(),context));
 		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(),context));
+	}
+	
+	public void testDBPartial(Context context){
+		Database db = new Database();
+		db.addToDB(new MessageModel("Hejsan svejsan jättemycket!!!", "Kalle"),context);
+
+		// Testa att hämta från databasen
+		List<ModelInterface> testList = db.getAllFromDB(new MessageModel(),context);
+		for (ModelInterface m : testList) {
+			// Hämta gammalt meddelande
+			MessageModel mess = (MessageModel) m;
+			Log.d("DB",mess.getId() + "-> " + mess.getMessageContent() + "; " +mess.getReciever() + "\n");
+			MessageModel messUpd = new MessageModel(mess.getId(),"JUHUU","PULL",mess.getMessageTimeStamp(),mess.isRead());
+			db.updateModel(messUpd, context);
+		}
+		testList = db.getAllFromDB(new MessageModel(),context);
+		Log.d("DB","*********** UPPDATERAD LISTA ************");
+		for (ModelInterface m : testList) {
+			// Hämta gammalt meddelande
+			MessageModel mess = (MessageModel) m;
+			Log.d("DB",mess.getId() + "-> " + mess.getMessageContent() + "; " +mess.getReciever() + "\n");
+		}
 	}
 	
 
