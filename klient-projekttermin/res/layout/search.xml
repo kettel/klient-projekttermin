@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
- <AutoCompleteTextView xmlns:android="http://schemas.android.com/apk/res/android"
+<map.CustomACTV xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ab_Search"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:hint="Search" />
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:completionThreshold="1"
+    android:hint="Search"
+    android:singleLine="true" />

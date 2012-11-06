@@ -9,14 +9,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.ListView;
+import android.widget.ArrayAdapter;
 import android.widget.SearchView;
-import android.widget.SimpleAdapter;
 import android.widget.ZoomControls;
 
 import com.example.klien_projekttermin.R;
@@ -51,9 +51,9 @@ public class MapActivity extends Activity implements Observer,
 	private BasicMapComponent mapComponent;
 	private String[] from = { "line1", "line2" };
 	private int[] to = { android.R.id.text1, android.R.id.text2 };
-	private ListView lv;
+	//private ListView lv;
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
-	private SimpleAdapter sm;
+	private ArrayAdapter<String> sm;
 	private MapView mapView;
 	private ZoomControls zoomControls;
 	private SearchView searchView;
@@ -66,6 +66,8 @@ public class MapActivity extends Activity implements Observer,
 	private static Image[] icons = { Utils.createImage("/res/drawable-hdpi/pin.png"),
 			Utils.createImage("/res/drawable-hdpi/pin_green.png"),
 			Utils.createImage("/res/drawable-hdpi/pos_arrow_liten.png") };
+	private CustomACTV actv;
+	private ArrayList<String> list=new ArrayList<String>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -86,10 +88,6 @@ public class MapActivity extends Activity implements Observer,
 		 * Hämtar listview till sökförslagen samt lägger till en adapter. Lägger
 		 * till en observer på searchSuggestions
 		 */
-		this.lv = (ListView) findViewById(R.id.mylist);
-		this.sm = new SimpleAdapter(this, searchSuggestions.getList(),
-				android.R.layout.simple_list_item_2, from, to);
-		this.lv.setAdapter(sm);
 		this.searchSuggestions.addObserver(this);
 		/**
 		 * Hämtar mapview och lägger till kartan i den
@@ -144,8 +142,38 @@ public class MapActivity extends Activity implements Observer,
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
-		View v=(View)menu.findItem(R.id.menu_search);
-		AutoCompleteTextView actv=(AutoCompleteTextView)v.findViewById(R.id.ab_Search);
+		View v=(View)menu.findItem(R.id.menu_search).getActionView();
+		this.actv=(CustomACTV)v.findViewById(R.id.ab_Search);
+		this.actv.addTextChangedListener(new TextWatcher() {
+			
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub
+				final String temp=s.toString();
+				if (!temp.isEmpty()) {
+					new Thread(new Runnable() {
+						
+						public void run() {
+							// TODO Auto-generated method stub
+							searchSuggestions.updateSearch(temp);
+						}
+					}).start();
+					}
+				
+			}
+			
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		sm=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+		actv.setAdapter(sm);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -258,14 +286,20 @@ public class MapActivity extends Activity implements Observer,
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
-		if (lv.getVisibility()==ListView.GONE) {
-			this.lv.setVisibility(ListView.VISIBLE);
-			this.mapView.setVisibility(MapView.GONE);
-			this.zoomControls.setVisibility(ZoomControls.GONE);
-			this.searchView.setVisibility(SearchView.VISIBLE);
-		}
 		System.out.println("observed");
-		this.sm.notifyDataSetChanged();
+		//sm=new SimpleAdapter(this, searchSuggestions.getList(), android.R.layout.simple_list_item_2, from, to);
+		System.out.println(actv.getAdapter().getCount()+" : "+this.sm.getCount()+" : "+this.list.size());
+		list.clear();
+		((ArrayAdapter<String>)actv.getAdapter()).clear();
+		((ArrayAdapter<String>)this.actv.getAdapter()).notifyDataSetInvalidated();
+		list.addAll(searchSuggestions.getList());
+		((ArrayAdapter<String>)actv.getAdapter()).addAll(list);
+		((ArrayAdapter<String>)this.actv.getAdapter()).notifyDataSetChanged();
+		//this.sm=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+		System.out.println("2");
+		//this.actv.setAdapter(sm);
+		System.out.println("3");
+		this.actv.setFilters(null);	
 	}
 
 	/**
@@ -273,7 +307,7 @@ public class MapActivity extends Activity implements Observer,
 	 * kontrollerna
 	 */
 	public boolean onClose() {
-		lv.setVisibility(ListView.GONE);
+		//lv.setVisibility(ListView.GONE);
 		mapView.setVisibility(MapView.VISIBLE);
 		zoomControls.setVisibility(ZoomControls.VISIBLE);
 		return false;

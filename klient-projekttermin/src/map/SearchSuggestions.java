@@ -16,8 +16,8 @@ import com.nutiteq.services.GeocodingService;
 public class SearchSuggestions extends Observable implements
 		GeocodingResultWaiter {
 
-	private ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();;
-	
+	//private ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+	private ArrayList<String> list=new ArrayList<String>();
 	/**
 	 * Tar in en text och startar en sökning på matchande termer. 
 	 * 
@@ -43,10 +43,11 @@ public class SearchSuggestions extends Observable implements
 			results=10;
 		}
 		for (int i = 0; i < results; i++) {
-			HashMap<String, String> item = new HashMap<String, String>();
-			item.put("line1", kmlPlaces[i].getName());
-			item.put("line2", kmlPlaces[i].getDescription());
-			list.add(item);
+//			HashMap<String, String> item = new HashMap<String, String>();
+//			item.put("line1", kmlPlaces[i].getName());
+//			item.put("line2", kmlPlaces[i].getDescription());
+//			list.add(item);
+			list.add(kmlPlaces[i].getName());
 		}
 		/**
 		 * Notifierar alla observers om att datan har ändrats
@@ -55,7 +56,7 @@ public class SearchSuggestions extends Observable implements
 		notifyObservers();
 	}
 
-	public ArrayList<HashMap<String, String>> getList() {
+	public ArrayList<String> getList() {
 		return list;
 	}
 }

@@ -4,16 +4,17 @@
     <item
         android:id="@+id/menu_search"
         android:actionLayout="@layout/search"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="ifRoom|withText|collapseActionView"
         android:title="Search"/>
-    <item android:id="@+id/menu_deactivate_gps"
-          android:title="GPS/on"
-          android:showAsAction="ifRoom|withText"
-          android:onClick="gpsStatus"
-          />
-    <item android:id="@+id/menu_add_region"
-          android:title="@string/mark_region"
-          android:showAsAction="ifRoom|withText"
-          android:onClick="changeAddRegionMode"
-          />
+    <item
+        android:id="@+id/menu_deactivate_gps"
+        android:onClick="gpsStatus"
+        android:showAsAction="ifRoom|withText"
+        android:title="GPS/on"/>
+    <item
+        android:id="@+id/menu_add_region"
+        android:onClick="changeAddRegionMode"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/mark_region"/>
+
 </menu>
