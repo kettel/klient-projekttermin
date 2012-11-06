@@ -1,13 +1,27 @@
 package map;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
+import models.Assignment;
+import models.ModelInterface;
+
 import routing.NutiteqRouteWaiter;
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,7 +30,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 import android.widget.ZoomControls;
+
 import com.example.klien_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
@@ -35,6 +51,8 @@ import com.nutiteq.ui.ThreadDrivenPanning;
 import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
+
+import database.Database;
 
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för
@@ -72,7 +90,6 @@ public class MapActivity extends Activity implements Observer,
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
-		System.out.println("ON CREATE");
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
@@ -114,11 +131,23 @@ public class MapActivity extends Activity implements Observer,
 		/**
 		 * GPS:en ska vara påslagen vid start
 		 */
+		getDatabaseInformation();
 		activateGPS(gpsOnOff);
 	}
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-	    super.onSaveInstanceState(outState);
+
+	public void getDatabaseInformation() {
+		System.out.println("DATABAS -----------------------------------");
+		Assignment a = new Assignment();
+		Database db = new Database();
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+		Bitmap bmp = Bitmap.createBitmap(2, 23, conf);
+		db.addToDB(new Assignment("dummy", (long)10.0, (long)12.2, "eric", "nicke", "dummy", "12.0.5", "on", bmp, "test", "dummy"), getBaseContext());
+		List<ModelInterface> hej = db.getAllFromDB(a, getBaseContext());
+		a = (Assignment) hej.get(0);
+		long lon = a.getLon();
+		long lat = a.getLat();
+		System.out.println("LAT: " + lat);
+		System.out.println("LON: " + lon);
 	}
 
 	/**
@@ -146,11 +175,28 @@ public class MapActivity extends Activity implements Observer,
 	 * Skapa meny i actionbar
 	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
-		View v=(View)menu.findItem(R.id.menu_search);
-		AutoCompleteTextView actv=(AutoCompleteTextView)v.findViewById(R.id.ab_Search);
-
+		final Menu m = menu;
+		runOnUiThread(new Runnable() {
+			public void run() {
+				MenuInflater inflater = getMenuInflater();
+				inflater.inflate(R.menu.menu, m);
+				MenuItem item = m.findItem(R.id.menu_deactivate_gps);
+				item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						return gpsStatus(item);
+					}
+				});
+				item = m.findItem(R.id.menu_add_region);
+				item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						return changeAddRegionMode(item);
+					}
+				});
+				View v = m.findItem(R.id.menu_search).getActionView();
+				AutoCompleteTextView actv = (AutoCompleteTextView) v
+						.findViewById(R.id.ab_Search);
+			}
+		});
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -162,7 +208,6 @@ public class MapActivity extends Activity implements Observer,
 		new Thread(new Runnable() {
 
 			public void run() {
-				// TODO Auto-generated method stub
 				searchSuggestions.updateSearch(str);
 			}
 		}).start();
@@ -173,12 +218,11 @@ public class MapActivity extends Activity implements Observer,
 	 * Vid sökning dölj allt förutom listview:n med sökresultat.
 	 */
 	public boolean onQueryTextSubmit(String query) {
-		//searchView.setVisibility(SearchView.GONE);
+		// searchView.setVisibility(SearchView.GONE);
 		final String str = query;
 		new Thread(new Runnable() {
 
 			public void run() {
-				// TODO Auto-generated method stub
 				searchSuggestions.updateSearch(str);
 			}
 		}).start();
@@ -212,7 +256,7 @@ public class MapActivity extends Activity implements Observer,
 	 * 
 	 * @param m
 	 */
-	public void changeAddRegionMode(MenuItem m) {
+	public boolean changeAddRegionMode(MenuItem m) {
 		isInAddMode = !isInAddMode;
 		/**
 		 * När klar med markering nollställ listan med punkter
@@ -227,8 +271,8 @@ public class MapActivity extends Activity implements Observer,
 		else {
 			m.setTitle("Markera region");
 			if (!points.isEmpty()) {
-				WgsPoint[] p = (WgsPoint[]) (points).toArray(
-						new WgsPoint[points.size()]);
+				WgsPoint[] p = (WgsPoint[]) (points)
+						.toArray(new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
 			}
 			/**
@@ -240,21 +284,25 @@ public class MapActivity extends Activity implements Observer,
 				mapComponent.removePlaces(corners);
 			}
 		}
+		return true;
+	}
+
 	/**
 	 * Ändrar tillstånd för GPS:en
 	 * 
 	 * @param m
 	 */
 
-	public void gpsStatus(MenuItem m) {
-		if (gpsOnOff) {
+	public boolean gpsStatus(MenuItem m) {
+		gpsOnOff = !gpsOnOff;
+		if (!gpsOnOff) {
 			m.setTitle("GPS/off");
 			activateGPS(gpsOnOff);
 		} else {
 			m.setTitle("GPS/on");
 			activateGPS(gpsOnOff);
 		}
-		gpsOnOff = !gpsOnOff;
+		return true;
 	}
 
 	/**
@@ -262,7 +310,7 @@ public class MapActivity extends Activity implements Observer,
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
-		if (lv.getVisibility()==ListView.GONE) {
+		if (lv.getVisibility() == ListView.GONE) {
 			this.lv.setVisibility(ListView.VISIBLE);
 			this.mapView.setVisibility(MapView.GONE);
 			this.zoomControls.setVisibility(ZoomControls.GONE);

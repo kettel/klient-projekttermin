@@ -6,14 +6,13 @@
         android:actionLayout="@layout/search"
         android:showAsAction="ifRoom|withText"
         android:title="Search"/>
-    <item android:id="@+id/menu_deactivate_gps"
-          android:title="GPS/on"
-          android:showAsAction="ifRoom|withText"
-          android:onClick="gpsStatus"
-          />
-    <item android:id="@+id/menu_add_region"
-          android:title="@string/mark_region"
-          android:showAsAction="ifRoom|withText"
-          android:onClick="changeAddRegionMode"
-          />
+    <item
+        android:id="@+id/menu_deactivate_gps"
+        android:showAsAction="ifRoom|withText"
+        android:title="GPS/on"/>
+    <item
+        android:id="@+id/menu_add_region"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/mark_region"/>
+
 </menu>

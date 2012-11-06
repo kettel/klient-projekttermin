@@ -154,7 +154,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
                 assignmentList.add(assignment);
             } while (cursor.moveToNext());
         }
- 		
+        cursor.close();
+        db.close();
         // Returnera kontaktlistan
         return assignmentList;
     }
