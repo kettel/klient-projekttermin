@@ -107,6 +107,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         if (cursor.moveToFirst()) {
             do {
                 Contact contact = new Contact(
+                		Long.valueOf(cursor.getString(0)),
                 		cursor.getString(1),
                 		Long.valueOf(cursor.getString(2)),
                 		cursor.getString(3),
@@ -120,5 +121,12 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
  		
         // Returnera meddelandelistan
 		return contactList;
+	}
+
+	public void removeContact(Contact contact) {
+		SQLiteDatabase db = this.getWritableDatabase();
+    	db.delete(TABLE_CONTACTS, KEY_ID + " = ?",
+                new String[] { String.valueOf(contact.getId()) });
+        db.close();
 	}
 }

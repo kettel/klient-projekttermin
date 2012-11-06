@@ -47,7 +47,7 @@ public class Inbox extends Activity implements Observer {
 
 	@Override
 	public void onResume(){
-		super.onResume();	
+		super.onResume();
 		loadListOfSenders();
 	}
 	
@@ -76,6 +76,7 @@ public class Inbox extends Activity implements Observer {
 				openConversation(peopleIveBeenTalkingTo[position]);
 			}
 		});
+		
 	}
 
 	/*
@@ -97,7 +98,7 @@ public class Inbox extends Activity implements Observer {
 		HashSet<String> setOfPeople = new HashSet<String>();
 
 		//Hämtar en lista med alla MessageModels som finns lagrade i databasen
-		List<ModelInterface> peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());;
+		List<ModelInterface> peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
 
 		listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
 		//String array över användare

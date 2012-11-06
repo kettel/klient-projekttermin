@@ -62,6 +62,22 @@ public class Database{
 		return returnCount;
 	}
 	
+	public void deleteFromDB(ModelInterface m, Context context){
+		String dbRep = m.getDatabaseRepresentation();
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
+			dha.removeAssignment((Assignment)m);
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
+			dhc.removeContact((Contact)m);
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
+			dhm.removeMessage((MessageModel)m);
+		}
+	}
+	
 	public List<ModelInterface> getAllFromDB(ModelInterface m, Context context){
 		String dbRep = m.getDatabaseRepresentation();
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
