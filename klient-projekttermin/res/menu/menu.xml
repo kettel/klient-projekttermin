@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_search"
-          android:title="@string/map_label"
-          android:showAsAction="ifRoom|withText"
-          android:actionViewClass="android.widget.SearchView"
-          />
-    <item android:id="@+id/menu_deactivate_gps"
-          android:title="GPS/on"
-          android:showAsAction="ifRoom|withText"
-          android:onClick="gpsStatus"
-          />
-    <item android:id="@+id/menu_add_region"
-          android:title="mode"
-          android:showAsAction="ifRoom|withText"
-          android:onClick="changeAddRegionMode"
-          />
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_search"
+        android:actionLayout="@layout/search"
+        android:showAsAction="ifRoom|withText"
+        android:title="Search"/>
+    <item
+        android:id="@+id/menu_deactivate_gps"
+        android:onClick="gpsStatus"
+        android:showAsAction="ifRoom|withText"
+        android:title="GPS/on"/>
+    <item
+        android:id="@+id/menu_add_region"
+        android:onClick="changeAddRegionMode"
+        android:showAsAction="ifRoom|withText"
+        android:title="mode"/>
+
 </menu>
