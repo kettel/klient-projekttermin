@@ -17,11 +17,14 @@ import database.Database;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -35,8 +38,9 @@ public class Inbox extends Activity implements Observer {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
-		
+
 		//Ropar p� en metod som skapar en lista �ver alla kontakter som anv�ndaren har haft en konversation med.
+		loadListOfSenders();
 	}
 
 	@Override
@@ -50,7 +54,16 @@ public class Inbox extends Activity implements Observer {
 		super.onResume();
 		loadListOfSenders();
 	}
-	
+
+	@Override
+	public void onStart(){
+		super.onStart();
+
+		addOnClickListener();
+		addOnLongClickListener();
+
+	}
+
 	/*
 	 * Metoden laddar en ListView med alla kontakter man har haft en konversation med.
 	 * Metoden s�tter ocks� en lyssnare som unders�ker om n�gon trycker p� n�got i listan
@@ -67,8 +80,13 @@ public class Inbox extends Activity implements Observer {
 				android.R.layout.simple_list_item_1, android.R.id.text1, peopleIveBeenTalkingTo);
 
 		//		// Assign adapter to ListView
-		listOfPeopleEngagedInConversation.setAdapter(adapter); 
-		//
+		listOfPeopleEngagedInConversation.setAdapter(adapter); 	
+	}
+
+	/*
+	 * Tillsätt lyssnare i meddelandelistan som lyssnar efter tryckningar på listobjekt
+	 */
+	public void addOnClickListener(){
 		listOfPeopleEngagedInConversation.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -76,7 +94,52 @@ public class Inbox extends Activity implements Observer {
 				openConversation(peopleIveBeenTalkingTo[position]);
 			}
 		});
-		
+	}
+
+	/*
+	 * Tillsätt lyssnare i meddelandelistan som lyssnar efter långa tryckningar på listobjekt
+	 */
+	public void addOnLongClickListener(){
+		//Skapar en lyssnare som lyssnar efter långa intryckningar 
+		listOfPeopleEngagedInConversation.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				showEraseOption();
+				return true;
+			}
+		});	
+	}
+
+	/*
+	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort en konversation
+	 * Metoden ger också användaren två valmöjligheter, JA eller Avbryt
+	 */
+	public void showEraseOption(){
+
+		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.setTitle("RADERA?");
+		alertDialog.setMessage("Vill du ta bort konversation?");
+		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA", new DialogInterface.OnClickListener() {
+
+			//Om användaren trycker på ja så körs metoden eraseMessage()
+			public void onClick(DialogInterface dialog, int which) {
+				eraseConversation();
+			}
+		});
+		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "AVBRYT", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				//Gör inget
+			}
+		});
+
+		alertDialog.show();
+
+	}
+
+	public void eraseConversation(){
+		// Peka på ett objekt i databasen och ta bort det.
 	}
 
 	/*
@@ -114,14 +177,14 @@ public class Inbox extends Activity implements Observer {
 		arrayOfPeopleEngagedInConversation = new String[setOfPeople.size()];
 		objectsInSetOfPeople = new Object[setOfPeople.size()];
 		objectsInSetOfPeople = setOfPeople.toArray();
-		
+
 		for (int i = 0; i < objectsInSetOfPeople.length; i++) {
 			arrayOfPeopleEngagedInConversation[i] = objectsInSetOfPeople[i].toString();
 		}
-		
+
 		return arrayOfPeopleEngagedInConversation;
 	}
-	
+
 	/*
 	 * Skapar ett nytt intent och startar aktiviteten CreateNewMessage
 	 * Metoden skickar ocks� med namnet p� den anv�ndare som �r inloggad p� enheten. 
@@ -129,11 +192,11 @@ public class Inbox extends Activity implements Observer {
 	public void createNewMessage(View v){
 		Intent intent = new Intent(this, CreateNewMessage.class);
 		intent.putExtra("USER", "ANVÄNDARE1");
-        startActivity(intent);
+		startActivity(intent);
 	}
 
 	public void update(Observable observable, Object data) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
