@@ -38,6 +38,9 @@ public class Contact implements ModelInterface {
 
 
 
+	public Contact() {
+	}
+
 	public String getContactName(){
 		return contactName;
 	}

@@ -177,5 +177,10 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         // Returnera antalet assignments
         return returnCount;
     }
+
+	public void updateModel(Assignment m) {
+		// TODO Auto-generated method stub
+		
+	}
     
 }

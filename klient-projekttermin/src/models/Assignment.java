@@ -69,6 +69,10 @@ public class Assignment implements ModelInterface{
 
 
 
+	public Assignment() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getName() {
 		return name;
 	}

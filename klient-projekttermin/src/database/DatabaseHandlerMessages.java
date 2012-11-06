@@ -11,7 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DatabaseHandlerMessages extends SQLiteOpenHelper{
+public class DatabaseHandlerMessages extends SQLiteOpenHelper {
 	// Alla statiska variabler
     // Databas version
     private static final int DATABASE_VERSION = 1;
@@ -130,5 +130,10 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
  		
         // Returnera meddelandelistan
 		return messageList;
+	}
+
+	public void updateModel(MessageModel m) {
+		// TODO Auto-generated method stub
+		
 	}
 }
