@@ -5,7 +5,6 @@ import java.util.Observable;
 import java.util.Observer;
 import routing.NutiteqRouteWaiter;
 import android.app.Activity;
-import android.app.SearchManager;
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
@@ -148,17 +148,8 @@ public class MapActivity extends Activity implements Observer,
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
-
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		searchView = (SearchView) menu.findItem(R.id.menu_search)
-				.getActionView();
-		searchView.setSearchableInfo(searchManager
-				.getSearchableInfo(getComponentName()));
-		/**
-		 * Lägg till lyssnare som lyssnar på sökfältet.
-		 */
-		searchView.setOnCloseListener(this);
-		searchView.setOnQueryTextListener(this);
+		View v=(View)menu.findItem(R.id.menu_search);
+		AutoCompleteTextView actv=(AutoCompleteTextView)v.findViewById(R.id.ab_Search);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -167,7 +158,14 @@ public class MapActivity extends Activity implements Observer,
 	 * Uppdaterar sökförslagen
 	 */
 	public boolean onQueryTextChange(String newText) {
-		searchSuggestions.updateSearch(newText);
+		final String str = newText;
+		new Thread(new Runnable() {
+
+			public void run() {
+				// TODO Auto-generated method stub
+				searchSuggestions.updateSearch(str);
+			}
+		}).start();
 		return true;
 	}
 
@@ -175,12 +173,15 @@ public class MapActivity extends Activity implements Observer,
 	 * Vid sökning dölj allt förutom listview:n med sökresultat.
 	 */
 	public boolean onQueryTextSubmit(String query) {
-		searchView.setVisibility(SearchView.GONE);
-		searchSuggestions.updateSearch(query);
-		lv.setVisibility(ListView.VISIBLE);
-		mapView.setVisibility(MapView.GONE);
-		zoomControls.setVisibility(ZoomControls.GONE);
-		searchView.setVisibility(SearchView.VISIBLE);
+		//searchView.setVisibility(SearchView.GONE);
+		final String str = query;
+		new Thread(new Runnable() {
+
+			public void run() {
+				// TODO Auto-generated method stub
+				searchSuggestions.updateSearch(str);
+			}
+		}).start();
 		return true;
 	}
 
@@ -239,8 +240,6 @@ public class MapActivity extends Activity implements Observer,
 				mapComponent.removePlaces(corners);
 			}
 		}
-	}
-	
 	/**
 	 * Ändrar tillstånd för GPS:en
 	 * 
@@ -263,8 +262,14 @@ public class MapActivity extends Activity implements Observer,
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
-		sm.notifyDataSetChanged();
-		sm.notifyDataSetInvalidated();
+		if (lv.getVisibility()==ListView.GONE) {
+			this.lv.setVisibility(ListView.VISIBLE);
+			this.mapView.setVisibility(MapView.GONE);
+			this.zoomControls.setVisibility(ZoomControls.GONE);
+			this.searchView.setVisibility(SearchView.VISIBLE);
+		}
+		System.out.println("observed");
+		this.sm.notifyDataSetChanged();
 	}
 
 	/**
@@ -296,4 +301,5 @@ public class MapActivity extends Activity implements Observer,
 
 	public void needRepaint(boolean arg0) {
 	}
+
 }
