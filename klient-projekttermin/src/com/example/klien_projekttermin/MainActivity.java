@@ -159,24 +159,31 @@ public class MainActivity extends ListActivity {
 	
 	public void testDBPartial(Context context){
 		Database db = new Database();
-		db.addToDB(new MessageModel("Hejsan svejsan jättemycket!!!", "Kalle"),context);
+		int w = 600, h = 600;
+
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+		Bitmap fakeImage = Bitmap.createBitmap(w, h, conf);
+		db.addToDB(new Assignment("Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats"),context);
 
 		// Testa att hämta från databasen
-		List<ModelInterface> testList = db.getAllFromDB(new MessageModel(),context);
+		List<ModelInterface> testList = db.getAllFromDB(new Assignment(),context);
 		for (ModelInterface m : testList) {
 			// Hämta gammalt meddelande
-			MessageModel mess = (MessageModel) m;
-			Log.d("DB",mess.getId() + "-> " + mess.getMessageContent() + "; " +mess.getReciever() + "\n");
-			MessageModel messUpd = new MessageModel(mess.getId(),"JUHUU","PULL",mess.getMessageTimeStamp(),mess.isRead());
-			db.updateModel(messUpd, context);
+			Assignment ass = (Assignment) m;
+			Log.d("DB",ass.getId() + "-> " + ass.getAssignmentDescription() + "; " + ass.getAssignmentStatus() + "\n");
+			Assignment assUpd = new Assignment(ass.getId(),"Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En hund i ett träd", "2 dagar", "påbörjat", ass.getCameraImage(), "Alstättersgata", "Lekplats");
+			db.updateModel(assUpd, context);
 		}
-		testList = db.getAllFromDB(new MessageModel(),context);
+		testList = db.getAllFromDB(new Assignment(),context);
 		Log.d("DB","*********** UPPDATERAD LISTA ************");
 		for (ModelInterface m : testList) {
 			// Hämta gammalt meddelande
-			MessageModel mess = (MessageModel) m;
-			Log.d("DB",mess.getId() + "-> " + mess.getMessageContent() + "; " +mess.getReciever() + "\n");
+			Assignment ass = (Assignment) m;
+			Log.d("DB",ass.getId() + "-> " + ass.getAssignmentDescription() + "; " + ass.getAssignmentStatus() + "\n");
+			db.deleteFromDB(ass, context);
 		}
+		testList = db.getAllFromDB(new Assignment(),context);
+		Log.d("DB","Storlek: " + testList.size());
 	}
 	
 

@@ -15,8 +15,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.text.format.Time;
-import android.util.Log;
 
 public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	// Alla statiska variabler
@@ -159,6 +157,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
  		
+        cursor.close();
+        db.close();
         // Returnera kontaktlistan
         return assignmentList;
     }
@@ -173,14 +173,31 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(countQuery, null);
         int returnCount = cursor.getCount();
         cursor.close();
- 
+        db.close();
         // Returnera antalet assignments
         return returnCount;
     }
 
-	public void updateModel(Assignment m) {
-		// TODO Auto-generated method stub
+	public void updateModel(Assignment ass) {
+		SQLiteDatabase db = this.getReadableDatabase();
 		
+		String UPDATE_ASSIGNMENT = "UPDATE " + TABLE_ASSIGNMENTS + " SET "
+        		+ KEY_ASSIGNMENTDESCRIPTION + " = \"" + ass.getAssignmentDescription() + "\", "
+        		+ KEY_ASSIGNMENTSTATUS + " = \"" + ass.getAssignmentStatus() +"\", "
+        		+ KEY_CAMERAIMAGE + " = \"" + ass.getCameraImage() + "\", "
+        		+ KEY_LAT + " = \"" + Long.toString(ass.getLat()) + "\", "
+        		+ KEY_LON + " = \"" + Long.toString(ass.getLon()) + "\", "
+        		+ KEY_NAME + " = \"" + ass.getName() + "\", "
+        		+ KEY_RECEIVER + " = \"" + ass.getReceiver() + "\", "
+        		+ KEY_SENDER + " = \"" + ass.getSender() + "\", "
+        		+ KEY_SITENAME + " = \"" + ass.getSiteName() + "\", "
+        		+ KEY_STREETNAME + " = \"" + ass.getStreetName() + "\", "
+        		+ KEY_TIMESPAN + " = \"" + ass.getTimeSpan() + "\" "
+        		+ "WHERE " + KEY_ID + " = " + ass.getId();
+        
+        db.execSQL(UPDATE_ASSIGNMENT);
+        
+        db.close();
 	}
     
 }

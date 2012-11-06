@@ -135,7 +135,8 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
         // Returnera meddelandelistan
 		return messageList;
 	}
-
+	
+	
 	public void updateModel(MessageModel m) {
 		SQLiteDatabase db = this.getReadableDatabase();
 		
