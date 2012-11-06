@@ -2,18 +2,23 @@ package routing;
 
 import com.nutiteq.services.YourNavigationDirections;
 
-
+/**
+ * Startar en ruttberäkning utifrån nutiteqwatier:ns egenskaper
+ * 
+ * @author nicklas
+ *
+ */
 public class Routingstarter implements Runnable {
 	private final NutiteqRouteWaiter nutiteqRouteWaiter;
-//	private MapApplication app;
 
 	public Routingstarter(NutiteqRouteWaiter nutiteqRouteWaiter) {
 		this.nutiteqRouteWaiter =nutiteqRouteWaiter;
 	}
 
+	/**
+	 * Kör en ruttberäkning
+	 */
 	public void run() {
-
-		System.out.println("RUN IN ROUTIGN STARTER");
 		new YourNavigationDirections(nutiteqRouteWaiter,
 				nutiteqRouteWaiter.getStartCoordinates(),
 				nutiteqRouteWaiter.getEndCoordinates(),
