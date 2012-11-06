@@ -1,26 +1,15 @@
 package com.example.klien_projekttermin;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
 import logger.LogViewer;
 import logger.logger;
-import models.Assignment;
-import models.Contact;
-import models.MessageModel;
-import models.ModelInterface;
-
-import database.Database;
-
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.format.Time;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,7 +35,7 @@ public class MainActivity extends ListActivity {
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				Intent myIntent;
+//				Intent myIntent;
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:

@@ -8,7 +8,6 @@ import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
 import android.content.Context;
-import android.util.Log;
 
 /**
  * En klass med metoder för Create, Remove, Update, Delete (CRUD)
