@@ -84,6 +84,10 @@ public class Assignment implements ModelInterface{
 		this.siteName = siteName;
 	}
 
+	public Assignment() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getName() {
 		return name;
 	}
