@@ -16,33 +16,38 @@ public class CommunicationModule {
 	private Gson gson = new Gson();
 	private String transmisson = null;
 	private logger comLog = null;
-	private boolean acceptTransmisson;
+//	private ClientToServerTransmisson ClientToServer = null;
 	//konstruktorn
-	public CommunicationModule(logger comLog, boolean acceptTransmisson){
+	public CommunicationModule(logger comLog,MessageModel message){
 		this.comLog = comLog;
-		this.acceptTransmisson = acceptTransmisson;
+//		ClientToServer = new ClientToServerTransmisson();
+		ClientToServerTransmisson ClientToServer = new ClientToServerTransmisson();
+		ClientToServer.sendTransmisson(transmisson);
+		System.out.println("baja");
+		ClientToServer.start();
 	}
 
 	public void sendMessage(MessageModel message){
-		transmisson = gson.toJson(message);
-		ClientToServerTransmisson messageToServer = new ClientToServerTransmisson(transmisson);
-		messageToServer.execute(transmisson);
-
+//		transmisson = gson.toJson(message);
+//		ClientToServer.sendTransmisson(transmisson);
+		
+//		ClientToServerTransmisson messageToServer = new ClientToServerTransmisson(transmisson);
+//		messageToServer.execute(transmisson);
 	}
 
 	public void sendAssignment(Assignment assignment){
-
 		transmisson = gson.toJson(assignment);
-		ClientToServerTransmisson assignmentToServer = new ClientToServerTransmisson(transmisson);
-		assignmentToServer.execute(transmisson);
-
+//		ClientToServerTransmisson assignmentToServer = new ClientToServerTransmisson(transmisson);
+//		assignmentToServer.execute(transmisson);
 	}
 
 	public void sendContact (Contact contact){
 		transmisson = gson.toJson(contact);
-		ClientToServerTransmisson contactToServer = new ClientToServerTransmisson(transmisson);
-		contactToServer.execute(transmisson);
+//		ClientToServerTransmisson contactToServer = new ClientToServerTransmisson(transmisson);
+//		contactToServer.execute(transmisson);
 	}
+	
+	
 
 
 
