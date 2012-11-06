@@ -11,7 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DatabaseHandlerMessages extends SQLiteOpenHelper{
+public class DatabaseHandlerMessages extends SQLiteOpenHelper {
 	// Alla statiska variabler
     // Databas version
     private static final int DATABASE_VERSION = 1;
@@ -54,6 +54,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
  
         // Skapa sedan databasen igen
         onCreate(db);
+        
     }
     
     /**
@@ -67,6 +68,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         values.put(KEY_MESSAGE_CONTENT, message.getMessageContent().toString());
         values.put(KEY_RECEIVER, message.getReciever().toString());
         values.put(KEY_MESSAGE_TIMESTAMP, Long.toString(message.getMessageTimeStamp()));
+
         // Lägg till isRead som en String, TRUE om true, FALSE om false.
         values.put(KEY_IS_READ, (message.isRead()? "TRUE" : "FALSE"));
         
@@ -98,6 +100,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         Cursor cursor = db.rawQuery(countQuery, null);
         int count = cursor.getCount();
         cursor.close();
+        db.close();
         return count;
 	}
 	
@@ -115,7 +118,6 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
         Cursor cursor = db.rawQuery(selectQuery, null);
  
         // Loopa igenom alla rader och lägg till dem i listan 
-        // TODO: Få ordning på BLOB, dvs hämta och dona med bild.
         
         if (cursor.moveToFirst()) {
             do {
@@ -127,8 +129,26 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper{
                 messageList.add(message);
             } while (cursor.moveToNext());
         }
+        
+        cursor.close();
+        db.close();
  		
         // Returnera meddelandelistan
 		return messageList;
+	}
+	
+	
+	public void updateModel(MessageModel m) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		String UPDATE_MESSAGES = "UPDATE " + TABLE_MESSAGES + " SET "
+        		+ KEY_MESSAGE_CONTENT + " = \""+ m.getMessageContent() + "\" ,"
+                + KEY_RECEIVER + " = \""+ m.getReciever() + "\" ,"
+                + KEY_IS_READ + " = \""+ (m.isRead()? "TRUE" : "FALSE") + "\" "
+                + "WHERE " + KEY_ID + " = " + Long.toString(m.getId());
+		
+        db.execSQL(UPDATE_MESSAGES);
+        
+        db.close();
 	}
 }

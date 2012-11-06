@@ -60,6 +60,11 @@ public class Database{
 		return returnCount;
 	}
 	
+	/**
+	 * Ta bort ett objekt från databasen
+	 * @param m	ModelInterface	Det objekt som önskas tas bort
+	 * @param context
+	 */
 	public void deleteFromDB(ModelInterface m, Context context){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
@@ -76,6 +81,12 @@ public class Database{
 		}
 	}
 	
+	/**
+	 * Hämta alla poster i databasen för inskickad modell.
+	 * @param m	ModelInterface	Modellen styr från vilken databas data hämtas
+	 * @param context
+	 * @return	List<ModelInterface>	Alla objekt från vald databas
+	 */
 	public List<ModelInterface> getAllFromDB(ModelInterface m, Context context){
 		String dbRep = m.getDatabaseRepresentation();
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
@@ -92,5 +103,28 @@ public class Database{
 			returnList = dhm.getAllMessages();
 		}
 		return returnList;
+	}
+	
+	/**
+	 * Uppdatera värden för ett objekt i databasen
+	 * @param m	ModelInterface	Det uppdaterade objektet 
+	 * 							(OBS! Måste ha samma Id-nummer som
+	 * 							det objekt det ska ersätta)
+	 * @param context
+	 */
+	public void updateModel(ModelInterface m, Context context) {
+		String dbRep = m.getDatabaseRepresentation();
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
+			dha.updateModel((Assignment)m);
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
+			dhc.updateModel((Contact)m);
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
+			dhm.updateModel((MessageModel)m);
+		}
 	}
 }

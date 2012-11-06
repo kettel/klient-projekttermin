@@ -87,7 +87,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         Cursor cursor = db.rawQuery(countQuery, null);
         int count = cursor.getCount();
         cursor.close();
-        
+        db.close();
         return count;
 	}
 
@@ -116,7 +116,8 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
                 contactList.add(contact);
             } while (cursor.moveToNext());
         }
- 		
+ 		cursor.close();
+ 		db.close();
         // Returnera meddelandelistan
 		return contactList;
 	}
@@ -125,6 +126,23 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
 		SQLiteDatabase db = this.getWritableDatabase();
     	db.delete(TABLE_CONTACTS, KEY_ID + " = ?",
                 new String[] { String.valueOf(contact.getId()) });
+        db.close();
+	}
+
+	public void updateModel(Contact c) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		String UPDATE_CONTACTS = "UPDATE " + TABLE_CONTACTS + " SET "
+        		+ KEY_CONTACT_NAME + " = \"" + c.getContactName() + "\", "
+                + KEY_PH_NO + " = \"" + c.getContactPhoneNumber() + "\", "
+                + KEY_CLEARANCE_LEVEL + " = \"" +c.getContactClearanceLevel()  + "\", "
+                + KEY_EMAIL + " = \"" + c.getContactEmail() + "\", "
+                + KEY_CLASSIFICATION + " = \"" + c.getContactClassification() + "\", "
+                + KEY_COMMENT + " = \"" + c.getContactComment() + "\" "
+                + "WHERE " + KEY_ID + " = " + Long.toString(c.getId());
+		
+        db.execSQL(UPDATE_CONTACTS);
+        
         db.close();
 	}
 }

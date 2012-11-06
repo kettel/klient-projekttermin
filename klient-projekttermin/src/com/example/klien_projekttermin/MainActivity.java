@@ -3,7 +3,6 @@ package com.example.klien_projekttermin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import logger.LogViewer;
 import logger.logger;
 import android.app.ListActivity;
@@ -28,7 +27,6 @@ public class MainActivity extends ListActivity {
 		String[] from = { "line1", "line2" };
 		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-		
 		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));

@@ -13,6 +13,7 @@ public class MessageModel implements ModelInterface {
 	private String reciever;
 	private long messageTimeStamp;
 	
+	
 	/**
 	 * Tom konstruktor. Används för att hämta från databasen.
 	 */

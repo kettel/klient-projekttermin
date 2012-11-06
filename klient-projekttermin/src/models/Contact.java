@@ -38,6 +38,9 @@ public class Contact implements ModelInterface {
 
 
 
+	public Contact() {
+	}
+
 	public String getContactName(){
 		return contactName;
 	}
@@ -87,7 +90,6 @@ public class Contact implements ModelInterface {
 	}
 
 	public String getDatabaseRepresentation() {
-		// TODO Auto-generated method stub
 		return databasetRepresentation;
 	}
 
