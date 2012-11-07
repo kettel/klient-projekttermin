@@ -32,7 +32,8 @@ import android.widget.SimpleAdapter;
 public class MainActivity extends ListActivity {
 
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-
+	public CommunicationModule Communicaton = new CommunicationModule(new logger(getApplicationContext(), "comlog"));
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,23 +56,19 @@ public class MainActivity extends ListActivity {
 				switch (arg2) {
 				case 0:
 					try {
-						CommunicationModule testCom = new CommunicationModule(new logger(getApplicationContext(), "comlog"),new MessageModel("Arne har gått vilse i skogen. Arne Är en äldre man i 80 års oldern och trors ha på sig en röd jacka","vilse i skogen gruppen"));
-//						testCom.sendMessage(new MessageModel("Arne har gått vilse i skogen. Arne Är en äldre man i 80 års oldern och trors ha på sig en röd jacka","vilse i skogen gruppen"));
-
+						Communicaton.sendMessage(new MessageModel("bla bla this is a test message", "some username I think :LOL"));
 					} catch (Exception e) {
 					}
-					// myIntent= new Intent(from.this,
-					// to.class);
 					break;
+					
 				case 1:
-					// myIntent= new Intent(from.this,
-					// to.class);
+					
 					break;
 				case 2:
-					// myIntent= new Intent(from.this,
-					// to.class);
+					
 					break;
 				case 3:
+					
 					try {
 						openLoggerIntent.putExtra(LOGCONTENT,testlogger.readFromLog());
 						startActivity(openLoggerIntent);
