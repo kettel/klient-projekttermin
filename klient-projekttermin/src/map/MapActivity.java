@@ -9,35 +9,36 @@ import models.Assignment;
 import models.ModelInterface;
 import routing.NutiteqRouteWaiter;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.ZoomControls;
+
 import com.example.klien_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
+import com.nutiteq.components.KmlPlace;
 import com.nutiteq.components.Place;
 import com.nutiteq.components.PlaceIcon;
 import com.nutiteq.components.PlaceLabel;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.listeners.MapListener;
+import com.nutiteq.location.LocationListener;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
 import com.nutiteq.location.NutiteqLocationMarker;
@@ -47,6 +48,7 @@ import com.nutiteq.ui.ThreadDrivenPanning;
 import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
+
 import database.Database;
 
 /**
@@ -56,11 +58,10 @@ import database.Database;
  * @author nicklas
  * 
  */
-public class MapActivity extends Activity implements Observer, MapListener,Runnable {
+public class MapActivity extends Activity implements Observer, MapListener,
+		Runnable, OnItemClickListener {
 
 	private BasicMapComponent mapComponent;
-	private String[] from = { "line1", "line2" };
-	private int[] to = { android.R.id.text1, android.R.id.text2 };
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
 	private ArrayAdapter<String> sm;
 	private MapView mapView;
@@ -77,7 +78,8 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 			Utils.createImage("/res/drawable-hdpi/pos_arrow_liten.png") };
 	private EditText actv;
 	private ListView lv;
-	private ArrayList<String> list = new ArrayList<String>();
+	private static String[] searchAlts = { "Navigera till plats", "Visa plats" };
+	LocationSource locationSource;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,9 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
+		locationSource = new AndroidGPSProvider(
+				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
+				1000L);
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
@@ -92,7 +97,7 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
-		navigateToLocation(LINKÖPING, mapComponent);
+//		navigateToLocation();
 
 		/**
 		 * Hämtar listview till sökförslagen samt lägger till en adapter. Lägger
@@ -155,9 +160,6 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 		/**
 		 * Om GPS är på centrera kartan vid gps positionen
 		 */
-		final LocationSource locationSource = new AndroidGPSProvider(
-				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
-				1000L);
 		if (on) {
 			final LocationMarker marker = new NutiteqLocationMarker(
 					new PlaceIcon(icons[0], icons[0].getWidth() / 2,
@@ -194,11 +196,14 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 		});
 		View v = (View) menu.findItem(R.id.menu_search).getActionView();
 		this.actv = (EditText) v.findViewById(R.id.ab_Search);
-		this.lv=(ListView)findViewById(R.id.mylist);
+		this.lv = (ListView) findViewById(R.id.mylist);
+
+		this.lv.setOnItemClickListener(this);
 		this.actv.addTextChangedListener(new TextWatcher() {
-			
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				final String temp=s.toString();
+
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				final String temp = s.toString();
 				if (!temp.isEmpty()) {
 					new Thread(new Runnable() {
 
@@ -212,18 +217,20 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
 
 			}
 
 			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
 
 			}
 		});
 		sm = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		lv.setAdapter(sm);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	private WgsPoint getGPSLocation() {
+		return locationSource.getLocation();
 	}
 
 	/**
@@ -234,8 +241,16 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 	 * @param map
 	 *            Kart objektet
 	 */
-	public void navigateToLocation(WgsPoint destination, BasicMapComponent map) {
-		new NutiteqRouteWaiter(STHLM, LINKÖPING, map, icons[2], icons[2]);
+	public void navigateToLocation(int arg) {
+		
+		new NutiteqRouteWaiter(STHLM, searchSuggestions.getList().get(arg).getPlace().getWgs(), mapComponent, icons[2],
+				icons[2]);
+	}
+
+	public void centerMapOnLocation(int arg) {
+		activateGPS(false);
+		mapComponent.setMiddlePoint(searchSuggestions.getList().get(arg)
+				.getPlace().getWgs());
 	}
 
 	/**
@@ -336,14 +351,56 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 	}
 
 	public void run() {
-		if (this.lv.getVisibility()==ListView.GONE) {
+		if (this.lv.getVisibility() == ListView.GONE) {
 			this.lv.setVisibility(ListView.VISIBLE);
 			this.mapView.setVisibility(MapView.GONE);
 			this.zoomControls.setVisibility(ZoomControls.GONE);
-		}
+		} 
 		sm.clear();
-		sm.addAll(searchSuggestions.getList());
+		for (KmlPlace temp : searchSuggestions.getList()) {
+			sm.addAll(temp.getName());
+		}
 		sm.notifyDataSetChanged();
 	}
+	
+	public void showMapView(){
+		runOnUiThread(new Runnable() {
+			
+			public void run() {
+				lv.setVisibility(ListView.GONE);
+				mapView.setVisibility(MapView.VISIBLE);
+				zoomControls.setVisibility(ZoomControls.VISIBLE);
+			}
+		});
+	}
 
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Meny");
+		ListView modeList = new ListView(this);
+		ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				searchAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				showMapView();
+				switch (arg2) {
+				case 0:
+					navigateToLocation(arg2);
+					break;
+				case 1:
+					centerMapOnLocation(arg2);
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
 }
