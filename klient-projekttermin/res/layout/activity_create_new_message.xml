@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
          android:layout_below="@+id/editText2"
         android:gravity="center_vertical"
-        android:onClick="cancelMessage"
+        android:onClick="cancelButton"
         android:text="@string/cancel"
         android:layout_toRightOf="@+id/button1" />
 

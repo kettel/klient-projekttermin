@@ -1,15 +1,21 @@
 package messageFunction;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.example.klien_projekttermin.R;
 
 import database.Database;
 
+import models.Contact;
 import models.MessageModel;
+import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,6 +30,7 @@ public class CreateNewMessage extends Activity {
 	private String sender;
 	private Database dataBase;
 	private String user = "Steffe";
+	private List<ModelInterface> contactModelList;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,18 @@ public class CreateNewMessage extends Activity {
         getMenuInflater().inflate(R.menu.activity_create_new_message, menu);
         return true;
     }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            showAlertMessage();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    
+//    public LinkedList<String> LoadContactList(){
+//    		contactModelList = dataBase.getAllFromDB(new Contact(), getApplicationContext());
+//    }
     
     /**
      * Metoden skapar ett meddelande objekt och skickar det vidare till komunikationsmodulen. Metoden sparar ocks� de skapade meddelandena i skickat mappen
@@ -80,24 +99,28 @@ public class CreateNewMessage extends Activity {
     * AlertDialog-rutan ner.
     * 
     */
-    public void cancelMessage(View v){
-    	AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-		alertDialog.setTitle("Avsluta?");
-		alertDialog.setMessage("Vill du avsluta?");
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA", new DialogInterface.OnClickListener() {
+    public void cancelButton(View v){
+    	showAlertMessage();
+    }
+    
+    public void showAlertMessage(){
+       	AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+    		alertDialog.setTitle("Avsluta?");
+    		alertDialog.setMessage("Vill du avsluta?");
+    		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA", new DialogInterface.OnClickListener() {
 
-			//Om användaren trycker på ja så körs metoden eraseMessage()
-			public void onClick(DialogInterface dialog, int which) {
-					finish();
-			}
-		});
-		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ", new DialogInterface.OnClickListener() {
+    			//Om användaren trycker på ja så körs metoden eraseMessage()
+    			public void onClick(DialogInterface dialog, int which) {
+    					finish();
+    			}
+    		});
+    		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ", new DialogInterface.OnClickListener() {
 
-			public void onClick(DialogInterface dialog, int which) {
-				//Gör inget
-			}
-		});
-		alertDialog.show();
+    			public void onClick(DialogInterface dialog, int which) {
+    				//Gör inget
+    			}
+    		});
+    		alertDialog.show();
     }
 }
 

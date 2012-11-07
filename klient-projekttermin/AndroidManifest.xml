@@ -23,8 +23,6 @@
             android:name="messageFunction.StartsidaMeddelanden"
             android:label="@string/title_activity_startsida_meddelanden" >
             
-            
-           
         </activity>
         <activity
             android:name="messageFunction.Inbox"
