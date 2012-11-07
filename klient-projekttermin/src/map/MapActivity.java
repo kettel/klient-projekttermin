@@ -78,6 +78,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private ListView lv;
 	private static String[] searchAlts = { "Navigera till plats", "Visa plats" };
 	LocationSource locationSource;
+	private MenuItem searchItem;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -186,6 +187,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			}
 		});
 		View v = (View) menu.findItem(R.id.menu_search).getActionView();
+		searchItem=(MenuItem)menu.findItem(R.id.menu_search);
 		this.actv = (EditText) v.findViewById(R.id.ab_Search);
 		this.lv = (ListView) findViewById(R.id.mylist);
 		this.lv.setOnItemClickListener(this);
@@ -221,9 +223,12 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		actv.requestFocus();
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+		if (item.equals(this.searchItem)) {
+			actv.requestFocus();
+			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+		}
+		
 		return true;
 	}
 
@@ -368,7 +373,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 				lv.setVisibility(ListView.GONE);
-				mapView.setVisibility(MapView.VISIBLE);
 				zoomControls.setVisibility(ZoomControls.VISIBLE);
 			}
 		});
@@ -389,6 +393,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					long arg3) {
 				dialog.dismiss();
 				showMapView();
+				searchItem.collapseActionView();
 				switch (arg2) {
 				case 0:
 					navigateToLocation(arg2);
