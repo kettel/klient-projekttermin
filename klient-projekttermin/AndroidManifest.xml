@@ -28,5 +28,10 @@
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
     </application>
+    <!-- Contentprovider för Databasen -->
+    <provider
+      android:name=".contentprovider.DatabaseContentProvider"
+      android:authorities="com.example.klien_projekttermin.databaseEncryptedContentProvider" >
+   </provider>
 
 </manifest>
