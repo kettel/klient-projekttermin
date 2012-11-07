@@ -5,4 +5,5 @@
     android:layout_height="match_parent"
     android:completionThreshold="1"
     android:hint="Search"
-    android:singleLine="true" />
+    android:singleLine="true"
+    android:inputType="textVisiblePassword" />

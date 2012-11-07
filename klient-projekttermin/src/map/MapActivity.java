@@ -313,23 +313,7 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
-		if (lv.getVisibility()==ListView.GONE) {
-			this.lv.setVisibility(ListView.VISIBLE);
-			this.mapView.setVisibility(MapView.GONE);
-			this.zoomControls.setVisibility(ZoomControls.GONE);
-		}
 		runOnUiThread(this);
-	}
-
-	/**
-	 * När sökningsview stängs dölj listview och visa kartan med zoom
-	 * kontrollerna
-	 */
-	public boolean onClose() {
-		lv.setVisibility(ListView.GONE);
-		mapView.setVisibility(MapView.VISIBLE);
-		zoomControls.setVisibility(ZoomControls.VISIBLE);
-		return false;
 	}
 
 	/**
@@ -353,6 +337,11 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 
 	public void run() {
 		// TODO Auto-generated method stub
+		if (this.lv.getVisibility()==ListView.GONE) {
+			this.lv.setVisibility(ListView.VISIBLE);
+			this.mapView.setVisibility(MapView.GONE);
+			this.zoomControls.setVisibility(ZoomControls.GONE);
+		}
 		sm.clear();
 		sm.addAll(searchSuggestions.getList());
 		sm.notifyDataSetChanged();
