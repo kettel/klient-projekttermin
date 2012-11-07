@@ -6,7 +6,7 @@ import android.os.Environment;
 
 public final class BaseAlbumDirFactory extends AlbumStorageDirFactory {
 
-	// Standard storage location for digital camera files
+	//Standard lagringsplats för kamera-filer
 	private static final String CAMERA_DIR = "/dcim/";
 
 	@Override
