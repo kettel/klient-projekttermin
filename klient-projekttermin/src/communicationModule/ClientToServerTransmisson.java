@@ -43,7 +43,7 @@ public class ClientToServerTransmisson extends Thread  {
 	public synchronized boolean isConnection(){
 		return connected;
 	}
-	// gfagas
+
 	public void run() {
 		try {
 			requestSocet = new Socket(ServerIP,ServerPort);
