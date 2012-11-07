@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
 import models.Assignment;
 import models.ModelInterface;
 import routing.NutiteqRouteWaiter;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
@@ -45,7 +47,6 @@ import com.nutiteq.ui.ThreadDrivenPanning;
 import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
-
 import database.Database;
 
 /**
@@ -56,12 +57,11 @@ import database.Database;
  * 
  */
 public class MapActivity extends Activity implements Observer,
-		SearchView.OnCloseListener, SearchView.OnQueryTextListener, MapListener {
+		SearchView.OnCloseListener, SearchView.OnQueryTextListener, MapListener,Runnable {
 
 	private BasicMapComponent mapComponent;
-//	private String[] from = { "line1", "line2" };
-//	private int[] to = { android.R.id.text1, android.R.id.text2 };
-	//private ListView lv;
+	private String[] from = { "line1", "line2" };
+	private int[] to = { android.R.id.text1, android.R.id.text2 };
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
 	private SimpleAdapter sm;
 	private MapView mapView;
@@ -76,8 +76,8 @@ public class MapActivity extends Activity implements Observer,
 			Utils.createImage("/res/drawable-hdpi/pin.png"),
 			Utils.createImage("/res/drawable-hdpi/pin_green.png"),
 			Utils.createImage("/res/drawable-hdpi/pos_arrow_liten.png") };
-	private CustomACTV actv;
-	private ArrayList<String> list=new ArrayList<String>();
+	private EditText actv;
+	private ArrayList<String> list = new ArrayList<String>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -130,22 +130,24 @@ public class MapActivity extends Activity implements Observer,
 	}
 
 	/**
-	 * Hämtar alla uppdrag från databasen
-	 * och markerar ut dessa på kartan 
+	 * Hämtar alla uppdrag från databasen och markerar ut dessa på kartan
 	 */
 	public void getDatabaseInformation() {
 		Assignment a = new Assignment();
 		Database db = new Database();
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
 		Bitmap bmp = Bitmap.createBitmap(2, 23, conf);
-		db.addToDB(new Assignment("dummyn", 15.5826, 58.527, "eric", "nicke", "dummy", "12.0.5", "on", bmp, "test", "dummy"), getBaseContext());
+		db.addToDB(new Assignment("dummyn", 15.5826, 58.527, "eric", "nicke",
+				"dummy", "12.0.5", "on", bmp, "test", "dummy"),
+				getBaseContext());
 		List<ModelInterface> hej = db.getAllFromDB(a, getBaseContext());
 		System.out.println(db.getDBCount(a, getBaseContext()));
-		for (int i = 0; i<db.getDBCount(a, getBaseContext()); i++) {
+		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
 			a = (Assignment) hej.get(i);
-			addInterestPoint(new WgsPoint(a.getLat(), a.getLon()), a.getName());	
+			addInterestPoint(new WgsPoint(a.getLat(), a.getLon()), a.getName());
 		}
 	}
+
 	/**
 	 * Aktiverar GPS:en
 	 */
@@ -190,35 +192,37 @@ public class MapActivity extends Activity implements Observer,
 				});
 			}
 		});
-		View v=(View)menu.findItem(R.id.menu_search).getActionView();
-		this.actv=(CustomACTV)v.findViewById(R.id.ab_Search);
+		View v = (View) menu.findItem(R.id.menu_search).getActionView();
+		this.actv = (EditText) v.findViewById(R.id.ab_Search);
+		this.lv=(ListView)findViewById(R.id.mylist);
 		this.actv.addTextChangedListener(new TextWatcher() {
 			
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				final String temp=s.toString();
 				if (!temp.isEmpty()) {
 					new Thread(new Runnable() {
+
 						public void run() {
 							searchSuggestions.updateSearch(temp);
 						}
 					}).start();
-					}
-				
+				}
+
 			}
-			
+
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			public void afterTextChanged(Editable s) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
-//		sm=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-		actv.setAdapter(sm);
+		sm = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+		lv.setAdapter(sm);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -254,8 +258,10 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Starta navigation till destination
 	 * 
-	 * @param destination WgsPoint
-	 * @param map Kart objektet
+	 * @param destination
+	 *            WgsPoint
+	 * @param map
+	 *            Kart objektet
 	 */
 	public void navigateToLocation(WgsPoint destination, BasicMapComponent map) {
 		new NutiteqRouteWaiter(STHLM, LINKÖPING, map, icons[2], icons[2]);
@@ -264,8 +270,10 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Markera en punkt på kartan
 	 * 
-	 * @param pointLocation Position för punkten WgsPoint
-	 * @param label Namn som syns om man klickar på punkten
+	 * @param pointLocation
+	 *            Position för punkten WgsPoint
+	 * @param label
+	 *            Namn som syns om man klickar på punkten
 	 */
 	public void addInterestPoint(WgsPoint pointLocation, String label) {
 		PlaceLabel poiLabel = new PlaceLabel(label);
@@ -276,7 +284,8 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Ändrar tillståndet för att markera regioner på kartan
 	 * 
-	 * @param m klickbart menuItem
+	 * @param m
+	 *            klickbart menuItem
 	 */
 	public boolean changeAddRegionMode(MenuItem m) {
 		isInAddMode = !isInAddMode;
@@ -312,7 +321,8 @@ public class MapActivity extends Activity implements Observer,
 	/**
 	 * Ändrar tillstånd för GPS:en
 	 * 
-	 * @param m klickbart menuItem
+	 * @param m
+	 *            klickbart menuItem
 	 */
 
 	public boolean gpsStatus(MenuItem m) {
@@ -332,6 +342,12 @@ public class MapActivity extends Activity implements Observer,
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
+		if (lv.getVisibility()==ListView.GONE) {
+			this.lv.setVisibility(ListView.VISIBLE);
+			this.mapView.setVisibility(MapView.GONE);
+			this.zoomControls.setVisibility(ZoomControls.GONE);
+		}
+		runOnUiThread(this);
 	}
 
 
@@ -341,7 +357,7 @@ public class MapActivity extends Activity implements Observer,
 	 * kontrollerna
 	 */
 	public boolean onClose() {
-		//lv.setVisibility(ListView.GONE);
+		lv.setVisibility(ListView.GONE);
 		mapView.setVisibility(MapView.VISIBLE);
 		zoomControls.setVisibility(ZoomControls.VISIBLE);
 		return false;
@@ -364,6 +380,12 @@ public class MapActivity extends Activity implements Observer,
 	}
 
 	public void needRepaint(boolean arg0) {
+	}
+
+	public void run() {
+		sm.clear();
+		sm.addAll(searchSuggestions.getList());
+		sm.notifyDataSetChanged();
 	}
 
 }
