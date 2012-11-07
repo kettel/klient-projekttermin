@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 public class Assignment implements ModelInterface{
 	
 	private String databasetRepresentation = "assignment";
+	private long id = -1;
+
 	private String name;
 	private long lat;
 	private long lon;
@@ -46,6 +48,45 @@ public class Assignment implements ModelInterface{
 		this.cameraImage=cameraImage;
 		this.streetName=streetName;
 		this.siteName=siteName;
+	}
+	
+	/**
+	 * Konstruktor för att återskapa ett meddelande från databasen med ett Id som
+	 * hämtas från databasen
+	 * @param id
+	 * @param name
+	 * @param lat
+	 * @param lon
+	 * @param receiver
+	 * @param sender
+	 * @param assignmentDescription
+	 * @param timeSpan
+	 * @param assignmentStatus
+	 * @param cameraImage
+	 * @param streetName
+	 * @param siteName
+	 */
+
+	public Assignment(long id, String name, long lat, long lon,
+			String receiver, String sender, String assignmentDescription,
+			String timeSpan, String assignmentStatus, Bitmap cameraImage,
+			String streetName, String siteName) {
+		this.id = id;
+		this.name = name;
+		this.lat = lat;
+		this.lon = lon;
+		this.receiver = receiver;
+		this.sender = sender;
+		this.assignmentDescription = assignmentDescription;
+		this.timeSpan = timeSpan;
+		this.assignmentStatus = assignmentStatus;
+		this.cameraImage = cameraImage;
+		this.streetName = streetName;
+		this.siteName = siteName;
+	}
+
+	public Assignment() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public String getName() {
@@ -138,5 +179,9 @@ public class Assignment implements ModelInterface{
 
 	public String getDatabaseRepresentation() {
 		return databasetRepresentation;
+	}
+
+	public long getId() {
+		return id;
 	}
 }

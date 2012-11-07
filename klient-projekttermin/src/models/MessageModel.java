@@ -5,9 +5,13 @@ import android.text.format.Time;
 import java.util.Calendar;
 import java.util.Date;
 
+
 public class MessageModel implements ModelInterface {
 
 	private String databaseRepresentation = "message";
+	private long id = -1;
+	private boolean isRead = false;
+	
 	private String messageContent;
 	private String reciever;
 	private long messageTimeStamp;
@@ -36,11 +40,16 @@ public class MessageModel implements ModelInterface {
 	 * @param reciever
 	 * @param timeStamp
 	 */
-
 	public MessageModel(String messageContent, String reciever,	long timeStamp) {
+		
+	}
+	public MessageModel(long id, String messageContent, String reciever,
+			long messageTimeStamp, boolean isRead) {
+		this.id = id;
 		this.messageContent = messageContent;
 		this.reciever = reciever;
-		this.messageTimeStamp = timeStamp;
+		this.messageTimeStamp = messageTimeStamp;
+		this.isRead = isRead;
 	}
 
 	public CharSequence getMessageContent() {
@@ -57,7 +66,14 @@ public class MessageModel implements ModelInterface {
 	}
 
 	public String getDatabaseRepresentation() {
-		// TODO Auto-generated method stub
 		return databaseRepresentation;
+	}
+
+	public long getId() {
+		return id;
+	}
+	
+	public boolean isRead(){
+		return isRead;
 	}
 }

@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.Contact;
-import models.MessageModel;
 import models.ModelInterface;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class DatabaseHandlerContacts extends SQLiteOpenHelper{
 	// Alla statiska variabler
@@ -89,7 +87,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         Cursor cursor = db.rawQuery(countQuery, null);
         int count = cursor.getCount();
         cursor.close();
-        
+        db.close();
         return count;
 	}
 
@@ -107,6 +105,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         if (cursor.moveToFirst()) {
             do {
                 Contact contact = new Contact(
+                		Long.valueOf(cursor.getString(0)),
                 		cursor.getString(1),
                 		Long.valueOf(cursor.getString(2)),
                 		cursor.getString(3),
@@ -117,8 +116,33 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
                 contactList.add(contact);
             } while (cursor.moveToNext());
         }
- 		
+ 		cursor.close();
+ 		db.close();
         // Returnera meddelandelistan
 		return contactList;
+	}
+
+	public void removeContact(Contact contact) {
+		SQLiteDatabase db = this.getWritableDatabase();
+    	db.delete(TABLE_CONTACTS, KEY_ID + " = ?",
+                new String[] { String.valueOf(contact.getId()) });
+        db.close();
+	}
+
+	public void updateModel(Contact c) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		String UPDATE_CONTACTS = "UPDATE " + TABLE_CONTACTS + " SET "
+        		+ KEY_CONTACT_NAME + " = \"" + c.getContactName() + "\", "
+                + KEY_PH_NO + " = \"" + c.getContactPhoneNumber() + "\", "
+                + KEY_CLEARANCE_LEVEL + " = \"" +c.getContactClearanceLevel()  + "\", "
+                + KEY_EMAIL + " = \"" + c.getContactEmail() + "\", "
+                + KEY_CLASSIFICATION + " = \"" + c.getContactClassification() + "\", "
+                + KEY_COMMENT + " = \"" + c.getContactComment() + "\" "
+                + "WHERE " + KEY_ID + " = " + Long.toString(c.getId());
+		
+        db.execSQL(UPDATE_CONTACTS);
+        
+        db.close();
 	}
 }

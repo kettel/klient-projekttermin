@@ -15,8 +15,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.text.format.Time;
-import android.util.Log;
 
 public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	// Alla statiska variabler
@@ -112,43 +110,13 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         db.close(); 
     }
  
-    /**
-     * Hämta ett uppdrag
-     * @param id	id för det sökta uppdraget
-     * @return	Assignment	det funna uppdraget
-     */
-    public Assignment getAssignment(int id) {
-        /*SQLiteDatabase db = this.getReadableDatabase();
- 
-        Cursor cursor = db.query(TABLE_ASSIGNMENTS, 
-        		new String[] {KEY_ID, KEY_NAME, KEY_LAT, KEY_LON, 
-        		KEY_RECEIVER, KEY_SENDER, KEY_ASSIGNMENTDESCRIPTION, 
-        		KEY_TIMESPAN, KEY_ASSIGNMENTSTATUS, KEY_STREETNAME, 
-        		KEY_SITENAME}, KEY_ID + "=?", new String[] { String.valueOf(id) }
-        		, null, null, null, null);
-        
-        if (cursor != null)
-            cursor.moveToFirst();
- 
-        // Ignorera cursors första element då det är ID-nummer från databasen för assignment
-        // Vad vi har sagt än så är det irrelevant.
-        /*Assignment assignment = new Assignment(cursor.getString(1),
-        									Long.parseLong(cursor.getString(2)), 
-        									Long.parseLong(cursor.getString(3)),
-        									cursor.getString(4),
-        									cursor.getString(5),
-        									cursor.getString(6),
-        									new Time(cursor.getString(7)),
-        									cursor.getString(8),
-        									cursor.getString(9),
-        									cursor.getString(10));
-        // Returnera den funna kontakten
-        //return assignment;
-         * */
-         
-        return null;
+    public void removeAssignment(Assignment ass){
+    	SQLiteDatabase db = this.getWritableDatabase();
+    	db.delete(TABLE_ASSIGNMENTS, KEY_ID + " = ?",
+                new String[] { String.valueOf(ass.getId()) });
+        db.close();
     }
- 
+    
     /**
      * Hämta alla uppdrag i databasen
      * @return	List<Assignment>	En lista med Assignment-objekt
@@ -172,6 +140,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
             	Bitmap theImage= BitmapFactory.decodeStream(imageStream);
             	
                 Assignment assignment = new Assignment(
+                		Long.valueOf(cursor.getString(0)),
                 		cursor.getString(1),
 						Long.parseLong(cursor.getString(2)), 
 						Long.parseLong(cursor.getString(3)),
@@ -188,6 +157,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
  		
+        cursor.close();
+        db.close();
         // Returnera kontaktlistan
         return assignmentList;
     }
@@ -202,9 +173,31 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(countQuery, null);
         int returnCount = cursor.getCount();
         cursor.close();
- 
+        db.close();
         // Returnera antalet assignments
         return returnCount;
     }
+
+	public void updateModel(Assignment ass) {
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		String UPDATE_ASSIGNMENT = "UPDATE " + TABLE_ASSIGNMENTS + " SET "
+        		+ KEY_ASSIGNMENTDESCRIPTION + " = \"" + ass.getAssignmentDescription() + "\", "
+        		+ KEY_ASSIGNMENTSTATUS + " = \"" + ass.getAssignmentStatus() +"\", "
+        		+ KEY_CAMERAIMAGE + " = \"" + ass.getCameraImage() + "\", "
+        		+ KEY_LAT + " = \"" + Long.toString(ass.getLat()) + "\", "
+        		+ KEY_LON + " = \"" + Long.toString(ass.getLon()) + "\", "
+        		+ KEY_NAME + " = \"" + ass.getName() + "\", "
+        		+ KEY_RECEIVER + " = \"" + ass.getReceiver() + "\", "
+        		+ KEY_SENDER + " = \"" + ass.getSender() + "\", "
+        		+ KEY_SITENAME + " = \"" + ass.getSiteName() + "\", "
+        		+ KEY_STREETNAME + " = \"" + ass.getStreetName() + "\", "
+        		+ KEY_TIMESPAN + " = \"" + ass.getTimeSpan() + "\" "
+        		+ "WHERE " + KEY_ID + " = " + ass.getId();
+        
+        db.execSQL(UPDATE_ASSIGNMENT);
+        
+        db.close();
+	}
     
 }

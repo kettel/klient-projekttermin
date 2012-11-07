@@ -1,7 +1,6 @@
 package com.example.klien_projekttermin;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,20 +8,12 @@ import communicationModule.CommunicationModule;
 
 import logger.LogViewer;
 import logger.logger;
-import models.Assignment;
-import models.Contact;
-import models.MessageModel;
-import models.ModelInterface;
 
-import database.Database;
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.format.Time;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -42,7 +33,6 @@ public class MainActivity extends ListActivity {
 		String[] from = { "line1", "line2" };
 		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-
 
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
