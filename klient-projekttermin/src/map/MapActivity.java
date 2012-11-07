@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
 import models.Assignment;
 import models.ModelInterface;
 import routing.NutiteqRouteWaiter;
@@ -19,8 +20,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.SearchView;
 import android.widget.ZoomControls;
+
 import com.example.klien_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
@@ -183,9 +186,6 @@ public class MapActivity extends Activity implements Observer,
 						return changeAddRegionMode(item);
 					}
 				});
-				View v = m.findItem(R.id.menu_search).getActionView();
-				AutoCompleteTextView actv = (AutoCompleteTextView) v
-						.findViewById(R.id.ab_Search);
 			}
 		});
 		View v=(View)menu.findItem(R.id.menu_search).getActionView();
