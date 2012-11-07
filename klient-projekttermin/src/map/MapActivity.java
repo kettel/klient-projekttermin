@@ -230,10 +230,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	private WgsPoint getGPSLocation() {
-		return locationSource.getLocation();
-	}
-
 	/**
 	 * Starta navigation till destination
 	 * 
@@ -250,6 +246,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void centerMapOnLocation(int arg) {
 		activateGPS(false);
+		addInterestPoint(searchSuggestions.getList().get(arg)
+				.getPlace().getWgs(), searchSuggestions.getList().get(arg).getName());
 		mapComponent.setMiddlePoint(searchSuggestions.getList().get(arg)
 				.getPlace().getWgs());
 	}
