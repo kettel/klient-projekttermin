@@ -3,8 +3,10 @@ package com.example.klien_projekttermin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import logger.LogViewer;
 import logger.logger;
+import map.MapActivity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,18 +35,12 @@ public class MainActivity extends ListActivity {
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-//				Intent myIntent;
+				Intent myIntent = null;
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
-					try {
-						testlogger.writeToLog("Nisse","testentry 1");
-						testlogger.writeToLog(null,"testentry 2");
-						testlogger.writeToLog("Nisse","testentry 3");
-					} catch (Exception e) {
-					}
-					// myIntent= new Intent(from.this,
-					// to.class);
+					 myIntent= new Intent(MainActivity.this,
+					 MapActivity.class);
 					break;
 				case 1:
 					// myIntent= new Intent(from.this,
@@ -66,7 +62,7 @@ public class MainActivity extends ListActivity {
 					// to.class);
 					break;
 				}
-				// SomeView.this.startActivity(myIntent);
+				 MainActivity.this.startActivity(myIntent);
 			}
 
 		});
