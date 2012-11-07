@@ -12,11 +12,12 @@ public class ClientToServerTransmisson extends Thread  {
 
 	private String ServerIP = "94.254.72.38";
 	private int ServerPort = 17234;
-	private Socket requestSocet = null;
+	private Socket requestSocet =  null;
 	private String transmisson = null;
+	private PrintWriter  output = null;
 	
 	private boolean sendData = false;
-	private boolean connected = true;
+	private boolean connected = false;
 	
 	public ClientToServerTransmisson(){
 		System.out.println("Constuct done");
@@ -39,18 +40,25 @@ public class ClientToServerTransmisson extends Thread  {
 	}
 
 	public void run() {
-		PrintWriter  output = null;
 		try {
 			requestSocet = new Socket(ServerIP,ServerPort);
 			output = new PrintWriter(requestSocet.getOutputStream(), true);
 			setConnetion(true);
 		} catch (Exception e) {
-			Log.e("Run", "Error in connecton", e);
 			setConnetion(false);
+			Log.e("Connection", ("Error: " + e.toString()));
 		}
 		
-		while(isConnection()){
-			
+		while(true){
+			if(!requestSocet.isConnected()){
+				Log.e("Dissconnect","No connection");
+				try{
+					requestSocet = new Socket(ServerIP,ServerPort);
+					output = new PrintWriter(requestSocet.getOutputStream(), true);	
+				}catch(Exception e) {
+					Log.e("catch","fafsa");
+				}
+			}
 			if(sendData){
 				output.println(transmisson);
 				sendData(false);
