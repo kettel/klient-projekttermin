@@ -9,8 +9,9 @@ import communicationModule.CommunicationModule;
 import logger.LogViewer;
 import logger.logger;
 import models.MessageModel;
-
-
+import logger.LogViewer;
+import logger.logger;
+import map.MapActivity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,17 +40,15 @@ public class MainActivity extends ListActivity {
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 
-
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				Intent myIntent;
+				Intent myIntent = null;
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
-					try {
-						Communicaton.sendMessage(new MessageModel("bla bla this is a test message", "Kristoffer"));
-					} catch (Exception e) {
-					}
+
+					 myIntent= new Intent(MainActivity.this,
+					 MapActivity.class);
 					break;
 					
 				case 1:
@@ -71,7 +70,7 @@ public class MainActivity extends ListActivity {
 					// to.class);
 					break;
 				}
-				// SomeView.this.startActivity(myIntent);
+				MainActivity.this.startActivity(myIntent);
 			}
 
 		});

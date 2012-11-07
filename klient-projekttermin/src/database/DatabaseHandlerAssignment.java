@@ -4,10 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import models.Assignment;
 import models.ModelInterface;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -93,8 +91,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, assignment.getName()); 
-        values.put(KEY_LAT, Long.toString(assignment.getLat()));
-        values.put(KEY_LON, Long.toString(assignment.getLon()));
+        values.put(KEY_LAT, assignment.getLat());
+        values.put(KEY_LON, assignment.getLon());
         values.put(KEY_RECEIVER, assignment.getReceiver());
         values.put(KEY_SENDER, assignment.getSender());
         values.put(KEY_ASSIGNMENTDESCRIPTION, assignment.getAssignmentDescription());
@@ -142,8 +140,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
                 Assignment assignment = new Assignment(
                 		Long.valueOf(cursor.getString(0)),
                 		cursor.getString(1),
-						Long.parseLong(cursor.getString(2)), 
-						Long.parseLong(cursor.getString(3)),
+						Double.parseDouble(cursor.getString(2)), 
+						Double.parseDouble(cursor.getString(3)),
 						cursor.getString(4),
 						cursor.getString(5),
 						cursor.getString(6),
@@ -156,7 +154,6 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
                 assignmentList.add(assignment);
             } while (cursor.moveToNext());
         }
- 		
         cursor.close();
         db.close();
         // Returnera kontaktlistan
@@ -185,8 +182,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         		+ KEY_ASSIGNMENTDESCRIPTION + " = \"" + ass.getAssignmentDescription() + "\", "
         		+ KEY_ASSIGNMENTSTATUS + " = \"" + ass.getAssignmentStatus() +"\", "
         		+ KEY_CAMERAIMAGE + " = \"" + ass.getCameraImage() + "\", "
-        		+ KEY_LAT + " = \"" + Long.toString(ass.getLat()) + "\", "
-        		+ KEY_LON + " = \"" + Long.toString(ass.getLon()) + "\", "
+        		+ KEY_LAT + " = \"" + ass.getLat() + "\", "
+        		+ KEY_LON + " = \"" + ass.getLon() + "\", "
         		+ KEY_NAME + " = \"" + ass.getName() + "\", "
         		+ KEY_RECEIVER + " = \"" + ass.getReceiver() + "\", "
         		+ KEY_SENDER + " = \"" + ass.getSender() + "\", "
