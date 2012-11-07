@@ -1,19 +1,16 @@
 package logger;
 
-
-import com.example.klien_projekttermin.MainActivity;
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.R.layout;
-import com.example.klien_projekttermin.R.menu;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.support.v4.app.NavUtils;
-import android.text.method.ScrollingMovementMethod;
+
+import com.example.klien_projekttermin.MainActivity;
+import com.example.klien_projekttermin.R;
 /**
  * En väldigt enkel logviewer för enheten.
  * @author Eric Karlsson

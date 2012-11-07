@@ -23,6 +23,7 @@ public class MessageModel implements ModelInterface {
 
 	
 	
+	
 	/**
 	 * Tom konstruktor. Används för att hämta från databasen.
 	 */

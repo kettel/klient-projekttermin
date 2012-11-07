@@ -8,7 +8,6 @@ import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
 import android.content.Context;
-import android.util.Log;
 
 /**
  * En klass med metoder för Create, Remove, Update, Delete (CRUD)
@@ -17,7 +16,6 @@ import android.util.Log;
  *
  */
 public class Database{
-	
 	/**
 	 * Lägg till ett uppdrag/kontakt/meddelande till rätt databas
 	 * @param m			ModellInterface av objekt som ska läggas till
