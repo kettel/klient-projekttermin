@@ -1,7 +1,6 @@
 package map;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Observable;
 import com.nutiteq.components.KmlPlace;
 import com.nutiteq.services.GeocodingResultWaiter;
@@ -17,7 +16,7 @@ public class SearchSuggestions extends Observable implements
 		GeocodingResultWaiter {
 
 	//private ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
-	private ArrayList<String> list=new ArrayList<String>();
+	private ArrayList<KmlPlace> list=new ArrayList<KmlPlace>();
 	/**
 	 * Tar in en text och startar en sökning på matchande termer. 
 	 * 
@@ -43,11 +42,7 @@ public class SearchSuggestions extends Observable implements
 			results=10;
 		}
 		for (int i = 0; i < results; i++) {
-//			HashMap<String, String> item = new HashMap<String, String>();
-//			item.put("line1", kmlPlaces[i].getName());
-//			item.put("line2", kmlPlaces[i].getDescription());
-//			list.add(item);
-			list.add(kmlPlaces[i].getName());
+			list.add(kmlPlaces[i]);
 		}
 		/**
 		 * Notifierar alla observers om att datan har ändrats
@@ -56,7 +51,7 @@ public class SearchSuggestions extends Observable implements
 		notifyObservers();
 	}
 
-	public ArrayList<String> getList() {
+	public ArrayList<KmlPlace> getList() {
 		return list;
 	}
 }
