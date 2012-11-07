@@ -14,12 +14,18 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.ZoomControls;
 import com.example.klien_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
@@ -53,14 +59,13 @@ public class MapActivity extends Activity implements Observer,
 		SearchView.OnCloseListener, SearchView.OnQueryTextListener, MapListener {
 
 	private BasicMapComponent mapComponent;
-	private String[] from = { "line1", "line2" };
-	private int[] to = { android.R.id.text1, android.R.id.text2 };
+//	private String[] from = { "line1", "line2" };
+//	private int[] to = { android.R.id.text1, android.R.id.text2 };
 	//private ListView lv;
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
-	private ArrayAdapter<String> sm;
+	private SimpleAdapter sm;
 	private MapView mapView;
 	private ZoomControls zoomControls;
-	private SearchView searchView;
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
 	private final WgsPoint STHLM = new WgsPoint(18.07, 59.33);
 	private boolean isInAddMode = false;
@@ -183,9 +188,6 @@ public class MapActivity extends Activity implements Observer,
 						return changeAddRegionMode(item);
 					}
 				});
-				View v = m.findItem(R.id.menu_search).getActionView();
-				AutoCompleteTextView actv = (AutoCompleteTextView) v
-						.findViewById(R.id.ab_Search);
 			}
 		});
 		View v=(View)menu.findItem(R.id.menu_search).getActionView();
@@ -193,13 +195,10 @@ public class MapActivity extends Activity implements Observer,
 		this.actv.addTextChangedListener(new TextWatcher() {
 			
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
 				final String temp=s.toString();
 				if (!temp.isEmpty()) {
 					new Thread(new Runnable() {
-						
 						public void run() {
-							// TODO Auto-generated method stub
 							searchSuggestions.updateSearch(temp);
 						}
 					}).start();
@@ -218,7 +217,7 @@ public class MapActivity extends Activity implements Observer,
 				
 			}
 		});
-		sm=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+//		sm=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		actv.setAdapter(sm);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -333,21 +332,9 @@ public class MapActivity extends Activity implements Observer,
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
-		System.out.println("observed");
-		//sm=new SimpleAdapter(this, searchSuggestions.getList(), android.R.layout.simple_list_item_2, from, to);
-		System.out.println(actv.getAdapter().getCount()+" : "+this.sm.getCount()+" : "+this.list.size());
-		list.clear();
-		((ArrayAdapter<String>)actv.getAdapter()).clear();
-		((ArrayAdapter<String>)this.actv.getAdapter()).notifyDataSetInvalidated();
-		list.addAll(searchSuggestions.getList());
-		((ArrayAdapter<String>)actv.getAdapter()).addAll(list);
-		((ArrayAdapter<String>)this.actv.getAdapter()).notifyDataSetChanged();
-		//this.sm=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-		System.out.println("2");
-		//this.actv.setAdapter(sm);
-		System.out.println("3");
-		this.actv.setFilters(null);	
 	}
+
+
 
 	/**
 	 * När sökningsview stängs dölj listview och visa kartan med zoom
