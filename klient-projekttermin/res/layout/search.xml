@@ -6,4 +6,7 @@
     android:completionThreshold="1"
     android:hint="Search"
     android:singleLine="true"
-    android:inputType="textVisiblePassword" />
+    android:inputType="textVisiblePassword" 
+    android:imeOptions="actionSearch"
+    android:focusable="true"
+    android:focusableInTouchMode="true"/>

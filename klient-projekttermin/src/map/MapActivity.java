@@ -198,7 +198,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		View v = (View) menu.findItem(R.id.menu_search).getActionView();
 		this.actv = (EditText) v.findViewById(R.id.ab_Search);
 		this.lv = (ListView) findViewById(R.id.mylist);
-
 		this.lv.setOnItemClickListener(this);
 		this.actv.addTextChangedListener(new TextWatcher() {
 
@@ -228,6 +227,14 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		sm = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		lv.setAdapter(sm);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		actv.requestFocus();
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+		return true;
 	}
 
 	/**
