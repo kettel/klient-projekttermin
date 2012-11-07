@@ -22,5 +22,10 @@
     <string name="Button">Test DB</string>
     <string name="sendMessage">Skicka</string>
     <string name="CreateANewMessage">Skapa nytt meddelande</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="send">Send</string>
+    <string name="reciever">Reciever</string>
+    <string name="message">Message</string>
 
 </resources>

@@ -1,15 +1,15 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
     <EditText
         android:id="@+id/editText1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:ems="10"
-        android:hint="Reciever"
+        android:hint="@string/reciever"
         android:inputType="textPersonName" >
 
         <requestFocus />
@@ -19,34 +19,29 @@
         android:id="@+id/editText2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/editText1"
         android:ems="10"
-        android:hint="Message"
+        android:hint="@string/message"
         android:inputType="textMultiLine" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
-        android:onClick="sendMessage" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:onClick="saveMessage"  />
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/editText2"
+        android:gravity="center_vertical"
+        android:onClick="sendMessage"
+        android:text="@string/send" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:onClick="cancelMessage"  />
+         android:layout_below="@+id/editText2"
+        android:gravity="center_vertical"
+        android:onClick="cancelMessage"
+        android:text="@string/cancel"
+        android:layout_toRightOf="@+id/button1" />
 
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

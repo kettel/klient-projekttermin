@@ -18,9 +18,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.input.InputManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
@@ -54,6 +56,7 @@ public class DisplayOfConversation extends Activity {
 		if (extras != null) {
 			chosenContact = extras.getString("ChosenContact");
 		}	 
+		
 		loadConversation(chosenContact);
 	}
 
@@ -78,7 +81,6 @@ public class DisplayOfConversation extends Activity {
 
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-				Toast.makeText(getApplicationContext(),conversationContentArray[position], Toast.LENGTH_LONG).show();
 				openMessage(conversationContentArray[position]);
 			}
 		});
@@ -98,7 +100,6 @@ public class DisplayOfConversation extends Activity {
 			}
 		});	
 	}
-
 
 	/*
 	 * Metoden skapar en listView över alla meddelanden som skickats och tagits emot. Dessa efterfrågas från databasen.
@@ -147,6 +148,7 @@ public class DisplayOfConversation extends Activity {
 	}
 
 	public void eraseMessage(String messageText){
+		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		MessageModel messageModelInList;
 		long id = messageAndIdMap.get(messageText);
 
@@ -158,7 +160,16 @@ public class DisplayOfConversation extends Activity {
 				break;
 			}
 		}
-		loadConversation(chosenContact);
+
+		//Gömmer tangentbort och tar bort text ur textfältet 
+		//om användaren raderar ett meddelande (omdessa visas vid raderingstillfället)
+		if(inm.isActive()){
+			//Gömmer tangentbordet på skärmen
+			inm.hideSoftInputFromWindow(message.getWindowToken(), 0);
+			//Tar bort texten ur textrutan
+			message.getEditableText().clear();
+			loadConversation(chosenContact);
+		}	
 	}
 
 	/*
@@ -178,10 +189,9 @@ public class DisplayOfConversation extends Activity {
 		LinkedList<String> listOfConversations = new LinkedList<String>();
 		Iterator<String> listIterator;
 
-
 		//Hämtar en lista med alla messagemodels som finns i databasen.
 		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
-		
+
 		//		Den listview som kontakterna kommerpresenteras i
 		listViewOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
 		//		//String array �ver anv�ndare
@@ -195,27 +205,27 @@ public class DisplayOfConversation extends Activity {
 				messageAndIdMap.put(messageModel.getMessageContent().toString(), messageModel.getId());
 			}
 		}
-		
+
 		//Skapar en string[] som är lika lång som listan som hämtades.
 		stringArrayOfConversationContent = new String[listOfConversations.size()];
 		listIterator = listOfConversations.descendingIterator();
 		for (int i = 0; i < listOfConversations.size(); i++) {
 			stringArrayOfConversationContent[i] = listIterator.next();
 		}
-		
 		return stringArrayOfConversationContent;
 	}
 
 	public void sendMessage(View v){
+		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		messageObject = new MessageModel(user+": "+message.getText().toString(), chosenContact); 
 
 		//Sparar messageObject i databasen
 		dataBase.addToDB(messageObject,getApplicationContext());
-		
-		message.clearFocus();
-		message.clearComposingText();
-//		message.
-		
+		//Gömmer tangentbordet på skärmen
+		inm.hideSoftInputFromWindow(message.getWindowToken(), 0);
+		//Tar bort texten ur textrutan
+		message.getEditableText().clear();
+
 		loadConversation(chosenContact);
 
 		//Skicka meddelande till server

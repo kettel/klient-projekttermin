@@ -1,17 +1,14 @@
 package messageFunction;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
+import logger.logger;
 import models.MessageModel;
 import models.ModelInterface;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.R.id;
-import com.example.klien_projekttermin.R.layout;
-import com.example.klien_projekttermin.R.menu;
 
 import database.Database;
 
@@ -27,18 +24,19 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-public class Inbox extends Activity implements Observer {
+public class Inbox extends Activity {
 
 	private ListView listOfPeopleEngagedInConversation;
 	private String[] peopleIveBeenTalkingTo;
+	private HashMap<String, Long> contactAndIdMap = new HashMap<String, Long>();
+	private List<ModelInterface> peopleEngagedInConversation;
+	private Database dataBase; 
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
-
 		//Ropar p� en metod som skapar en lista �ver alla kontakter som anv�ndaren har haft en konversation med.
 		loadListOfSenders();
 	}
@@ -105,7 +103,7 @@ public class Inbox extends Activity implements Observer {
 
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				showEraseOption();
+				showEraseOption(position);
 				return true;
 			}
 		});	
@@ -115,8 +113,9 @@ public class Inbox extends Activity implements Observer {
 	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort en konversation
 	 * Metoden ger också användaren två valmöjligheter, JA eller Avbryt
 	 */
-	public void showEraseOption(){
-
+	public void showEraseOption(int position){
+		final int conversationNumber = position;
+		
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("RADERA?");
 		alertDialog.setMessage("Vill du ta bort konversation?");
@@ -124,7 +123,7 @@ public class Inbox extends Activity implements Observer {
 
 			//Om användaren trycker på ja så körs metoden eraseMessage()
 			public void onClick(DialogInterface dialog, int which) {
-				eraseConversation();
+				eraseConversation(peopleIveBeenTalkingTo[conversationNumber]);
 			}
 		});
 		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "AVBRYT", new DialogInterface.OnClickListener() {
@@ -138,8 +137,23 @@ public class Inbox extends Activity implements Observer {
 
 	}
 
-	public void eraseConversation(){
-		// Peka på ett objekt i databasen och ta bort det.
+	/*
+	 * Metoden tar bort hela konversationen för ett valt namn i inboxen
+	 */
+	public void eraseConversation(String contact){
+//		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+		MessageModel messageModelInList;
+//		long id = contactAndIdMap.get(contact);
+
+		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
+			messageModelInList = (MessageModel) peopleEngagedInConversation.get(i);
+
+			if(messageModelInList.getReciever().toString().equals(contact)){
+				dataBase.deleteFromDB(messageModelInList, getApplicationContext());
+			}
+		}
+		
+		loadListOfSenders();
 	}
 
 	/*
@@ -156,12 +170,12 @@ public class Inbox extends Activity implements Observer {
 	public String[] getInformationFromDatabase(){
 		String[] arrayOfPeopleEngagedInConversation;
 		Object[] objectsInSetOfPeople;
-		Database dataBase = new Database();
+		dataBase = new Database();
 		MessageModel messageModel;
 		HashSet<String> setOfPeople = new HashSet<String>();
 
 		//Hämtar en lista med alla MessageModels som finns lagrade i databasen
-		List<ModelInterface> peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
+		peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
 
 		listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
 		//String array över användare
@@ -171,6 +185,7 @@ public class Inbox extends Activity implements Observer {
 
 			if (!setOfPeople.contains(messageModel.getReciever().toString())) {
 				setOfPeople.add(messageModel.getReciever().toString());
+				contactAndIdMap.put(messageModel.getReciever().toString(), messageModel.getId());
 			}	
 		}
 		//Skapar en string[] som är lika lång som listan som hämtades.
@@ -193,10 +208,5 @@ public class Inbox extends Activity implements Observer {
 		Intent intent = new Intent(this, CreateNewMessage.class);
 		intent.putExtra("USER", "ANVÄNDARE1");
 		startActivity(intent);
-	}
-
-	public void update(Observable observable, Object data) {
-		// TODO Auto-generated method stub
-
 	}
 }

@@ -1,44 +1,34 @@
 package messageFunction;
 
-import java.util.List;
-
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.R.id;
-import com.example.klien_projekttermin.R.layout;
-import com.example.klien_projekttermin.R.menu;
 
 import database.Database;
 
 import models.MessageModel;
-import models.ModelInterface;
 import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.format.Time;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class CreateNewMessage extends Activity {
 	private TextView reciever;
 	private TextView message;
 	private Button button;
-	private Time messageTimeStamp;
 	private MessageModel messageObject;
-	private Time timeStamp;
 	private String sender;
-	private String storageFile = "massorMedText.txt";
 	private Database dataBase;
+	private String user = "Steffe";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
        setContentView(R.layout.activity_create_new_message);
-       
        dataBase = new Database();
        
        Bundle extras = getIntent().getExtras();
@@ -62,46 +52,52 @@ public class CreateNewMessage extends Activity {
      * @param v
      */
     public void sendMessage(View v){
-    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());
-    	Toast.makeText(getApplicationContext(),"Meddelandet är skickat", Toast.LENGTH_LONG).show();
-    	
-    	//Skicka till kommunikationsmoduloch spara p� databasen.	
-    }  
-    
-    /**
-     * Metoden skapar ett meddelandeobjekt av inmatad information och skapar en ny instans av saveMessage-klassen som sparar meddelandet
-     * AAVS�NDARE M�STE L�GGAS TILL
-     * Problem med timestamp 
-     * @param v
-     */
-    public void saveMessage(View v){
-    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString()); 
+    	String recievingContact = reciever.getText().toString();
+    	InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+    	messageObject = new MessageModel(user+": "+message.getText().toString(), recievingContact); 
 
 		//Sparar messageObject i databasen
 		dataBase.addToDB(messageObject,getApplicationContext());
-
-		//Meddelar att meddelandet har sparats
-		Toast.makeText(getApplicationContext(),"Meddelandet �r sparat", Toast.LENGTH_LONG).show();
-    }
+		//Gömmer tangentbordet på skärmen
+		inm.hideSoftInputFromWindow(message.getWindowToken(), 0);
+		//Tar bort texten ur textrutan
+		message.getEditableText().clear();
+	
+		//Skicka till kommunikationsmodulen
+		
+		finish();
+		
+		//Öppnar konversatinsvyn för kontakten man skickade till 
+		Intent intent = new Intent(this, DisplayOfConversation.class);
+		intent.putExtra("ChosenContact", recievingContact);
+		startActivity(intent);
+    }  
     
-   /**
-    * Metoden skapar ett meddelandeobjekt av inmatad information och sparar det i utkastmappen p� enheten
-    * @param v
+   /*
+    * Metoden ger användaren valet att avsluta meddelandeskaparfunktionen.
+    * Metoden skapar en AlertDialog-ruta och låter användaren svara på frågan om att avsluta
+    * Om användaren trycker ja avslutas aktiviteten, om användaren trycker nej stängs bara 
+    * AlertDialog-rutan ner.
+    * 
     */
     public void cancelMessage(View v){
-    	
-    	List<ModelInterface> peopleEngagedInConversation;
-    	Integer a;
-    	 
- 		peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(), getApplicationContext());
- 		a=peopleEngagedInConversation.size();
-    	Toast.makeText(getApplicationContext(),peopleEngagedInConversation.size(), Toast.LENGTH_LONG).show();
+    	AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.setTitle("Avsluta?");
+		alertDialog.setMessage("Vill du avsluta?");
+		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA", new DialogInterface.OnClickListener() {
 
-//    	messageObject = new MessageModel(message.getText().toString(), reciever.getText().toString());
-//    	Toast.makeText(getApplicationContext(),"Meddelandet avbr�ts", Toast.LENGTH_LONG).show();
+			//Om användaren trycker på ja så körs metoden eraseMessage()
+			public void onClick(DialogInterface dialog, int which) {
+					finish();
+			}
+		});
+		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ", new DialogInterface.OnClickListener() {
 
-    	// Spara meddelandet p� databasen och avsluta funktionen
-
+			public void onClick(DialogInterface dialog, int which) {
+				//Gör inget
+			}
+		});
+		alertDialog.show();
     }
 }
 
