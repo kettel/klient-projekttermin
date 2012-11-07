@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -367,6 +368,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		runOnUiThread(new Runnable() {
 			
 			public void run() {
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 				lv.setVisibility(ListView.GONE);
 				mapView.setVisibility(MapView.VISIBLE);
 				zoomControls.setVisibility(ZoomControls.VISIBLE);
