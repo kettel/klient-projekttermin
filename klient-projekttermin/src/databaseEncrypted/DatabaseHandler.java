@@ -15,6 +15,7 @@ public abstract class DatabaseHandler {
 	File databaseFile = null;
 
 	protected String PASSWORD = "password";
+	protected String KEY_ID = "id";
 	
 	/**
 	 * Konstruktor som initierar databasen med rätt context.
@@ -84,8 +85,10 @@ public abstract class DatabaseHandler {
 	 * @param m
 	 */
 	public void removeModel(ModelInterface m){
-		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
-		database.execSQL("DELETE FROM " + m.getDatabaseRepresentation() + " WHERE id = " + Long.toString(m.getId()));
+		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, 
+																	PASSWORD, null);
+		database.execSQL("DELETE FROM " + m.getDatabaseRepresentation() + 
+						" WHERE " + KEY_ID + " = " + Long.toString(m.getId()));
 		database.close();
 	}
 	

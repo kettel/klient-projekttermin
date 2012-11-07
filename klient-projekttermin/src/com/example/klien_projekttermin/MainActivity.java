@@ -6,11 +6,12 @@ import java.util.List;
 
 import logger.LogViewer;
 import logger.logger;
-import models.Assignment;
+import models.MessageModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
 
+import databaseEncrypted.Database;
 import databaseEncrypted.DatabaseHandler;
 
 import android.app.ListActivity;
@@ -41,10 +42,7 @@ public class MainActivity extends ListActivity {
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
 		// Testa DB
-		//testDBFull(this);
-		// Hämta instans av databasen
-		DatabaseHandler db = new DatabaseHandler(this);
-		db.addToDB(new Contact());
+		testDBPartial(this);
 		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
@@ -167,34 +165,43 @@ public class MainActivity extends ListActivity {
 		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(),context));
 		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(),context));
 	}
-	
+	*/
 	public void testDBPartial(Context context){
 		Database db = new Database();
+		/*
 		int w = 600, h = 600;
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
 		Bitmap fakeImage = Bitmap.createBitmap(w, h, conf);
 		db.addToDB(new Assignment("Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats"),context);
-
-		// Testa att hämta från databasen
-		List<ModelInterface> testList = db.getAllFromDB(new Assignment(),context);
+		*/
+		db.addToDB(new MessageModel("Hej svehjs","Kalle"), context);
+		
+		// Testa att hämta från databasen samt uppdatera databasen
+		List<ModelInterface> testList = db.getAllFromDB(new MessageModel(),context);
 		for (ModelInterface m : testList) {
 			// Hämta gammalt meddelande
-			Assignment ass = (Assignment) m;
-			Log.d("DB",ass.getId() + "-> " + ass.getAssignmentDescription() + "; " + ass.getAssignmentStatus() + "\n");
-			Assignment assUpd = new Assignment(ass.getId(),"Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En hund i ett träd", "2 dagar", "påbörjat", ass.getCameraImage(), "Alstättersgata", "Lekplats");
-			db.updateModel(assUpd, context);
+			MessageModel mess= (MessageModel) m;
+			Log.d("DB",mess.getId() + "-> " + mess.getReciever() + "; " + mess.getMessageContent() + "\n");
+			// Skapa nytt meddelande
+			MessageModel messUpd = new MessageModel(mess.getId(),"Hej dååå",mess.getReciever().toString(),mess.getMessageTimeStamp(),mess.isRead());
+			// Lägg in det uppdaterade meddelandet
+			db.updateModel(messUpd, context);
 		}
-		testList = db.getAllFromDB(new Assignment(),context);
+		testList = db.getAllFromDB(new MessageModel(),context);
 		Log.d("DB","*********** UPPDATERAD LISTA ************");
+		
+		// Testa att skriva ut den uppdaterade listan samt töm hela databasen
 		for (ModelInterface m : testList) {
 			// Hämta gammalt meddelande
-			Assignment ass = (Assignment) m;
-			Log.d("DB",ass.getId() + "-> " + ass.getAssignmentDescription() + "; " + ass.getAssignmentStatus() + "\n");
-			db.deleteFromDB(ass, context);
+			MessageModel mess = (MessageModel) m;
+			Log.d("DB",mess.getId() + "-> " + mess.getReciever() + "; " + mess.getMessageContent() + "\n");
+			// Ta bort aktuell post från databasen
+			db.deleteFromDB(mess, context);
 		}
-		testList = db.getAllFromDB(new Assignment(),context);
+		// Testa så databasen är tom
+		testList = db.getAllFromDB(new MessageModel(),context);
 		Log.d("DB","Storlek: " + testList.size());
-	}*/
+	}
 	
 
 }

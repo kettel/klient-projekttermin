@@ -17,7 +17,6 @@ public class DatabaseHandlerMessages extends DatabaseHandler{
     private static final String TABLE_MESSAGES = "messages";
 
     // Contacts tabellkolumnnamn
-    private static final String KEY_ID = "id";
     private static final String KEY_MESSAGE_CONTENT = "content";
     private static final String KEY_RECEIVER = "receiver";
 	private static final String KEY_MESSAGE_TIMESTAMP = "timestamp";
