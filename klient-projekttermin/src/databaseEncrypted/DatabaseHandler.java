@@ -29,7 +29,7 @@ public abstract class DatabaseHandler {
 			this.databaseFile.delete();
 		}
 		
-		// Ladda in bibliotek. Fungerar detta för subklasser?
+		// Ladda in bibliotek. Fungerar för subklasser.
 		SQLiteDatabase.loadLibs(context);
 	}
 	

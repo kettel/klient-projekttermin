@@ -1,6 +1,7 @@
 package com.example.klien_projekttermin;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,11 +10,9 @@ import logger.logger;
 import models.Assignment;
 import models.MessageModel;
 import models.Contact;
-import models.MessageModel;
 import models.ModelInterface;
 
 import databaseEncrypted.Database;
-import databaseEncrypted.DatabaseHandler;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -43,8 +42,10 @@ public class MainActivity extends ListActivity {
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
 		// Testa DB
+		long timer = Calendar.getInstance().getTimeInMillis();
 		testDBFull(this);
-		
+		timer = Calendar.getInstance().getTimeInMillis() - timer;
+		Log.d("DB", "Exekveringstid: " + Long.toString(timer));
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
