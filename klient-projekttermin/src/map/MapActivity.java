@@ -53,8 +53,7 @@ import database.Database;
  * @author nicklas
  * 
  */
-public class MapActivity extends Activity implements Observer,
-		SearchView.OnCloseListener, SearchView.OnQueryTextListener, MapListener,Runnable {
+public class MapActivity extends Activity implements Observer, MapListener,Runnable {
 
 	private BasicMapComponent mapComponent;
 	private String[] from = { "line1", "line2" };
@@ -225,35 +224,6 @@ public class MapActivity extends Activity implements Observer,
 		sm = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		lv.setAdapter(sm);
 		return super.onCreateOptionsMenu(menu);
-	}
-
-	/**
-	 * Uppdaterar sökförslagen
-	 */
-	public boolean onQueryTextChange(String newText) {
-		final String str = newText;
-		new Thread(new Runnable() {
-
-			public void run() {
-				searchSuggestions.updateSearch(str);
-			}
-		}).start();
-		return true;
-	}
-
-	/**
-	 * Vid sökning dölj allt förutom listview:n med sökresultat.
-	 */
-	public boolean onQueryTextSubmit(String query) {
-		// searchView.setVisibility(SearchView.GONE);
-		final String str = query;
-		new Thread(new Runnable() {
-
-			public void run() {
-				searchSuggestions.updateSearch(str);
-			}
-		}).start();
-		return true;
 	}
 
 	/**
