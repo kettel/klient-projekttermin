@@ -14,7 +14,7 @@ import models.MessageModel;
 
 public class CommunicationModule {
 	private Gson gson = new Gson();
-	private String transmisson = null;
+	private String transmisson = "test";
 	private logger comLog = null;
 	ClientToServerTransmisson ClientToServer = null;
 	//konstruktorn

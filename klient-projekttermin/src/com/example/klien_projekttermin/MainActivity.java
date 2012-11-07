@@ -8,6 +8,7 @@ import communicationModule.CommunicationModule;
 
 import logger.LogViewer;
 import logger.logger;
+import models.MessageModel;
 
 
 import android.app.ListActivity;
@@ -46,7 +47,7 @@ public class MainActivity extends ListActivity {
 				switch (arg2) {
 				case 0:
 					try {
-						Communicaton.sendMessage(new MessageModel("bla bla this is a test message", "some username I think LOL"));
+						Communicaton.sendMessage(new MessageModel("bla bla this is a test message", "Kristoffer"));
 					} catch (Exception e) {
 					}
 					break;

@@ -1,5 +1,7 @@
 package communicationModule;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -15,6 +17,8 @@ public class ClientToServerTransmisson extends Thread  {
 	private Socket requestSocet =  null;
 	private String transmisson = null;
 	private PrintWriter  output = null;
+	private BufferedReader input = null;
+	private String inputString = null;
 	
 	private boolean sendData = false;
 	private boolean connected = false;
@@ -29,6 +33,7 @@ public class ClientToServerTransmisson extends Thread  {
 	
 	public synchronized void sendTransmisson(String transmisson){
 		this.transmisson = transmisson;
+		System.out.println("this transmisson: " + transmisson);
 		sendData = true;
 	}
 	
@@ -42,7 +47,7 @@ public class ClientToServerTransmisson extends Thread  {
 	public void run() {
 		try {
 			requestSocet = new Socket(ServerIP,ServerPort);
-			requestSocet.
+			input = new BufferedReader(new InputStreamReader(requestSocet.getInputStream()));
 			output = new PrintWriter(requestSocet.getOutputStream(), true);
 			setConnetion(true);
 		} catch (Exception e) {
@@ -51,17 +56,27 @@ public class ClientToServerTransmisson extends Thread  {
 		}
 		
 		while(true){
+			try {
+				if(input.ready()){
+					inputString = input.readLine();
+					Log.e("incomeing", inputString);	
+				}
+			} catch (Exception e) {
+				Log.e("carcha", "inputString: " + e.toString());
+			}
 			if(!requestSocet.isConnected()){
 				Log.e("Dissconnect","No connection");
 				try{
 					requestSocet = new Socket(ServerIP,ServerPort);
 					output = new PrintWriter(requestSocet.getOutputStream(), true);	
 				}catch(Exception e) {
-					Log.e("catch","fafsa");
+					Log.e("catch","requestSocet: " + e.toString());
 				}
 			}
+			
 			if(sendData){
 				output.println(transmisson);
+				Log.e("output", "sending TRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANS");
 				sendData(false);
 			}
 			
