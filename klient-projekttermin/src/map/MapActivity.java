@@ -19,10 +19,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.ZoomControls;
 
 import com.example.klien_projekttermin.R;
@@ -53,7 +53,8 @@ import database.Database;
  * @author nicklas
  * 
  */
-public class MapActivity extends Activity implements Observer, MapListener,Runnable {
+public class MapActivity extends Activity implements Observer, MapListener,
+		Runnable {
 
 	private BasicMapComponent mapComponent;
 	private String[] from = { "line1", "line2" };
@@ -191,7 +192,7 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 		});
 		View v = (View) menu.findItem(R.id.menu_search).getActionView();
 		this.actv = (EditText) v.findViewById(R.id.ab_Search);
-		this.lv=(ListView)findViewById(R.id.mylist);
+		this.lv = (ListView) findViewById(R.id.mylist);
 		this.actv.addTextChangedListener(new TextWatcher() {
 
 			public void onTextChanged(CharSequence s, int start, int before,
@@ -224,6 +225,14 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 		sm = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		lv.setAdapter(sm);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		actv.requestFocus();
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+		return true;
 	}
 
 	/**
@@ -337,7 +346,7 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 
 	public void run() {
 		// TODO Auto-generated method stub
-		if (this.lv.getVisibility()==ListView.GONE) {
+		if (this.lv.getVisibility() == ListView.GONE) {
 			this.lv.setVisibility(ListView.VISIBLE);
 			this.mapView.setVisibility(MapView.GONE);
 			this.zoomControls.setVisibility(ZoomControls.GONE);
