@@ -18,8 +18,7 @@ public class CommunicationModule {
 	private logger comLog = null;
 	ClientToServerTransmisson ClientToServer = null;
 	//konstruktorn
-	public CommunicationModule(logger comLog){
-		this.comLog = comLog;
+	public CommunicationModule(){
 		ClientToServer = new ClientToServerTransmisson();
 		ClientToServer.start();
 	}
