@@ -62,7 +62,7 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 	private String[] from = { "line1", "line2" };
 	private int[] to = { android.R.id.text1, android.R.id.text2 };
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
-	private SimpleAdapter sm;
+	private ArrayAdapter<String> sm;
 	private MapView mapView;
 	private ZoomControls zoomControls;
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
@@ -76,6 +76,7 @@ public class MapActivity extends Activity implements Observer, MapListener,Runna
 			Utils.createImage("/res/drawable-hdpi/pin_green.png"),
 			Utils.createImage("/res/drawable-hdpi/pos_arrow_liten.png") };
 	private EditText actv;
+	private ListView lv;
 	private ArrayList<String> list = new ArrayList<String>();
 
 	@Override
