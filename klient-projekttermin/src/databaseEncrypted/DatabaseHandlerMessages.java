@@ -14,7 +14,7 @@ import android.database.Cursor;
 public class DatabaseHandlerMessages extends DatabaseHandler{
 
 	// Contacts tabellnamn
-    private static final String TABLE_MESSAGES = "messages";
+    private static final String TABLE_MESSAGES = "message";
 
     // Contacts tabellkolumnnamn
     private static final String KEY_MESSAGE_CONTENT = "content";

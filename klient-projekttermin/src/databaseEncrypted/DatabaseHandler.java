@@ -4,8 +4,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
-import models.Contact;
 import models.ModelInterface;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -24,7 +22,6 @@ public abstract class DatabaseHandler {
 	public DatabaseHandler(Context c){
 		this.context = c;
 		this.databaseFile = context.getDatabasePath("tddd36.db");
-		Log.d("DB","Sökväg: " + databaseFile.toString());
 		
 		// Om databasfilen inte existerar, skapa den
 		if(!this.databaseFile.exists()){
