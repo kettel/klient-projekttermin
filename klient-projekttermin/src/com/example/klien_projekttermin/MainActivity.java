@@ -6,6 +6,7 @@ import java.util.List;
 
 import logger.LogViewer;
 import logger.logger;
+import models.Assignment;
 import models.MessageModel;
 import models.Contact;
 import models.MessageModel;
@@ -42,7 +43,7 @@ public class MainActivity extends ListActivity {
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
 		// Testa DB
-		testDBPartial(this);
+		testDBFull(this);
 		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
@@ -114,7 +115,7 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	/*
+	
 	public void testDBFull(Context context){
 		Database db = new Database();
 		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
@@ -165,7 +166,7 @@ public class MainActivity extends ListActivity {
 		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(),context));
 		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(),context));
 	}
-	*/
+	
 	public void testDBPartial(Context context){
 		Database db = new Database();
 		/*

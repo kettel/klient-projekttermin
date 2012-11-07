@@ -43,7 +43,8 @@ public class DatabaseHandlerAssignment extends DatabaseHandler{
 	@Override
 	public void initiateModelDatabase() {
 		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
-		String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_ASSIGNMENTS + "("
+		String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE IF NOT EXISTS " 
+				+ TABLE_ASSIGNMENTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
         		+ KEY_NAME + " TEXT,"
                 + KEY_LAT + " TEXT,"
@@ -57,6 +58,7 @@ public class DatabaseHandlerAssignment extends DatabaseHandler{
                 + KEY_STREETNAME + " TEXT,"
                 + KEY_SITENAME + " TEXT" + ")";
         database.execSQL(CREATE_ASSIGNMENTS_TABLE);
+        database.close();
 	}
 
 	@Override
