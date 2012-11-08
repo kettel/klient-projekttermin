@@ -211,6 +211,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 							searchSuggestions.updateSearch(temp);
 						}
 					}).start();
+				}else {
+					sm.clear();
 				}
 			}
 
