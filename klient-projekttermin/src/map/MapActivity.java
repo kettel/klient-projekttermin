@@ -200,7 +200,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					int count) {
 				runOnUiThread(new Runnable() {
 					public void run() {
-						sp.setVisibility(0);
+						sp.setVisibility(ProgressBar.VISIBLE);
 					}
 				});
 				final String temp = s.toString();
@@ -368,7 +368,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			sm.addAll(temp.getName());
 		}
 		sm.notifyDataSetChanged();
-		sp.setVisibility(8);
+		sp.setVisibility(ProgressBar.GONE);
 	}
 
 	public void showMapView() {
