@@ -5,9 +5,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import logger.logger;
-
-import android.os.AsyncTask;
 import android.util.Log;
 
 public class ClientToServerTransmisson extends Thread  {

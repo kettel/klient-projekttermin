@@ -8,9 +8,6 @@ import communicationModule.CommunicationModule;
 
 import logger.LogViewer;
 import logger.logger;
-import models.MessageModel;
-import logger.LogViewer;
-import logger.logger;
 import map.MapActivity;
 import android.app.ListActivity;
 import android.content.Context;
