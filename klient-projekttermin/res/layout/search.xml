@@ -4,24 +4,39 @@
     android:layout_height="fill_parent"
     android:orientation="horizontal" >
 
-    <EditText
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ab_Search"
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.9"
-        android:completionThreshold="1"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:hint="@string/search_hint"
-        android:imeOptions="actionSearch"
-        android:inputType="textVisiblePassword"
-        android:singleLine="true" />
+        android:layout_height="wrap_content"
+        android:layout_weight="0.9" >
+
+        <EditText
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/ab_Search"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:completionThreshold="1"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="@string/search_hint"
+            android:imeOptions="actionSearch"
+            android:inputType="textVisiblePassword"
+            android:background="@android:color/background_dark"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/clearSearch"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignRight="@id/ab_Search"
+            android:background="@drawable/gtk_close" />
+    </RelativeLayout>
 
     <ProgressBar
         android:id="@+id/spinner"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:layout_weight="0.1" />
 
 </LinearLayout>

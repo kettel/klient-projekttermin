@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnLayoutChangeListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -51,6 +50,7 @@ import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
 
 import database.Database;
+
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för
  * kartan finns
@@ -200,7 +200,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					int count) {
 				runOnUiThread(new Runnable() {
 					public void run() {
-						sp.setVisibility(0);
+						sp.setVisibility(ProgressBar.VISIBLE);
 					}
 				});
 				final String temp = s.toString();
@@ -250,7 +250,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		activateGPS(false);
 		mapComponent.setMiddlePoint(locationSource.getLocation());
 		new NutiteqRouteWaiter(locationSource.getLocation(), searchSuggestions
-				.getList().get(arg).getPlace().getWgs(), mapComponent, icons[2], icons[2]);
+				.getList().get(arg).getPlace().getWgs(), mapComponent,
+				icons[2], icons[2]);
 	}
 
 	public void centerMapOnLocation(int arg) {
@@ -366,7 +367,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			sm.addAll(temp.getName());
 		}
 		sm.notifyDataSetChanged();
-		sp.setVisibility(8);
+		sp.setVisibility(ProgressBar.GONE);
 	}
 
 	public void showMapView() {
