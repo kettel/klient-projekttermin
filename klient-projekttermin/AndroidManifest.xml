@@ -33,5 +33,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
+        <service android:name="communicationModule.CommunicationService">
+    </service>
     </application>
 </manifest>

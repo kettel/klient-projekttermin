@@ -24,7 +24,6 @@ public class ClientToServerTransmisson extends Thread  {
 	private boolean connected = false;
 	
 	public ClientToServerTransmisson(){
-		System.out.println("Constuct done");
 	}
 	
 	private synchronized void sendData(boolean enabel){
@@ -33,7 +32,6 @@ public class ClientToServerTransmisson extends Thread  {
 	
 	public synchronized void sendTransmisson(String transmisson){
 		this.transmisson = transmisson;
-		System.out.println("this transmisson: " + transmisson);
 		sendData = true;
 	}
 	
@@ -45,6 +43,7 @@ public class ClientToServerTransmisson extends Thread  {
 	}
 
 	public void run() {
+		
 		try {
 			requestSocet = new Socket(ServerIP,ServerPort);
 			input = new BufferedReader(new InputStreamReader(requestSocet.getInputStream()));
@@ -56,6 +55,7 @@ public class ClientToServerTransmisson extends Thread  {
 		}
 		
 		while(true){
+			
 			try {
 				if(input.ready()){
 					inputString = input.readLine();
@@ -64,6 +64,7 @@ public class ClientToServerTransmisson extends Thread  {
 			} catch (Exception e) {
 				Log.e("carcha", "inputString: " + e.toString());
 			}
+			
 			if(!requestSocet.isConnected()){
 				Log.e("Dissconnect","No connection");
 				try{
