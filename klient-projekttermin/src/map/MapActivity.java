@@ -20,10 +20,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -81,6 +83,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	LocationSource locationSource;
 	private MenuItem searchItem;
 	private ProgressBar sp;
+	private Button clearSearch;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -191,11 +194,18 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		View v = (View) menu.findItem(R.id.menu_search).getActionView();
 		this.sp = (ProgressBar) v.findViewById(R.id.spinner);
 		this.searchItem = (MenuItem) menu.findItem(R.id.menu_search);
+		this.clearSearch = (Button) v.findViewById(R.id.clearSearch);
+		this.clearSearch.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				showMapView();
+				searchItem.collapseActionView();
+			}
+		});
 		this.actv = (EditText) v.findViewById(R.id.ab_Search);
 		this.lv = (ListView) findViewById(R.id.mylist);
 		this.lv.setOnItemClickListener(this);
 		this.actv.addTextChangedListener(new TextWatcher() {
-
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
 				runOnUiThread(new Runnable() {

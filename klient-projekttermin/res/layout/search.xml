@@ -21,7 +21,6 @@
             android:hint="@string/search_hint"
             android:imeOptions="actionSearch"
             android:inputType="textVisiblePassword"
-            android:background="@android:color/background_dark"
             android:singleLine="true" />
 
         <Button
