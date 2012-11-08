@@ -16,7 +16,8 @@ public class CustomGeocodingService extends GeocodingService{
 	@Override
 	public int maxResults() {
 		// TODO Auto-generated method stub
-		return 3;
+		return 5;
 	}
+	
 
 }

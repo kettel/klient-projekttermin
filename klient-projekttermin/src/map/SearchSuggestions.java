@@ -14,8 +14,7 @@ import com.nutiteq.services.GeocodingService;
  */
 public class SearchSuggestions extends Observable implements
 		GeocodingResultWaiter {
-
-	//private ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+	private CustomGeocodingService service;
 	private ArrayList<KmlPlace> list=new ArrayList<KmlPlace>();
 	/**
 	 * Tar in en text och startar en sökning på matchande termer. 
@@ -23,7 +22,10 @@ public class SearchSuggestions extends Observable implements
 	 * @param text
 	 */
 	public void updateSearch(String text) {
-		final CustomGeocodingService service = new CustomGeocodingService(this,
+		if (service!=null) {
+			service.cancel();
+		}
+		service = new CustomGeocodingService(this,
 				GeocodingService.DEFAULT_URL, "et", null, text,
 				GeocodingService.SEARCH_TYPE_GEOCODING, null, 20, false);
 		service.execute();
@@ -37,11 +39,7 @@ public class SearchSuggestions extends Observable implements
 	 */
 	public void searchResults(KmlPlace[] kmlPlaces) {
 		list.clear();
-		int results=kmlPlaces.length;
-		if (results>10){
-			results=10;
-		}
-		for (int i = 0; i < results; i++) {
+		for (int i = 0; i < kmlPlaces.length; i++) {
 			list.add(kmlPlaces[i]);
 		}
 		/**
