@@ -23,7 +23,7 @@ public class SearchSuggestions extends Observable implements
 	 * @param text
 	 */
 	public void updateSearch(String text) {
-		final GeocodingService service = new GeocodingService(this,
+		final CustomGeocodingService service = new CustomGeocodingService(this,
 				GeocodingService.DEFAULT_URL, "et", null, text,
 				GeocodingService.SEARCH_TYPE_GEOCODING, null, 20, false);
 		service.execute();
