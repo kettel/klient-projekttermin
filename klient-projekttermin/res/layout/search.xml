@@ -4,9 +4,9 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:completionThreshold="1"
-    android:hint="Search"
-    android:singleLine="true"
-    android:inputType="textVisiblePassword" 
-    android:imeOptions="actionSearch"
     android:focusable="true"
-    android:focusableInTouchMode="true"/>
+    android:focusableInTouchMode="true"
+    android:hint="Search"
+    android:imeOptions="actionSearch"
+    android:inputType="textVisiblePassword"
+    android:singleLine="true" />

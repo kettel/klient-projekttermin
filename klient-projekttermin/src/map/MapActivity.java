@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.ZoomControls;
 
 import com.example.klien_projekttermin.R;
@@ -39,7 +41,6 @@ import com.nutiteq.components.PlaceLabel;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.listeners.MapListener;
-import com.nutiteq.location.LocationListener;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
 import com.nutiteq.location.NutiteqLocationMarker;
@@ -99,7 +100,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
-//		navigateToLocation();
+		// navigateToLocation();
 
 		/**
 		 * Hämtar listview till sökförslagen samt lägger till en adapter. Lägger
@@ -197,7 +198,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			}
 		});
 		View v = (View) menu.findItem(R.id.menu_search).getActionView();
-		searchItem=(MenuItem)menu.findItem(R.id.menu_search);
+		searchItem = (MenuItem) menu.findItem(R.id.menu_search);
 		this.actv = (EditText) v.findViewById(R.id.ab_Search);
 		this.lv = (ListView) findViewById(R.id.mylist);
 		this.lv.setOnItemClickListener(this);
@@ -236,9 +237,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		if (item.equals(this.searchItem)) {
 			actv.requestFocus();
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-	        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 		}
-		
+
 		return true;
 	}
 
@@ -251,9 +252,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 *            Kart objektet
 	 */
 	public void navigateToLocation(int arg) {
-		
-		new NutiteqRouteWaiter(STHLM, searchSuggestions.getList().get(arg).getPlace().getWgs(), mapComponent, icons[2],
-				icons[2]);
+
+		new NutiteqRouteWaiter(STHLM, searchSuggestions.getList().get(arg)
+				.getPlace().getWgs(), mapComponent, icons[2], icons[2]);
 	}
 
 	public void centerMapOnLocation(int arg) {
@@ -363,17 +364,17 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		if (this.lv.getVisibility() == ListView.GONE) {
 			this.lv.setVisibility(ListView.VISIBLE);
 			this.zoomControls.setVisibility(ZoomControls.GONE);
-		} 
+		}
 		sm.clear();
 		for (KmlPlace temp : searchSuggestions.getList()) {
 			sm.addAll(temp.getName());
 		}
 		sm.notifyDataSetChanged();
 	}
-	
-	public void showMapView(){
+
+	public void showMapView() {
 		runOnUiThread(new Runnable() {
-			
+
 			public void run() {
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
