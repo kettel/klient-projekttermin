@@ -22,7 +22,7 @@ import android.widget.SimpleAdapter;
 public class MainActivity extends ListActivity {
 
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-	public CommunicationModule Communicaton = new CommunicationModule();
+//	public CommunicationModule Communicaton = new CommunicationModule();
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

@@ -20,12 +20,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnLayoutChangeListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.ZoomControls;
 
 import com.example.klien_projekttermin.R;
@@ -49,7 +51,6 @@ import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
 
 import database.Database;
-
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för
  * kartan finns
@@ -71,14 +72,15 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private ArrayList<WgsPoint> points = new ArrayList<WgsPoint>();
 	private ArrayList<Place> regionCorners = new ArrayList<Place>();
 	private static Image[] icons = {
-			Utils.createImage("/res/drawable-hdpi/pin.png"),
-			Utils.createImage("/res/drawable-hdpi/pin_green.png"),
-			Utils.createImage("/res/drawable-hdpi/pos_arrow_liten.png") };
+			Utils.createImage("/res/drawable-hdpi/blobredsmall.png"),
+			Utils.createImage("/res/drawable-hdpi/blobgreensmall.png"),
+			Utils.createImage("/res/drawable-hdpi/blobbluesmall.png") };
 	private EditText actv;
 	private ListView lv;
 	private static String[] searchAlts = { "Navigera till plats", "Visa plats" };
 	LocationSource locationSource;
 	private MenuItem searchItem;
+	private ProgressBar sp;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -156,9 +158,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			final LocationMarker marker = new NutiteqLocationMarker(
 					new PlaceIcon(icons[0], icons[0].getWidth() / 2,
 							icons[0].getHeight()), 3000, true);
-			// locationSource = new AndroidGPSProvider(
-			// (LocationManager) getSystemService(Context.LOCATION_SERVICE),
-			// 1000L);
 			locationSource.setLocationMarker(marker);
 			mapComponent.setLocationSource(locationSource);
 		} else {
@@ -190,7 +189,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			}
 		});
 		View v = (View) menu.findItem(R.id.menu_search).getActionView();
-		searchItem = (MenuItem) menu.findItem(R.id.menu_search);
+		this.sp = (ProgressBar) v.findViewById(R.id.spinner);
+		this.searchItem = (MenuItem) menu.findItem(R.id.menu_search);
 		this.actv = (EditText) v.findViewById(R.id.ab_Search);
 		this.lv = (ListView) findViewById(R.id.mylist);
 		this.lv.setOnItemClickListener(this);
@@ -198,6 +198,11 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						sp.setVisibility(0);
+					}
+				});
 				final String temp = s.toString();
 				if (!temp.isEmpty()) {
 					new Thread(new Runnable() {
@@ -207,7 +212,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 						}
 					}).start();
 				}
-
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -231,7 +235,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 		}
-
 		return true;
 	}
 
@@ -244,17 +247,14 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 *            Kart objektet
 	 */
 	public void navigateToLocation(int arg) {
-		activateGPS(true);
-		mapComponent.setMiddlePoint(searchSuggestions.getList().get(arg)
-				.getPlace().getWgs());
+		activateGPS(false);
+		mapComponent.setMiddlePoint(locationSource.getLocation());
 		new NutiteqRouteWaiter(locationSource.getLocation(), searchSuggestions
 				.getList().get(arg).getPlace().getWgs(), mapComponent, icons[2], icons[2]);
 	}
 
 	public void centerMapOnLocation(int arg) {
 		activateGPS(false);
-		addInterestPoint(searchSuggestions.getList().get(arg).getPlace()
-				.getWgs(), searchSuggestions.getList().get(arg).getName());
 		mapComponent.setMiddlePoint(searchSuggestions.getList().get(arg)
 				.getPlace().getWgs());
 	}
@@ -366,11 +366,11 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			sm.addAll(temp.getName());
 		}
 		sm.notifyDataSetChanged();
+		sp.setVisibility(8);
 	}
 
 	public void showMapView() {
 		runOnUiThread(new Runnable() {
-
 			public void run() {
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
