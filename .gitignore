@@ -15,7 +15,6 @@ gen/
 # Local configuration file (sdk path, etc)
 local.properties
 *.pydevproject
-#.project
 .metadata
 bin/**
 tmp/**
@@ -25,8 +24,7 @@ tmp/**/*
 *.swp
 *~.nib
 local.properties
-#.classpath
-#.settings/
+.settings/
 .loadpath
 
 # External tool builders
@@ -39,7 +37,7 @@ local.properties
 .cproject
 
 # PDT-specific
-.buildpath# built application files
+.buildpath
 *.apk
 *.ap_
 
