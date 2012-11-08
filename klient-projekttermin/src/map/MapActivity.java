@@ -79,7 +79,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			Utils.createImage("/res/drawable-hdpi/blobbluesmall.png") };
 	private EditText actv;
 	private ListView lv;
-	private static String[] searchAlts = { "Navigera till plats", "Visa plats" };
+	private static String[] searchAlts = { "Navigera till plats", "Visa plats",
+			"Lägg till uppdrag på position" };
 	LocationSource locationSource;
 	private MenuItem searchItem;
 	private ProgressBar sp;
@@ -221,7 +222,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 							searchSuggestions.updateSearch(temp);
 						}
 					}).start();
-				}else {
+				} else {
 					sm.clear();
 				}
 			}
@@ -261,9 +262,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	public void navigateToLocation(int arg) {
 		activateGPS(false);
 		mapComponent.setMiddlePoint(locationSource.getLocation());
-		new NutiteqRouteWaiter(locationSource.getLocation(), searchSuggestions
-				.getList().get(arg).getPlace().getWgs(), mapComponent,
-				icons[2], icons[2]);
+		NutiteqRouteWaiter r = new NutiteqRouteWaiter(
+				locationSource.getLocation(), searchSuggestions.getList()
+						.get(arg).getPlace().getWgs(), mapComponent, icons[2],
+				icons[2]);
 	}
 
 	public void centerMapOnLocation(int arg) {
@@ -394,6 +396,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		final int choice=arg2;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Meny");
 		ListView modeList = new ListView(this);
@@ -409,12 +412,16 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				dialog.dismiss();
 				showMapView();
 				searchItem.collapseActionView();
+				System.out.println(arg2);
 				switch (arg2) {
 				case 0:
-					navigateToLocation(arg2);
+					navigateToLocation(choice);
 					break;
 				case 1:
-					centerMapOnLocation(arg2);
+					centerMapOnLocation(choice);
+					break;
+				case 2:
+					//Starta createAssignment
 					break;
 				default:
 					break;
