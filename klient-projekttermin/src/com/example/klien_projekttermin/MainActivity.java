@@ -8,9 +8,6 @@ import communicationModule.CommunicationModule;
 
 import logger.LogViewer;
 import logger.logger;
-import models.MessageModel;
-import logger.LogViewer;
-import logger.logger;
 import map.MapActivity;
 import android.app.ListActivity;
 import android.content.Context;
@@ -25,7 +22,7 @@ import android.widget.SimpleAdapter;
 public class MainActivity extends ListActivity {
 
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-	public CommunicationModule Communicaton = new CommunicationModule();
+//	public CommunicationModule Communicaton = new CommunicationModule();
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +43,6 @@ public class MainActivity extends ListActivity {
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
-
 					 myIntent= new Intent(MainActivity.this,
 					 MapActivity.class);
 					break;

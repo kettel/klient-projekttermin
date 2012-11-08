@@ -1,21 +1,14 @@
 package communicationModule;
 
-import java.io.PrintWriter;
-import java.net.Socket;
-
-import android.content.Context;
-
-import com.google.gson.Gson;
-
-import logger.logger;
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
 
+import com.google.gson.Gson;
+
 public class CommunicationModule {
 	private Gson gson = new Gson();
 	private String transmisson = "test";
-	private logger comLog = null;
 	ClientToServerTransmisson ClientToServer = null;
 	//konstruktorn
 	public CommunicationModule(){

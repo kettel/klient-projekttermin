@@ -1,9 +1,6 @@
 package models;
 
-import android.text.format.Time;
-
 import java.util.Calendar;
-import java.util.Date;
 
 
 public class MessageModel implements ModelInterface {
