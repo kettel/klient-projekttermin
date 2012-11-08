@@ -1,4 +1,4 @@
-package databaseEncryptedContentProvider;
+package com.example.klien_projekttermin.database;
 
 import android.content.Context;
 import net.sqlcipher.database.SQLiteDatabase;

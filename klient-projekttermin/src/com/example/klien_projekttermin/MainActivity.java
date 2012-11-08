@@ -5,6 +5,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import com.example.klien_projekttermin.database.DatabaseContentProvider;
+import com.example.klien_projekttermin.database.MessageTable;
+
 import logger.LogViewer;
 import logger.logger;
 import models.Assignment;
@@ -18,6 +21,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -26,8 +30,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
 
-public class MainActivity extends ListActivity {
+import android.widget.SimpleCursorAdapter;
 
+public class MainActivity extends ListActivity {
+	private SimpleCursorAdapter adapter;
+	
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
 	
 	
@@ -43,9 +50,10 @@ public class MainActivity extends ListActivity {
 		
 		// Testa DB
 		long timer = Calendar.getInstance().getTimeInMillis();
-		testDBFull(this);
+		testDBProvider(this);
 		timer = Calendar.getInstance().getTimeInMillis() - timer;
 		Log.d("DB", "Exekveringstid: " + Long.toString(timer));
+		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -205,5 +213,10 @@ public class MainActivity extends ListActivity {
 		Log.d("DB","Storlek: " + testList.size());
 	}
 	
+	public void testDBProvider(Context context){
+	    Uri todoUri = Uri.parse(DatabaseContentProvider.CONTENT_URI + "/");
+	    Log.d("DB","URI: " + todoUri);
+
+	}
 
 }

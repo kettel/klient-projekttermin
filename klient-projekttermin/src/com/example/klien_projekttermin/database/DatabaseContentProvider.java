@@ -1,4 +1,4 @@
-package databaseEncryptedContentProvider;
+package com.example.klien_projekttermin.database;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -58,7 +58,7 @@ public class DatabaseContentProvider extends ContentProvider{
 		checkColumns(projection);
 
 		// Set the table
-		queryBuilder.setTables(TodoTable.TABLE_TODO);
+		queryBuilder.setTables(MessageTable.TABLE_MESSAGE);
 
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
@@ -66,7 +66,7 @@ public class DatabaseContentProvider extends ContentProvider{
 			break;
 		case TODO_ID:
 			// Adding the ID to the original query
-			queryBuilder.appendWhere(TodoTable.COLUMN_ID + "="
+			queryBuilder.appendWhere(MessageTable.COLUMN_ID + "="
 					+ uri.getLastPathSegment());
 			break;
 		default:
@@ -94,7 +94,7 @@ public class DatabaseContentProvider extends ContentProvider{
 		long id = 0;
 		switch (uriType) {
 		case TODOS:
-			id = sqlDB.insert(TodoTable.TABLE_TODO, null, values);
+			id = sqlDB.insert(MessageTable.TABLE_MESSAGE, null, values);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -110,18 +110,18 @@ public class DatabaseContentProvider extends ContentProvider{
 		int rowsDeleted = 0;
 		switch (uriType) {
 		case TODOS:
-			rowsDeleted = sqlDB.delete(TodoTable.TABLE_TODO, selection,
+			rowsDeleted = sqlDB.delete(MessageTable.TABLE_MESSAGE, selection,
 					selectionArgs);
 			break;
 		case TODO_ID:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsDeleted = sqlDB.delete(TodoTable.TABLE_TODO,
-						TodoTable.COLUMN_ID + "=" + id, 
+				rowsDeleted = sqlDB.delete(MessageTable.TABLE_MESSAGE,
+						MessageTable.COLUMN_ID + "=" + id, 
 						null);
 			} else {
-				rowsDeleted = sqlDB.delete(TodoTable.TABLE_TODO,
-						TodoTable.COLUMN_ID + "=" + id 
+				rowsDeleted = sqlDB.delete(MessageTable.TABLE_MESSAGE,
+						MessageTable.COLUMN_ID + "=" + id 
 						+ " and " + selection,
 						selectionArgs);
 			}
@@ -140,7 +140,7 @@ public class DatabaseContentProvider extends ContentProvider{
 		int rowsUpdated = 0;
 		switch (uriType) {
 		case TODOS:
-			rowsUpdated = sqlDB.update(TodoTable.TABLE_TODO, 
+			rowsUpdated = sqlDB.update(MessageTable.TABLE_MESSAGE, 
 					values, 
 					selection,
 					selectionArgs);
@@ -148,14 +148,14 @@ public class DatabaseContentProvider extends ContentProvider{
 		case TODO_ID:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update(TodoTable.TABLE_TODO, 
+				rowsUpdated = sqlDB.update(MessageTable.TABLE_MESSAGE, 
 						values,
-						TodoTable.COLUMN_ID + "=" + id, 
+						MessageTable.COLUMN_ID + "=" + id, 
 						null);
 			} else {
-				rowsUpdated = sqlDB.update(TodoTable.TABLE_TODO, 
+				rowsUpdated = sqlDB.update(MessageTable.TABLE_MESSAGE, 
 						values,
-						TodoTable.COLUMN_ID + "=" + id 
+						MessageTable.COLUMN_ID + "=" + id 
 						+ " and " 
 						+ selection,
 						selectionArgs);
@@ -169,9 +169,9 @@ public class DatabaseContentProvider extends ContentProvider{
 	}
 	
 	private void checkColumns(String[] projection) {
-		String[] available = { TodoTable.COLUMN_CATEGORY,
-				TodoTable.COLUMN_SUMMARY, TodoTable.COLUMN_DESCRIPTION,
-				TodoTable.COLUMN_ID };
+		String[] available = { MessageTable.COLUMN_CONTENT,
+				MessageTable.COLUMN_RECEIVER, MessageTable.COLUMN_ISREAD,
+				MessageTable.COLUMN_ID };
 		if (projection != null) {
 			HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
 			HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));

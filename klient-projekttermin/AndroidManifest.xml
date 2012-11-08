@@ -27,11 +27,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
+        <!-- Contentprovider för Databasen -->
+        <provider
+            android:name=".contentprovider.DatabaseContentProvider"
+            android:authorities="com.example.klien_projekttermin.contentprovider" >
+        </provider>
+
     </application>
-    <!-- Contentprovider för Databasen -->
-    <provider
-      android:name=".contentprovider.DatabaseContentProvider"
-      android:authorities="com.example.klien_projekttermin.databaseEncryptedContentProvider" >
-   </provider>
+    
 
 </manifest>
