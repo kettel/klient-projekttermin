@@ -156,6 +156,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			final LocationMarker marker = new NutiteqLocationMarker(
 					new PlaceIcon(icons[0], icons[0].getWidth() / 2,
 							icons[0].getHeight()), 3000, true);
+			// locationSource = new AndroidGPSProvider(
+			// (LocationManager) getSystemService(Context.LOCATION_SERVICE),
+			// 1000L);
 			locationSource.setLocationMarker(marker);
 			mapComponent.setLocationSource(locationSource);
 		} else {
@@ -187,7 +190,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			}
 		});
 		View v = (View) menu.findItem(R.id.menu_search).getActionView();
-		searchItem=(MenuItem)menu.findItem(R.id.menu_search);
+		searchItem = (MenuItem) menu.findItem(R.id.menu_search);
 		this.actv = (EditText) v.findViewById(R.id.ab_Search);
 		this.lv = (ListView) findViewById(R.id.mylist);
 		this.lv.setOnItemClickListener(this);
@@ -226,9 +229,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		if (item.equals(this.searchItem)) {
 			actv.requestFocus();
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-	        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 		}
-		
+
 		return true;
 	}
 
@@ -245,8 +248,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		mapComponent.setMiddlePoint(searchSuggestions.getList().get(arg)
 				.getPlace().getWgs());
 		new NutiteqRouteWaiter(locationSource.getLocation(), searchSuggestions
-				.getList().get(arg).getPlace().getWgs(), mapComponent,
-				icons[2], icons[2]);
+				.getList().get(arg).getPlace().getWgs(), mapComponent, icons[2], icons[2]);
 	}
 
 	public void centerMapOnLocation(int arg) {
