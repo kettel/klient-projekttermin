@@ -3,8 +3,15 @@ package com.example.klien_projekttermin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import communicationModule.CommunicationModule;
+
 import logger.LogViewer;
 import logger.logger;
+import models.MessageModel;
+import logger.LogViewer;
+import logger.logger;
+import map.MapActivity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +25,8 @@ import android.widget.SimpleAdapter;
 public class MainActivity extends ListActivity {
 
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-
+	public CommunicationModule Communicaton = new CommunicationModule();
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,34 +35,30 @@ public class MainActivity extends ListActivity {
 		String[] from = { "line1", "line2" };
 		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-		
+
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
+
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-//				Intent myIntent;
+				Intent myIntent = null;
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
-					try {
-						testlogger.writeToLog("Nisse","testentry 1");
-						testlogger.writeToLog(null,"testentry 2");
-						testlogger.writeToLog("Nisse","testentry 3");
-					} catch (Exception e) {
-					}
-					// myIntent= new Intent(from.this,
-					// to.class);
+
+					 myIntent= new Intent(MainActivity.this,
+					 MapActivity.class);
 					break;
+					
 				case 1:
-					// myIntent= new Intent(from.this,
-					// to.class);
+					
 					break;
 				case 2:
-					// myIntent= new Intent(from.this,
-					// to.class);
+					
 					break;
 				case 3:
+					
 					try {
 						openLoggerIntent.putExtra(LOGCONTENT,testlogger.readFromLog());
 						startActivity(openLoggerIntent);
@@ -66,7 +70,7 @@ public class MainActivity extends ListActivity {
 					// to.class);
 					break;
 				}
-				// SomeView.this.startActivity(myIntent);
+				MainActivity.this.startActivity(myIntent);
 			}
 
 		});
@@ -96,6 +100,6 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	
+
 
 }

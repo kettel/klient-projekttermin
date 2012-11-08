@@ -1,12 +1,13 @@
+<<<<<<< HEAD
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.klien_projekttermin"
     android:versionCode="1"
     android:versionName="1.0" >
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-sdk
         android:minSdkVersion="15"
-        android:targetSdkVersion="16" />
+        android:targetSdkVersion="15" />
+
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -16,13 +17,52 @@
             android:label="@string/title_activity_main" >
         </activity>
         <activity
-            android:name="map.MapActivity"
-            android:label="@string/title_activity_map" 
-            android:configChanges="orientation">
+            android:name="logger.LogViewer"
+            android:label="@string/title_activity_log_viewer" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.klien_projekttermin.MainActivity" />
+        </activity>
+        <activity
+            android:name="camera.Camera"
+            android:label="@string/title_activity_camera" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+=======
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.klien_projekttermin"
+    android:versionCode="1"
+    android:versionName="1.0" >
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="15" />
+		<uses-permission android:name="android.permission.INTERNET"/>
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name="map.MapActivity"
+            android:label="@string/title_activity_map" 
+            android:configChanges="orientation">
         </activity>
         <activity
             android:name="logger.LogViewer"
@@ -33,3 +73,4 @@
         </activity>
     </application>
 </manifest>
+>>>>>>> 8250c3707d4a68aa3587d707edf613c604358f38

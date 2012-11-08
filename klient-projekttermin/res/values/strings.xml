@@ -1,3 +1,23 @@
+<<<<<<< HEAD
+<resources>
+
+    <string name="app_name">klien-projekttermin</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_dbtest">DBTest</string>
+    <string name="Button">Test DB</string>
+    <string name="title_activity_log_viewer">LogViewer</string>
+    <string name="btnIntend">Ta bild</string>
+    <string name="btnIntendS">Ta (liten) bild</string>
+    <string name="btnIntendV">Spela in film</string>
+    <string name="cannot">Kan inte</string>
+    <string name="album_name">Album</string>
+    <string name="title_activity_camera">Camera</string>
+    <string name="showAlbum">Album</string>
+
+</resources>
+=======
 <resources>
     <string name="app_name">klient-projekttermin</string>
     <string name="menu_settings">Settings</string>
@@ -11,3 +31,4 @@
     <string name="Button">Test DB</string>
     <string name="title_activity_log_viewer">LogViewer</string>
 </resources>
+>>>>>>> 8250c3707d4a68aa3587d707edf613c604358f38

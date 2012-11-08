@@ -12,8 +12,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -69,7 +67,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private MapView mapView;
 	private ZoomControls zoomControls;
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
-	private final WgsPoint STHLM = new WgsPoint(18.07, 59.33);
 	private boolean isInAddMode = false;
 	private boolean gpsOnOff = true;
 	private ArrayList<WgsPoint> points = new ArrayList<WgsPoint>();
@@ -100,7 +97,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
-		// navigateToLocation();
 
 		/**
 		 * Hämtar listview till sökförslagen samt lägger till en adapter. Lägger
@@ -143,15 +139,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	public void getDatabaseInformation() {
 		Assignment a = new Assignment();
 		Database db = new Database();
-		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-		Bitmap bmp = Bitmap.createBitmap(2, 23, conf);
-		db.addToDB(new Assignment("dummyn", 15.5826, 58.527, "eric", "nicke",
-				"dummy", "12.0.5", "on", bmp, "test", "dummy"),
-				getBaseContext());
-		List<ModelInterface> hej = db.getAllFromDB(a, getBaseContext());
-		System.out.println(db.getDBCount(a, getBaseContext()));
+		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
 		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
-			a = (Assignment) hej.get(i);
+			a = (Assignment) list.get(i);
 			addInterestPoint(new WgsPoint(a.getLat(), a.getLon()), a.getName());
 		}
 	}
@@ -252,13 +242,18 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 *            Kart objektet
 	 */
 	public void navigateToLocation(int arg) {
-
-		new NutiteqRouteWaiter(STHLM, searchSuggestions.getList().get(arg)
-				.getPlace().getWgs(), mapComponent, icons[2], icons[2]);
+		activateGPS(true);
+		mapComponent.setMiddlePoint(searchSuggestions.getList().get(arg)
+				.getPlace().getWgs());
+		new NutiteqRouteWaiter(locationSource.getLocation(), searchSuggestions
+				.getList().get(arg).getPlace().getWgs(), mapComponent,
+				icons[2], icons[2]);
 	}
 
 	public void centerMapOnLocation(int arg) {
 		activateGPS(false);
+		addInterestPoint(searchSuggestions.getList().get(arg).getPlace()
+				.getWgs(), searchSuggestions.getList().get(arg).getName());
 		mapComponent.setMiddlePoint(searchSuggestions.getList().get(arg)
 				.getPlace().getWgs());
 	}
