@@ -18,7 +18,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 import database.Database;
 import com.example.klien_projekttermin.*;
 
@@ -33,7 +32,7 @@ public class AssignmentOverview extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_assignmentoverview);
+		setContentView(R.layout.activity_assignment_overview);
 
 		db = new Database();
 		listView = (ListView) findViewById(R.id.listView1);

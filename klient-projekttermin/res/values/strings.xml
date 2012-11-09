@@ -1,5 +1,5 @@
-
 <resources>
+
     <string name="btnIntend">Ta bild</string>
     <string name="btnIntendS">Ta (liten) bild</string>
     <string name="btnIntendV">Spela in film</string>
@@ -18,5 +18,10 @@
     <string name="title_activity_dbtest">DBTest</string>
     <string name="Button">Test DB</string>
     <string name="title_activity_log_viewer">LogViewer</string>
-</resources>
+    <string name="title_activity_uppdragslista">Uppdragslista</string>
+    <string name="title_activity_uppdrag">Uppdrag</string>
+    <string name="title_activity_add_assignment">AddAssignment</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_assignment_overview">AssignmentOverview</string>
 
+</resources>

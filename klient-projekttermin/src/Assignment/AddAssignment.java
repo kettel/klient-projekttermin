@@ -16,7 +16,7 @@ public class AddAssignment extends Activity {
 	private Database db;
 	private Button addAssignmentButton;
 	private EditText assignmentName;
-	private EditText assignmentCoord;
+	//private EditText assignmentCoord;
 	private EditText assignmentDescription;
 	private EditText assignmentTime;
 	private EditText assignmentStreetName;
@@ -30,7 +30,7 @@ public class AddAssignment extends Activity {
 		// Hämtar och sätter vyerna från .xml -filen.
 		addAssignmentButton = (Button) findViewById(R.id.button_add_assignment);
 		assignmentName = (EditText) findViewById(R.id.assignment_name);
-		assignmentCoord = (EditText) findViewById(R.id.assignment_coord);
+		//assignmentCoord = (EditText) findViewById(R.id.assignment_coord);
 		assignmentDescription = (EditText) findViewById(R.id.assignment_description);
 		assignmentTime = (EditText) findViewById(R.id.assignment_time);
 		assignmentStreetName = (EditText) findViewById(R.id.assignment_street_name);

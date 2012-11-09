@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import communicationModule.CommunicationModule;
-
-import logger.LogViewer;
-import logger.logger;
-import models.MessageModel;
 import logger.LogViewer;
 import logger.logger;
 import map.MapActivity;
+import Assignment.AssignmentOverview;
 import android.app.ListActivity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +18,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
+
+import communicationModule.CommunicationModule;
 
 public class MainActivity extends ListActivity {
 
@@ -52,6 +51,8 @@ public class MainActivity extends ListActivity {
 					break;
 					
 				case 1:
+						myIntent= new Intent(MainActivity.this,
+							 AssignmentOverview.class);
 					
 					break;
 				case 2:
@@ -70,7 +71,12 @@ public class MainActivity extends ListActivity {
 					// to.class);
 					break;
 				}
-				MainActivity.this.startActivity(myIntent);
+				try {
+					MainActivity.this.startActivity(myIntent);
+				} catch (ActivityNotFoundException e) {
+					e.printStackTrace();
+				}
+				
 			}
 
 		});
