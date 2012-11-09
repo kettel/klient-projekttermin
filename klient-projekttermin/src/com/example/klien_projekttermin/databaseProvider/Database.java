@@ -15,8 +15,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.SimpleCursorAdapter;
-
 
 /**
  * En klass med metoder för Create, Remove, Update, Delete (CRUD)
@@ -25,9 +23,10 @@ import android.widget.SimpleCursorAdapter;
  *
  */
 public class Database{
-	private SimpleCursorAdapter adapter;
 	private Uri messUri;
 	private static Context context = null;
+	
+	@SuppressWarnings("unused")
 	private static SQLiteDatabase database = null;
 
 	public static String PASSWORD = "password";
@@ -85,6 +84,7 @@ public class Database{
 	    	// Nytt meddelande
 		    // messUri borde väl egentligen kunna returneras för enkel åtkomst?
 		    messUri = context.getContentResolver().insert(DatabaseContentProviderMessages.CONTENT_URI, values);
+		    Log.d("DB","MeddelandeURI: " + messUri);
 		}
 		
 	}

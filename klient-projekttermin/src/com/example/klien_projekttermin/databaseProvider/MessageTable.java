@@ -20,9 +20,10 @@ public class MessageTable {
 			+ COLUMN_CONTENT + " text not null, " 
 			+ COLUMN_RECEIVER + " text not null, " 
 			+ COLUMN_TIMESTAMP + " text, "
-			+ COLUMN_ISREAD + " text not null);";
+			+ COLUMN_ISREAD + " text not null)";
 
 	public static void onCreate(SQLiteDatabase database) {
+		Log.d("DB","Skapar tabell: " + DATABASE_CREATE);
 		database.execSQL(DATABASE_CREATE);
 	}
 
