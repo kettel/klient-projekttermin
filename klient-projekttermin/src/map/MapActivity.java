@@ -7,6 +7,7 @@ import java.util.Observer;
 
 import models.Assignment;
 import models.ModelInterface;
+import routing.MapManager;
 import routing.NutiteqRouteWaiter;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -89,6 +90,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private ProgressBar sp;
 	private Button clearSearch;
 	final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+	private MapManager mm = new MapManager();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -285,10 +287,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	public void navigateToLocation(int arg) {
 		activateGPS(false);
 		mapComponent.setMiddlePoint(locationSource.getLocation());
-		NutiteqRouteWaiter r = new NutiteqRouteWaiter(
+		new NutiteqRouteWaiter(
 				locationSource.getLocation(), searchSuggestions.getList()
 						.get(arg).getPlace().getWgs(), mapComponent, icons[2],
-				icons[2]);
+				icons[2], mm);
 	}
 
 	public void centerMapOnLocation(int arg) {
