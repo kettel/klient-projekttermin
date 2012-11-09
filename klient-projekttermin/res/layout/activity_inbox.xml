@@ -4,17 +4,10 @@
     android:layout_height="match_parent" 
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/createNewMessage"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/CreateANewMessage"
-        android:onClick="createNewMessage" />
-
     <ListView
         android:id="@+id/conversationContactsList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
     </ListView>
     
 </LinearLayout>

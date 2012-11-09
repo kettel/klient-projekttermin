@@ -3,6 +3,9 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="15" />
@@ -16,24 +19,26 @@
             android:label="@string/title_activity_main" >
         </activity>
         <activity
-            android:name="messageFunction.CreateNewMessage"
+            android:name="map.MapActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_map" >
+        </activity>
+        <activity
+            android:name="messageFunction.CreateMessage"
             android:label="@string/title_activity_create_new_message" >
         </activity>
         <activity
             android:name="messageFunction.StartsidaMeddelanden"
             android:label="@string/title_activity_startsida_meddelanden" >
-            
         </activity>
         <activity
             android:name="messageFunction.Inbox"
-            android:label="@string/title_activity_inbox">
-            
-             <intent-filter>
+            android:label="@string/title_activity_inbox" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
         </activity>
         <activity
             android:name="logger.LogViewer"
@@ -44,8 +49,7 @@
         </activity>
         <activity
             android:name="messageFunction.DisplayOfConversation"
-            android:label="@string/title_activity_display_of_conversation"
-            >
+            android:label="@string/title_activity_display_of_conversation" >
         </activity>
         <activity
             android:name="messageFunction.DisplayMessage"

@@ -18,6 +18,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -32,6 +34,7 @@ public class Inbox extends Activity {
 	private HashMap<String, Long> contactAndIdMap = new HashMap<String, Long>();
 	private List<ModelInterface> peopleEngagedInConversation;
 	private Database dataBase; 
+	private String user = "Steffe";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,7 +46,8 @@ public class Inbox extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_inbox, menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.activity_inbox, menu);
 		return true;
 	}
 
@@ -54,6 +58,12 @@ public class Inbox extends Activity {
 	}
 
 	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		createNewMessage(new View(getApplicationContext()));
+		return super.onMenuItemSelected(featureId, item);
+	}
+
+	@Override
 	public void onStart(){
 		super.onStart();
 
@@ -61,7 +71,6 @@ public class Inbox extends Activity {
 		addOnLongClickListener();
 
 	}
-
 	/*
 	 * Metoden laddar en ListView med alla kontakter man har haft en konversation med.
 	 * Metoden s�tter ocks� en lyssnare som unders�ker om n�gon trycker p� n�got i listan
@@ -115,7 +124,7 @@ public class Inbox extends Activity {
 	 */
 	public void showEraseOption(int position){
 		final int conversationNumber = position;
-		
+
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("RADERA?");
 		alertDialog.setMessage("Vill du ta bort konversation?");
@@ -134,16 +143,15 @@ public class Inbox extends Activity {
 		});
 
 		alertDialog.show();
-
 	}
 
 	/*
 	 * Metoden tar bort hela konversationen för ett valt namn i inboxen
 	 */
 	public void eraseConversation(String contact){
-//		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+		//		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		MessageModel messageModelInList;
-//		long id = contactAndIdMap.get(contact);
+		//		long id = contactAndIdMap.get(contact);
 
 		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
 			messageModelInList = (MessageModel) peopleEngagedInConversation.get(i);
@@ -152,7 +160,6 @@ public class Inbox extends Activity {
 				dataBase.deleteFromDB(messageModelInList, getApplicationContext());
 			}
 		}
-		
 		loadListOfSenders();
 	}
 
@@ -164,6 +171,7 @@ public class Inbox extends Activity {
 
 		//Metoden skickar med namnet p� den kontakt som klickades p�.
 		intent.putExtra("ChosenContact", chosenContact);
+		intent.putExtra("USER", user);
 		startActivity(intent);
 	}
 
@@ -205,8 +213,8 @@ public class Inbox extends Activity {
 	 * Metoden skickar ocks� med namnet p� den anv�ndare som �r inloggad p� enheten. 
 	 */
 	public void createNewMessage(View v){
-		Intent intent = new Intent(this, CreateNewMessage.class);
-		intent.putExtra("USER", "ANVÄNDARE1");
+		Intent intent = new Intent(this, CreateMessage.class);
+		intent.putExtra("USER",user);
 		startActivity(intent);
 	}
 }

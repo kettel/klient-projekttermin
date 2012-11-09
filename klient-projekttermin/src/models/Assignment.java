@@ -9,11 +9,9 @@ public class Assignment implements ModelInterface{
 	//Id för modellen (Sätts av databasen så pilla inte)
 	private long id = -1;
 
-
 	private String name;
 	private double lat;
 	private double lon;
-
 	private String receiver;
 	//Användarnamnet på den person som skapade uppdraget.
 	private String sender;

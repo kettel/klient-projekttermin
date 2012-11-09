@@ -10,6 +10,10 @@ import com.example.klien_projekttermin.R.menu;
 
 import logger.LogViewer;
 import logger.logger;
+
+import communicationModule.CommunicationModule;
+import models.MessageModel;
+
 import map.MapActivity;
 import android.app.ListActivity;
 import android.content.Context;
@@ -24,7 +28,8 @@ import android.widget.SimpleAdapter;
 public class MainActivity extends ListActivity {
 
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-
+	public CommunicationModule Communicaton = new CommunicationModule();
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,10 +38,11 @@ public class MainActivity extends ListActivity {
 		String[] from = { "line1", "line2" };
 		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-		
+
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
+
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent = null;
@@ -46,15 +52,15 @@ public class MainActivity extends ListActivity {
 					 myIntent= new Intent(MainActivity.this,
 					 MapActivity.class);
 					break;
+					
 				case 1:
-					// myIntent= new Intent(from.this,
-					// to.class);
+					
 					break;
 				case 2:
-					// myIntent= new Intent(from.this,
-					// to.class);
+					
 					break;
 				case 3:
+					
 					try {
 						openLoggerIntent.putExtra(LOGCONTENT,testlogger.readFromLog());
 						startActivity(openLoggerIntent);
@@ -96,6 +102,4 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	
-
 }

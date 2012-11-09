@@ -1,5 +1,6 @@
 package messageFunction;
 
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import models.MessageModel;
 import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,8 +23,12 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.klien_projekttermin.R;
+import com.google.gson.Gson;
+
+import communicationModule.CommunicationModule;
 
 import database.Database;
 
@@ -35,8 +41,10 @@ public class DisplayOfConversation extends Activity {
 	private HashMap<String, Long> messageAndIdMap = new HashMap<String, Long>();
 	private String chosenContact;
 	private Database dataBase;
-	private String user = "Steffe";
+	private String user;
 	private MessageModel messageObject;
+	private String[] options = {"AVBRYT","RADERA","VIDAREBEFORDRA"};
+	//	private CommunicationModule communicationModule = new CommunicationModule();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,8 +58,9 @@ public class DisplayOfConversation extends Activity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			chosenContact = extras.getString("ChosenContact");
+			user = extras.getString("USER");
 		}	 
-		
+
 		loadConversation(chosenContact);
 	}
 
@@ -64,21 +73,7 @@ public class DisplayOfConversation extends Activity {
 	@Override
 	public void onStart(){
 		super.onStart();
-		addOnClickListener();
 		addOnLongClickListener();
-	}
-
-	/*
-	 * Tillsätt lyssnare i meddelandelistan som lyssnar efter tryckningar på listobjekt
-	 */
-	public void addOnClickListener(){
-		listViewOfConversationInputs.setOnItemClickListener(new OnItemClickListener() {
-
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-				openMessage(conversationContentArray[position]);
-			}
-		});
 	}
 
 	/*
@@ -88,9 +83,8 @@ public class DisplayOfConversation extends Activity {
 		//Skapar en lyssnare som lyssnar efter långa intryckningar 
 		listViewOfConversationInputs.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				showEraseOption(position);
+			public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
+				showOptions(position);
 				return true;
 			}
 		});	
@@ -119,34 +113,56 @@ public class DisplayOfConversation extends Activity {
 	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort en konversation
 	 * Metoden ger också användaren två valmöjligheter, JA eller Avbryt
 	 */
-	public void showEraseOption(int position){
+	public void showOptions(int position){
 		final int messageNumber = position;
 
-		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-		alertDialog.setTitle("RADERA?");
-		alertDialog.setMessage("Vill du ta bort meddelandet?");
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA", new DialogInterface.OnClickListener() {
+		AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+		alertDialog.setTitle("Meny");
+		ListView alertOptions = new ListView(this);
 
-			//Om användaren trycker på ja så körs metoden eraseMessage()
-			public void onClick(DialogInterface dialog, int which) {
-				eraseMessage(conversationContentArray[messageNumber]);
+		ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,options);
+
+		alertOptions.setAdapter(modeAdapter);
+
+		alertDialog.setView(alertOptions);
+		final Dialog dialog = alertDialog.create();
+
+		alertOptions.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					break;
+				case 1:
+					eraseMessage(conversationContentArray[messageNumber]);
+					break;
+				case 2:
+					forwardMessage(conversationContentArray[messageNumber]);
+					break;
+				default:
+					break;
+				}
 			}
 		});
-		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "AVBRYT", new DialogInterface.OnClickListener() {
 
-			public void onClick(DialogInterface dialog, int which) {
-				//Gör inget
-			}
-		});
-		alertDialog.show();
+		dialog.show();
+	}
 
+	public void forwardMessage(String messageContent){
+		Intent intent = new Intent(this, CreateMessage.class);
+		intent.putExtra("MESSAGE",messageContent);
+		startActivity(intent);
 	}
 
 	public void eraseMessage(String messageText){
+		
 		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		MessageModel messageModelInList;
 		long id = messageAndIdMap.get(messageText);
-
+		Integer a = listOfMassageModels.size();
+		
+		
 		for (int i = 0; i < listOfMassageModels.size(); i++) {
 			messageModelInList = (MessageModel) listOfMassageModels.get(i);
 
@@ -155,7 +171,6 @@ public class DisplayOfConversation extends Activity {
 				break;
 			}
 		}
-
 		//Gömmer tangentbort och tar bort text ur textfältet 
 		//om användaren raderar ett meddelande (omdessa visas vid raderingstillfället)
 		if(inm.isActive()){
@@ -163,29 +178,26 @@ public class DisplayOfConversation extends Activity {
 			inm.hideSoftInputFromWindow(message.getWindowToken(), 0);
 			//Tar bort texten ur textrutan
 			message.getEditableText().clear();
-			loadConversation(chosenContact);
-		}	
-	}
-
-	/*
-	 * Metoden skapar en ny aktivitet som visar ett valt meddelanden.
-	 * Metoden skickar med meddelandetexten och kontaktens kontaktens namn till den nya aktiviteten.
-	 */
-	public void openMessage(String specifiedMessage){
-		Intent intent = new Intent(this, DisplayMessage.class);
-		intent.putExtra("specifiedMessage", specifiedMessage);
-		intent.putExtra("correspondant", chosenContact);
-		startActivity(intent);
+		}
+		
+		if(listOfMassageModels.size()-1<1){
+			finish();
+		}
+		loadConversation(chosenContact);
+		
 	}
 
 	public String[] getInformationFromDatabase(String Contact){
+
 		MessageModel messageModel;
 		String[] stringArrayOfConversationContent;
 		LinkedList<String> listOfConversations = new LinkedList<String>();
 		Iterator<String> listIterator;
+		String currentTime;
 
 		//Hämtar en lista med alla messagemodels som finns i databasen.
 		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
+		MessageModel a = (MessageModel) listOfMassageModels.get(0);
 
 		//		Den listview som kontakterna kommerpresenteras i
 		listViewOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
@@ -196,14 +208,16 @@ public class DisplayOfConversation extends Activity {
 			messageModel = (MessageModel) listOfMassageModels.get(i);
 
 			if(messageModel.getReciever().toString().equals(Contact)){
-				listOfConversations.add(messageModel.getMessageContent().toString());
-				messageAndIdMap.put(messageModel.getMessageContent().toString(), messageModel.getId());
+
+				listOfConversations.add(messageModel.getSender().toString()+" ["+messageModel.getTimeStampInUnderstandableFormat()+"] "+"\n"+messageModel.getMessageContent().toString());
+				messageAndIdMap.put(messageModel.getSender().toString()+" ["+messageModel.getTimeStampInUnderstandableFormat()+"] "+"\n"+messageModel.getMessageContent().toString(), messageModel.getId());
 			}
 		}
 
 		//Skapar en string[] som är lika lång som listan som hämtades.
 		stringArrayOfConversationContent = new String[listOfConversations.size()];
 		listIterator = listOfConversations.descendingIterator();
+
 		for (int i = 0; i < listOfConversations.size(); i++) {
 			stringArrayOfConversationContent[i] = listIterator.next();
 		}
@@ -211,8 +225,10 @@ public class DisplayOfConversation extends Activity {
 	}
 
 	public void sendMessage(View v){
+
 		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-		messageObject = new MessageModel(user+": "+message.getText().toString(), chosenContact); 
+
+		messageObject = new MessageModel(message.getText().toString(), chosenContact, user); 
 
 		//Sparar messageObject i databasen
 		dataBase.addToDB(messageObject,getApplicationContext());
@@ -223,6 +239,6 @@ public class DisplayOfConversation extends Activity {
 
 		loadConversation(chosenContact);
 
-		//Skicka meddelande till server
+		//		communicationModule.sendMessage(messageObject);
 	}
 }
