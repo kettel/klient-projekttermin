@@ -226,9 +226,6 @@ public class Database{
 			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderContacts.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
 			if (cursor.moveToFirst()) {
 	            do {
-	            	for(int i = 0; i < 7; i++){
-	            		Log.d("CONTACT", "Cursor " + i +"-> " + cursor.getString(i));
-	            	}
 	                Contact contact = new Contact(
 	                		Long.valueOf(cursor.getString(0)),
 	                		cursor.getString(1),
