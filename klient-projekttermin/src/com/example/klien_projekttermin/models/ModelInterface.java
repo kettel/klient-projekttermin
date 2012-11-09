@@ -1,4 +1,4 @@
-package models;
+package com.example.klien_projekttermin.models;
 
 public interface ModelInterface {
 

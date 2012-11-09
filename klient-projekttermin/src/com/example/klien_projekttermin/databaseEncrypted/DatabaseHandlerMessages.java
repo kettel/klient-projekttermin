@@ -1,12 +1,13 @@
-package databaseEncrypted;
+package com.example.klien_projekttermin.databaseEncrypted;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.klien_projekttermin.models.MessageModel;
+import com.example.klien_projekttermin.models.ModelInterface;
+
 import net.sqlcipher.database.SQLiteDatabase;
 
-import models.MessageModel;
-import models.ModelInterface;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

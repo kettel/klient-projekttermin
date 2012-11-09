@@ -1,10 +1,11 @@
-package database;
+package com.example.klien_projekttermin.database;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import models.Contact;
-import models.ModelInterface;
+import com.example.klien_projekttermin.models.Contact;
+import com.example.klien_projekttermin.models.ModelInterface;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

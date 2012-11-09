@@ -1,10 +1,12 @@
-package databaseEncrypted;
+package com.example.klien_projekttermin.databaseEncrypted;
 import java.io.File;
 import java.util.List;
 
+import com.example.klien_projekttermin.models.ModelInterface;
+
 import android.content.Context;
 import android.database.Cursor;
-import models.ModelInterface;
+import android.util.Log;
 import net.sqlcipher.database.SQLiteDatabase;
 
 public abstract class DatabaseHandler {
@@ -22,6 +24,7 @@ public abstract class DatabaseHandler {
 	public DatabaseHandler(Context c){
 		this.context = c;
 		this.databaseFile = context.getDatabasePath("tddd36.db");
+		Log.d("DB", "Sökväg: " + databaseFile.toString());
 		
 		// Om databasfilen inte existerar, skapa den
 		if(!this.databaseFile.exists()){

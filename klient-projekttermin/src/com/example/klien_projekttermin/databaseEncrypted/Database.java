@@ -1,12 +1,13 @@
-package databaseEncrypted;
+package com.example.klien_projekttermin.databaseEncrypted;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.klien_projekttermin.models.ModelInterface;
+
 import android.content.Context;
 
-import models.ModelInterface;
 
 public class Database {
 	

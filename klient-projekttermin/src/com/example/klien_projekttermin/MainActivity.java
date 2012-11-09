@@ -5,23 +5,23 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.klien_projekttermin.database.DatabaseContentProvider;
-import com.example.klien_projekttermin.database.MessageTable;
+import net.sqlcipher.database.SQLiteDatabase;
 
-import logger.LogViewer;
-import logger.logger;
-import models.Assignment;
-import models.MessageModel;
-import models.Contact;
-import models.ModelInterface;
+import com.example.klien_projekttermin.databaseProvider.Database;
+import com.example.klien_projekttermin.databaseProvider.NotesDB;
+import com.example.klien_projekttermin.logger.LogViewer;
+import com.example.klien_projekttermin.logger.logger;
+import com.example.klien_projekttermin.models.Assignment;
+import com.example.klien_projekttermin.models.Contact;
+import com.example.klien_projekttermin.models.MessageModel;
+import com.example.klien_projekttermin.models.ModelInterface;
 
-import databaseEncrypted.Database;
+
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -30,15 +30,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
 
-import android.widget.SimpleCursorAdapter;
-
 public class MainActivity extends ListActivity {
-	private SimpleCursorAdapter adapter;
-	
+
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-	
-	
-	
+
+
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,18 +44,17 @@ public class MainActivity extends ListActivity {
 		String[] from = { "line1", "line2" };
 		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-		
+
 		// Testa DB
 		long timer = Calendar.getInstance().getTimeInMillis();
 		testDBProvider(this);
 		timer = Calendar.getInstance().getTimeInMillis() - timer;
 		Log.d("DB", "Exekveringstid: " + Long.toString(timer));
-		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 
-			
+
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent;
@@ -124,7 +120,7 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	
+
 	public void testDBFull(Context context){
 		Database db = new Database();
 		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
@@ -145,7 +141,7 @@ public class MainActivity extends ListActivity {
 
 			// Skriv det uppdaterade objektet till databasen
 			db.updateModel(messUpdate,context);
-			
+
 			db.deleteFromDB(messUpdate, context);
 		}
 
@@ -155,7 +151,7 @@ public class MainActivity extends ListActivity {
 
 			Contact contUpd = new Contact(cont.getId(),"Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Dålig lirare");
 			db.updateModel(contUpd,context);
-			
+
 			db.deleteFromDB(contUpd, context);
 		}
 
@@ -167,7 +163,7 @@ public class MainActivity extends ListActivity {
 			Assignment assUpd = new Assignment(ass.getId(),"Katt i hav", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats");
 
 			db.updateModel(assUpd,context);
-			
+
 			db.deleteFromDB(assUpd, context);
 		}
 
@@ -175,7 +171,7 @@ public class MainActivity extends ListActivity {
 		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(),context));
 		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(),context));
 	}
-	
+
 	public void testDBPartial(Context context){
 		Database db = new Database();
 		/*
@@ -185,7 +181,7 @@ public class MainActivity extends ListActivity {
 		db.addToDB(new Assignment("Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats"),context);
 		*/
 		db.addToDB(new MessageModel("Hej svehjs","Kalle"), context);
-		
+
 		// Testa att hämta från databasen samt uppdatera databasen
 		List<ModelInterface> testList = db.getAllFromDB(new MessageModel(),context);
 		for (ModelInterface m : testList) {
@@ -199,7 +195,7 @@ public class MainActivity extends ListActivity {
 		}
 		testList = db.getAllFromDB(new MessageModel(),context);
 		Log.d("DB","*********** UPPDATERAD LISTA ************");
-		
+
 		// Testa att skriva ut den uppdaterade listan samt töm hela databasen
 		for (ModelInterface m : testList) {
 			// Hämta gammalt meddelande
@@ -214,9 +210,12 @@ public class MainActivity extends ListActivity {
 	}
 	
 	public void testDBProvider(Context context){
-	    Uri todoUri = Uri.parse(DatabaseContentProvider.CONTENT_URI + "/");
-	    Log.d("DB","URI: " + todoUri);
-
+		// Ladda in bibliotek. Fungerar för subklasser.
+		SQLiteDatabase.loadLibs(context);
+		NotesDB db = NotesDB.getInstance();
+		db.addNewNote(context.getContentResolver(), "Hej", "Kale");
+		Log.d("DB","Text från titel: " + db.getTextFromTitle(context.getContentResolver(), "Hej"));
 	}
+
 
 }

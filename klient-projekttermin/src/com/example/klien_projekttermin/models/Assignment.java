@@ -1,4 +1,4 @@
-package models;
+package com.example.klien_projekttermin.models;
 
 
 import android.graphics.Bitmap;

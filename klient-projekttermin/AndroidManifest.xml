@@ -20,20 +20,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="logger.LogViewer"
-            android:label="@string/title_activity_log_viewer" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.klien_projekttermin.MainActivity" />
-        </activity>
-        <!-- Contentprovider för Databasen -->
-        <provider
-            android:name=".contentprovider.DatabaseContentProvider"
-            android:authorities="com.example.klien_projekttermin.contentprovider" >
-        </provider>
-
+        
+        <provider 
+            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider" 
+            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider" />
+   		
+   		<provider 
+   		    android:name="com.example.klien_projekttermin.providers.NotesContentProvider" 
+   		    android:authorities="com.example.klien_projekttermin.providers.NotesContentProvider" />
+        
     </application>
-    
 
 </manifest>

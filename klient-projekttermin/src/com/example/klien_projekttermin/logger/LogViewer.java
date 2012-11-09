@@ -1,4 +1,4 @@
-package logger;
+package com.example.klien_projekttermin.logger;
 
 import com.example.klien_projekttermin.MainActivity;
 import com.example.klien_projekttermin.R;

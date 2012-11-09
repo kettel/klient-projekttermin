@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.database;
+package com.example.klien_projekttermin.databaseProvider;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,7 +15,7 @@ import net.sqlcipher.database.SQLiteQueryBuilder;
 
 public class DatabaseContentProvider extends ContentProvider{
 
-	private DatabaseHelper database;
+	private MessageDatabaseHelper database;
 	
 	private String PASSWORD = "password";
 
@@ -23,9 +23,9 @@ public class DatabaseContentProvider extends ContentProvider{
 	private static final int TODOS = 10;
 	private static final int TODO_ID = 20;
 
-	private static final String AUTHORITY = "com.example.klien_projekttermin";
+	private static final String AUTHORITY = "com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider";
 
-	private static final String BASE_PATH = "klien_projekttermin";
+	private static final String BASE_PATH = "klien-projekttermin";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 			+ "/" + BASE_PATH);
 
@@ -43,7 +43,7 @@ public class DatabaseContentProvider extends ContentProvider{
 
 	@Override
 	public boolean onCreate() {
-		database = new DatabaseHelper(getContext());
+		database = new MessageDatabaseHelper(getContext());
 		// Varför falskt?
 		return false;
 	}

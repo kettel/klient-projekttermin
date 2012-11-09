@@ -1,4 +1,4 @@
-package logger;
+package com.example.klien_projekttermin.logger;
 
 import java.io.BufferedReader;
 import java.io.File;
