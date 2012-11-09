@@ -39,12 +39,15 @@ import com.example.klien_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
 import com.nutiteq.components.KmlPlace;
+import com.nutiteq.components.OnMapElement;
 import com.nutiteq.components.Place;
 import com.nutiteq.components.PlaceIcon;
 import com.nutiteq.components.PlaceLabel;
+import com.nutiteq.components.PolyStyle;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.listeners.MapListener;
+import com.nutiteq.listeners.OnMapElementListener;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
 import com.nutiteq.location.NutiteqLocationMarker;
@@ -65,7 +68,7 @@ import database.Database;
  * 
  */
 public class MapActivity extends Activity implements Observer, MapListener,
-		Runnable, OnItemClickListener {
+		Runnable, OnItemClickListener,OnMapElementListener {
 
 	private BasicMapComponent mapComponent;
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
@@ -111,6 +114,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
+		this.mapComponent.setOnMapElementListener(this);
 
 		/**
 		 * Hämtar listview till sökförslagen samt lägger till en adapter. Lägger
@@ -461,5 +465,22 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			}
 		});
 		dialog.show();
+	}
+
+	public void elementClicked(OnMapElement arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void elementEntered(OnMapElement arg0) {
+		// TODO Auto-generated method stub
+		if (arg0 instanceof Polygon) {
+			mapComponent.removePolygon(((Polygon) arg0));
+		}
+		
+	}
+
+	public void elementLeft(OnMapElement arg0) {
+		// TODO Auto-generated method stub
 	}
 }
