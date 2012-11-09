@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.databaseEncrypted;
+package com.example.klien_projekttermin.databaseNotEncrypted;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.List;
 import com.example.klien_projekttermin.models.Contact;
 import com.example.klien_projekttermin.models.ModelInterface;
 
-import net.sqlcipher.database.SQLiteDatabase;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 public class DatabaseHandlerContacts extends DatabaseHandler{
@@ -37,7 +37,7 @@ public class DatabaseHandlerContacts extends DatabaseHandler{
 	public void initiateModelDatabase() {
 		Log.d("DB","Initierar DBH Contacts. Databasfil: " + databaseFile.toString());
 		Log.d("DB","Lösenord: " + PASSWORD);
-		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
+		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, null);
 		String CREATE_CONTACTS_TABLE = "CREATE TABLE IF NOT EXISTS " 
 				+ TABLE_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
@@ -54,7 +54,7 @@ public class DatabaseHandlerContacts extends DatabaseHandler{
 	@Override
 	public void addModel(ModelInterface m) {
 		Contact contact = (Contact) m;
-		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
+		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, null);
 		
 		ContentValues values = new ContentValues();
         values.put(KEY_CONTACT_NAME, contact.getContactName());
@@ -74,7 +74,7 @@ public class DatabaseHandlerContacts extends DatabaseHandler{
 	@Override
 	public void updateModel(ModelInterface m) {
 		Contact contact = (Contact) m;
-		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
+		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, null);
 		
 		String UPDATE_CONTACTS = "UPDATE " + TABLE_CONTACTS + " SET "
         		+ KEY_CONTACT_NAME + " = \"" + contact.getContactName() + "\", "
@@ -96,12 +96,10 @@ public class DatabaseHandlerContacts extends DatabaseHandler{
 		// Select All frågan. Ze classic! Dvs, hämta allt från MESSAGES-databasen
         String selectQuery = "SELECT  * FROM " + TABLE_CONTACTS;
  
-        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
+        SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, null);
         Cursor cursor = database.rawQuery(selectQuery, null);
  
         // Loopa igenom alla rader och lägg till dem i listan 
-        // TODO: Få ordning på BLOB, dvs hämta och dona med bild.
-        
         if (cursor.moveToFirst()) {
             do {
                 Contact contact = new Contact(

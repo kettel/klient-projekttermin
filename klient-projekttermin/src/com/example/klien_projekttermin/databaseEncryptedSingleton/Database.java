@@ -16,11 +16,11 @@ import android.util.Log;
 public class Database {
 	
 	private static Context context = null;
-	private static File databaseFile = null;
 	private static SQLiteDatabase database = null;
 
 	protected static String PASSWORD = "password";
 	protected static String KEY_ID = "id";
+	protected static File dbFile = null;
 	
 	private Database(){}
 	
@@ -33,7 +33,7 @@ public class Database {
 		}
 		
 		//databaseFile = context.getDatabasePath("tddd36.db");
-		File dbFile = context.getDatabasePath("tddd36.db");
+		dbFile = context.getDatabasePath("tddd36.db");
 		
 		// Om databasfilen inte existerar, skapa den
 		if(!dbFile.exists()){
@@ -43,8 +43,9 @@ public class Database {
 		Log.d("DB", "About to create DB");
 		// Ladda in SQLCipher-bibliotek filer
 		SQLiteDatabase.loadLibs(context);
-		
-		database = SQLiteDatabase.openOrCreateDatabase(dbFile, "password", null);
+		Log.d("DB","Libraries loaded");
+		Log.d("DB","Databasefile to use: " + dbFile.toString());
+		database = SQLiteDatabase.openOrCreateDatabase(dbFile, PASSWORD, null);
 		
 		return instance;
 	}

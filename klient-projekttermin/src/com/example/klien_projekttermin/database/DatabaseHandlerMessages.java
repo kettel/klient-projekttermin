@@ -1,5 +1,4 @@
 package com.example.klien_projekttermin.database;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,11 +59,10 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
     
     /**
      * Lägg till ett meddelande
-     * @param db 
      * @param Contact	Den kontakt som ska läggas till i databasen
      */
-    public void addMessage(SQLiteDatabase db, MessageModel message) {
-        //SQLiteDatabase db = this.getWritableDatabase();
+    public void addMessage(MessageModel message) {
+        SQLiteDatabase db = this.getWritableDatabase();
  
         ContentValues values = new ContentValues();
         values.put(KEY_MESSAGE_CONTENT, message.getMessageContent().toString());
@@ -77,18 +75,18 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
         // Lägg till meddelanden i databasen
         db.insert(TABLE_MESSAGES, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
-        //db.close(); 
+        db.close(); 
     }
     
     /**
      * Ta bort ett meddelande från databasen
      * @param message
      */
-    public void removeMessage(SQLiteDatabase db, MessageModel message){
-    	//SQLiteDatabase db = this.getWritableDatabase();
+    public void removeMessage(MessageModel message){
+    	SQLiteDatabase db = this.getWritableDatabase();
     	db.delete(TABLE_MESSAGES, KEY_ID + " = ?",
                 new String[] { String.valueOf(message.getId()) });
-        //db.close();
+        db.close();
     	
     }
     
@@ -96,27 +94,27 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
      * Räkna antal meddelanden i messages-databasen
      * @return int 		Antal meddelanden
      */
-	public int getMessageCount(SQLiteDatabase db) {
+	public int getMessageCount() {
 		String countQuery = "SELECT * FROM " + TABLE_MESSAGES;
-        //SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         int count = cursor.getCount();
         cursor.close();
-        //db.close();
+        db.close();
         return count;
 	}
-	
+
 	/**
 	 * Returnerar alla meddelanden i en Array-lista. Meddelanden har nu ett ID från 
 	 * databasen.
 	 * @return
 	 */
-	public List<ModelInterface> getAllMessages(SQLiteDatabase db) {
+	public List<ModelInterface> getAllMessages() {
 		List<ModelInterface> messageList = new ArrayList<ModelInterface>();
 		// Select All frågan. Ze classic! Dvs, hämta allt från MESSAGES-databasen
         String selectQuery = "SELECT  * FROM " + TABLE_MESSAGES;
  
-        //SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
  
         // Loopa igenom alla rader och lägg till dem i listan 
@@ -133,24 +131,24 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
         }
         
         cursor.close();
-        //db.close();
+        db.close();
  		
         // Returnera meddelandelistan
 		return messageList;
 	}
-	
-	
-	public void updateModel(SQLiteDatabase db, MessageModel m) {
-		//SQLiteDatabase db = this.getReadableDatabase();
-		
+
+
+	public void updateModel(MessageModel m) {
+		SQLiteDatabase db = this.getReadableDatabase();
+
 		String UPDATE_MESSAGES = "UPDATE " + TABLE_MESSAGES + " SET "
         		+ KEY_MESSAGE_CONTENT + " = \""+ m.getMessageContent() + "\" ,"
                 + KEY_RECEIVER + " = \""+ m.getReciever() + "\" ,"
                 + KEY_IS_READ + " = \""+ (m.isRead()? "TRUE" : "FALSE") + "\" "
                 + "WHERE " + KEY_ID + " = " + Long.toString(m.getId());
-		
+
         db.execSQL(UPDATE_MESSAGES);
         
-        //db.close();
+        db.close();
 	}
 }

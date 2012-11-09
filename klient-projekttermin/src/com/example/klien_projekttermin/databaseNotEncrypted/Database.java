@@ -1,48 +1,39 @@
-package com.example.klien_projekttermin.database;
+package com.example.klien_projekttermin.databaseNotEncrypted;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.klien_projekttermin.models.Assignment;
-import com.example.klien_projekttermin.models.Contact;
-import com.example.klien_projekttermin.models.MessageModel;
 import com.example.klien_projekttermin.models.ModelInterface;
 
 import android.content.Context;
 
 
-/**
- * En klass med metoder för Create, Remove, Update, Delete (CRUD)
- * operationer på databasen.
- * @author kettel
- *
- */
-public class Database{
-
+public class Database {
+	
 	/**
 	 * Lägg till ett uppdrag/kontakt/meddelande till rätt databas
 	 * @param m			ModellInterface av objekt som ska läggas till
-	 * @param context	Aktivitetens kontext så data läggs i rätt databas
 	 */
 	public void addToDB(ModelInterface m, Context context){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.addAssignment((Assignment)m);
+			dha.addModel(m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			dhc.addContact((Contact)m);
+			dhc.addModel(m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.addMessage((MessageModel)m);
+			dhm.addModel(m);
 		}
 	}
+	
 	/**
 	 * Räkna antal poster i vald databas
 	 * @param m			datatypen för den databas som ska räknas samman
-	 * @param context	programkontexten så rätt databas kan väljas
 	 * @return
 	 */
 	public int getDBCount(ModelInterface m, Context context){
@@ -50,84 +41,82 @@ public class Database{
 		int returnCount = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			returnCount = dha.getAssignmentCount();
+			returnCount = dha.getCount(m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			returnCount = dhc.getContactCount();
+			returnCount = dhc.getCount(m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			returnCount = dhm.getMessageCount();
+			returnCount = dhm.getCount(m);
 		}
 		return returnCount;
 	}
-
+	
 	/**
-	 * Ta bort ett objekt från databasen
-	 * @param m	ModelInterface	Det objekt som önskas tas bort
-	 * @param context
-	 */
-	public void deleteFromDB(ModelInterface m, Context context){
-		String dbRep = m.getDatabaseRepresentation();
-		if (dbRep.equalsIgnoreCase("assignment")) {
-			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.removeAssignment((Assignment)m);
-		}
-		else if(dbRep.equalsIgnoreCase("contact")){
-			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			dhc.removeContact((Contact)m);
-		}
-		else if(dbRep.equalsIgnoreCase("message")){
-			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.removeMessage((MessageModel)m);
-		}
-	}
-
-	/**
-	 * Hämta alla poster i databasen för inskickad modell.
-	 * @param m	ModelInterface	Modellen styr från vilken databas data hämtas
-	 * @param context
-	 * @return	List<ModelInterface>	Alla objekt från vald databas
+	 * Hämta alla objekt från databasen i en ArrayList
+	 * @param m	ModelInterface	Den önskade returtypen
+	 * @return	
 	 */
 	public List<ModelInterface> getAllFromDB(ModelInterface m, Context context){
 		String dbRep = m.getDatabaseRepresentation();
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			returnList = dha.getAllAssignments();
+			returnList = dha.getAllModels(m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			returnList = dhc.getAllContacts();
+			returnList = dhc.getAllModels(m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			returnList = dhm.getAllMessages();
+			returnList = dhm.getAllModels(m);
 		}
 		return returnList;
 	}
-
+	
 	/**
-	 * Uppdatera värden för ett objekt i databasen
-	 * @param m	ModelInterface	Det uppdaterade objektet 
-	 * 							(OBS! Måste ha samma Id-nummer som
-	 * 							det objekt det ska ersätta)
+	 * Ta bort ett objekt från databasen
+	 * @param m
 	 * @param context
 	 */
-	public void updateModel(ModelInterface m, Context context) {
+	public void deleteFromDB(ModelInterface m, Context context){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.updateModel((Assignment)m);
+			dha.removeModel(m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			dhc.updateModel((Contact)m);
+			dhc.removeModel(m);
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			System.out.println("Ska ta bort meddelande "+Long.toString(m.getId()) + ". Från " + m.getDatabaseRepresentation());
+			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
+			dhm.removeModel(m);
+		}
+	}
+	
+	/**
+	 * Uppdatera ett objekt i databasen
+	 * @param m
+	 */
+	public void updateModel(ModelInterface m, Context context){
+		String dbRep = m.getDatabaseRepresentation();
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
+			dha.updateModel(m);
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
+			dhc.updateModel(m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.updateModel((MessageModel)m);
+			dhm.updateModel(m);
 		}
 	}
+
 }

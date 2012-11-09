@@ -5,10 +5,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.klien_projekttermin.databaseEncrypted.Database;
-import com.example.klien_projekttermin.databaseProvider.NotesDB;
-import com.example.klien_projekttermin.logger.LogViewer;
-import com.example.klien_projekttermin.logger.logger;
+import com.example.klien_projekttermin.databaseNotEncrypted.Database;
 import com.example.klien_projekttermin.models.Assignment;
 import com.example.klien_projekttermin.models.Contact;
 import com.example.klien_projekttermin.models.MessageModel;
@@ -17,7 +14,6 @@ import com.example.klien_projekttermin.models.ModelInterface;
 
 import android.app.ListActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,22 +25,16 @@ import android.widget.SimpleAdapter;
 
 public class MainActivity extends ListActivity {
 
-	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-
-
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		final logger testlogger = new logger((Context)this,"log.txt"); 
 		String[] from = { "line1", "line2" };
-		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
 		// Testa DB
 		long timer = Calendar.getInstance().getTimeInMillis();
-		testDBProvider(this);
+		testDBFullSingleton(this);
 		timer = Calendar.getInstance().getTimeInMillis() - timer;
 		Log.d("DB", "Exekveringstid: " + Long.toString(timer));
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -54,16 +44,9 @@ public class MainActivity extends ListActivity {
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				Intent myIntent;
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
-					try {
-						testlogger.writeToLog("Nisse","testentry 1");
-						testlogger.writeToLog(null,"testentry 2");
-						testlogger.writeToLog("Nisse","testentry 3");
-					} catch (Exception e) {
-					}
 					// myIntent= new Intent(from.this,
 					// to.class);
 					break;
@@ -76,11 +59,6 @@ public class MainActivity extends ListActivity {
 					// to.class);
 					break;
 				case 3:
-					try {
-						openLoggerIntent.putExtra(LOGCONTENT,testlogger.readFromLog());
-						startActivity(openLoggerIntent);
-					} catch (Exception e) {
-					}
 					break;
 				default:
 					// myIntent= new Intent(from.this,
@@ -120,6 +98,57 @@ public class MainActivity extends ListActivity {
 
 	public void testDBFull(Context context){
 		Database db = new Database();
+		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
+		int w = 600, h = 600;
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+		Bitmap fakeImage = Bitmap.createBitmap(w, h, conf);
+		db.addToDB(new Assignment("Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats"),context);
+		db.addToDB(new MessageModel("Hejsan svejsan jättemycket!!!", "Kalle"),context);
+
+		// Testa att hämta från databasen
+		List<ModelInterface> testList = db.getAllFromDB(new MessageModel(),context);
+		for (ModelInterface m : testList) {
+			// Hämta gammalt meddelande
+			MessageModel mess = (MessageModel) m;
+
+			// Skapa ett uppdaterat meddelande
+			MessageModel messUpdate = new MessageModel(mess.getId(), "mjuhu","höns",mess.getMessageTimeStamp(),mess.isRead());
+
+			// Skriv det uppdaterade objektet till databasen
+			db.updateModel(messUpdate,context);
+
+			db.deleteFromDB(messUpdate, context);
+		}
+
+		testList = db.getAllFromDB(new Contact(),context);
+		for (ModelInterface m : testList) {
+			Contact cont = (Contact) m;
+
+			Contact contUpd = new Contact(cont.getId(),"Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Dålig lirare");
+			db.updateModel(contUpd,context);
+
+			db.deleteFromDB(contUpd, context);
+		}
+
+
+		testList = db.getAllFromDB(new Assignment(),context);
+		for (ModelInterface m : testList) {
+			Assignment ass = (Assignment) m;
+
+			Assignment assUpd = new Assignment(ass.getId(),"Katt i hav", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats");
+
+			db.updateModel(assUpd,context);
+
+			db.deleteFromDB(assUpd, context);
+		}
+
+		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel(),context));
+		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(),context));
+		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(),context));
+	}
+	
+	public void testDBFullEncrypted(Context context){
+		com.example.klien_projekttermin.databaseEncrypted.Database db = new com.example.klien_projekttermin.databaseEncrypted.Database();
 		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
 		int w = 600, h = 600;
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
@@ -257,7 +286,6 @@ public class MainActivity extends ListActivity {
 		Log.d("DB","Storlek: " + testList.size());
 	}
 
-	
 	public void testDBProvider(Context context){
 		com.example.klien_projekttermin.databaseProvider.Database db = com.example.klien_projekttermin.databaseProvider.Database.getInstance(context);
 		db.addToDB(new MessageModel("Hej svehjs","Kalle"), context);
