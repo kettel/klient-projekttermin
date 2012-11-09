@@ -199,9 +199,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 	    final AlertDialog alert = builder.create();
 	 	    alert.show();
 	    }
-	    else {
-	    	System.out.println("HEJ");
-	    }
 	}
 
 	/**

@@ -2,6 +2,7 @@ package map;
 
 import java.util.ArrayList;
 import java.util.Observable;
+
 import com.nutiteq.components.KmlPlace;
 import com.nutiteq.services.GeocodingResultWaiter;
 import com.nutiteq.services.GeocodingService;
