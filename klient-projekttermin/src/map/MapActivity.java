@@ -45,7 +45,6 @@ import com.nutiteq.components.OnMapElement;
 import com.nutiteq.components.Place;
 import com.nutiteq.components.PlaceIcon;
 import com.nutiteq.components.PlaceLabel;
-import com.nutiteq.components.PolyStyle;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.listeners.MapListener;
@@ -474,10 +473,13 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Meny");
 		ListView modeList = new ListView(this);
-		ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this,
+		CustomAdapter modeAdapter = new CustomAdapter(this,
 				android.R.layout.simple_list_item_1, android.R.id.text1,
 				searchAlts);
 		modeList.setAdapter(modeAdapter);
+		if (this.locationSource.getLocation()==null) {
+			modeAdapter.navigationToggle();
+		}
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
 		modeList.setOnItemClickListener(new OnItemClickListener() {
