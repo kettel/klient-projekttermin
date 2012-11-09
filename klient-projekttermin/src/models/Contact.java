@@ -27,7 +27,7 @@ public class Contact implements ModelInterface {
 	public Contact(){
 		
 	}
-	
+
 	public Contact(String contactName, Long contactPhoneNumber, String contactEmail, String contactClearanceLevel, String contactClassification, String contactComment){
 		this.contactName=contactName;
 		this.contactPhoneNumber=contactPhoneNumber;
@@ -35,7 +35,6 @@ public class Contact implements ModelInterface {
 		this.contactClearanceLevel=contactClearanceLevel;
 		this.contactClassification=contactClassification;
 		this.contactComment=contactComment;
-
 	}
 	
 	public Contact(long id, String contactName, Long contactPhoneNumber,
@@ -49,8 +48,6 @@ public class Contact implements ModelInterface {
 		this.contactClassification = contactClassification;
 		this.contactComment = contactComment;
 	}
-
-
 
 	public String getContactName(){
 		return contactName;

@@ -1,8 +1,6 @@
 package models;
 
-
 import android.graphics.Bitmap;
-
 
 public class Assignment implements ModelInterface{
 	
@@ -13,9 +11,9 @@ public class Assignment implements ModelInterface{
 	//Namnet på uppdraget
 	private String name;
 	//Latitud för uppdragspositionen
-	private long lat;
+	private double lat;
 	//Longitud för uppdragspositionen
-	private long lon;
+	private double lon;
 	//Användarnamnet på mottagaren för ett uppdrag (Om man vill specificera det)
 	private String receiver;
 	//Användarnamnet på den person som skapade uppdraget.
@@ -32,45 +30,6 @@ public class Assignment implements ModelInterface{
 	private String streetName;
 	//Platsnamn där uppdraget utspelas
 	private String siteName;
-
-	
-	
-	
-	/**
-	 * Tom konstruktor for Assignment
-	 */
-	public Assignment(){
-		
-	}
-	
-	
-	/**
-	 * 
-	 * @param name	String	Namn på uppdrag
-	 * @param lat	long	Latitud för uppdraget
-	 * @param lon	long	Longitud för uppdraget
-	 * @param receiver	String	Mottagare av uppgradet
-	 * @param sender	String	Sändare av uppdraget
-	 * @param assignmentDescription	String	Beskrivning av uppdraget
-	 * @param timeSpan	String	Hur lång tid uppdraget väntas ta
-	 * @param assignmentStatus	String	Status för uppdraget
-	 * @param cameraImage	Bitmap	En bifogad bild på uppdragsplatsen
-	 * @param streetName	String	Gatunamn
-	 * @param siteName	String	Platsnamn
-	 */
-	public Assignment(String name, long lat, long lon, String receiver, String sender, String assignmentDescription, String timeSpan, String assignmentStatus, Bitmap cameraImage, String streetName, String siteName){
-		this.lat=lat;
-		this.lon=lon;
-		this.name=name;
-		this.receiver=receiver;
-		this.sender=sender;
-		this.assignmentDescription=assignmentDescription;
-		this.timeSpan=timeSpan;
-		this.assignmentStatus=assignmentStatus;
-		this.cameraImage=cameraImage;
-		this.streetName=streetName;
-		this.siteName=siteName;
-	}
 	
 	/**
 	 * Konstruktor för att återskapa ett meddelande från databasen med ett Id som
@@ -89,7 +48,7 @@ public class Assignment implements ModelInterface{
 	 * @param siteName
 	 */
 
-	public Assignment(long id, String name, long lat, long lon,
+	public Assignment(long id, String name, double lat, double lon,
 			String receiver, String sender, String assignmentDescription,
 			String timeSpan, String assignmentStatus, Bitmap cameraImage,
 			String streetName, String siteName) {
@@ -105,6 +64,13 @@ public class Assignment implements ModelInterface{
 		this.cameraImage = cameraImage;
 		this.streetName = streetName;
 		this.siteName = siteName;
+	}
+
+	/**
+	 * Använd för att hämta infomtion
+	 */
+	public Assignment() {
+		
 	}
 
 	public String getName() {
@@ -131,19 +97,19 @@ public class Assignment implements ModelInterface{
 		this.siteName=siteNameToBeSet;
 	}
 
-	public long getLat() {
+	public double getLat() {
 		return lat;
 	}
 
-	public void setLat(long latToBeSet) {
+	public void setLat(double latToBeSet) {
 		this.lat = latToBeSet;
 	}
 
-	public long getLon() {
+	public double getLon() {
 		return lon;
 	}
 
-	public void setLon(long lonToBeSet) {
+	public void setLon(double lonToBeSet) {
 		this.lon = lonToBeSet;
 	}
 

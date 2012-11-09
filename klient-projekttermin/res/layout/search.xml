@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ab_Search"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:completionThreshold="1"
+    android:hint="Search"
+    android:singleLine="true"
+    android:inputType="textVisiblePassword" 
+    android:imeOptions="actionSearch"
+    android:focusable="true"
+    android:focusableInTouchMode="true"/>
