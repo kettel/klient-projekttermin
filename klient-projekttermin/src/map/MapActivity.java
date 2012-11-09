@@ -90,7 +90,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private ListView lv;
 	private static String[] searchAlts = { "Navigera till plats", "Visa plats",
 			"Lägg till uppdrag på position" };
-	LocationSource locationSource;
+	private LocationSource locationSource;
 	private MenuItem searchItem;
 	private ProgressBar sp;
 	private Button clearSearch;
@@ -103,8 +103,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
-		manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		locationSource = new AndroidGPSProvider(manager, 1000L);
+		this.manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		this.locationSource = new AndroidGPSProvider(manager, 1000L);
 		this.setContentView(R.layout.activity_map);
 
 		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -143,15 +143,15 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				mapComponent.zoomOut();
 			}
 		});
-		haveNetworkConnection();
+		this.haveNetworkConnection();
 		/**
 		 * Hämta information från databasen om aktuella uppdrag
 		 */
-		getDatabaseInformation();
+		this.getDatabaseInformation();
 		/**
 		 * GPS:en ska vara påslagen vid start
 		 */
-		activateGPS(gpsOnOff);
+		this.activateGPS(gpsOnOff);
 	}
 
 	private void buildAlertMessageNoGps() {
@@ -279,13 +279,13 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		this.actv.addTextChangedListener(new TextWatcher() {
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-				runOnUiThread(new Runnable() {
-					public void run() {
-						sp.setVisibility(ProgressBar.VISIBLE);
-					}
-				});
 				final String temp = s.toString();
 				if (!temp.isEmpty()) {
+					runOnUiThread(new Runnable() {
+						public void run() {
+							sp.setVisibility(ProgressBar.VISIBLE);
+						}
+					});
 					new Thread(new Runnable() {
 
 						public void run() {
@@ -293,6 +293,11 @@ public class MapActivity extends Activity implements Observer, MapListener,
 						}
 					}).start();
 				} else {
+					runOnUiThread(new Runnable() {
+						public void run() {
+							sp.setVisibility(ProgressBar.GONE);
+						}
+					});
 					sm.clear();
 				}
 			}
@@ -481,7 +486,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				dialog.dismiss();
 				showMapView();
 				searchItem.collapseActionView();
-				System.out.println(arg2);
 				switch (arg2) {
 				case 0:
 					navigateToLocation(choice);
