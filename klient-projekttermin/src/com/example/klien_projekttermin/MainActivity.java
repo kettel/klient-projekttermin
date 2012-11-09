@@ -289,29 +289,55 @@ public class MainActivity extends ListActivity {
 
 	public void testDBProvider(Context context){
 		com.example.klien_projekttermin.databaseProvider.Database db = com.example.klien_projekttermin.databaseProvider.Database.getInstance(context);
-		db.addToDB(new MessageModel("Hej svehjs","Kalle"), context);
 		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
 		int w = 600, h = 600;
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
 		Bitmap fakeImage = Bitmap.createBitmap(w, h, conf);
 		db.addToDB(new Assignment("Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats"),context);
 		db.addToDB(new MessageModel("Hejsan svejsan jättemycket!!!", "Kalle"),context);
-		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel(), context));
-		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(), context));
-		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(), context));
-		List<ModelInterface>  testList = db.getAllFromDB(new Assignment(), context);
+
+		// Testa att hämta från databasen
+		List<ModelInterface> testList = db.getAllFromDB(new MessageModel(),context);
+		for (ModelInterface m : testList) {
+			// Hämta gammalt meddelande
+			MessageModel mess = (MessageModel) m;
+
+			// Skapa ett uppdaterat meddelande
+			MessageModel messUpdate = new MessageModel(mess.getId(), "mjuhu","höns",mess.getMessageTimeStamp(),mess.isRead());
+
+			// Skriv det uppdaterade objektet till databasen
+			db.updateModel(messUpdate,context);
+
+			db.deleteFromDB(messUpdate, context);
+		}
+
+		testList = db.getAllFromDB(new Contact(),context);
+		for (ModelInterface m : testList) {
+			Contact cont = (Contact) m;
+
+			Contact contUpd = new Contact(cont.getId(),"Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Dålig lirare");
+			db.updateModel(contUpd,context);
+
+			db.deleteFromDB(contUpd, context);
+		}
+
+
+		testList = db.getAllFromDB(new Assignment(),context);
 		for (ModelInterface m : testList) {
 			Assignment ass = (Assignment) m;
 
-			//Assignment assUpd = new Assignment(ass.getId(),"Katt i hav", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats");
-			Log.d("DB",ass.getId() + " -> " + ass.getAssignmentDescription());
-			//db.updateModel(assUpd);
-			db.deleteFromDB(ass, context);
-			//db.deleteFromDB(assUpd);
+			Assignment assUpd = new Assignment(ass.getId(),"Katt i hav", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats");
+
+			db.updateModel(assUpd,context);
+
+			db.deleteFromDB(assUpd, context);
 		}
-		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(), context));
+
+		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel(),context));
+		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(),context));
+		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(),context));
 		
-		db.onDestroy();
+		//db.onDestroy();
 	}
 
 

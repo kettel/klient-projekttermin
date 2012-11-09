@@ -106,8 +106,9 @@ public class Database{
 			values.put(ContactsTable.COLUMN_CLASSIFICATION, contact.getContactClassification());
 			values.put(ContactsTable.COLUMN_CLEARANCE_LEVEL, contact.getContactClearanceLevel());
 			values.put(ContactsTable.COLUMN_COMMENT, contact.getContactComment());
-			values.put(ContactsTable.COLUMN_CONTACT_NAME, contact.getContactEmail());
-			values.put(ContactsTable.COLUMN_PH_NO, contact.getContactEmail());
+			values.put(ContactsTable.COLUMN_CONTACT_NAME, contact.getContactName());
+			values.put(ContactsTable.COLUMN_PH_NO, contact.getContactPhoneNumber());
+			values.put(ContactsTable.COLUMN_EMAIL, contact.getContactEmail());
 			
 			Uri contactUri = context.getContentResolver().insert(DatabaseContentProviderContacts.CONTENT_URI, values);
 			Log.d("DB","ContactURI: " + contactUri);
@@ -225,6 +226,9 @@ public class Database{
 			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderContacts.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
 			if (cursor.moveToFirst()) {
 	            do {
+	            	for(int i = 0; i < 7; i++){
+	            		Log.d("CONTACT", "Cursor " + i +"-> " + cursor.getString(i));
+	            	}
 	                Contact contact = new Contact(
 	                		Long.valueOf(cursor.getString(0)),
 	                		cursor.getString(1),
@@ -267,14 +271,59 @@ public class Database{
 	 */
 	public void updateModel(ModelInterface m, Context context) {
 		String dbRep = m.getDatabaseRepresentation();
+		int updated = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
+			Assignment ass = (Assignment) m;
+			ContentValues values = new ContentValues();
+			
+			values.put(AssignmentTable.COLUMN_ASSIGNMENTDESCRIPTION, ass.getAssignmentDescription());
+			values.put(AssignmentTable.COLUMN_ASSIGNMENTSTATUS, ass.getAssignmentStatus());
+			values.put(AssignmentTable.COLUMN_CAMERAIMAGE, bitmapToByteArray(ass.getCameraImage()));
+			values.put(AssignmentTable.COLUMN_LAT,Long.toString(ass.getLat()));
+			values.put(AssignmentTable.COLUMN_LON, Long.toString(ass.getLon()));
+			values.put(AssignmentTable.COLUMN_NAME, ass.getName());
+			values.put(AssignmentTable.COLUMN_RECEIVER, ass.getReceiver());
+			values.put(AssignmentTable.COLUMN_SENDER, ass.getSender());
+			values.put(AssignmentTable.COLUMN_SITENAME, ass.getSiteName());
+			values.put(AssignmentTable.COLUMN_STREETNAME, ass.getStreetName());
+			values.put(AssignmentTable.COLUMN_TIMESPAN, ass.getTimeSpan());
+			
+			updated = context.getContentResolver().update(DatabaseContentProviderAssignments.CONTENT_URI, values, Database.KEY_ID + " = " + Long.toString(m.getId()), null);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
+			Contact contact = (Contact) m;
+			ContentValues values = new ContentValues();
+			values.put(ContactsTable.COLUMN_CLASSIFICATION, contact.getContactClassification());
+			values.put(ContactsTable.COLUMN_CLEARANCE_LEVEL, contact.getContactClearanceLevel());
+			values.put(ContactsTable.COLUMN_COMMENT, contact.getContactComment());
+			values.put(ContactsTable.COLUMN_CONTACT_NAME, contact.getContactEmail());
+			values.put(ContactsTable.COLUMN_PH_NO, contact.getContactEmail());
+			
+			updated = context.getContentResolver().update(DatabaseContentProviderContacts.CONTENT_URI, values, Database.KEY_ID + " = " + Long.toString(m.getId()), null);
+			
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
+			MessageModel mess = (MessageModel) m;
+
+		    ContentValues values = new ContentValues();
+		    values.put(MessageTable.COLUMN_CONTENT, mess.getMessageContent().toString());
+		    values.put(MessageTable.COLUMN_RECEIVER, mess.getReciever().toString());
+		    values.put(MessageTable.COLUMN_TIMESTAMP, Long.toString(mess.getMessageTimeStamp()));
+		    values.put(MessageTable.COLUMN_ISREAD, (mess.isRead()? "TRUE" : "FALSE"));
+		    
+		    updated = context.getContentResolver().update(DatabaseContentProviderMessages.CONTENT_URI, values, Database.KEY_ID + " = " + Long.toString(m.getId()), null);
 		}
 	}
 	
+	private byte[] bitmapToByteArray(Bitmap cameraImage) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+        Bitmap bmp = cameraImage;
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);   
+        byte[] photo = baos.toByteArray();
+        return photo;
+	}
+
+
 	public void onDestroy(){
 		if(database != null){
 			database.close();
