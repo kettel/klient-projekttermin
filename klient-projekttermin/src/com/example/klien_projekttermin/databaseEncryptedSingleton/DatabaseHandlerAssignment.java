@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.database;
+package com.example.klien_projekttermin.databaseEncryptedSingleton;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,28 +8,19 @@ import java.util.List;
 import com.example.klien_projekttermin.models.Assignment;
 import com.example.klien_projekttermin.models.ModelInterface;
 
-
+import net.sqlcipher.database.SQLiteDatabase;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
-	// Alla statiska variabler
-    // Databas version
-    private static final int DATABASE_VERSION = 1;
- 
-    // Databasens namn - > assignmentManager
-    private static final String DATABASE_NAME = "assignmentManager";
- 
-    // Assignments tabellnamn
+public class DatabaseHandlerAssignment extends DatabaseHandler{
+
+	// Assignments tabellnamn
     private static final String TABLE_ASSIGNMENTS = "assignment";
 
     // Assignments tabellkolumnnamn
-    private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
     private static final String KEY_LAT = "lat";
 	private static final String KEY_LON = "long";
@@ -41,16 +32,18 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	private static final String KEY_CAMERAIMAGE = "camera_image";
 	private static final String KEY_STREETNAME ="streetname";
 	private static final String KEY_SITENAME = "sitename";
- 
-    public DatabaseHandlerAssignment(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
- 
-    // Skapa tabell
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_ASSIGNMENTS + "("
-                + KEY_ID + " INTEGER PRIMARY KEY,"  
+	
+	public DatabaseHandlerAssignment(SQLiteDatabase database) {
+		// Initiera Messages-tabellen.
+		initiateModelDatabase(database);
+	}
+	
+	@Override
+	public void initiateModelDatabase(SQLiteDatabase database) {
+		//SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
+		String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE IF NOT EXISTS " 
+				+ TABLE_ASSIGNMENTS + "("
+                + Database.KEY_ID + " INTEGER PRIMARY KEY,"  
         		+ KEY_NAME + " TEXT,"
                 + KEY_LAT + " TEXT,"
         		+ KEY_LON + " TEXT,"
@@ -62,31 +55,15 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
                 + KEY_CAMERAIMAGE + " BLOB,"
                 + KEY_STREETNAME + " TEXT,"
                 + KEY_SITENAME + " TEXT" + ")";
-        db.execSQL(CREATE_ASSIGNMENTS_TABLE);
-    }
-    
-    // Uppgradera databasen vid behov (om en äldre version existerar)
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Om en äldre version existerar, ta bort den
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ASSIGNMENTS);
- 
-        // Skapa sedan databasen igen
-        onCreate(db);
-    }
- 
-    /**
-     * Alla CRUD(Create, Read, Update, Delete) operationer
-     */
-    
-    /**
-     * Lägg till ett uppdrag
-     * @param assignment	Det uppdrag som ska läggas till i databasen
-     */
-    public void addAssignment(SQLiteDatabase db, Assignment assignment) {
-        //SQLiteDatabase db = this.getWritableDatabase();
- 
-        // Konvertera Bitmap -> Byte[] -> BLOB
+        database.execSQL(CREATE_ASSIGNMENTS_TABLE);
+        //database.close();
+	}
+
+	@Override
+	public void addModel(SQLiteDatabase database, ModelInterface m) {
+		Assignment assignment = (Assignment) m;
+		//SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
+		// Konvertera Bitmap -> Byte[] -> BLOB
         ByteArrayOutputStream baos = new ByteArrayOutputStream();  
         Bitmap bmp = assignment.getCameraImage();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);   
@@ -105,31 +82,45 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         values.put(KEY_CAMERAIMAGE, photo);
         values.put(KEY_STREETNAME, assignment.getStreetName());
         values.put(KEY_SITENAME, assignment.getSiteName());
+        
         // Lägg till assignment i databasen
-        db.insert(TABLE_ASSIGNMENTS, null, values);
+        database.insert(TABLE_ASSIGNMENTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
-        //db.close(); 
-    }
- 
-    public void removeAssignment(SQLiteDatabase db, Assignment ass){
-    	//SQLiteDatabase db = this.getWritableDatabase();
-    	db.delete(TABLE_ASSIGNMENTS, KEY_ID + " = ?",
-                new String[] { String.valueOf(ass.getId()) });
-        //db.close();
-    }
-    
-    /**
-     * Hämta alla uppdrag i databasen
-     * @return	List<Assignment>	En lista med Assignment-objekt
-     */
-    public List<ModelInterface> getAllAssignments(SQLiteDatabase db) {
-        List<ModelInterface> assignmentList = new ArrayList<ModelInterface>();
+        //database.close();
+	}
+
+	@Override
+	public void updateModel(SQLiteDatabase database, ModelInterface m) {
+		Assignment ass = (Assignment) m;
+		//SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
+		
+		String UPDATE_ASSIGNMENT = "UPDATE " + TABLE_ASSIGNMENTS + " SET "
+        		+ KEY_ASSIGNMENTDESCRIPTION + " = \"" + ass.getAssignmentDescription() + "\", "
+        		+ KEY_ASSIGNMENTSTATUS + " = \"" + ass.getAssignmentStatus() +"\", "
+        		+ KEY_CAMERAIMAGE + " = \"" + ass.getCameraImage() + "\", "
+        		+ KEY_LAT + " = \"" + Long.toString(ass.getLat()) + "\", "
+        		+ KEY_LON + " = \"" + Long.toString(ass.getLon()) + "\", "
+        		+ KEY_NAME + " = \"" + ass.getName() + "\", "
+        		+ KEY_RECEIVER + " = \"" + ass.getReceiver() + "\", "
+        		+ KEY_SENDER + " = \"" + ass.getSender() + "\", "
+        		+ KEY_SITENAME + " = \"" + ass.getSiteName() + "\", "
+        		+ KEY_STREETNAME + " = \"" + ass.getStreetName() + "\", "
+        		+ KEY_TIMESPAN + " = \"" + ass.getTimeSpan() + "\" "
+        		+ "WHERE " + Database.KEY_ID + " = " + ass.getId();
+        
+        database.execSQL(UPDATE_ASSIGNMENT);
+        //database.close();
+	}
+
+	@Override
+	public List<ModelInterface> getAllModels(SQLiteDatabase database, ModelInterface m) {
+		List<ModelInterface> assignmentList = new ArrayList<ModelInterface>();
         
         // Select All frågan. Ze classic! Dvs, hämta allt från ASSIGNMENTS-databasen
         String selectQuery = "SELECT  * FROM " + TABLE_ASSIGNMENTS;
  
-        //SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        //SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(databaseFile, PASSWORD, null);
+        Cursor cursor = database.rawQuery(selectQuery, null);
  
         // Loopa igenom alla rader och lägg till dem i listan 
         
@@ -159,46 +150,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
         }
  		
         cursor.close();
-        //db.close();
+        //database.close();
         // Returnera kontaktlistan
         return assignmentList;
-    }
- 
-    /**
-     * Räkna antal assignments i databasen
-     * @return	int		Antal assignments
-     */
-    public int getAssignmentCount(SQLiteDatabase db) {
-        String countQuery = "SELECT * FROM " + TABLE_ASSIGNMENTS;
-        //SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        int returnCount = cursor.getCount();
-        cursor.close();
-        //db.close();
-        // Returnera antalet assignments
-        return returnCount;
-    }
-
-	public void updateModel(SQLiteDatabase db, Assignment ass) {
-		//SQLiteDatabase db = this.getReadableDatabase();
-		
-		String UPDATE_ASSIGNMENT = "UPDATE " + TABLE_ASSIGNMENTS + " SET "
-        		+ KEY_ASSIGNMENTDESCRIPTION + " = \"" + ass.getAssignmentDescription() + "\", "
-        		+ KEY_ASSIGNMENTSTATUS + " = \"" + ass.getAssignmentStatus() +"\", "
-        		+ KEY_CAMERAIMAGE + " = \"" + ass.getCameraImage() + "\", "
-        		+ KEY_LAT + " = \"" + Long.toString(ass.getLat()) + "\", "
-        		+ KEY_LON + " = \"" + Long.toString(ass.getLon()) + "\", "
-        		+ KEY_NAME + " = \"" + ass.getName() + "\", "
-        		+ KEY_RECEIVER + " = \"" + ass.getReceiver() + "\", "
-        		+ KEY_SENDER + " = \"" + ass.getSender() + "\", "
-        		+ KEY_SITENAME + " = \"" + ass.getSiteName() + "\", "
-        		+ KEY_STREETNAME + " = \"" + ass.getStreetName() + "\", "
-        		+ KEY_TIMESPAN + " = \"" + ass.getTimeSpan() + "\" "
-        		+ "WHERE " + KEY_ID + " = " + ass.getId();
-        
-        db.execSQL(UPDATE_ASSIGNMENT);
-        
-        //db.close();
 	}
-    
 }

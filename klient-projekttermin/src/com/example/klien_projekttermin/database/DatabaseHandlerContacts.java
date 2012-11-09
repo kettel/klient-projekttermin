@@ -11,6 +11,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseHandlerContacts extends SQLiteOpenHelper{
 	// Alla statiska variabler
@@ -64,11 +65,12 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     
     /**
      * Lägg till en kontakt
+     * @param db 
      * @param Contact	Den kontakt som ska läggas till i databasen
      */
-    public void addContact(Contact contact) {
-        SQLiteDatabase db = this.getWritableDatabase();
- 
+    public void addContact(SQLiteDatabase db, Contact contact) {
+        //SQLiteDatabase db = this.getWritableDatabase();
+    	Log.d("DB","Got DB: " + db.toString());
         ContentValues values = new ContentValues();
         values.put(KEY_CONTACT_NAME, contact.getContactName());
         values.put(KEY_PH_NO, contact.getContactPhoneNumber().toString());
@@ -79,25 +81,25 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
         // Lägg till kontakter i databasen
         db.insert(TABLE_CONTACTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
-        db.close(); 
+        //db.close(); 
     }
 
-	public int getContactCount() {
+	public int getContactCount(SQLiteDatabase db) {
 		String countQuery = "SELECT * FROM " + TABLE_CONTACTS;
-        SQLiteDatabase db = this.getReadableDatabase();
+        //SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
         int count = cursor.getCount();
         cursor.close();
-        db.close();
+        //db.close();
         return count;
 	}
 
-	public List<ModelInterface> getAllContacts() {
+	public List<ModelInterface> getAllContacts(SQLiteDatabase db) {
 		List<ModelInterface> contactList = new ArrayList<ModelInterface>();
 		// Select All frågan. Ze classic! Dvs, hämta allt från MESSAGES-databasen
         String selectQuery = "SELECT  * FROM " + TABLE_CONTACTS;
  
-        SQLiteDatabase db = this.getWritableDatabase();
+        //SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
  
         // Loopa igenom alla rader och lägg till dem i listan 
@@ -118,20 +120,20 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
             } while (cursor.moveToNext());
         }
  		cursor.close();
- 		db.close();
+ 		//db.close();
         // Returnera meddelandelistan
 		return contactList;
 	}
 
-	public void removeContact(Contact contact) {
-		SQLiteDatabase db = this.getWritableDatabase();
+	public void removeContact(SQLiteDatabase db, Contact contact) {
+		//SQLiteDatabase db = this.getWritableDatabase();
     	db.delete(TABLE_CONTACTS, KEY_ID + " = ?",
                 new String[] { String.valueOf(contact.getId()) });
-        db.close();
+        //db.close();
 	}
 
-	public void updateModel(Contact c) {
-		SQLiteDatabase db = this.getReadableDatabase();
+	public void updateModel(SQLiteDatabase db, Contact c) {
+		//SQLiteDatabase db = this.getReadableDatabase();
 		
 		String UPDATE_CONTACTS = "UPDATE " + TABLE_CONTACTS + " SET "
         		+ KEY_CONTACT_NAME + " = \"" + c.getContactName() + "\", "
@@ -144,6 +146,6 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
 		
         db.execSQL(UPDATE_CONTACTS);
         
-        db.close();
+        //db.close();
 	}
 }

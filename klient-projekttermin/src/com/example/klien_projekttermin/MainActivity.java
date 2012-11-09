@@ -5,9 +5,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import net.sqlcipher.database.SQLiteDatabase;
-
-import com.example.klien_projekttermin.databaseProvider.Database;
+import com.example.klien_projekttermin.databaseEncrypted.Database;
 import com.example.klien_projekttermin.databaseProvider.NotesDB;
 import com.example.klien_projekttermin.logger.LogViewer;
 import com.example.klien_projekttermin.logger.logger;
@@ -15,7 +13,6 @@ import com.example.klien_projekttermin.models.Assignment;
 import com.example.klien_projekttermin.models.Contact;
 import com.example.klien_projekttermin.models.MessageModel;
 import com.example.klien_projekttermin.models.ModelInterface;
-
 
 
 import android.app.ListActivity;
@@ -44,10 +41,10 @@ public class MainActivity extends ListActivity {
 		String[] from = { "line1", "line2" };
 		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-
+		
 		// Testa DB
 		long timer = Calendar.getInstance().getTimeInMillis();
-		testDBProvider(this);
+		testDBFullSingleton(this);
 		timer = Calendar.getInstance().getTimeInMillis() - timer;
 		Log.d("DB", "Exekveringstid: " + Long.toString(timer));
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -171,6 +168,57 @@ public class MainActivity extends ListActivity {
 		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(),context));
 		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(),context));
 	}
+	
+	public void testDBFullSingleton(Context context){
+		com.example.klien_projekttermin.databaseEncryptedSingleton.Database db = com.example.klien_projekttermin.databaseEncryptedSingleton.Database.getInstance(context);
+		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"));
+		int w = 600, h = 600;
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+		Bitmap fakeImage = Bitmap.createBitmap(w, h, conf);
+		db.addToDB(new Assignment("Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats"));
+		db.addToDB(new MessageModel("Hejsan svejsan jättemycket!!!", "Kalle"));
+
+		// Testa att hämta från databasen
+		List<ModelInterface> testList = db.getAllFromDB(new MessageModel());
+		for (ModelInterface m : testList) {
+			// Hämta gammalt meddelande
+			MessageModel mess = (MessageModel) m;
+
+			// Skapa ett uppdaterat meddelande
+			MessageModel messUpdate = new MessageModel(mess.getId(), "mjuhu","höns",mess.getMessageTimeStamp(),mess.isRead());
+
+			// Skriv det uppdaterade objektet till databasen
+			db.updateModel(messUpdate);
+
+			db.deleteFromDB(messUpdate);
+		}
+
+		testList = db.getAllFromDB(new Contact());
+		for (ModelInterface m : testList) {
+			Contact cont = (Contact) m;
+
+			Contact contUpd = new Contact(cont.getId(),"Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Dålig lirare");
+			db.updateModel(contUpd);
+
+			db.deleteFromDB(contUpd);
+		}
+
+
+		testList = db.getAllFromDB(new Assignment());
+		for (ModelInterface m : testList) {
+			Assignment ass = (Assignment) m;
+
+			Assignment assUpd = new Assignment(ass.getId(),"Katt i hav", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats");
+
+			db.updateModel(assUpd);
+
+			db.deleteFromDB(assUpd);
+		}
+
+		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel()));
+		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact()));
+		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment()));
+	}
 
 	public void testDBPartial(Context context){
 		Database db = new Database();
@@ -208,10 +256,11 @@ public class MainActivity extends ListActivity {
 		testList = db.getAllFromDB(new MessageModel(),context);
 		Log.d("DB","Storlek: " + testList.size());
 	}
+
 	
 	public void testDBProvider(Context context){
 		// Ladda in bibliotek. Fungerar för subklasser.
-		SQLiteDatabase.loadLibs(context);
+		//SQLiteDatabase.loadLibs(context);
 		NotesDB db = NotesDB.getInstance();
 		db.addNewNote(context.getContentResolver(), "Hej", "Kale");
 		Log.d("DB","Text från titel: " + db.getTextFromTitle(context.getContentResolver(), "Hej"));

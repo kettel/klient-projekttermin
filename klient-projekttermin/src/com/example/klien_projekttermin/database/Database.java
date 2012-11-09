@@ -1,7 +1,9 @@
 package com.example.klien_projekttermin.database;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 
 import com.example.klien_projekttermin.models.Assignment;
 import com.example.klien_projekttermin.models.Contact;
@@ -9,6 +11,8 @@ import com.example.klien_projekttermin.models.MessageModel;
 import com.example.klien_projekttermin.models.ModelInterface;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
 /**
@@ -19,6 +23,36 @@ import android.content.Context;
  */
 public class Database{
 	
+	private Database(){
+		
+	}
+	
+	private static Database instance = new Database();
+	private static File databaseFile = null;
+	private static SQLiteDatabase db = null;
+	private static Context context = null;
+	
+	public static Database getInstance(Context context){
+		Log.d("DB","get instance..");
+		if(databaseFile != context.getDatabasePath("tddd36.db")){
+			databaseFile = context.getDatabasePath("tddd36.db");
+		}
+		// Om databasfilen inte existerar, skapa den
+		if(!databaseFile.exists()){
+			databaseFile.mkdirs();
+			databaseFile.delete();
+		}
+		// Om databasen inte är initierad
+		if(db != null){
+			
+			db = SQLiteDatabase.openOrCreateDatabase(databaseFile, null);
+		}
+		Log.d("DB","got instance..");
+		return instance;
+	}
+	
+	
+	
 	/**
 	 * Lägg till ett uppdrag/kontakt/meddelande till rätt databas
 	 * @param m			ModellInterface av objekt som ska läggas till
@@ -28,15 +62,16 @@ public class Database{
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.addAssignment((Assignment)m);
+			dha.addAssignment(db, (Assignment)m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
+			Log.d("DB","About to add contact");
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			dhc.addContact((Contact)m);
+			dhc.addContact(db, (Contact)m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.addMessage((MessageModel)m);
+			dhm.addMessage(db, (MessageModel)m);
 		}
 	}
 	/**
@@ -50,15 +85,15 @@ public class Database{
 		int returnCount = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			returnCount = dha.getAssignmentCount();
+			returnCount = dha.getAssignmentCount(db);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			returnCount = dhc.getContactCount();
+			returnCount = dhc.getContactCount(db);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			returnCount = dhm.getMessageCount();
+			returnCount = dhm.getMessageCount(db);
 		}
 		return returnCount;
 	}
@@ -72,15 +107,15 @@ public class Database{
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.removeAssignment((Assignment)m);
+			dha.removeAssignment(db, (Assignment)m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			dhc.removeContact((Contact)m);
+			dhc.removeContact(db, (Contact)m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.removeMessage((MessageModel)m);
+			dhm.removeMessage(db, (MessageModel)m);
 		}
 	}
 	
@@ -95,15 +130,15 @@ public class Database{
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			returnList = dha.getAllAssignments();
+			returnList = dha.getAllAssignments(db);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			returnList = dhc.getAllContacts();
+			returnList = dhc.getAllContacts(db);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			returnList = dhm.getAllMessages();
+			returnList = dhm.getAllMessages(db);
 		}
 		return returnList;
 	}
@@ -119,15 +154,15 @@ public class Database{
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.updateModel((Assignment)m);
+			dha.updateModel(db, (Assignment)m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			dhc.updateModel((Contact)m);
+			dhc.updateModel(db, (Contact)m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.updateModel((MessageModel)m);
+			dhm.updateModel(db, (MessageModel)m);
 		}
 	}
 }
