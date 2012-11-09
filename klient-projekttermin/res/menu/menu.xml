@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:actionLayout="@layout/search"
+        android:showAsAction="ifRoom|withText|collapseActionView"/>
+    <item
+        android:id="@+id/menu_deactivate_gps"
+        android:showAsAction="ifRoom|withText"
+        android:title="GPS/on"/>
+    <item
+        android:id="@+id/menu_add_region"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/mark_region"/>
+
+</menu>
