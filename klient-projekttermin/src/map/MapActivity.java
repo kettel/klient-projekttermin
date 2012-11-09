@@ -89,7 +89,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private MenuItem searchItem;
 	private ProgressBar sp;
 	private Button clearSearch;
-	final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+	private LocationManager manager;
 	private MapManager mm = new MapManager();
 
 	@Override
@@ -98,12 +98,13 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
-		locationSource = new AndroidGPSProvider(manager,1000L);
+		manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		locationSource = new AndroidGPSProvider(manager, 1000L);
 		this.setContentView(R.layout.activity_map);
 
-	    if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-	        buildAlertMessageNoGps();
-	    }
+		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			buildAlertMessageNoGps();
+		}
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
 		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
@@ -145,22 +146,29 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		 */
 		activateGPS(gpsOnOff);
 	}
+
 	private void buildAlertMessageNoGps() {
-	    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setMessage("Yout GPS seems to be disabled, do you want to enable it?")
-	           .setCancelable(false)
-	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                   startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-	               }
-	           })
-	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	               public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                    dialog.cancel();
-	               }
-	           });
-	    final AlertDialog alert = builder.create();
-	    alert.show();
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(
+				"Yout GPS seems to be disabled, do you want to enable it?")
+				.setCancelable(false)
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(
+									@SuppressWarnings("unused") final DialogInterface dialog,
+									@SuppressWarnings("unused") final int id) {
+								startActivity(new Intent(
+										Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+							}
+						})
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(final DialogInterface dialog,
+							@SuppressWarnings("unused") final int id) {
+						dialog.cancel();
+					}
+				});
+		final AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	/**
@@ -287,10 +295,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	public void navigateToLocation(int arg) {
 		activateGPS(false);
 		mapComponent.setMiddlePoint(locationSource.getLocation());
-		new NutiteqRouteWaiter(
-				locationSource.getLocation(), searchSuggestions.getList()
-						.get(arg).getPlace().getWgs(), mapComponent, icons[2],
-				icons[2], mm);
+		new NutiteqRouteWaiter(locationSource.getLocation(), searchSuggestions
+				.getList().get(arg).getPlace().getWgs(), mapComponent,
+				icons[2], icons[2], mm);
 	}
 
 	public void centerMapOnLocation(int arg) {
