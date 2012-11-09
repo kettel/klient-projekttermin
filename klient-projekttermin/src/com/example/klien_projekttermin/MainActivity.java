@@ -263,8 +263,15 @@ public class MainActivity extends ListActivity {
 		//SQLiteDatabase.loadLibs(context);
 		com.example.klien_projekttermin.databaseProvider.Database db = com.example.klien_projekttermin.databaseProvider.Database.getInstance(context);
 		db.addToDB(new MessageModel("Hej svehjs","Kalle"), context);
-		Log.d("DB","Lagt till en post i databasen");
+		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
+		int w = 600, h = 600;
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+		Bitmap fakeImage = Bitmap.createBitmap(w, h, conf);
+		db.addToDB(new Assignment("Katt i träd", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats"),context);
+		db.addToDB(new MessageModel("Hejsan svejsan jättemycket!!!", "Kalle"),context);
 		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel(), context));
+		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(), context));
+		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(), context));
 	}
 
 

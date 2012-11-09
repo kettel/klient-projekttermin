@@ -1,5 +1,6 @@
 package com.example.klien_projekttermin.databaseProvider;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,12 +8,15 @@ import java.util.List;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
+import com.example.klien_projekttermin.models.Assignment;
+import com.example.klien_projekttermin.models.Contact;
 import com.example.klien_projekttermin.models.MessageModel;
 import com.example.klien_projekttermin.models.ModelInterface;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
@@ -50,7 +54,6 @@ public class Database{
 			dbFile.mkdirs();
 			dbFile.delete();
 		}
-		Log.d("DB", "About to create DB");
 		// Ladda in SQLCipher-bibliotek filer
 		SQLiteDatabase.loadLibs(context);
 		database = SQLiteDatabase.openOrCreateDatabase(dbFile, "password", null);
@@ -66,8 +69,40 @@ public class Database{
 	public void addToDB(ModelInterface m, Context c){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
+			Assignment ass = (Assignment) m;
+			// Konvertera Bitmap -> Byte[]
+	        ByteArrayOutputStream baos = new ByteArrayOutputStream();  
+	        Bitmap bmp = ass.getCameraImage();
+	        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);   
+	        byte[] photo = baos.toByteArray();
+	        
+			ContentValues values = new ContentValues();
+			
+			values.put(AssignmentTable.COLUMN_ASSIGNMENTDESCRIPTION, ass.getAssignmentDescription());
+			values.put(AssignmentTable.COLUMN_ASSIGNMENTSTATUS, ass.getAssignmentStatus());
+			values.put(AssignmentTable.COLUMN_CAMERAIMAGE, photo);
+			values.put(AssignmentTable.COLUMN_LAT, Long.toString(ass.getLat()));
+			values.put(AssignmentTable.COLUMN_LON, Long.toString(ass.getLon()));
+			values.put(AssignmentTable.COLUMN_NAME, ass.getName());
+			values.put(AssignmentTable.COLUMN_RECEIVER, ass.getReceiver());
+			values.put(AssignmentTable.COLUMN_SENDER, ass.getSender());
+			values.put(AssignmentTable.COLUMN_SITENAME, ass.getSiteName());
+			values.put(AssignmentTable.COLUMN_STREETNAME, ass.getStreetName());
+			values.put(AssignmentTable.COLUMN_TIMESPAN, ass.getTimeSpan());
+			Uri assUri = context.getContentResolver().insert(DatabaseContentProviderAssignments.CONTENT_URI, values);
+			Log.d("DB","AssignmentURI: " + assUri);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
+			Contact contact = (Contact) m;
+			ContentValues values = new ContentValues();
+			values.put(ContactsTable.COLUMN_CLASSIFICATION, contact.getContactClassification());
+			values.put(ContactsTable.COLUMN_CLEARANCE_LEVEL, contact.getContactClearanceLevel());
+			values.put(ContactsTable.COLUMN_COMMENT, contact.getContactComment());
+			values.put(ContactsTable.COLUMN_CONTACT_NAME, contact.getContactEmail());
+			values.put(ContactsTable.COLUMN_PH_NO, contact.getContactEmail());
+			
+			Uri contactUri = context.getContentResolver().insert(DatabaseContentProviderContacts.CONTENT_URI, values);
+			Log.d("DB","ContactURI: " + contactUri);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			MessageModel mess = (MessageModel) m;
@@ -98,15 +133,21 @@ public class Database{
 		String dbRep = m.getDatabaseRepresentation();
 		int returnCount = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
+			// SELECT * WHERE _id IS NOT null
+			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderAssignments.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
+			returnCount = cursor.getCount();
+			cursor.close();
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
+			// SELECT * WHERE _id IS NOT null
+			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderContacts.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
+			returnCount = cursor.getCount();
+			cursor.close();
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			// SELECT * WHERE _id IS NOT null
 			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderMessages.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
-			
 			returnCount = cursor.getCount();
-			Log.d("DB","Cursor: " + cursor.toString());
 			cursor.close();
 		}
 		return returnCount;
