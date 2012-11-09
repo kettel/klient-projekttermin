@@ -38,6 +38,8 @@ local.properties
 
 # PDT-specific
 .buildpath
+<<<<<<< HEAD
+=======
 *.apk
 *.ap_
 
@@ -53,3 +55,4 @@ gen/
 
 # Local configuration file (sdk path, etc)
 local.properties
+>>>>>>> map

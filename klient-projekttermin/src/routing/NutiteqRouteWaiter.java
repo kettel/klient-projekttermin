@@ -24,6 +24,8 @@ public class NutiteqRouteWaiter implements DirectionsWaiter {
 	private Thread starter;
 	private int routingService;
 	private BasicMapComponent map;
+	private Line routeLine;
+	private MapManager mm;
 
 	/**
 	 * Läser in start- och slutkoordinater för rutten. Markerar dessa punkter på kartan.
@@ -35,11 +37,12 @@ public class NutiteqRouteWaiter implements DirectionsWaiter {
 	 * @param start
 	 * @param dest
 	 */
-	public NutiteqRouteWaiter(WgsPoint startCoordinates, WgsPoint endCoordinates, BasicMapComponent map, Image start, Image dest) {
+	public NutiteqRouteWaiter(WgsPoint startCoordinates, WgsPoint endCoordinates, BasicMapComponent map, Image start, Image dest, MapManager mm){
 		instance = this;
 		this.startCoordinates = startCoordinates;
 		this.endCoordinates = endCoordinates;
 		this.map = map;
+		this.mm = mm;
 		Place startMarker = new Place(1, "START", start, startCoordinates);
 		Place destinationMarker = new Place(1, "END", dest, endCoordinates);
 		this.map.addPlace(startMarker);
@@ -48,11 +51,17 @@ public class NutiteqRouteWaiter implements DirectionsWaiter {
 		starter.start();
 	}
 
+
 	/**
 	 * När en rutt är funnen rita ut den på kartan. 
 	 */
 	public void routeFound(Route route) {
-		Line routeLine = route.getRouteLine();
+		if(mm.getLine() != null){
+			System.out.println("I IF");
+			map.removeLine(mm.getLine());
+		}
+		routeLine = route.getRouteLine();
+		mm.setLine(routeLine);
 		int[] lineColors = { 0xFF0000FF, 0xFF00FF00 };
 		routeLine.setStyle(new LineStyle(lineColors[routingService], 5));
 		map.addLine(routeLine);
