@@ -262,7 +262,6 @@ public class MainActivity extends ListActivity {
 		// Ladda in bibliotek. Fungerar för subklasser.
 		//SQLiteDatabase.loadLibs(context);
 		com.example.klien_projekttermin.databaseProvider.Database db = com.example.klien_projekttermin.databaseProvider.Database.getInstance(context);
-		Log.d("DB","Skapat databasen...");
 		db.addToDB(new MessageModel("Hej svehjs","Kalle"), context);
 		Log.d("DB","Lagt till en post i databasen");
 		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel(), context));

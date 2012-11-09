@@ -30,8 +30,8 @@ public class Database{
 	private static Context context = null;
 	private static SQLiteDatabase database = null;
 
-	protected static String PASSWORD = "password";
-	protected static String KEY_ID = "id";
+	public static String PASSWORD = "password";
+	protected static String KEY_ID = "_id";
 	
 	private Database(){}
 	
@@ -102,7 +102,8 @@ public class Database{
 		else if(dbRep.equalsIgnoreCase("contact")){
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderMessages.CONTENT_URI, null, MessageTable.COLUMN_ID + " IS NOT null",null, null);
+			// SELECT * WHERE _id IS NOT null
+			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderMessages.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
 			
 			returnCount = cursor.getCount();
 			Log.d("DB","Cursor: " + cursor.toString());

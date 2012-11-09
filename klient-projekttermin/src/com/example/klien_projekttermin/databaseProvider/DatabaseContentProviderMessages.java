@@ -1,8 +1,5 @@
 package com.example.klien_projekttermin.databaseProvider;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -15,9 +12,9 @@ import net.sqlcipher.database.SQLiteQueryBuilder;
 
 public class DatabaseContentProviderMessages extends ContentProvider{
 
-	private MessageDatabaseHelper database;
+	private DatabaseHelper database;
 	
-	private String PASSWORD = "password";
+	private String PASSWORD = Database.PASSWORD;
 
 	// -BEGIN Används för UriMatcher så ContentProvidern kan användas
 	private static final int MESSAGES = 10;
@@ -43,7 +40,7 @@ public class DatabaseContentProviderMessages extends ContentProvider{
 
 	@Override
 	public boolean onCreate() {
-		database = new MessageDatabaseHelper(getContext());
+		database = new DatabaseHelper(getContext());
 		// Varför falskt?
 		return false;
 	}
@@ -54,9 +51,7 @@ public class DatabaseContentProviderMessages extends ContentProvider{
 		// Using SQLiteQueryBuilder instead of query() method
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
-		// Check if the caller has requested a column which does not exists
-		checkColumns(projection);
-
+		
 		// Set the table
 		queryBuilder.setTables(MessageTable.TABLE_MESSAGE);
 
@@ -66,7 +61,7 @@ public class DatabaseContentProviderMessages extends ContentProvider{
 			break;
 		case MESSAGE_ID:
 			// Adding the ID to the original query
-			queryBuilder.appendWhere(MessageTable.COLUMN_ID + "="
+			queryBuilder.appendWhere(Database.KEY_ID + "="
 					+ uri.getLastPathSegment());
 			break;
 		default:
@@ -90,7 +85,6 @@ public class DatabaseContentProviderMessages extends ContentProvider{
 	public Uri insert(Uri uri, ContentValues values) {
 		int uriType = sURIMatcher.match(uri);
 		SQLiteDatabase sqlDB = database.getWritableDatabase(PASSWORD);
-		int rowsDeleted = 0;
 		long id = 0;
 		switch (uriType) {
 		case MESSAGES:
@@ -117,11 +111,11 @@ public class DatabaseContentProviderMessages extends ContentProvider{
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
 				rowsDeleted = sqlDB.delete(MessageTable.TABLE_MESSAGE,
-						MessageTable.COLUMN_ID + "=" + id, 
+						Database.KEY_ID + "=" + id, 
 						null);
 			} else {
 				rowsDeleted = sqlDB.delete(MessageTable.TABLE_MESSAGE,
-						MessageTable.COLUMN_ID + "=" + id 
+						Database.KEY_ID + "=" + id 
 						+ " and " + selection,
 						selectionArgs);
 			}
@@ -150,12 +144,12 @@ public class DatabaseContentProviderMessages extends ContentProvider{
 			if (TextUtils.isEmpty(selection)) {
 				rowsUpdated = sqlDB.update(MessageTable.TABLE_MESSAGE, 
 						values,
-						MessageTable.COLUMN_ID + "=" + id, 
+						Database.KEY_ID + "=" + id, 
 						null);
 			} else {
 				rowsUpdated = sqlDB.update(MessageTable.TABLE_MESSAGE, 
 						values,
-						MessageTable.COLUMN_ID + "=" + id 
+						Database.KEY_ID + "=" + id 
 						+ " and " 
 						+ selection,
 						selectionArgs);
@@ -168,18 +162,4 @@ public class DatabaseContentProviderMessages extends ContentProvider{
 		return rowsUpdated;
 	}
 	
-	private void checkColumns(String[] projection) {
-		String[] available = { MessageTable.COLUMN_CONTENT,
-				MessageTable.COLUMN_RECEIVER, MessageTable.COLUMN_ISREAD,
-				MessageTable.COLUMN_ID };
-		if (projection != null) {
-			HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
-			HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
-			// Check if all columns which are requested are available
-			if (!availableColumns.containsAll(requestedColumns)) {
-				throw new IllegalArgumentException("Unknown columns in projection");
-			}
-		}
-	}
-
 }

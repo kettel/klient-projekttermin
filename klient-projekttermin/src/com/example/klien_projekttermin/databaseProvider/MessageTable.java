@@ -8,7 +8,6 @@ public class MessageTable {
 
 	// Database table
 	public static final String TABLE_MESSAGE = "message";
-	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_CONTENT = "content";
 	public static final String COLUMN_RECEIVER = "receiver";
 	public static final String COLUMN_TIMESTAMP = "timestamp";
@@ -17,7 +16,7 @@ public class MessageTable {
 	// Database creation SQL statement
 	private static final String DATABASE_CREATE = "create table if not exists "
 			+ TABLE_MESSAGE + "(" 
-			+ COLUMN_ID + " integer primary key autoincrement, " 
+			+ Database.KEY_ID + " integer primary key autoincrement, " 
 			+ COLUMN_CONTENT + " text not null, " 
 			+ COLUMN_RECEIVER + " text not null, " 
 			+ COLUMN_TIMESTAMP + " text, "
