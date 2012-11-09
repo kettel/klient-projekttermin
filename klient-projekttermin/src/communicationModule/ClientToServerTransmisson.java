@@ -5,7 +5,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import com.google.gson.Gson;
+
+import models.Assignment;
+import models.Contact;
+import models.MessageModel;
+
 import database.Database;
+import android.content.Context;
 import android.util.Log;
 
 public class ClientToServerTransmisson extends Thread  {
@@ -18,11 +25,13 @@ public class ClientToServerTransmisson extends Thread  {
 	private BufferedReader input = null;
 	private String inputString = null;
 	private Database database = new Database();
-	
+	private Gson gson = new Gson();
 	private boolean sendData = false;
 	private boolean connected = false;
+	private Context context = null;
 
-	public ClientToServerTransmisson(){
+	public ClientToServerTransmisson(Context context){
+		this.context = context;
 	}
 	
 	private synchronized void sendData(boolean enabel){
@@ -57,7 +66,19 @@ public class ClientToServerTransmisson extends Thread  {
 			try {
 				if(input.ready()){
 					inputString = input.readLine();
-					Log.i("incomeing", inputString);	
+					Log.i("incomeing", inputString);
+					if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
+						MessageModel message = gson.fromJson(inputString, MessageModel.class);
+						database.addToDB(message, this.context);
+			        }else if (inputString.contains("\"databasetRepresentation\":\"assignment\"")) {
+			        	Assignment assignment = gson.fromJson(inputString, Assignment.class);
+						database.addToDB(assignment, this.context);
+			        }else if (inputString.contains("\"databasetRepresentation\":\"contact\"")) {
+			        	Contact contact = gson.fromJson(inputString, Contact.class);
+			        	database.addToDB(contact, context);
+			        }else {
+			            Log.e("Database input problem","Did not recognise inputtype.");
+			        }
 				}
 			} catch (Exception e) {
 				Log.e("Crash in input", "inputString: " + e.toString());

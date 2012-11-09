@@ -20,12 +20,12 @@ public class CommunicationService extends Service{
 	private final IBinder binder = new CommunicationBinder();
 	
 	private Gson gson = new Gson();
-	private String transmisson = "test";
+	private String transmisson = "";
 	ClientToServerTransmisson ClientToServer = null;
 	
 	//konstruktorn
 	public CommunicationService(){
-		ClientToServer = new ClientToServerTransmisson();
+		ClientToServer = new ClientToServerTransmisson(getApplicationContext());
 		ClientToServer.start();
 	}
 
