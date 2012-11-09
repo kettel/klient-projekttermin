@@ -19,7 +19,7 @@ public class Database {
 	private static SQLiteDatabase database = null;
 
 	protected static String PASSWORD = "password";
-	protected static String KEY_ID = "id";
+	protected static String KEY_ID = "_id";
 	protected static File dbFile = null;
 	
 	private Database(){}

@@ -14,7 +14,7 @@ public abstract class DatabaseHandler {
 	File databaseFile = null;
 
 	protected String PASSWORD = "password";
-	protected String KEY_ID = "id";
+	protected String KEY_ID = "_id";
 
 	/**
 	 * Konstruktor som initierar databasen med rätt context.

@@ -24,7 +24,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     private static final String TABLE_CONTACTS = "contacts";
 
     // Contacts tabellkolumnnamn
-    private static final String KEY_ID = "id";
+    private static final String KEY_ID = "_id";
     private static final String KEY_CONTACT_NAME = "contact_name";
     private static final String KEY_PH_NO = "phone_number";
 	private static final String KEY_EMAIL = "email";

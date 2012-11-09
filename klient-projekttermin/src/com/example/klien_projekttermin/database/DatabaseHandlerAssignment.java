@@ -29,7 +29,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
     private static final String TABLE_ASSIGNMENTS = "assignment";
 
     // Assignments tabellkolumnnamn
-    private static final String KEY_ID = "id";
+    private static final String KEY_ID = "_id";
     private static final String KEY_NAME = "name";
     private static final String KEY_LAT = "lat";
 	private static final String KEY_LON = "long";

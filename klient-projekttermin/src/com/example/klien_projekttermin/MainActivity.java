@@ -34,7 +34,7 @@ public class MainActivity extends ListActivity {
 		
 		// Testa DB
 		long timer = Calendar.getInstance().getTimeInMillis();
-		testDBFullSingleton(this);
+		testDBProvider(this);
 		timer = Calendar.getInstance().getTimeInMillis() - timer;
 		Log.d("DB", "Exekveringstid: " + Long.toString(timer));
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
