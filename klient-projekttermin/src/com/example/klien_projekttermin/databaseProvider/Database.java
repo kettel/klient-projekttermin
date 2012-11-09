@@ -32,11 +32,12 @@ public class Database{
 	private Uri messUri;
 	private static Context context = null;
 	
-	@SuppressWarnings("unused")
 	private static SQLiteDatabase database = null;
 
 	public static String PASSWORD = "password";
 	protected static String KEY_ID = "_id";
+	
+	private static boolean isLibraryLoaded = false;
 	
 	private Database(){}
 	
@@ -56,9 +57,14 @@ public class Database{
 			dbFile.mkdirs();
 			dbFile.delete();
 		}
-		// Ladda in SQLCipher-bibliotek filer
-		SQLiteDatabase.loadLibs(context);
-		database = SQLiteDatabase.openOrCreateDatabase(dbFile, "password", null);
+		
+		// Ladda vid behov in SQLCipher-bibliotek filer
+		if(!isLibraryLoaded){
+			SQLiteDatabase.loadLibs(context);
+			isLibraryLoaded = true;
+		}
+		// 
+		database = SQLiteDatabase.openOrCreateDatabase(dbFile, PASSWORD, null);
 		return instance;
 	}
 
@@ -164,17 +170,17 @@ public class Database{
 		String dbRep = m.getDatabaseRepresentation();
 		int deleted = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			//deleted = context.getContentResolver().delete(DatabaseContentProviderAssignments.CONTENT_URI, Database.KEY_ID, new String[]{Long.toString(m.getId())});
+			deleted = context.getContentResolver().delete(DatabaseContentProviderAssignments.CONTENT_URI, Database.KEY_ID + " = " + Long.toString(m.getId()), null);
 			// Ta bort alla uppdrag.. -> null, null *host*
-			deleted = context.getContentResolver().delete(DatabaseContentProviderAssignments.CONTENT_URI, null, null);
+			//deleted = context.getContentResolver().delete(DatabaseContentProviderAssignments.CONTENT_URI, null, null);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			deleted = context.getContentResolver().delete(DatabaseContentProviderContacts.CONTENT_URI, Database.KEY_ID, new String[]{Long.toString(m.getId())});
+			deleted = context.getContentResolver().delete(DatabaseContentProviderContacts.CONTENT_URI, Database.KEY_ID + " = " + Long.toString(m.getId()), null);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			deleted = context.getContentResolver().delete(DatabaseContentProviderMessages.CONTENT_URI, Database.KEY_ID, new String[]{Long.toString(m.getId())});
+			deleted = context.getContentResolver().delete(DatabaseContentProviderMessages.CONTENT_URI, Database.KEY_ID + " = " + Long.toString(m.getId()), null);
 		}
-		Log.d("DB", "Deleted: " + deleted + " posts from " + m.getDatabaseRepresentation());
+//		Log.d("DB", "Deleted: " + deleted + " posts from " + m.getDatabaseRepresentation());
 	}
 	
 	/**
@@ -266,6 +272,12 @@ public class Database{
 		else if(dbRep.equalsIgnoreCase("contact")){
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
+		}
+	}
+	
+	public void onDestroy(){
+		if(database != null){
+			database.close();
 		}
 	}
 }

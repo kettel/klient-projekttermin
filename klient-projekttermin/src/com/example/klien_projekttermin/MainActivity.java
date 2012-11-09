@@ -89,6 +89,7 @@ public class MainActivity extends ListActivity {
 		}
 		return content;
 	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -309,6 +310,8 @@ public class MainActivity extends ListActivity {
 			//db.deleteFromDB(assUpd);
 		}
 		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(), context));
+		
+		db.onDestroy();
 	}
 
 
