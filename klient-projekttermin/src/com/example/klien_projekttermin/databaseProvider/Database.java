@@ -82,10 +82,9 @@ public class Database{
 		    values.put(MessageTable.COLUMN_TIMESTAMP, timestamp);
 		    values.put(MessageTable.COLUMN_ISREAD, "FALSE");
 
-		    if (messUri == null) {
-		    	// New message
-		    	messUri = context.getContentResolver().insert(DatabaseContentProvider.CONTENT_URI, values);
-		    }
+	    	// Nytt meddelande
+		    // messUri borde väl egentligen kunna returneras för enkel åtkomst?
+		    messUri = context.getContentResolver().insert(DatabaseContentProviderMessages.CONTENT_URI, values);
 		}
 		
 	}
@@ -103,9 +102,11 @@ public class Database{
 		else if(dbRep.equalsIgnoreCase("contact")){
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			Cursor cursor = context.getContentResolver().query(DatabaseContentProvider.CONTENT_URI, null, MessageTable.COLUMN_ID + " IS NOT null",null, null);
+			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderMessages.CONTENT_URI, null, MessageTable.COLUMN_ID + " IS NOT null",null, null);
 			
 			returnCount = cursor.getCount();
+			Log.d("DB","Cursor: " + cursor.toString());
+			cursor.close();
 		}
 		return returnCount;
 	}

@@ -20,12 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+        <!-- Database Content Providers -->
         <provider
-            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider" 
-            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider" />
+            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" 
+            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" />
    		
-   		<!-- <provider  		    android:name="com.example.klien_projekttermin.providers.NotesContentProvider" android:authorities="com.example.klien_projekttermin.providers.NotesContentProvider" /> -->
         
     </application>
 

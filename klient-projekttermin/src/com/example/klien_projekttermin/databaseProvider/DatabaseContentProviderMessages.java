@@ -13,17 +13,17 @@ import android.text.TextUtils;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteQueryBuilder;
 
-public class DatabaseContentProvider extends ContentProvider{
+public class DatabaseContentProviderMessages extends ContentProvider{
 
 	private MessageDatabaseHelper database;
 	
 	private String PASSWORD = "password";
 
 	// -BEGIN Används för UriMatcher så ContentProvidern kan användas
-	private static final int TODOS = 10;
-	private static final int TODO_ID = 20;
+	private static final int MESSAGES = 10;
+	private static final int MESSAGE_ID = 20;
 
-	private static final String AUTHORITY = "com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider";
+	private static final String AUTHORITY = "com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages";
 
 	private static final String BASE_PATH = "klien-projekttermin";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
@@ -36,8 +36,8 @@ public class DatabaseContentProvider extends ContentProvider{
 
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	static {
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH, TODOS);
-		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", TODO_ID);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH, MESSAGES);
+		sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", MESSAGE_ID);
 	}
 	// -END URImatcher magi..
 
@@ -62,9 +62,9 @@ public class DatabaseContentProvider extends ContentProvider{
 
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
-		case TODOS:
+		case MESSAGES:
 			break;
-		case TODO_ID:
+		case MESSAGE_ID:
 			// Adding the ID to the original query
 			queryBuilder.appendWhere(MessageTable.COLUMN_ID + "="
 					+ uri.getLastPathSegment());
@@ -93,7 +93,7 @@ public class DatabaseContentProvider extends ContentProvider{
 		int rowsDeleted = 0;
 		long id = 0;
 		switch (uriType) {
-		case TODOS:
+		case MESSAGES:
 			id = sqlDB.insert(MessageTable.TABLE_MESSAGE, null, values);
 			break;
 		default:
@@ -109,11 +109,11 @@ public class DatabaseContentProvider extends ContentProvider{
 		SQLiteDatabase sqlDB = database.getWritableDatabase(PASSWORD);
 		int rowsDeleted = 0;
 		switch (uriType) {
-		case TODOS:
+		case MESSAGES:
 			rowsDeleted = sqlDB.delete(MessageTable.TABLE_MESSAGE, selection,
 					selectionArgs);
 			break;
-		case TODO_ID:
+		case MESSAGE_ID:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
 				rowsDeleted = sqlDB.delete(MessageTable.TABLE_MESSAGE,
@@ -139,13 +139,13 @@ public class DatabaseContentProvider extends ContentProvider{
 		SQLiteDatabase sqlDB = database.getWritableDatabase(PASSWORD);
 		int rowsUpdated = 0;
 		switch (uriType) {
-		case TODOS:
+		case MESSAGES:
 			rowsUpdated = sqlDB.update(MessageTable.TABLE_MESSAGE, 
 					values, 
 					selection,
 					selectionArgs);
 			break;
-		case TODO_ID:
+		case MESSAGE_ID:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
 				rowsUpdated = sqlDB.update(MessageTable.TABLE_MESSAGE, 
