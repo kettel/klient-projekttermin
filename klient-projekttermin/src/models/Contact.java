@@ -27,7 +27,6 @@ public class Contact implements ModelInterface {
 	public Contact(){
 		
 	}
-
 	public Contact(String contactName, Long contactPhoneNumber, String contactEmail, String contactClearanceLevel, String contactClassification, String contactComment){
 		this.contactName=contactName;
 		this.contactPhoneNumber=contactPhoneNumber;

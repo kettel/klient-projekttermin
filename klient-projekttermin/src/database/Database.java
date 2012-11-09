@@ -60,6 +60,7 @@ public class Database{
 		return returnCount;
 	}
 	
+
 	/**
 	 * Ta bort ett objekt från databasen
 	 * @param m	ModelInterface	Det objekt som önskas tas bort
