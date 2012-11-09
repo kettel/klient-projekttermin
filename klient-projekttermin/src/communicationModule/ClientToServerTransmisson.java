@@ -5,9 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import logger.logger;
-
-import android.os.AsyncTask;
+import database.Database;
 import android.util.Log;
 
 public class ClientToServerTransmisson extends Thread  {
@@ -19,10 +17,11 @@ public class ClientToServerTransmisson extends Thread  {
 	private PrintWriter  output = null;
 	private BufferedReader input = null;
 	private String inputString = null;
+	private Database database = new Database();
 	
 	private boolean sendData = false;
 	private boolean connected = false;
-	
+
 	public ClientToServerTransmisson(){
 	}
 	
@@ -54,15 +53,14 @@ public class ClientToServerTransmisson extends Thread  {
 			Log.e("Connection", ("Error: " + e.toString()));
 		}
 		
-		while(true){
-			
+		while(true){			
 			try {
 				if(input.ready()){
 					inputString = input.readLine();
-					Log.e("incomeing", inputString);	
+					Log.i("incomeing", inputString);	
 				}
 			} catch (Exception e) {
-				Log.e("carcha", "inputString: " + e.toString());
+				Log.e("Crash in input", "inputString: " + e.toString());
 			}
 			
 			if(!requestSocet.isConnected()){
@@ -77,7 +75,7 @@ public class ClientToServerTransmisson extends Thread  {
 			
 			if(sendData){
 				output.println(transmisson);
-				Log.e("output", "sending TRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANS");
+				Log.i("output", "sending Transmisson");
 				sendData(false);
 			}
 			

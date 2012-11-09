@@ -56,7 +56,7 @@ public class MainActivity extends ListActivity {
 				switch (arg2) {
 				case 0:
 					if(communicationBond){
-						communicationService.sendMessage(new MessageModel("test","test"));
+						communicationService.sendMessage(new MessageModel("Hello, this is pandaphone.","test"));
 					}
 					break;
 					
