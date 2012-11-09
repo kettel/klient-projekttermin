@@ -44,7 +44,7 @@ public class MainActivity extends ListActivity {
 		
 		// Testa DB
 		long timer = Calendar.getInstance().getTimeInMillis();
-		testDBFullSingleton(this);
+		testDBProvider(this);
 		timer = Calendar.getInstance().getTimeInMillis() - timer;
 		Log.d("DB", "Exekveringstid: " + Long.toString(timer));
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -261,9 +261,11 @@ public class MainActivity extends ListActivity {
 	public void testDBProvider(Context context){
 		// Ladda in bibliotek. Fungerar för subklasser.
 		//SQLiteDatabase.loadLibs(context);
-		NotesDB db = NotesDB.getInstance();
-		db.addNewNote(context.getContentResolver(), "Hej", "Kale");
-		Log.d("DB","Text från titel: " + db.getTextFromTitle(context.getContentResolver(), "Hej"));
+		com.example.klien_projekttermin.databaseProvider.Database db = com.example.klien_projekttermin.databaseProvider.Database.getInstance(context);
+		Log.d("DB","Skapat databasen...");
+		db.addToDB(new MessageModel("Hej svehjs","Kalle"), context);
+		Log.d("DB","Lagt till en post i databasen");
+		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel(), context));
 	}
 
 

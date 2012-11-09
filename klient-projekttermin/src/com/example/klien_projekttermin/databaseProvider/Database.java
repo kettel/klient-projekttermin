@@ -1,14 +1,18 @@
 package com.example.klien_projekttermin.databaseProvider;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import net.sqlcipher.database.SQLiteDatabase;
 
 import com.example.klien_projekttermin.models.MessageModel;
 import com.example.klien_projekttermin.models.ModelInterface;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.SimpleCursorAdapter;
@@ -23,7 +27,36 @@ import android.widget.SimpleCursorAdapter;
 public class Database{
 	private SimpleCursorAdapter adapter;
 	private Uri messUri;
+	private static Context context = null;
+	private static SQLiteDatabase database = null;
+
+	protected static String PASSWORD = "password";
+	protected static String KEY_ID = "id";
 	
+	private Database(){}
+	
+	private static Database instance = new Database();
+	
+	public static Database getInstance(Context c){
+		// Om kontexten redan är skapad (dvs om instansen hämtas efter att den är skapad)
+		if(context== null){
+			context = c;
+		}
+		
+		//databaseFile = context.getDatabasePath("tddd36.db");
+		File dbFile = context.getDatabasePath("tddd36.db");
+		
+		// Om databasfilen inte existerar, skapa den
+		if(!dbFile.exists()){
+			dbFile.mkdirs();
+			dbFile.delete();
+		}
+		Log.d("DB", "About to create DB");
+		// Ladda in SQLCipher-bibliotek filer
+		SQLiteDatabase.loadLibs(context);
+		database = SQLiteDatabase.openOrCreateDatabase(dbFile, "password", null);
+		return instance;
+	}
 
 	
 	/**
@@ -31,7 +64,7 @@ public class Database{
 	 * @param m			ModellInterface av objekt som ska läggas till
 	 * @param context	Aktivitetens kontext så data läggs i rätt databas
 	 */
-	public void addToDB(ModelInterface m, Context context){
+	public void addToDB(ModelInterface m, Context c){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 		}
@@ -62,7 +95,7 @@ public class Database{
 	 * @param context	programkontexten så rätt databas kan väljas
 	 * @return
 	 */
-	public int getDBCount(ModelInterface m, Context context){
+	public int getDBCount(ModelInterface m, Context c){
 		String dbRep = m.getDatabaseRepresentation();
 		int returnCount = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
@@ -70,6 +103,9 @@ public class Database{
 		else if(dbRep.equalsIgnoreCase("contact")){
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
+			Cursor cursor = context.getContentResolver().query(DatabaseContentProvider.CONTENT_URI, null, MessageTable.COLUMN_ID + " IS NOT null",null, null);
+			
+			returnCount = cursor.getCount();
 		}
 		return returnCount;
 	}

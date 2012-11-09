@@ -21,7 +21,9 @@
             </intent-filter>
         </activity>
         
-        <!--  <provider            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider" android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider" /> -->
+        <provider
+            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider" 
+            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProvider" />
    		
    		<!-- <provider  		    android:name="com.example.klien_projekttermin.providers.NotesContentProvider" android:authorities="com.example.klien_projekttermin.providers.NotesContentProvider" /> -->
         

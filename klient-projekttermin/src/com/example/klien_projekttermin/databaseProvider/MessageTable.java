@@ -15,7 +15,7 @@ public class MessageTable {
 	public static final String COLUMN_ISREAD = "isRead";
 
 	// Database creation SQL statement
-	private static final String DATABASE_CREATE = "create table "
+	private static final String DATABASE_CREATE = "create table if not exists "
 			+ TABLE_MESSAGE + "(" 
 			+ COLUMN_ID + " integer primary key autoincrement, " 
 			+ COLUMN_CONTENT + " text not null, " 
