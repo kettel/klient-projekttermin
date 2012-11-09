@@ -65,7 +65,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private ArrayAdapter<String> sm;
 	private MapView mapView;
 	private ZoomControls zoomControls;
-	private final WgsPoint LINKÃ–PING = new WgsPoint(15.5826, 58.427);
+	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
 	private boolean isInAddMode = false;
 	private boolean gpsOnOff = true;
 	private ArrayList<WgsPoint> points = new ArrayList<WgsPoint>();
@@ -91,7 +91,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				1000L);
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
-				this), 1, 1, LINKÃ–PING, 10);
+				this), 1, 1, LINKÖPING, 10);
 		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();

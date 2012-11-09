@@ -1,15 +1,18 @@
-package com.example.assignmentlist;
+package Assignment;
 
 import java.util.List;
 
-import model.Assignment;
-import model.ModelInterface;
-import database.Database;
-import android.os.Bundle;
+import models.Assignment;
+import models.ModelInterface;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.widget.TextView;
+
+import com.example.klien_projekttermin.R;
+
+import database.Database;
 
 public class Uppdrag extends Activity {
 	

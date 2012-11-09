@@ -1,7 +1,6 @@
-package com.example.assignmentlist;
+package Assignment;
 
-import model.Assignment;
-
+import models.Assignment;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import database.Database;
+import com.example.klien_projekttermin.*;
 
 public class AddAssignment extends Activity {
 
@@ -55,7 +55,6 @@ public class AddAssignment extends Activity {
 		// Lyssnar efter klick.
 		button.setOnClickListener(new View.OnClickListener() {
 
-			@Override
 			public void onClick(View v) {
 				if (!assignmentName.getText().toString().equals("")) {
 					Assignment newAssignment = new Assignment(assignmentName

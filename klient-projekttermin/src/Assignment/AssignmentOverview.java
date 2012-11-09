@@ -1,9 +1,9 @@
-package com.example.assignmentlist;
+package Assignment;
 
 import java.util.List;
 
-import model.Assignment;
-import model.ModelInterface;
+import models.Assignment;
+import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import database.Database;
+import com.example.klien_projekttermin.*;
 
 public class AssignmentOverview extends Activity {
 
@@ -115,7 +116,6 @@ public class AssignmentOverview extends Activity {
 		listView.setClickable(true);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int itemClicked, long arg3) {
 
@@ -137,7 +137,6 @@ public class AssignmentOverview extends Activity {
 		// Skapar en lyssnare som lyssnar efter långa intryckningar
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int eraseAtPos, long arg3) {
 				showEraseOption(idInAdapter[eraseAtPos]);
