@@ -40,10 +40,10 @@ public class MainActivity extends ListActivity {
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
-		// testar services
-		Intent intent = new Intent(this, CommunicationService.class);
-		bindService(intent, sevbull, Context.BIND_AUTO_CREATE);
-		// end service
+//		// testar services
+//		Intent intent = new Intent(this, CommunicationService.class);
+//		bindService(intent, sevbull, Context.BIND_AUTO_CREATE);
+//		// end service
 		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
@@ -54,11 +54,7 @@ public class MainActivity extends ListActivity {
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
-
-					if(communicationBond){
-					}
 					break;
-					
 				case 1:
 					
 					break;
@@ -89,7 +85,7 @@ public class MainActivity extends ListActivity {
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
 		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Notera att det krävs en subtitle till varje item.
-		String[] menuItems={"Karta","Uppdragshanterare","Kontakter"};
+		String[] menuItems={"Karta","Uppdragshanterare","Kontakter","Meddelanden"};
 		String[] menuSubtitle={"Visar en karta","Lägg till, ta bort eller ändra uppdrag","Visar kontaktlista"};
 		//Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {

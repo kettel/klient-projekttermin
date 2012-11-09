@@ -3,6 +3,8 @@ package messageFunction;
 import java.util.List;
 
 import com.example.klien_projekttermin.R;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 import database.Database;
 
@@ -10,9 +12,13 @@ import models.MessageModel;
 import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -24,14 +30,13 @@ import android.widget.Toast;
 public class CreateMessage extends Activity {
 	private TextView reciever;
 	private TextView message;
-	private Button button;
 	private MessageModel messageObject;
-	private String sender = "Steffe";
 	private String messageContent;
 	private Database dataBase;
 	private String user;
-	private List<ModelInterface> contactModelList;
-
+	private CommunicationService communicationService;
+	private boolean communicationBond = false;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,8 +48,10 @@ public class CreateMessage extends Activity {
 			user = extras.getString("USER");
 			messageContent = extras.getString("MESSAGE");
 		}
+		
+		Intent intent = new Intent(this, CommunicationService.class);
+		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-		button = (Button) this.findViewById(R.id.button1);
 		message = (TextView) this.findViewById(R.id.editText2);
 		reciever = (TextView) this.findViewById(R.id.editText1);
 		message.setText(messageContent);
@@ -64,10 +71,6 @@ public class CreateMessage extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	//    public LinkedList<String> LoadContactList(){
-	//    		contactModelList = dataBase.getAllFromDB(new Contact(), getApplicationContext());
-	//    }
-
 	/**
 	 * Metoden skapar ett meddelande objekt och skickar det vidare till komunikationsmodulen. Metoden sparar ocks� de skapade meddelandena i skickat mappen
 	 * @param v
@@ -80,7 +83,11 @@ public class CreateMessage extends Activity {
 		//Sparar messageObject i databasen
 		dataBase.addToDB(messageObject,getApplicationContext());
 		//Skicka till kommunikationsmodulen
-
+		
+		if(communicationBond){
+			communicationService.sendMessage(messageObject);
+		}
+		
 		finish();
 
 		//Öppnar konversatinsvyn för kontakten man skickade till 
@@ -120,5 +127,17 @@ public class CreateMessage extends Activity {
 		});
 		alertDialog.show();
 	}
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className,IBinder service) {
+			System.out.println("OnServiceConnection");
+			CommunicationBinder binder = (CommunicationBinder) service;
+			communicationService = binder.getService();
+			communicationBond = true;
+		}
+		public void onServiceDisconnected(ComponentName arg0) {
+			communicationBond = false;
+		}
+	};
 }
 
