@@ -165,6 +165,7 @@ public class Database{
 		int deleted = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			//deleted = context.getContentResolver().delete(DatabaseContentProviderAssignments.CONTENT_URI, Database.KEY_ID, new String[]{Long.toString(m.getId())});
+			// Ta bort alla uppdrag.. -> null, null *host*
 			deleted = context.getContentResolver().delete(DatabaseContentProviderAssignments.CONTENT_URI, null, null);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
