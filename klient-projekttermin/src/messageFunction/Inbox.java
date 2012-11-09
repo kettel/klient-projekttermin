@@ -168,7 +168,6 @@ public class Inbox extends Activity {
 	 */
 	public void openConversation(String chosenContact){
 		Intent intent = new Intent(this, DisplayOfConversation.class);
-
 		//Metoden skickar med namnet p� den kontakt som klickades p�.
 		intent.putExtra("ChosenContact", chosenContact);
 		intent.putExtra("USER", user);

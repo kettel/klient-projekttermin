@@ -4,21 +4,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.R.layout;
-import com.example.klien_projekttermin.R.menu;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 import logger.LogViewer;
 import logger.logger;
-
-import communicationModule.CommunicationModule;
+import models.Assignment;
 import models.MessageModel;
 
 import map.MapActivity;
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,29 +29,34 @@ import android.widget.SimpleAdapter;
 public class MainActivity extends ListActivity {
 
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-	public CommunicationModule Communicaton = new CommunicationModule();
+//	public CommunicationService Communicaton = new CommunicationService();
+	CommunicationService communicationService;
+	boolean communicationBond = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		final logger testlogger = new logger((Context)this,"log.txt"); 
 		String[] from = { "line1", "line2" };
-		final Intent openLoggerIntent = new Intent(this, LogViewer.class);
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-
+		
+		// testar services
+		Intent intent = new Intent(this, CommunicationService.class);
+		bindService(intent, sevbull, Context.BIND_AUTO_CREATE);
+		// end service
+		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				Intent myIntent = null;
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
-					 myIntent= new Intent(MainActivity.this,
-					 MapActivity.class);
+
+					if(communicationBond){
+					}
 					break;
 					
 				case 1:
@@ -62,8 +68,6 @@ public class MainActivity extends ListActivity {
 				case 3:
 					
 					try {
-						openLoggerIntent.putExtra(LOGCONTENT,testlogger.readFromLog());
-						startActivity(openLoggerIntent);
 					} catch (Exception e) {
 					}
 					break;
@@ -72,7 +76,7 @@ public class MainActivity extends ListActivity {
 					// to.class);
 					break;
 				}
-				MainActivity.this.startActivity(myIntent);
+//				MainActivity.this.startActivity(myIntent);
 			}
 
 		});
@@ -102,4 +106,18 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	
+		private ServiceConnection sevbull = new ServiceConnection() {
+			
+			public void onServiceConnected(ComponentName className,IBinder service) {
+	        	CommunicationBinder binder = (CommunicationBinder) service;
+	            communicationService = binder.getService();
+	            communicationBond = true;
+	        }
+	        public void onServiceDisconnected(ComponentName arg0) {
+	        	communicationBond = false;
+	        }
+
+
+	    };
 }

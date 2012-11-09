@@ -31,4 +31,11 @@
     <string name="title_activity_dbtest">DBTest</string>
     <string name="Button">Test DB</string>
     <string name="title_activity_log_viewer">LogViewer</string>
+    <string name="btnIntend">Ta bild</string>
+    <string name="btnIntendS">Ta (liten) bild</string>
+    <string name="btnIntendV">Spela in film</string>
+    <string name="cannot">Kan inte</string>
+    <string name="album_name">Album</string>
+    <string name="title_activity_camera">Camera</string>
+    <string name="showAlbum">Album</string>
 </resources>

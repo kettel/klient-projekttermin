@@ -3,7 +3,6 @@ package messageFunction;
 import java.util.List;
 
 import com.example.klien_projekttermin.R;
-import communicationModule.CommunicationModule;
 
 import database.Database;
 

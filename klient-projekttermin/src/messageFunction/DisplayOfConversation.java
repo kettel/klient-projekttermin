@@ -11,9 +11,13 @@ import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -27,8 +31,8 @@ import android.widget.Toast;
 
 import com.example.klien_projekttermin.R;
 import com.google.gson.Gson;
-
-import communicationModule.CommunicationModule;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 import database.Database;
 
@@ -44,6 +48,8 @@ public class DisplayOfConversation extends Activity {
 	private String user;
 	private MessageModel messageObject;
 	private String[] options = {"AVBRYT","RADERA","VIDAREBEFORDRA"};
+	private CommunicationService communicationService;
+	private boolean communicationBond = false;
 	//	private CommunicationModule communicationModule = new CommunicationModule();
 
 	@Override
@@ -54,6 +60,10 @@ public class DisplayOfConversation extends Activity {
 		message = (TextView) this.findViewById(R.id.messageBox);
 
 		dataBase = new Database();
+
+		Intent intent = new Intent(this, CommunicationService.class);
+		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+
 		//Metoden testar om någonting skickades med från Inbox och skriver i så fall ut det till strängen chosenContact
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -156,13 +166,13 @@ public class DisplayOfConversation extends Activity {
 	}
 
 	public void eraseMessage(String messageText){
-		
+
 		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		MessageModel messageModelInList;
 		long id = messageAndIdMap.get(messageText);
 		Integer a = listOfMassageModels.size();
-		
-		
+
+
 		for (int i = 0; i < listOfMassageModels.size(); i++) {
 			messageModelInList = (MessageModel) listOfMassageModels.get(i);
 
@@ -179,12 +189,12 @@ public class DisplayOfConversation extends Activity {
 			//Tar bort texten ur textrutan
 			message.getEditableText().clear();
 		}
-		
+
 		if(listOfMassageModels.size()-1<1){
 			finish();
 		}
 		loadConversation(chosenContact);
-		
+
 	}
 
 	public String[] getInformationFromDatabase(String Contact){
@@ -237,8 +247,23 @@ public class DisplayOfConversation extends Activity {
 		//Tar bort texten ur textrutan
 		message.getEditableText().clear();
 
+		if(communicationBond){
+			communicationService.sendMessage(messageObject);
+		}
+		
 		loadConversation(chosenContact);
-
-		//		communicationModule.sendMessage(messageObject);
 	}
+
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className,IBinder service) {
+			System.out.println("OnServiceConnection");
+			CommunicationBinder binder = (CommunicationBinder) service;
+			communicationService = binder.getService();
+			communicationBond = true;
+		}
+		public void onServiceDisconnected(ComponentName arg0) {
+			communicationBond = false;
+		}
+	};
 }
