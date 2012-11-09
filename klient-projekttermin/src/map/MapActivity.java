@@ -12,8 +12,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -85,6 +88,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private MenuItem searchItem;
 	private ProgressBar sp;
 	private Button clearSearch;
+	final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,10 +96,12 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
-		locationSource = new AndroidGPSProvider(
-				(LocationManager) getSystemService(Context.LOCATION_SERVICE),
-				1000L);
+		locationSource = new AndroidGPSProvider(manager,1000L);
 		this.setContentView(R.layout.activity_map);
+
+	    if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+	        buildAlertMessageNoGps();
+	    }
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
 		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
@@ -136,6 +142,23 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		 * GPS:en ska vara påslagen vid start
 		 */
 		activateGPS(gpsOnOff);
+	}
+	private void buildAlertMessageNoGps() {
+	    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setMessage("Yout GPS seems to be disabled, do you want to enable it?")
+	           .setCancelable(false)
+	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+	                   startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+	               }
+	           })
+	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	               public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+	                    dialog.cancel();
+	               }
+	           });
+	    final AlertDialog alert = builder.create();
+	    alert.show();
 	}
 
 	/**
@@ -197,7 +220,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		this.searchItem = (MenuItem) menu.findItem(R.id.menu_search);
 		this.clearSearch = (Button) v.findViewById(R.id.clearSearch);
 		this.clearSearch.setOnClickListener(new OnClickListener() {
-			
+
 			public void onClick(View v) {
 				showMapView();
 				searchItem.collapseActionView();
@@ -396,7 +419,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		final int choice=arg2;
+		final int choice = arg2;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Meny");
 		ListView modeList = new ListView(this);
@@ -421,7 +444,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					centerMapOnLocation(choice);
 					break;
 				case 2:
-					//Starta createAssignment
+					// Starta createAssignment
 					break;
 				default:
 					break;
