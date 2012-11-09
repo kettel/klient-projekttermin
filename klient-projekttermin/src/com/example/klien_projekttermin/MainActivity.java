@@ -277,9 +277,10 @@ public class MainActivity extends ListActivity {
 			//Assignment assUpd = new Assignment(ass.getId(),"Katt i hav", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats");
 			Log.d("DB",ass.getId() + " -> " + ass.getAssignmentDescription());
 			//db.updateModel(assUpd);
-
+			db.deleteFromDB(ass, context);
 			//db.deleteFromDB(assUpd);
 		}
+		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(), context));
 	}
 
 

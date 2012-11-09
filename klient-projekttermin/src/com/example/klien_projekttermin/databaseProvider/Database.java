@@ -162,12 +162,18 @@ public class Database{
 	 */
 	public void deleteFromDB(ModelInterface m, Context context){
 		String dbRep = m.getDatabaseRepresentation();
+		int deleted = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
+			//deleted = context.getContentResolver().delete(DatabaseContentProviderAssignments.CONTENT_URI, Database.KEY_ID, new String[]{Long.toString(m.getId())});
+			deleted = context.getContentResolver().delete(DatabaseContentProviderAssignments.CONTENT_URI, null, null);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
+			deleted = context.getContentResolver().delete(DatabaseContentProviderContacts.CONTENT_URI, Database.KEY_ID, new String[]{Long.toString(m.getId())});
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
+			deleted = context.getContentResolver().delete(DatabaseContentProviderMessages.CONTENT_URI, Database.KEY_ID, new String[]{Long.toString(m.getId())});
 		}
+		Log.d("DB", "Deleted: " + deleted + " posts from " + m.getDatabaseRepresentation());
 	}
 	
 	/**
@@ -182,7 +188,6 @@ public class Database{
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderAssignments.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
 			// Loopa igenom alla rader och lägg till dem i listan 
-	        
 	        if (cursor.moveToFirst()) {
 	            do {
 	            	// Konvertera BLOB -> Bitmap
@@ -207,13 +212,41 @@ public class Database{
 	                returnList.add(assignment);
 	            } while (cursor.moveToNext());
 	        }
-	 		
 	        cursor.close();
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
+			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderContacts.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
+			if (cursor.moveToFirst()) {
+	            do {
+	                Contact contact = new Contact(
+	                		Long.valueOf(cursor.getString(0)),
+	                		cursor.getString(1),
+	                		Long.valueOf(cursor.getString(2)),
+	                		cursor.getString(3),
+	                		cursor.getString(4),
+	                		cursor.getString(5),
+	                		cursor.getString(6));
+	                
+	                returnList.add(contact);
+	            } while (cursor.moveToNext());
+	        }
+	 		cursor.close();
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			
+			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderMessages.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
+			// Loopa igenom alla rader och lägg till dem i listan 
+	        if (cursor.moveToFirst()) {
+	            do {
+	            	MessageModel message = new MessageModel(Long.valueOf(cursor.getString(0)),
+	            											cursor.getString(1),
+	            											cursor.getString(2),
+	            											Long.valueOf(cursor.getString(3)),
+	            											Boolean.valueOf(cursor.getString(4)));
+	                
+	            	returnList.add(message);
+	            } while (cursor.moveToNext());
+	        }
+	        cursor.close();
 		}
 		return returnList;
 	}
