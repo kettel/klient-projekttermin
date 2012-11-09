@@ -139,7 +139,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				mapComponent.zoomOut();
 			}
 		});
-//		haveNetworkConnection();
+		haveNetworkConnection();
 		/**
 		 * Hämta information från databasen om aktuella uppdrag
 		 */
@@ -188,7 +188,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 	    .setCancelable(false)
 	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                   startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+	                   startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
 	               }
 	           })
 	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
