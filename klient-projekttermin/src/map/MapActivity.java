@@ -16,6 +16,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
@@ -141,6 +143,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				mapComponent.zoomOut();
 			}
 		});
+		haveNetworkConnection();
 		/**
 		 * Hämta information från databasen om aktuella uppdrag
 		 */
@@ -152,27 +155,57 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 
 	private void buildAlertMessageNoGps() {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(
-				"Yout GPS seems to be disabled, do you want to enable it?")
-				.setCancelable(false)
-				.setPositiveButton("Yes",
-						new DialogInterface.OnClickListener() {
-							public void onClick(
-									@SuppressWarnings("unused") final DialogInterface dialog,
-									@SuppressWarnings("unused") final int id) {
-								startActivity(new Intent(
-										Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-							}
-						})
-				.setNegativeButton("No", new DialogInterface.OnClickListener() {
-					public void onClick(final DialogInterface dialog,
-							@SuppressWarnings("unused") final int id) {
-						dialog.cancel();
-					}
-				});
-		final AlertDialog alert = builder.create();
-		alert.show();
+	    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+	           .setCancelable(false)
+	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+	                   startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+	               }
+	           })
+	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	               public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+	                    dialog.cancel();
+	               }
+	           });
+	    final AlertDialog alert = builder.create();
+	    alert.show();
+	}
+	
+	private void haveNetworkConnection() {
+	    boolean haveConnectedWifi = false;
+	    boolean haveConnectedMobile = false;
+
+	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+	    for (NetworkInfo ni : netInfo) {
+	        if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+	            if (ni.isConnected())
+	                haveConnectedWifi = true;
+	        if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+	            if (ni.isConnected())
+	                haveConnectedMobile = true;
+	    }
+	    if(!haveConnectedWifi && !haveConnectedMobile){
+	    	 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	 	    builder.setMessage("No network connection enabled, do you want to enable it?")
+	 	    .setCancelable(false)
+	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+	                   startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
+	               }
+	           })
+	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	               public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+	                    dialog.cancel();
+	               }
+	           });
+	 	    final AlertDialog alert = builder.create();
+	 	    alert.show();
+	    }
+	    else {
+	    	System.out.println("HEJ");
+	    }
 	}
 
 	/**
