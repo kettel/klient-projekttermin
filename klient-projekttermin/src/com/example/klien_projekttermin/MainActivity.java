@@ -259,8 +259,6 @@ public class MainActivity extends ListActivity {
 
 	
 	public void testDBProvider(Context context){
-		// Ladda in bibliotek. Fungerar för subklasser.
-		//SQLiteDatabase.loadLibs(context);
 		com.example.klien_projekttermin.databaseProvider.Database db = com.example.klien_projekttermin.databaseProvider.Database.getInstance(context);
 		db.addToDB(new MessageModel("Hej svehjs","Kalle"), context);
 		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
@@ -272,6 +270,16 @@ public class MainActivity extends ListActivity {
 		Log.d("DB","Antal meddelanden: " + db.getDBCount(new MessageModel(), context));
 		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(), context));
 		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(), context));
+		List<ModelInterface>  testList = db.getAllFromDB(new Assignment(), context);
+		for (ModelInterface m : testList) {
+			Assignment ass = (Assignment) m;
+
+			//Assignment assUpd = new Assignment(ass.getId(),"Katt i hav", Long.valueOf("12423423"),Long.valueOf("23423425"),"Kalle", "Nisse", "En katt i ett träd", "2 dagar", "Ej påbörjat", fakeImage, "Alstättersgata", "Lekplats");
+			Log.d("DB",ass.getId() + " -> " + ass.getAssignmentDescription());
+			//db.updateModel(assUpd);
+
+			//db.deleteFromDB(assUpd);
+		}
 	}
 
 

@@ -1,5 +1,6 @@
 package com.example.klien_projekttermin.databaseProvider;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
@@ -178,10 +180,40 @@ public class Database{
 		String dbRep = m.getDatabaseRepresentation();
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
 		if (dbRep.equalsIgnoreCase("assignment")) {
+			Cursor cursor = context.getContentResolver().query(DatabaseContentProviderAssignments.CONTENT_URI, null, Database.KEY_ID + " IS NOT null",null, null);
+			// Loopa igenom alla rader och lägg till dem i listan 
+	        
+	        if (cursor.moveToFirst()) {
+	            do {
+	            	// Konvertera BLOB -> Bitmap
+	            	byte[] image = cursor.getBlob(9);
+	            	ByteArrayInputStream imageStream = new ByteArrayInputStream(image);
+	            	Bitmap theImage= BitmapFactory.decodeStream(imageStream);
+	            	
+	                Assignment assignment = new Assignment(
+	                		Long.valueOf(cursor.getString(0)),
+	                		cursor.getString(1),
+							Long.parseLong(cursor.getString(2)), 
+							Long.parseLong(cursor.getString(3)),
+							cursor.getString(4),
+							cursor.getString(5),
+							cursor.getString(6),
+							cursor.getString(7),
+							cursor.getString(8),
+							theImage,
+							cursor.getString(10),
+							cursor.getString(11));
+	                
+	                returnList.add(assignment);
+	            } while (cursor.moveToNext());
+	        }
+	 		
+	        cursor.close();
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
+			
 		}
 		return returnList;
 	}
