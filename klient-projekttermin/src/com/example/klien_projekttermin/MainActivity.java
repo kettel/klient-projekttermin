@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import map.MapActivity;
+import messageFunction.Inbox;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,25 +35,10 @@ public class MainActivity extends ListActivity {
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
-
+					myIntent = new Intent(MainActivity.this,MapActivity.class);
 					break;
 				case 1:
-					
-					break;
-				case 2:
-
-					break;
-				case 3:
-//					myIntent = new Intent(MainActivity.this,Inbox.class);
-					break;
-				case 4:
-					
-					break;
-				case 5:
-
-					try {
-					} catch (Exception e) {
-					}
+					myIntent = new Intent(MainActivity.this,Inbox.class);
 					break;
 				default:
 					break;
@@ -69,8 +56,8 @@ public class MainActivity extends ListActivity {
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
 		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Notera att det krävs en subtitle till varje item.
-		String[] menuItems={"Karta","Uppdragshanterare","Kontakter","Meddelanden"};
-		String[] menuSubtitle={"Visar en karta","Lägg till, ta bort eller ändra uppdrag","Visar kontaktlista","Visar Inkorgen"};
+		String[] menuItems={"Karta","Meddelanden"};
+		String[] menuSubtitle={"Visar en karta","Visar Inkorgen"};
 		//Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();

@@ -237,7 +237,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			mapComponent.setLocationSource(null);
 		}
 	}
-
+	
 	/**
 	 * Skapa meny i actionbar
 	 */
@@ -408,10 +408,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	public boolean gpsStatus(MenuItem m) {
 		gpsOnOff = !gpsOnOff;
 		if (!gpsOnOff) {
-			m.setTitle("GPS/off");
+			m.setTitle("Sluta följ");
 			activateGPS(gpsOnOff);
 		} else {
-			m.setTitle("GPS/on");
+			m.setTitle("Följ position");
 			activateGPS(gpsOnOff);
 		}
 		return true;
