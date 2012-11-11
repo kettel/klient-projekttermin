@@ -4,24 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
-
-import logger.LogViewer;
-import logger.logger;
-
-import models.Assignment;
-import models.MessageModel;
-
-import map.MapActivity;
-import messageFunction.Inbox;
 import android.app.ListActivity;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,22 +17,12 @@ public class MainActivity extends ListActivity {
 
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
 
-	//	public CommunicationService Communicaton = new CommunicationService();
-	CommunicationService communicationService;
-	boolean communicationBond = false;
-
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-
-		//		// testar services
-		//		Intent intent = new Intent(this, CommunicationService.class);
-		//		bindService(intent, sevbull, Context.BIND_AUTO_CREATE);
-		//		// end service
 
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
@@ -58,7 +33,6 @@ public class MainActivity extends ListActivity {
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
-					myIntent = new Intent(MainActivity.this,MapActivity.class);
 
 					break;
 				case 1:
@@ -68,7 +42,7 @@ public class MainActivity extends ListActivity {
 
 					break;
 				case 3:
-					myIntent = new Intent(MainActivity.this,Inbox.class);
+//					myIntent = new Intent(MainActivity.this,Inbox.class);
 					break;
 				case 4:
 					
@@ -113,15 +87,4 @@ public class MainActivity extends ListActivity {
 		return true;
 	}
 
-	private ServiceConnection sevbull = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className,IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-	};
 }
