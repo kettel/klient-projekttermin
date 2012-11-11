@@ -7,13 +7,7 @@ import java.util.List;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-import logger.LogViewer;
-import logger.logger;
-import models.Assignment;
 import models.MessageModel;
-import logger.LogViewer;
-import logger.logger;
-import map.MapActivity;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -30,9 +24,8 @@ import android.widget.SimpleAdapter;
 public class MainActivity extends ListActivity {
 
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-//	public CommunicationService Communicaton = new CommunicationService();
-	CommunicationService communicationService;
-	boolean communicationBond = false;
+	private CommunicationService communicationService;
+	private boolean communicationBond = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,9 +34,9 @@ public class MainActivity extends ListActivity {
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		
-		// testar services
-		Intent intent = new Intent(this, CommunicationService.class);
-		bindService(intent, sevbull, Context.BIND_AUTO_CREATE);
+		// start services
+		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
+		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
 		// end service
 		
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -56,6 +49,7 @@ public class MainActivity extends ListActivity {
 				switch (arg2) {
 				case 0:
 					if(communicationBond){
+						communicationService.setContext(getApplicationContext());
 						communicationService.sendMessage(new MessageModel("Hello, this is pandaphone.","test"));
 					}
 					break;
@@ -108,7 +102,7 @@ public class MainActivity extends ListActivity {
 		return true;
 	}
 	
-		private ServiceConnection sevbull = new ServiceConnection() {
+		private ServiceConnection communicationServiceConnection = new ServiceConnection() {
 			
 			public void onServiceConnected(ComponentName className,IBinder service) {
 	        	CommunicationBinder binder = (CommunicationBinder) service;
