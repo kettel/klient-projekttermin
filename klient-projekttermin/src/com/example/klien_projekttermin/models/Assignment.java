@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 
 public class Assignment implements ModelInterface{
 	
-	private String databasetRepresentation = "assignment";
+	private String databaseRepresentation = "assignment";
 	private long id = -1;
 
 	private String name;
@@ -177,7 +177,7 @@ public class Assignment implements ModelInterface{
 	}
 
 	public String getDatabaseRepresentation() {
-		return databasetRepresentation;
+		return databaseRepresentation;
 	}
 
 	public long getId() {

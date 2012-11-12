@@ -337,7 +337,7 @@ public class MainActivity extends ListActivity {
 		Log.d("DB","Antal kontakter: " + db.getDBCount(new Contact(),context));
 		Log.d("DB","Antal uppdrag: " + db.getDBCount(new Assignment(),context));
 		
-		db.onDestroy();
+		db.destroy();
 	}
 
 

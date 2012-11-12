@@ -3,7 +3,7 @@ package com.example.klien_projekttermin.models;
 
 public class Contact implements ModelInterface {
 	
-	private String databasetRepresentation = "contact";
+	private String databaseRepresentation = "contact";
 	private long id = -1;
 	
 	private String contactName;
@@ -90,7 +90,7 @@ public class Contact implements ModelInterface {
 	}
 
 	public String getDatabaseRepresentation() {
-		return databasetRepresentation;
+		return databaseRepresentation;
 	}
 
 	public long getId() {
