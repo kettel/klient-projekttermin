@@ -55,13 +55,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
+        <activity 
+            android:name="assignment.AssignmentOverview"
+            android:label="HEJ" >
+        </activity>
         <activity
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-        <activity android:name="Assignment.AssignmentOverview" >
-        </activity>
-
         <service android:name="communicationModule.CommunicationService" >
         </service>
     </application>
