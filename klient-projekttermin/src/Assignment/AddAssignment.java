@@ -27,7 +27,7 @@ public class AddAssignment extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_assignment);
 
-		// Hämtar och sätter vyerna från .xml -filen.
+		// Hï¿½mtar och sï¿½tter vyerna frï¿½n .xml -filen.
 		addAssignmentButton = (Button) findViewById(R.id.button_add_assignment);
 		assignmentName = (EditText) findViewById(R.id.assignment_name);
 		//assignmentCoord = (EditText) findViewById(R.id.assignment_coord);
@@ -42,7 +42,7 @@ public class AddAssignment extends Activity {
 	}
 
 	/**
-	 * Lägger till lyssnare till "add-uppdrag-knappen".
+	 * Lï¿½gger till lyssnare till "add-uppdrag-knappen".
 	 * 
 	 * @param button
 	 */
@@ -57,19 +57,19 @@ public class AddAssignment extends Activity {
 
 			public void onClick(View v) {
 				if (!assignmentName.getText().toString().equals("")) {
-					Assignment newAssignment = new Assignment(assignmentName
-							.getText().toString(), 66666, 77777,
-							"Den här ska bort.",
-							"Ska automatiskt hämtas från den innloggade",
+					Assignment newAssignment = new Assignment(45,assignmentName
+							.getText().toString(), (double)66666, (double)77777,
+							"Den hÃ¤r ska bort.",
+							"Ska automatiskt hÃ¤mtas frï¿½n den innloggade",
 							assignmentDescription.getText().toString(),
 							assignmentTime.getText().toString(),
-							"Status%%#/%&", fakeImage, assignmentStreetName
+							"Status", fakeImage, assignmentStreetName
 									.getText().toString(), assignmentSpot
 									.getText().toString());
 					db.addToDB(newAssignment, getApplication());
 				}
 
-				// Stänger aktiviteten.
+				// Stï¿½nger aktiviteten.
 				finish();
 			}
 		});
