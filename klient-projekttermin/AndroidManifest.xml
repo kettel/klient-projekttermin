@@ -2,22 +2,20 @@
     package="com.example.klien_projekttermin"
     android:versionCode="1"
     android:versionName="1.0" >
-	<!-- Permissions -->
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- User permissions -->
-	<user-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-	<!-- Features -->
-    <uses-feature android:name="android.hardware.camera"/>
-    
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.camera" />
 
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="15" />
 
     <application
-        android:icon="@drawable/loggakrona"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -36,20 +34,19 @@
         </activity>
         <activity
             android:name="messageFunction.CreateMessage"
-            android:label="@string/title_activity_create_new_message" >
+            android:label="title_activity_create_new_message" >
         </activity>
         <activity
             android:name="messageFunction.StartsidaMeddelanden"
-            android:label="@string/title_activity_startsida_meddelanden" >
+            android:label="startsida" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
-            android:label="@string/title_activity_inbox" >
-            
+            android:label="inbox" >
         </activity>
-		<activity
+        <activity
             android:name="camera.Camera"
-            android:label="@string/title_activity_camera" >
+            android:label="Camera" >
         </activity>
         <activity
             android:name="logger.LogViewer"
@@ -59,14 +56,14 @@
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
         <activity
-            android:name="messageFunction.DisplayOfConversation"
-            android:label="@string/title_activity_display_of_conversation" >
-        </activity>
-        <activity
             android:name="messageFunction.DisplayMessage"
-            android:label="@string/title_activity_message_view" >
+            android:label="display" >
         </activity>
-        <service android:name="communicationModule.CommunicationService">
-    </service>
+        <activity android:name="Assignment.AssignmentOverview" >
+        </activity>
+
+        <service android:name="communicationModule.CommunicationService" >
+        </service>
     </application>
+
 </manifest>
