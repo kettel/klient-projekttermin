@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">AssignmentList</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_uppdragslista">Uppdragslista</string>
+    <string name="title_activity_uppdrag">Uppdrag</string>
+    <string name="title_activity_add_assignment">AddAssignment</string>
+
+</resources>
