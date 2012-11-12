@@ -1,4 +1,4 @@
-package Assignment;
+package assignment;
 
 import java.util.List;
 
@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-
 import database.Database;
 
 public class Uppdrag extends Activity {
@@ -31,13 +30,13 @@ public class Uppdrag extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_uppdrag);
 		
-		//Hämtar intent för att nå extras så som ID:t som clickades på i assignmentoverview.
+		//Hï¿½mtar intent fï¿½r att nï¿½ extras sï¿½ som ID:t som clickades pï¿½ i assignmentoverview.
 		Intent intent = getIntent();
 		assignmentID = intent.getExtras().getLong("assignmentID");
 		
 		//Initierar databasen.
 		db = new Database();
-		//Hämtar textvyerna som ska sättas.
+		//Hï¿½mtar textvyerna som ska sï¿½ttas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
 		textViewDescription = (TextView) findViewById(R.id.assignment_description_set);
 		textViewTime = (TextView) findViewById(R.id.assignment_time_set);
@@ -45,13 +44,13 @@ public class Uppdrag extends Activity {
 		textViewStreetname = (TextView) findViewById(R.id.assignment_streetname_set);
 		textViewCoord = (TextView) findViewById(R.id.assignment_coordinates_set);
 		
-		//Sätter texten som ska visas i uppdragsvyn.
+		//Sï¿½tter texten som ska visas i uppdragsvyn.
 		setAssignmentToView();
 
 	}
 	
 	/**
-	 * Sätter texten som ska visas i uppdragsvyn.
+	 * Sï¿½tter texten som ska visas i uppdragsvyn.
 	 */
 	public void setAssignmentToView(){
 		
@@ -64,7 +63,7 @@ public class Uppdrag extends Activity {
 			//Konverterar Modelinterfacet till ett Assignment.
 			Assignment a = (Assignment)m;
 			
-			//Jämför ID:T som clickats på med befindliga Assignments från databasen och sätter den texten.
+			//Jï¿½mfï¿½r ID:T som clickats pï¿½ med befindliga Assignments frï¿½n databasen och sï¿½tter den texten.
 			if (a.getId() == assignmentID) {
 				textViewAssName.setText(a.getName());
 				textViewDescription.setText(a.getAssignmentDescription());
