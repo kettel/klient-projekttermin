@@ -284,7 +284,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 						}
 					});
 					new Thread(new Runnable() {
-
 						public void run() {
 							searchSuggestions.updateSearch(temp);
 						}
