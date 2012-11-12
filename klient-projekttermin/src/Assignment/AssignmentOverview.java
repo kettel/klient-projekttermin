@@ -20,7 +20,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import database.Database;
 import com.example.klien_projekttermin.*;
-
 public class AssignmentOverview extends Activity {
 
 	ListView listView;

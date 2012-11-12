@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import database.Database;
 import com.example.klien_projekttermin.*;
-
 public class AddAssignment extends Activity {
 
 	private Database db;

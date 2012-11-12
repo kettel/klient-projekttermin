@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-
 import database.Database;
 
 public class Uppdrag extends Activity {
