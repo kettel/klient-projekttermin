@@ -1,4 +1,4 @@
-package Assignment;
+package assignment;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class AssignmentOverview extends Activity {
 
 	}
 
-	// Gör en custom topmeny.
+	// Gï¿½r en custom topmeny.
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// getMenuInflater().inflate(R.menu.activity_uppdragslista, menu);
@@ -69,7 +69,7 @@ public class AssignmentOverview extends Activity {
 
 	public void loadAssignmentList() {
 
-		// Hämtar en stringarray med strängar som representerar uppdragen.
+		// Hï¿½mtar en stringarray med strï¿½ngar som representerar uppdragen.
 		assignmentHeadlineArray = getAssHeadsFromDatabase();
 
 		// // First paramenter - Context
@@ -85,7 +85,7 @@ public class AssignmentOverview extends Activity {
 	}
 
 	/**
-	 * Hämtar en stringarray med strängar som representerar uppdragen.
+	 * Hï¿½mtar en stringarray med strï¿½ngar som representerar uppdragen.
 	 * 
 	 * @return
 	 */
@@ -95,7 +95,7 @@ public class AssignmentOverview extends Activity {
 		int i = 0;
 		String[] tempHeadArr = new String[assList.size()];
 
-		// Håller koll på ID varje position i adaptern erhåller.
+		// Hï¿½ller koll pï¿½ ID varje position i adaptern erhï¿½ller.
 		idInAdapter = new long[assList.size()];
 
 		for (ModelInterface a : assList) {
@@ -108,7 +108,7 @@ public class AssignmentOverview extends Activity {
 	}
 
 	/**
-	 * Sätter en klicklyssnare på listvyn.
+	 * Sï¿½tter en klicklyssnare pï¿½ listvyn.
 	 */
 	public void setItemClickListner() {
 		listView = (ListView) findViewById(R.id.listView1);
@@ -121,7 +121,7 @@ public class AssignmentOverview extends Activity {
 				Intent myIntent = new Intent(AssignmentOverview.this,
 						Uppdrag.class);
 
-				// Skickar med ID:t på det klickade uppdtaget.
+				// Skickar med ID:t pï¿½ det klickade uppdtaget.
 				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
 				AssignmentOverview.this.startActivity(myIntent);
 			}
@@ -129,11 +129,11 @@ public class AssignmentOverview extends Activity {
 	}
 
 	/*
-	 * Tillsätt lyssnare i meddelandelistan som lyssnar efter långa tryckningar
-	 * på listobjekt
+	 * Tillsï¿½tt lyssnare i meddelandelistan som lyssnar efter lï¿½nga tryckningar
+	 * pï¿½ listobjekt
 	 */
 	public void setLongItemClickListener() {
-		// Skapar en lyssnare som lyssnar efter långa intryckningar
+		// Skapar en lyssnare som lyssnar efter lï¿½nga intryckningar
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
@@ -145,8 +145,8 @@ public class AssignmentOverview extends Activity {
 	}
 
 	/*
-	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort
-	 * en konversation Metoden ger också användaren två valmöjligheter, JA eller
+	 * Metoden skapar en dialogruta som frï¿½gar anvï¿½ndaren om denne vill ta bort
+	 * en konversation Metoden ger ocksï¿½ anvï¿½ndaren tvï¿½ valmï¿½jligheter, JA eller
 	 * Avbryt
 	 */
 	public void showEraseOption(final long eraseById) {
@@ -158,7 +158,7 @@ public class AssignmentOverview extends Activity {
 		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA",
 				new DialogInterface.OnClickListener() {
 
-					// Om användaren trycker på ja så körs metoden
+					// Om anvï¿½ndaren trycker pï¿½ ja sï¿½ kï¿½rs metoden
 					// eraseAssignment()
 					public void onClick(DialogInterface dialog, int which) {
 						eraseAssignment(eraseById);
@@ -168,7 +168,7 @@ public class AssignmentOverview extends Activity {
 				new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {
-						// Gör inget
+						// Gï¿½r inget
 					}
 				});
 
@@ -189,7 +189,7 @@ public class AssignmentOverview extends Activity {
 			// Konverterar Modelinterfacet till ett Assignment.
 			Assignment a = (Assignment) m;
 
-			// Jämför ID:T som clickhold:ats på med befindliga Assignments från
+			// Jï¿½mfï¿½r ID:T som clickhold:ats pï¿½ med befindliga Assignments frï¿½n
 			// databasen och tar bort det uppdraget.
 			if (a.getId() == assignmentId) {
 				db.deleteFromDB(a, getApplicationContext());

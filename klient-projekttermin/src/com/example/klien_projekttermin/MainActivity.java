@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
+import assignment.AssignmentOverview;
 
 public class MainActivity extends ListActivity {
 
@@ -40,6 +41,9 @@ public class MainActivity extends ListActivity {
 				case 1:
 					myIntent = new Intent(MainActivity.this,Inbox.class);
 					break;
+				case 2:
+					myIntent = new Intent(MainActivity.this,AssignmentOverview.class);
+					break;
 				default:
 					break;
 				}
@@ -56,8 +60,8 @@ public class MainActivity extends ListActivity {
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
 		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Notera att det krävs en subtitle till varje item.
-		String[] menuItems={"Karta","Meddelanden"};
-		String[] menuSubtitle={"Visar en karta","Visar Inkorgen"};
+		String[] menuItems={"Karta","Meddelanden", "Uppdragshanteraren"};
+		String[] menuSubtitle={"Visar en karta","Visar Inkorgen", ""};
 		//Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();

@@ -59,8 +59,14 @@
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-        <activity android:name="Assignment.AssignmentOverview" >
+        <activity android:name="assignment.AssignmentOverview" >
         </activity>
+        
+        <activity android:name="assignment.AddAssignment" >
+        </activity>
+        <activity android:name="assignment.Uppdrag" >
+        </activity>
+        
 
         <service android:name="communicationModule.CommunicationService" >
         </service>
