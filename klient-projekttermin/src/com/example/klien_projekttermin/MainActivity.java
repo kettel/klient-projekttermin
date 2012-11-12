@@ -288,7 +288,7 @@ public class MainActivity extends ListActivity {
 	}
 
 	public void testDBProvider(Context context){
-		com.example.klien_projekttermin.databaseProvider.Database db = com.example.klien_projekttermin.databaseProvider.Database.getInstance(context);
+		com.example.klien_projekttermin.databaseProviderFaster.Database db = com.example.klien_projekttermin.databaseProviderFaster.Database.getInstance(context);
 		db.addToDB(new Contact("Nise",Long.valueOf("0130123"),"nisse@gdsasdf","s","A","Skön lirare"),context);
 		int w = 600, h = 600;
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types

@@ -72,7 +72,7 @@ public class DatabaseContentProviderContacts extends ContentProvider{
 				selectionArgs, null, null, sortOrder);
 		// Make sure that potential listeners are getting notified
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
+		db.close();
 		return cursor;
 	}
 	
@@ -94,6 +94,7 @@ public class DatabaseContentProviderContacts extends ContentProvider{
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
+		sqlDB.close();
 		return Uri.parse(BASE_PATH + "/" + id);
 	}
 	
@@ -124,6 +125,7 @@ public class DatabaseContentProviderContacts extends ContentProvider{
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
+		sqlDB.close();
 		return rowsDeleted;
 	}
 
@@ -159,6 +161,7 @@ public class DatabaseContentProviderContacts extends ContentProvider{
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
+		sqlDB.close();
 		return rowsUpdated;
 	}
 

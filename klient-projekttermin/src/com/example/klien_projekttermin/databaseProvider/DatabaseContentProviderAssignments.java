@@ -71,7 +71,7 @@ public class DatabaseContentProviderAssignments extends ContentProvider{
 				selectionArgs, null, null, sortOrder);
 		// Make sure that potential listeners are getting notified
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
+		
 		return cursor;
 	}
 	
