@@ -43,14 +43,6 @@
             android:label="startsida" >
         </activity>
         <activity
-            android:name="messageFunction.Inbox"
-<<<<<<< HEAD
-            android:label="@string/title_activity_inbox" >
-=======
-            android:label="inbox" >
->>>>>>> b746e32984d4f0180b7d9b77a85c85106da9ce2a
-        </activity>
-        <activity
             android:name="camera.Camera"
             android:label="Camera" >
         </activity>
@@ -61,31 +53,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
-        <activity 
-            android:name="assignment.AssignmentOverview"
-            android:label="HEJ" >
-        </activity>
         <activity
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-<<<<<<< HEAD
-
-=======
         <activity android:name="assignment.AssignmentOverview" >
         </activity>
-        
         <activity android:name="assignment.AddAssignment" >
         </activity>
         <activity android:name="assignment.Uppdrag" >
         </activity>
->>>>>>> b746e32984d4f0180b7d9b77a85c85106da9ce2a
+
         <service android:name="communicationModule.CommunicationService" >
         </service>
     </application>
 
-<<<<<<< HEAD
 </manifest>
-=======
-</manifest>
->>>>>>> b746e32984d4f0180b7d9b77a85c85106da9ce2a
