@@ -22,33 +22,33 @@ public class AddAssignment extends Activity {
 	private Database db;
 	private Button addAssignmentButton;
 	private EditText assignmentName;
-//	private EditText assignmentCoord;
+	private EditText assignmentCoord;
 	private EditText assignmentDescription;
 	private EditText assignmentTime;
 	private EditText assignmentStreetName;
 	private EditText assignmentSpot;
-//	private double[] coordinates;
-//	private String coords="";
-//	private StringBuilder sb = new StringBuilder();
+	private double[] coordinates;
+	private String coords="";
+	private StringBuilder sb = new StringBuilder();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		DecimalFormat df = new DecimalFormat("#.00");
-//		Intent intent = getIntent();
-//		coordinates = (double[]) intent.getDoubleArrayExtra(MapActivity.coordinates);
-//		for (int i = 0; i < coordinates.length; i++) {
-//			double temp = Double.valueOf(df.format(coordinates[i]));
-//			coords = sb.append(temp+ " , ").toString();
-//		}
-//		coords = coords.substring(0, coords.length()-2);
+		DecimalFormat df = new DecimalFormat("#.00");
+		Intent intent = getIntent();
+		coordinates = (double[]) intent.getDoubleArrayExtra(MapActivity.coordinates);
+		for (int i = 0; i < coordinates.length; i++) {
+			double temp = Double.valueOf(df.format(coordinates[i]));
+			coords = sb.append(temp+ " , ").toString();
+		}
+		coords = coords.substring(0, coords.length()-2);
 		setContentView(R.layout.activity_add_assignment);
 
 		// Hämtar och sätter vyerna från .xml -filen.
 		addAssignmentButton = (Button) findViewById(R.id.button_add_assignment);
 		assignmentName = (EditText) findViewById(R.id.assignment_name);
-//		assignmentCoord = (EditText) findViewById(R.id.assignment_coord);
-//		assignmentCoord.setText(coords);
+		assignmentCoord = (EditText) findViewById(R.id.assignment_coord);
+		assignmentCoord.setText(coords);
 		assignmentDescription = (EditText) findViewById(R.id.assignment_description);
 		assignmentTime = (EditText) findViewById(R.id.assignment_time);
 		assignmentStreetName = (EditText) findViewById(R.id.assignment_street_name);

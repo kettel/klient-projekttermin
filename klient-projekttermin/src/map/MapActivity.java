@@ -103,7 +103,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private Button clearSearch;
 	private LocationManager manager;
 	private MapManager mm = new MapManager();
-//	private static String[] regionAlts = { "Ta bort polygon" , "Skapa uppdrag med polygon" };
+	private static String[] regionAlts = { "Ta bort polygon" , "Skapa uppdrag med polygon" };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -519,10 +519,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					centerMapOnLocation(choice);
 					break;
 				case 2:
-//					double[] coords = {searchSuggestions.getList().get(arg2)
-//						.getPlace().getWgs().getLat(), searchSuggestions
-//						.getList().get(arg2).getPlace().getWgs().getLon()};
-//					createAssignment(coords);
+					double[] coords = {searchSuggestions.getList().get(arg2)
+						.getPlace().getWgs().getLat(), searchSuggestions
+						.getList().get(arg2).getPlace().getWgs().getLon()};
+					createAssignment(coords);
 					break;
 				default:
 					break;
@@ -532,50 +532,50 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		dialog.show();
 	}
 
-//	public void createAssignment(double[] coords) {
-//		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
-//		intent.putExtra(coordinates, coords);
-//		MapActivity.this.startActivity(intent);
-//	}
-//	
-//	public void regionChoice(OnMapElement arg){
-//		final OnMapElement argument = arg;
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		builder.setTitle("Regions val");
-//		ListView modeList = new ListView(this);
-//		CustomAdapter modeAdapter = new CustomAdapter(this,
-//				android.R.layout.simple_list_item_1, android.R.id.text1,
-//				regionAlts );
-//		modeList.setAdapter(modeAdapter);
-//		builder.setView(modeList);
-//		final Dialog dialog = builder.create();
-//		modeList.setOnItemClickListener(new OnItemClickListener() {
-//			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-//					long arg3) {
-//				dialog.dismiss();
-//				switch (arg2) {
-//				case 0:
-//					mapComponent.removePolygon(((Polygon) argument));
-//					break;
-//				case 1:
-//					createAssignmentFromRegion(argument);
-//					break;
-//				default:
-//					break;
-//				}
-//			}
-//		});
-//		dialog.show();
-//		
-//	}
+	public void createAssignment(double[] coords) {
+		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
+		intent.putExtra(coordinates, coords);
+		MapActivity.this.startActivity(intent);
+	}
 	
-//	public void createAssignmentFromRegion(OnMapElement arg){
-//		double corners[];
-//		for (int i = 0; i<arg.getPoints().length; i++) {
-//			corners[i] = arg.getPoints()[i].g;
-//		}
+	public void regionChoice(OnMapElement arg){
+		final OnMapElement argument = arg;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Regions val");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				regionAlts );
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					mapComponent.removePolygon(((Polygon) argument));
+					break;
+				case 1:
+					createAssignmentFromRegion(argument);
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+		
+	}
+	
+	public void createAssignmentFromRegion(OnMapElement arg){
+		double corners[];
+		for (int i = 0; i<arg.getPoints().length; i++) {
+//			corners[i] = arg.getPoints()[i];
+		}
 //		arg.getPoints().toJ
-//	}
+	}
 
 	public void elementClicked(OnMapElement arg0) {
 		// if (arg0 instanceof PlaceLabel) {
@@ -585,7 +585,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void elementEntered(OnMapElement arg0) {
 		if (arg0 instanceof Polygon) {
-//			regionChoice(arg0);
+			regionChoice(arg0);
 			mapComponent.removePolygon(((Polygon) arg0));
 		}
 
