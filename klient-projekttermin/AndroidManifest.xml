@@ -36,11 +36,11 @@
         </activity>
         <activity
             android:name="messageFunction.CreateMessage"
-            android:label="title_activity_create_new_message" >
+            android:label="@string/new_message" >
         </activity>
         <activity
             android:name="messageFunction.DisplayOfConversation"
-            android:label="DisplayOfConversation" >
+            android:label="@string/displayConversation" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
@@ -57,11 +57,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
-        <activity android:name="assignment.AssignmentOverview" >
+        <activity 
+            android:name="assignment.AssignmentOverview" 
+            android:label="@string/assignmentOverview">
         </activity>
-        <activity android:name="assignment.AddAssignment" >
+        <activity 
+            android:name="assignment.AddAssignment" 
+            android:label="@string/addAssignment">
         </activity>
-        <activity android:name="assignment.Uppdrag" >
+        <activity 
+            android:name="assignment.Uppdrag" 
+            android:label="@string/uppdrag">
         </activity>
 
         <service android:name="communicationModule.CommunicationService" >

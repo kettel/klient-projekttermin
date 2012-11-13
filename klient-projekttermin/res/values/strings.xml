@@ -35,6 +35,10 @@
     <string name="coordinates">Koordinater</string>
     <string name="assignmentName">Uppdragets namn</string>
     <string name="createAssignmentFromRegion">Skapa uppdrag för region</string>
-    <string name="inbox">inbox</string>
+    <string name="inbox">Inbox</string>
+    <string name="new_message">Nytt meddelande</string>
+    <string name="displayConversation">Konversation</string>
+    <string name="uppdrag">Uppdrag</string>
+    <string name="assignmentOverview">Uppdrags översikt</string>
 
 </resources>
