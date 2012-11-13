@@ -105,7 +105,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private MenuItem gpsFollowItem;
 	private MapManager mm = new MapManager();
 	private boolean onRetainCalled;
-	private static String[] regionAlts = { "Ta bort polygon" , "Skapa uppdrag med polygon" };
+	private static String[] regionAlts = { "Ta bort polygon",
+			"Skapa uppdrag med polygon" };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -191,36 +192,44 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 
 	private void haveNetworkConnection() {
-	    boolean haveConnectedWifi = false;
-	    boolean haveConnectedMobile = false;
+		boolean haveConnectedWifi = false;
+		boolean haveConnectedMobile = false;
 
-	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-	    for (NetworkInfo ni : netInfo) {
-	        if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-	            if (ni.isConnected())
-	                haveConnectedWifi = true;
-	        if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-	            if (ni.isConnected())
-	                haveConnectedMobile = true;
-	    }
-	    if(!haveConnectedWifi && !haveConnectedMobile){
-	    	 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	 	    builder.setMessage("No network connection enabled, do you want to enable it?")
-	 	    .setCancelable(false)
-	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                   startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
-	               }
-	           })
-	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	               public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                    dialog.cancel();
-	               }
-	           });
-	 	    final AlertDialog alert = builder.create();
-	 	    alert.show();
-	    }
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+		for (NetworkInfo ni : netInfo) {
+			if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+				if (ni.isConnected())
+					haveConnectedWifi = true;
+			if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+				if (ni.isConnected())
+					haveConnectedMobile = true;
+		}
+		if (!haveConnectedWifi && !haveConnectedMobile) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(
+					"No network connection enabled, do you want to enable it?")
+					.setCancelable(false)
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+								public void onClick(
+										@SuppressWarnings("unused") final DialogInterface dialog,
+										@SuppressWarnings("unused") final int id) {
+									startActivity(new Intent(
+											Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
+								}
+							})
+					.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+								public void onClick(
+										final DialogInterface dialog,
+										@SuppressWarnings("unused") final int id) {
+									dialog.cancel();
+								}
+							});
+			final AlertDialog alert = builder.create();
+			alert.show();
+		}
 	}
 
 	/**
@@ -340,16 +349,15 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		// TODO Auto-generated method stub
 		super.onResume();
 		getDatabaseInformation();
-			runOnUiThread(new Runnable() {
+		runOnUiThread(new Runnable() {
 
-				public void run() {
-					// TODO Auto-generated method stu
-					gpsFollowItem.setEnabled(manager
-							.isProviderEnabled(LocationManager.GPS_PROVIDER));
-				}
-			});
+			public void run() {
+				// TODO Auto-generated method stu
+				gpsFollowItem.setEnabled(manager
+						.isProviderEnabled(LocationManager.GPS_PROVIDER));
+			}
+		});
 
-		}
 	}
 
 	@Override
@@ -533,9 +541,11 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					centerMapOnLocation(choice);
 					break;
 				case 2:
-					double[] coords = {searchSuggestions.getList().get(arg2)
-						.getPlace().getWgs().getLat(), searchSuggestions
-						.getList().get(arg2).getPlace().getWgs().getLon()};
+					double[] coords = {
+							searchSuggestions.getList().get(arg2).getPlace()
+									.getWgs().getLat(),
+							searchSuggestions.getList().get(arg2).getPlace()
+									.getWgs().getLon() };
 					createAssignment(coords);
 					break;
 				default:
@@ -551,15 +561,15 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		intent.putExtra(coordinates, coords);
 		MapActivity.this.startActivity(intent);
 	}
-	
-	public void regionChoice(OnMapElement arg){
+
+	public void regionChoice(OnMapElement arg) {
 		final OnMapElement argument = arg;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Regions val");
 		ListView modeList = new ListView(this);
 		CustomAdapter modeAdapter = new CustomAdapter(this,
 				android.R.layout.simple_list_item_1, android.R.id.text1,
-				regionAlts );
+				regionAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
@@ -581,13 +591,13 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		});
 		dialog.show();
 	}
-	
-	public void createAssignmentFromRegion(OnMapElement arg){
+
+	public void createAssignmentFromRegion(OnMapElement arg) {
 		double corners[];
-		for (int i = 0; i<arg.getPoints().length; i++) {
-//			corners[i] = arg.getPoints()[i];
+		for (int i = 0; i < arg.getPoints().length; i++) {
+			// corners[i] = arg.getPoints()[i];
 		}
-//		arg.getPoints().toJ
+		// arg.getPoints().toJ
 	}
 
 	public void elementClicked(OnMapElement arg0) {
@@ -611,7 +621,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		onRetainCalled = true;
 		return mapComponent;
 	}
-	
 
 	@Override
 	protected void onPause() {
@@ -632,7 +641,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			mapComponent = null;
 		}
 	}
-//	public String toJSONString() {
-//		return null;
-//	}
+	// public String toJSONString() {
+	// return null;
+	// }
 }
