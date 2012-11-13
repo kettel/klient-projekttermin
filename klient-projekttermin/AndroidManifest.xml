@@ -29,18 +29,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-	<!-- Database Content Providers -->
-        <provider
-            android:name="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderMessages" 
-            android:authorities="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderMessages" />
-   		<provider
-            android:name="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderContacts" 
-            android:authorities="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderContacts" />
-   		<provider
-            android:name="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderAssignments" 
-            android:authorities="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderAssignments" />
-        
         <activity
             android:name="map.MapActivity"
             android:configChanges="orientation"
@@ -49,6 +37,10 @@
         <activity
             android:name="messageFunction.CreateMessage"
             android:label="title_activity_create_new_message" >
+        </activity>
+        <activity
+            android:name="messageFunction.Inbox"
+            android:label="@string/inbox" >
         </activity>
         <activity
             android:name="messageFunction.DisplayOfConversation"
@@ -69,14 +61,25 @@
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-
         <activity android:name="assignment.AssignmentOverview" >
         </activity>
         <activity android:name="assignment.AddAssignment" >
         </activity>
         <activity android:name="assignment.Uppdrag" >
         </activity>
-
+		
+        <!-- Database Content Providers -->
+        <provider
+            android:name="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderMessages" 
+            android:authorities="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderMessages" />
+   		<provider
+            android:name="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderContacts" 
+            android:authorities="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderContacts" />
+   		<provider
+            android:name="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderAssignments" 
+            android:authorities="com.example.klien_projekttermin.databaseProviderFaster.DatabaseContentProviderAssignments" />
+        
+   		<!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" >
         </service>
     </application>

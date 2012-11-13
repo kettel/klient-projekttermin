@@ -247,7 +247,7 @@ public class DisplayOfConversation extends Activity {
 		if(communicationBond){
 			communicationService.sendMessage(messageObject);
 		}
-		
+
 		loadConversation(chosenContact);
 	}
 

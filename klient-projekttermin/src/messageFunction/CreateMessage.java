@@ -36,7 +36,7 @@ public class CreateMessage extends Activity {
 	private String user;
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,7 +49,7 @@ public class CreateMessage extends Activity {
 			user = extras.getString("USER");
 			messageContent = extras.getString("MESSAGE");
 		}
-		
+
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
@@ -84,11 +84,11 @@ public class CreateMessage extends Activity {
 		//Sparar messageObject i databasen
 		dataBase.addToDB(messageObject,getApplicationContext());
 		//Skicka till kommunikationsmodulen
-		
+
 		if(communicationBond){
 			communicationService.sendMessage(messageObject);
 		}
-		
+
 		finish();
 
 		//Öppnar konversatinsvyn för kontakten man skickade till 
