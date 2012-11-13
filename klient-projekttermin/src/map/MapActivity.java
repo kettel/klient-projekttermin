@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.json.me.JSONString;
-
 import models.Assignment;
 import models.ModelInterface;
 import routing.MapManager;
@@ -68,6 +66,7 @@ import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
 
 import database.Database;
+import com.google.gson.Gson;
 
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för
@@ -227,7 +226,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 * Hämtar alla uppdrag från databasen och markerar ut dessa på kartan
 	 */
 	public void getDatabaseInformation() {
-		System.out.println("GET DATABASE");
 		Assignment a = new Assignment();
 		Database db = new Database();
 		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
@@ -584,11 +582,11 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 	
 	public void createAssignmentFromRegion(OnMapElement arg){
-		double corners[];
-		for (int i = 0; i<arg.getPoints().length; i++) {
-//			corners[i] = arg.getPoints()[i];
-		}
-//		arg.getPoints().toJ
+		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
+		Gson gson = new Gson();
+		WgsPoint[] ar = arg.getPoints();
+		intent.putExtra(coordinates, gson.toJson(ar));
+		MapActivity.this.startActivity(intent);
 	}
 
 	public void elementClicked(OnMapElement arg0) {
@@ -603,8 +601,4 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void elementLeft(OnMapElement arg0) {
 	}
-
-//	public String toJSONString() {
-//		return null;
-//	}
 }
