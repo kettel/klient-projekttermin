@@ -16,6 +16,7 @@ import android.widget.EditText;
 import com.example.klien_projekttermin.R;
 
 import database.Database;
+import com.google.gson.Gson;
 
 public class AddAssignment extends Activity {
 
@@ -27,9 +28,6 @@ public class AddAssignment extends Activity {
 	private EditText assignmentTime;
 	private EditText assignmentStreetName;
 	private EditText assignmentSpot;
-	private double[] coordinates;
-	private String coords="";
-	private StringBuilder sb = new StringBuilder();
 	double lat=0;
 	double lon = 0;
 
@@ -38,22 +36,13 @@ public class AddAssignment extends Activity {
 		super.onCreate(savedInstanceState);
 		DecimalFormat df = new DecimalFormat("#.00");
 		Intent intent = getIntent();
-		coordinates = (double[]) intent.getDoubleArrayExtra(MapActivity.coordinates);
-		for (int i = 0; i < coordinates.length; i++) {
-			double temp = Double.valueOf(df.format(coordinates[i]));
-
-			coords = sb.append(temp+ " , ").toString();
-		}
-		lat = coordinates[0];
-		lon = coordinates[1];
-		coords = coords.substring(0, coords.length()-2);
+		intent.getExtras();
 		setContentView(R.layout.activity_add_assignment);
 
 		// Hämtar och sätter vyerna från .xml -filen.
 		addAssignmentButton = (Button) findViewById(R.id.button_add_assignment);
 		assignmentName = (EditText) findViewById(R.id.assignment_name);
 		assignmentCoord = (EditText) findViewById(R.id.assignment_coord);
-		assignmentCoord.setText(coords);
 		assignmentDescription = (EditText) findViewById(R.id.assignment_description);
 		assignmentTime = (EditText) findViewById(R.id.assignment_time);
 		assignmentStreetName = (EditText) findViewById(R.id.assignment_street_name);
@@ -89,7 +78,6 @@ public class AddAssignment extends Activity {
 							"Status", fakeImage, assignmentStreetName
 									.getText().toString(), assignmentSpot
 									.getText().toString());
-					System.out.println("ADDA TILL DATABASE");
 					db.addToDB(newAssignment, getApplication());
 				}
 
