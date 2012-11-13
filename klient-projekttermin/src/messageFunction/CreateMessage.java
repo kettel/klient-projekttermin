@@ -10,7 +10,6 @@ import communicationModule.CommunicationService.CommunicationBinder;
 
 
 import models.MessageModel;
-import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -41,6 +40,7 @@ public class CreateMessage extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		System.out.println("Nr 1");
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = new Database();
 
