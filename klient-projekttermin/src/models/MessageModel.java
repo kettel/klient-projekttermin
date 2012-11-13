@@ -16,6 +16,7 @@ public class MessageModel implements ModelInterface {
 
 	private String messageContent;
 	private String reciever;
+	private String sender;
 	private Long messageTimeStamp;
 
 	/**
@@ -31,9 +32,10 @@ public class MessageModel implements ModelInterface {
 	 * @param messageContent
 	 * @param reciever
 	 */
-	public MessageModel(String messageContent, String reciever) {
+	public MessageModel(String messageContent, String reciever, String sender) {
 		this.messageContent = messageContent;
 		this.reciever = reciever;
+		this.sender = sender;
 		messageTimeStamp = Calendar.getInstance().getTimeInMillis();
 	}
 
@@ -45,10 +47,11 @@ public class MessageModel implements ModelInterface {
 	 * @param timeStamp
 	 */
 	public MessageModel(long id, String messageContent, String reciever,
-			Long messageTimeStamp, boolean isRead) {
+			String sender, Long messageTimeStamp, boolean isRead) {
 		this.id = id;
 		this.messageContent = messageContent;
 		this.reciever = reciever;
+		this.sender = sender;
 		this.messageTimeStamp = messageTimeStamp;
 		this.isRead = isRead;
 	}
@@ -103,6 +106,10 @@ public class MessageModel implements ModelInterface {
 	 */
 	public long getId() {
 		return id;
+	}
+	
+	public String getSender(){
+		return sender;
 	}
 
 	/**
