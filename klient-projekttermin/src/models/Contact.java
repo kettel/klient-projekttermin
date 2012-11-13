@@ -3,17 +3,30 @@ package models;
 
 public class Contact implements ModelInterface {
 	
+	//Typen av modell 
 	private String databasetRepresentation = "contact";
+	//Id för modellen (Sätts av databasen så pilla inte)
 	private long id = -1;
-	
+	//Användarnamnet på konakten
 	private String contactName;
+	//Telefonnumret till kontakten
 	private Long contactPhoneNumber;
+	//E-mailadressen till kontakten
 	private String contactEmail;
+	//Kontaktens behörighetsnivå för att komma åt filer
 	private String contactClearanceLevel;
+	//Kontaktens titel (t.ex. chef,städare,kung,terrorist)
 	private String contactClassification;
+	//Kommentar om kontakten
 	private String contactComment;
 
 
+	/**
+	 * Tom konstruktor for Contact
+	 */
+	public Contact(){
+		
+	}
 	public Contact(String contactName, Long contactPhoneNumber, String contactEmail, String contactClearanceLevel, String contactClassification, String contactComment){
 		this.contactName=contactName;
 		this.contactPhoneNumber=contactPhoneNumber;
@@ -21,7 +34,6 @@ public class Contact implements ModelInterface {
 		this.contactClearanceLevel=contactClearanceLevel;
 		this.contactClassification=contactClassification;
 		this.contactComment=contactComment;
-
 	}
 	
 	public Contact(long id, String contactName, Long contactPhoneNumber,
@@ -34,11 +46,6 @@ public class Contact implements ModelInterface {
 		this.contactClearanceLevel = contactClearanceLevel;
 		this.contactClassification = contactClassification;
 		this.contactComment = contactComment;
-	}
-
-
-
-	public Contact() {
 	}
 
 	public String getContactName(){

@@ -8,7 +8,7 @@
     <item
         android:id="@+id/menu_deactivate_gps"
         android:showAsAction="ifRoom|withText"
-        android:title="GPS/on"/>
+        android:title="Följ position"/>
     <item
         android:id="@+id/menu_add_region"
         android:showAsAction="ifRoom|withText"
