@@ -7,7 +7,7 @@ import java.util.List;
 import logger.LogViewer;
 import logger.logger;
 import map.MapActivity;
-import Assignment.AssignmentOverview;
+import assignment.AssignmentOverview;
 import android.app.ListActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;

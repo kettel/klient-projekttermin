@@ -1,4 +1,4 @@
-package Assignment;
+package assignment;
 
 import models.Assignment;
 import android.app.Activity;
