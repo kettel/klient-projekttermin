@@ -3,6 +3,13 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="15" />
@@ -20,7 +27,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Database Content Providers -->
+        
+	<!-- Database Content Providers -->
         <provider
             android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" 
             android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" />
@@ -31,6 +39,51 @@
             android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments" 
             android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments" />
         
+        <activity
+            android:name="map.MapActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_map" >
+        </activity>
+        <activity
+            android:name="messageFunction.CreateMessage"
+            android:label="title_activity_create_new_message" >
+        </activity>
+        <activity
+            android:name="messageFunction.StartsidaMeddelanden"
+            android:label="startsida" >
+        </activity>
+        <activity
+            android:name="messageFunction.Inbox"
+            android:label="inbox" >
+        </activity>
+        <activity
+            android:name="camera.Camera"
+            android:label="Camera" >
+        </activity>
+        <activity
+            android:name="logger.LogViewer"
+            android:label="@string/title_activity_log_viewer" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.klien_projekttermin.MainActivity" />
+        </activity>
+        <activity 
+            android:name="assignment.AssignmentOverview"
+            android:label="HEJ" >
+        </activity>
+        <activity
+            android:name="messageFunction.DisplayMessage"
+            android:label="display" >
+        </activity>
+        <activity android:name="assignment.AssignmentOverview" >
+        </activity>
+        
+        <activity android:name="assignment.AddAssignment" >
+        </activity>
+        <activity android:name="assignment.Uppdrag" >
+        </activity>
+        <service android:name="communicationModule.CommunicationService" >
+        </service>
     </application>
 
 </manifest>

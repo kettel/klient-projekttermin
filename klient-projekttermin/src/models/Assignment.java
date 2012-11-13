@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.models;
+package models;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

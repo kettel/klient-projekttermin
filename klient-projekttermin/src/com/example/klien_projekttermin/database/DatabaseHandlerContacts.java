@@ -3,15 +3,14 @@ package com.example.klien_projekttermin.database;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.klien_projekttermin.models.Contact;
-import com.example.klien_projekttermin.models.ModelInterface;
+import models.Contact;
+import models.ModelInterface;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class DatabaseHandlerContacts extends SQLiteOpenHelper{
 	// Alla statiska variabler
@@ -27,12 +26,6 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     // Contacts tabellkolumnnamn
     private static final String KEY_ID = "_id";
     private static final String KEY_CONTACT_NAME = "contact_name";
-    private static final String KEY_PH_NO = "phone_number";
-	private static final String KEY_EMAIL = "email";
-	private static final String KEY_CLEARANCE_LEVEL = "clearance_level";
-	private static final String KEY_CLASSIFICATION = "classification";
-	private static final String KEY_COMMENT = "comment";
-
  
     public DatabaseHandlerContacts(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -43,12 +36,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
-        		+ KEY_CONTACT_NAME + " TEXT,"
-                + KEY_PH_NO + " TEXT,"
-        		+ KEY_EMAIL + " TEXT,"
-                + KEY_CLEARANCE_LEVEL + " TEXT,"
-                + KEY_CLASSIFICATION + " TEXT,"
-                + KEY_COMMENT + " TEXT"+")";
+        		+ KEY_CONTACT_NAME + " TEXT)";
         db.execSQL(CREATE_CONTACTS_TABLE);
     	//executeSQLScript(db, "assignments.sql", this);
     }
@@ -72,11 +60,6 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
  
         ContentValues values = new ContentValues();
         values.put(KEY_CONTACT_NAME, contact.getContactName());
-        values.put(KEY_PH_NO, contact.getContactPhoneNumber().toString());
-        values.put(KEY_EMAIL, contact.getContactEmail());
-        values.put(KEY_CLEARANCE_LEVEL, contact.getContactClearanceLevel());
-        values.put(KEY_CLASSIFICATION, contact.getContactClassification());
-        values.put(KEY_COMMENT, contact.getContactComment());
         // Lägg till kontakter i databasen
         db.insert(TABLE_CONTACTS, null, values);
         // Stäng databasen. MYCKET VIKTIGT!!
@@ -108,12 +91,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
             do {
                 Contact contact = new Contact(
                 		Long.valueOf(cursor.getString(0)),
-                		cursor.getString(1),
-                		Long.valueOf(cursor.getString(2)),
-                		cursor.getString(3),
-                		cursor.getString(4),
-                		cursor.getString(5),
-                		cursor.getString(6));
+                		cursor.getString(1));
                 
                 contactList.add(contact);
             } while (cursor.moveToNext());
@@ -136,11 +114,6 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
 
 		String UPDATE_CONTACTS = "UPDATE " + TABLE_CONTACTS + " SET "
         		+ KEY_CONTACT_NAME + " = \"" + c.getContactName() + "\", "
-                + KEY_PH_NO + " = \"" + c.getContactPhoneNumber() + "\", "
-                + KEY_CLEARANCE_LEVEL + " = \"" +c.getContactClearanceLevel()  + "\", "
-                + KEY_EMAIL + " = \"" + c.getContactEmail() + "\", "
-                + KEY_CLASSIFICATION + " = \"" + c.getContactClassification() + "\", "
-                + KEY_COMMENT + " = \"" + c.getContactComment() + "\" "
                 + "WHERE " + KEY_ID + " = " + Long.toString(c.getId());
 
         db.execSQL(UPDATE_CONTACTS);

@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.models;
+package models;
 
 
 public class Contact implements ModelInterface {

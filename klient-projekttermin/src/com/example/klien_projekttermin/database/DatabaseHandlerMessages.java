@@ -13,19 +13,27 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHandlerMessages extends SQLiteOpenHelper {
 	// Alla statiska variabler
-    // Databas version
-    private static final int DATABASE_VERSION = 1;
- 
-    // Databasens namn
-    private static final String DATABASE_NAME = "messageManager";
- 
-    // Contacts tabellnamn
-    private static final String TABLE_MESSAGES = "messages";
+	// Databas version
+	private static final int DATABASE_VERSION = 1;
 
+	// Databasens namn
+	private static final String DATABASE_NAME = "messageManager";
+
+	// Contacts tabellnamn
+	private static final String TABLE_MESSAGES = "messages";
+
+<<<<<<< HEAD:klient-projekttermin/src/com/example/klien_projekttermin/database/DatabaseHandlerMessages.java
     // Contacts tabellkolumnnamn
     private static final String KEY_ID = "_id";
     private static final String KEY_MESSAGE_CONTENT = "content";
     private static final String KEY_RECEIVER = "receiver";
+=======
+	// Contacts tabellkolumnnamn
+	private static final String KEY_ID = "id";
+	private static final String KEY_MESSAGE_CONTENT = "content";
+	private static final String KEY_RECEIVER = "receiver";
+	private static final String KEY_SENDER = "sender";
+>>>>>>> b746e32984d4f0180b7d9b77a85c85106da9ce2a:klient-projekttermin/src/database/DatabaseHandlerMessages.java
 	private static final String KEY_MESSAGE_TIMESTAMP = "timestamp";
 	private static final String KEY_IS_READ = "isRead";
 
@@ -41,6 +49,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
                 + KEY_ID + " INTEGER PRIMARY KEY,"  
         		+ KEY_MESSAGE_CONTENT + " TEXT,"
                 + KEY_RECEIVER + " TEXT,"
+                + KEY_SENDER + " TEXT,"
                 + KEY_MESSAGE_TIMESTAMP + " TEXT," 
                 + KEY_IS_READ + " TEXT"+ ")";
         db.execSQL(CREATE_MESSAGES_TABLE);
@@ -67,6 +76,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_MESSAGE_CONTENT, message.getMessageContent().toString());
         values.put(KEY_RECEIVER, message.getReciever().toString());
+        values.put(KEY_SENDER, message.getSender().toString());
         values.put(KEY_MESSAGE_TIMESTAMP, Long.toString(message.getMessageTimeStamp()));
 
         // Lägg till isRead som en String, TRUE om true, FALSE om false.
@@ -124,8 +134,9 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
             	MessageModel message = new MessageModel(Long.valueOf(cursor.getString(0)),
             											cursor.getString(1),
             											cursor.getString(2),
-            											Long.valueOf(cursor.getString(3)),
-            											Boolean.valueOf(cursor.getString(4)));
+            											cursor.getString(3),
+            											Long.valueOf(cursor.getString(4)),
+            											Boolean.valueOf(cursor.getString(5)));
                 messageList.add(message);
             } while (cursor.moveToNext());
         }
@@ -144,6 +155,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
 		String UPDATE_MESSAGES = "UPDATE " + TABLE_MESSAGES + " SET "
         		+ KEY_MESSAGE_CONTENT + " = \""+ m.getMessageContent() + "\" ,"
                 + KEY_RECEIVER + " = \""+ m.getReciever() + "\" ,"
+                + KEY_SENDER + " = \""+ m.getSender() + "\" ,"
                 + KEY_IS_READ + " = \""+ (m.isRead()? "TRUE" : "FALSE") + "\" "
                 + "WHERE " + KEY_ID + " = " + Long.toString(m.getId());
 
