@@ -226,21 +226,21 @@ public class Camera extends Activity {
 		mImageBitmap = null;
 		mVideoUri = null;
 
-		Button picBtn = (Button) findViewById(R.id.btnIntend);
+		Button picBtn = (Button) findViewById(R.id.takePicture);
 		setBtnListenerOrDisable( 
 				picBtn, 
 				mTakePicOnClickListener,
 				MediaStore.ACTION_IMAGE_CAPTURE
 				);
 
-		Button picSBtn = (Button) findViewById(R.id.btnIntendS);
+		Button picSBtn = (Button) findViewById(R.id.goAlbum);
 		setBtnListenerOrDisable( 
 				picSBtn, 
 				mTakePicSOnClickListener,
 				MediaStore.ACTION_IMAGE_CAPTURE
 				);
 
-		Button vidBtn = (Button) findViewById(R.id.btnIntendV);
+		Button vidBtn = (Button) findViewById(R.id.makeMovie);
 		setBtnListenerOrDisable( 
 				vidBtn, 
 				mTakeVidOnClickListener,

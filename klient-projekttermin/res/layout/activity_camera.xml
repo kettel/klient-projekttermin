@@ -10,18 +10,26 @@
         android:orientation="vertical" >
 
         <Button
-            android:id="@+id/btnIntend"
+            android:id="@+id/takePicture"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/btnIntend" />
+            android:text="@string/takePicture" />
 
         <Button
-            android:id="@+id/btnIntendV"
+            android:id="@+id/makeMovie"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/btnIntendV" />
+            android:text="@string/makeMovie" />
+
+        <Button
+            android:id="@+id/goAlbum"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/goAlbum"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <ImageView
@@ -34,14 +42,6 @@
         android:id="@+id/videoView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/btnIntendS"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/btnIntendS"
         android:visibility="invisible" />
 
 </LinearLayout>
