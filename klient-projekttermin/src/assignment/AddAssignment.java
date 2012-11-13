@@ -30,6 +30,8 @@ public class AddAssignment extends Activity {
 	private double[] coordinates;
 	private String coords="";
 	private StringBuilder sb = new StringBuilder();
+	double lat=0;
+	double lon = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,11 @@ public class AddAssignment extends Activity {
 		coordinates = (double[]) intent.getDoubleArrayExtra(MapActivity.coordinates);
 		for (int i = 0; i < coordinates.length; i++) {
 			double temp = Double.valueOf(df.format(coordinates[i]));
+
 			coords = sb.append(temp+ " , ").toString();
 		}
+		lat = coordinates[0];
+		lon = coordinates[1];
 		coords = coords.substring(0, coords.length()-2);
 		setContentView(R.layout.activity_add_assignment);
 
@@ -76,7 +81,7 @@ public class AddAssignment extends Activity {
 			public void onClick(View v) {
 				if (!assignmentName.getText().toString().equals("")) {
 					Assignment newAssignment = new Assignment(45,assignmentName
-							.getText().toString(), (double)333, (double)12,
+							.getText().toString(), lon, lat,
 							"Den här ska bort.",
 							"Ska automatiskt hämtas från den inloggade",
 							assignmentDescription.getText().toString(),
@@ -84,6 +89,7 @@ public class AddAssignment extends Activity {
 							"Status", fakeImage, assignmentStreetName
 									.getText().toString(), assignmentSpot
 									.getText().toString());
+					System.out.println("ADDA TILL DATABASE");
 					db.addToDB(newAssignment, getApplication());
 				}
 

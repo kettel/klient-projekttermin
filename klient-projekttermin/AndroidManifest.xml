@@ -44,7 +44,7 @@
         </activity>
         <activity
             android:name="messageFunction.Inbox"
-            android:label="@string/title_activity_inbox" >
+            android:label="@string/inbox" >
         </activity>
         <activity
             android:name="camera.Camera"

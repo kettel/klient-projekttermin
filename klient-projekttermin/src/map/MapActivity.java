@@ -183,7 +183,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
 					public void onClick(final DialogInterface dialog,
 							@SuppressWarnings("unused") final int id) {
-							final int id) {
 						dialog.cancel();
 					}
 				});
@@ -228,6 +227,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 * Hämtar alla uppdrag från databasen och markerar ut dessa på kartan
 	 */
 	public void getDatabaseInformation() {
+		System.out.println("GET DATABASE");
 		Assignment a = new Assignment();
 		Database db = new Database();
 		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
@@ -338,6 +338,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		getDatabaseInformation();
 		if (gpsFollowItem!=null) {
 			System.out.println("gps");
 			runOnUiThread(new Runnable() {
@@ -580,8 +581,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			}
 		});
 		dialog.show();
-		
-	public void elementClicked(OnMapElement arg0) {
 	}
 	
 	public void createAssignmentFromRegion(OnMapElement arg){
@@ -593,15 +592,11 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 
 	public void elementClicked(OnMapElement arg0) {
-		// if (arg0 instanceof PlaceLabel) {
-		// if (
-		// }
 	}
 
 	public void elementEntered(OnMapElement arg0) {
 		if (arg0 instanceof Polygon) {
 			regionChoice(arg0);
-			mapComponent.removePolygon(((Polygon) arg0));
 		}
 
 	}
