@@ -15,8 +15,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -38,6 +36,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ZoomControls;
+import assignment.AddAssignment;
 
 import com.example.klien_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
@@ -62,6 +61,7 @@ import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
 
 import database.Database;
+import com.google.gson.Gson;
 
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för
@@ -91,6 +91,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private ListView lv;
 	private static String[] searchAlts = { "Navigera till plats", "Visa plats",
 			"Lägg till uppdrag på position" };
+	public static String coordinates;
+	public static String longitud;
 	private LocationSource locationSource;
 	private MenuItem searchItem;
 	private ProgressBar sp;
@@ -98,6 +100,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private LocationManager manager;
 	private MenuItem gpsFollowItem;
 	private MapManager mm = new MapManager();
+	private static String[] regionAlts = { "Ta bort region" , "Skapa uppdrag med region" };
+	private boolean onRetainCalled;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -156,6 +160,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		 * GPS:en ska vara påslagen vid start
 		 */
 		this.activateGPS(gpsOnOff);
+		onRetainCalled = false;
 	}
 
 	private void buildAlertMessageNoGps() {
@@ -173,7 +178,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 						})
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
 					public void onClick(final DialogInterface dialog,
-							final int id) {
+							@SuppressWarnings("unused") final int id) {
 						dialog.cancel();
 					}
 				});
@@ -219,8 +224,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 							});
 			final AlertDialog alert = builder.create();
 			alert.show();
-		} else {
-			System.out.println("Har internet anslutning");
 		}
 	}
 
@@ -265,7 +268,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				MenuInflater inflater = getMenuInflater();
 				inflater.inflate(R.menu.menu, m);
 				gpsFollowItem = m.findItem(R.id.menu_deactivate_gps);
-				gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
+				gpsFollowItem.setEnabled(manager
+						.isProviderEnabled(LocationManager.GPS_PROVIDER));
 				gpsFollowItem
 						.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 							public boolean onMenuItemClick(MenuItem item) {
@@ -305,7 +309,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 						}
 					});
 					new Thread(new Runnable() {
-
 						public void run() {
 							searchSuggestions.updateSearch(temp,
 									locationSource.getLocation());
@@ -339,17 +342,17 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		getDatabaseInformation();
 		if (gpsFollowItem!=null) {
-			System.out.println("gps");
 			runOnUiThread(new Runnable() {
-				
+
 				public void run() {
 					// TODO Auto-generated method stu
-					System.out.println(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
-					gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));	
+					gpsFollowItem.setEnabled(manager
+							.isProviderEnabled(LocationManager.GPS_PROVIDER));
 				}
 			});
-			
+
 		}
 	}
 
@@ -534,7 +537,12 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					centerMapOnLocation(choice);
 					break;
 				case 2:
-					// Starta createAssignment
+					double[] coords = {
+							searchSuggestions.getList().get(arg2).getPlace()
+									.getWgs().getLat(),
+							searchSuggestions.getList().get(arg2).getPlace()
+									.getWgs().getLon() };
+					createAssignment(coords);
 					break;
 				default:
 					break;
@@ -544,20 +552,78 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		dialog.show();
 	}
 
-	public void elementClicked(OnMapElement arg0) {
-		// TODO Auto-generated method stub
-
+	public void createAssignment(double[] coords) {
+		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
+		intent.putExtra(coordinates, coords);
+		MapActivity.this.startActivity(intent);
 	}
 
+	public void regionChoice(OnMapElement arg) {
+		final OnMapElement argument = arg;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Regions val");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				regionAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					mapComponent.removePolygon(((Polygon) argument));
+					break;
+				case 1:
+					createAssignmentFromRegion(argument);
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
+	
+	public void createAssignmentFromRegion(OnMapElement arg){
+		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
+		Gson gson = new Gson();
+		WgsPoint[] ar = arg.getPoints();
+		intent.putExtra(coordinates, gson.toJson(ar));
+		MapActivity.this.startActivity(intent);
+	}
+
+	public void elementClicked(OnMapElement arg0) {
+	}
+
+	/**
+	 * Kollar om det är en man har
+	 */
 	public void elementEntered(OnMapElement arg0) {
-		// TODO Auto-generated method stub
 		if (arg0 instanceof Polygon) {
-			mapComponent.removePolygon(((Polygon) arg0));
+			regionChoice(arg0);
 		}
 
 	}
 
 	public void elementLeft(OnMapElement arg0) {
+	}
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		onRetainCalled = true;
+		return mapComponent;
+	}
+
+	@Override
+	protected void onPause() {
 		// TODO Auto-generated method stub
+		super.onPause();
+		if (!onRetainCalled) {
+			mapComponent.stopMapping();
+			mapComponent = null;
+		}
 	}
 }

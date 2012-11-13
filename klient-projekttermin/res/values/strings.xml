@@ -23,5 +23,18 @@
     <string name="title_activity_add_assignment">AddAssignment</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_assignment_overview">AssignmentOverview</string>
+    <string name="receiver_hint">Receiver</string>
+    <string name="message_hint">Message</string>
+    <string name="send">Send</string>
+    <string name="cancel">Cancel</string>
+    <string name="addAssignment">Skapa uppdrag</string>
+    <string name="assignmentLocation">Uppdragets plats</string>
+    <string name="streetAddress">Gatu adress</string>
+    <string name="time">Uppskattad tid</string>
+    <string name="assignmentDescription">Uppdragsbeskrivning</string>
+    <string name="coordinates">Koordinater</string>
+    <string name="assignmentName">Uppdragets namn</string>
+    <string name="createAssignmentFromRegion">Skapa uppdrag för region</string>
+    <string name="inbox">inbox</string>
 
 </resources>
