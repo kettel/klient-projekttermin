@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.json.me.JSONString;
+
 import models.Assignment;
 import models.ModelInterface;
 import routing.MapManager;
@@ -36,8 +38,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ZoomControls;
+import assignment.AddAssignment;
+import assignment.AssignmentOverview;
 
 import com.example.klien_projekttermin.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
 import com.nutiteq.components.KmlPlace;
@@ -89,6 +95,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private ListView lv;
 	private static String[] searchAlts = { "Navigera till plats", "Visa plats",
 			"Lägg till uppdrag på position" };
+	public static String coordinates;
+	public static String longitud;
 	private LocationSource locationSource;
 	private MenuItem searchItem;
 	private ProgressBar sp;
@@ -97,6 +105,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private MenuItem gpsFollowItem;
 	private MapManager mm = new MapManager();
 	private boolean onRetainCalled;
+	private static String[] regionAlts = { "Ta bort polygon" , "Skapa uppdrag med polygon" };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -173,7 +182,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 						})
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
 					public void onClick(final DialogInterface dialog,
-							final int id) {
+							@SuppressWarnings("unused") final int id) {
 						dialog.cancel();
 					}
 				});
@@ -182,52 +191,43 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 
 	private void haveNetworkConnection() {
-		boolean haveConnectedWifi = false;
-		boolean haveConnectedMobile = false;
+	    boolean haveConnectedWifi = false;
+	    boolean haveConnectedMobile = false;
 
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-		for (NetworkInfo ni : netInfo) {
-			if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-				if (ni.isConnected())
-					haveConnectedWifi = true;
-			if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-				if (ni.isConnected())
-					haveConnectedMobile = true;
-		}
-		if (!haveConnectedWifi && !haveConnectedMobile) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(
-					"No network connection enabled, do you want to enable it?")
-					.setCancelable(false)
-					.setPositiveButton("Yes",
-							new DialogInterface.OnClickListener() {
-								public void onClick(
-										@SuppressWarnings("unused") final DialogInterface dialog,
-										@SuppressWarnings("unused") final int id) {
-									startActivity(new Intent(
-											Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
-								}
-							})
-					.setNegativeButton("No",
-							new DialogInterface.OnClickListener() {
-								public void onClick(
-										final DialogInterface dialog,
-										@SuppressWarnings("unused") final int id) {
-									dialog.cancel();
-								}
-							});
-			final AlertDialog alert = builder.create();
-			alert.show();
-		} else {
-			System.out.println("Har internet anslutning");
-		}
+	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+	    for (NetworkInfo ni : netInfo) {
+	        if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+	            if (ni.isConnected())
+	                haveConnectedWifi = true;
+	        if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+	            if (ni.isConnected())
+	                haveConnectedMobile = true;
+	    }
+	    if(!haveConnectedWifi && !haveConnectedMobile){
+	    	 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	 	    builder.setMessage("No network connection enabled, do you want to enable it?")
+	 	    .setCancelable(false)
+	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+	                   startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
+	               }
+	           })
+	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	               public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+	                    dialog.cancel();
+	               }
+	           });
+	 	    final AlertDialog alert = builder.create();
+	 	    alert.show();
+	    }
 	}
 
 	/**
 	 * Hämtar alla uppdrag från databasen och markerar ut dessa på kartan
 	 */
 	public void getDatabaseInformation() {
+		System.out.println("GET DATABASE");
 		Assignment a = new Assignment();
 		Database db = new Database();
 		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
@@ -306,7 +306,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 						}
 					});
 					new Thread(new Runnable() {
-
 						public void run() {
 							searchSuggestions.updateSearch(temp,
 									locationSource.getLocation());
@@ -340,7 +339,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		if (gpsFollowItem != null) {
+		getDatabaseInformation();
 			runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -534,7 +533,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					centerMapOnLocation(choice);
 					break;
 				case 2:
-					// Starta createAssignment
+					double[] coords = {searchSuggestions.getList().get(arg2)
+						.getPlace().getWgs().getLat(), searchSuggestions
+						.getList().get(arg2).getPlace().getWgs().getLon()};
+					createAssignment(coords);
 					break;
 				default:
 					break;
@@ -544,24 +546,64 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		dialog.show();
 	}
 
-	public void elementClicked(OnMapElement arg0) {
-		// TODO Auto-generated method stub
+	public void createAssignment(double[] coords) {
+		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
+		intent.putExtra(coordinates, coords);
+		MapActivity.this.startActivity(intent);
+	}
+	
+	public void regionChoice(OnMapElement arg){
+		final OnMapElement argument = arg;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Regions val");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				regionAlts );
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					mapComponent.removePolygon(((Polygon) argument));
+					break;
+				case 1:
+					createAssignmentFromRegion(argument);
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
+	
+	public void createAssignmentFromRegion(OnMapElement arg){
+		double corners[];
+		for (int i = 0; i<arg.getPoints().length; i++) {
+//			corners[i] = arg.getPoints()[i];
+		}
+//		arg.getPoints().toJ
+	}
 
+	public void elementClicked(OnMapElement arg0) {
 	}
 
 	/**
 	 * Kollar om det är en man har
 	 */
 	public void elementEntered(OnMapElement arg0) {
-		// TODO Auto-generated method stub
 		if (arg0 instanceof Polygon) {
-			mapComponent.removePolygon(((Polygon) arg0));
+			regionChoice(arg0);
 		}
 
 	}
 
 	public void elementLeft(OnMapElement arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -590,4 +632,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			mapComponent = null;
 		}
 	}
+//	public String toJSONString() {
+//		return null;
+//	}
 }

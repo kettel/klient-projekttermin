@@ -5,10 +5,10 @@
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- User permissions -->
-    <user-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <!-- Features -->
     <uses-feature android:name="android.hardware.camera" />
 
@@ -17,7 +17,7 @@
         android:targetSdkVersion="15" />
 
     <application
-        android:icon="@drawable/loggakrona"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -36,19 +36,19 @@
         </activity>
         <activity
             android:name="messageFunction.CreateMessage"
-            android:label="@string/title_activity_create_new_message" >
+            android:label="title_activity_create_new_message" >
         </activity>
         <activity
-            android:name="messageFunction.StartsidaMeddelanden"
-            android:label="@string/title_activity_startsida_meddelanden" >
+            android:name="messageFunction.DisplayOfConversation"
+            android:label="DisplayOfConversation" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
-            android:label="@string/title_activity_inbox" >
+            android:label="@string/inbox" >
         </activity>
         <activity
             android:name="camera.Camera"
-            android:label="@string/title_activity_camera" >
+            android:label="Camera" >
         </activity>
         <activity
             android:name="logger.LogViewer"
@@ -57,13 +57,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
-        <activity
-            android:name="messageFunction.DisplayOfConversation"
-            android:label="@string/title_activity_display_of_conversation" >
+        <activity android:name="assignment.AssignmentOverview" >
         </activity>
-        <activity
-            android:name="messageFunction.DisplayMessage"
-            android:label="@string/title_activity_message_view" >
+        <activity android:name="assignment.AddAssignment" >
+        </activity>
+        <activity android:name="assignment.Uppdrag" >
         </activity>
 
         <service android:name="communicationModule.CommunicationService" >

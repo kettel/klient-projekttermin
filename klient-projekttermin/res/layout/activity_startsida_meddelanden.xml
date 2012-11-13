@@ -8,28 +8,28 @@
         android:id="@+id/button2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/CreateNewMessage" 
+        android:text="CreateMessage" 
         android:onClick="openMessageCreator"/>
 
     <Button
         android:id="@+id/button3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/Inbox" 
+        android:text="inbox" 
         android:onClick="openInbox"/>
 
     <Button
         android:id="@+id/button1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/Draft"
+        android:text="soft"
         android:onClick="openDraft" />
 
     <Button
         android:id="@+id/button4"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/SavedMessages"
+        android:text="savedMessage"
         android:onClick="openSavedMessages" />
     
 </LinearLayout>

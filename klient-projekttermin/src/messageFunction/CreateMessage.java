@@ -40,6 +40,7 @@ public class CreateMessage extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		System.out.println("Nr 1");
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = new Database();
 

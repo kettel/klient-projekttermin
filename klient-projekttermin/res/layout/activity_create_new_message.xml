@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:ems="10"
-        android:hint="@string/reciever"
+        android:hint="@string/receiver_hint"
         android:inputType="textPersonName" >
 
         <requestFocus />
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText1"
         android:ems="10"
-        android:hint="@string/message"
+        android:hint="@string/message_hint"
         android:inputType="textMultiLine" />
 
     <Button
