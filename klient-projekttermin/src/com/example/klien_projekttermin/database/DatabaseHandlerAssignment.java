@@ -34,7 +34,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	private static final String KEY_LAT = "lat";
 	private static final String KEY_LON = "long";
 	private static final String KEY_REGION = "region";
-	private static final String KEY_RECEIVER = "receiver";
+	private static final String KEY_AGENTS = "agents";
 	private static final String KEY_SENDER = "sender";
 	private static final String KEY_EXTERNAL_MISSION = "external_mission";
 	private static final String KEY_ASSIGNMENTDESCRIPTION = "description";
@@ -53,13 +53,22 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String CREATE_ASSIGNMENTS_TABLE = "CREATE TABLE " + TABLE_ASSIGNMENTS
-				+ "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
-				+ KEY_LAT + " TEXT," + KEY_LON + " TEXT," + KEY_REGION
-				+ " TEXT," + KEY_RECEIVER + " TEXT," + KEY_SENDER + " TEXT,"
-				+ KEY_EXTERNAL_MISSION + " TEXT," + KEY_ASSIGNMENTDESCRIPTION
-				+ " TEXT," + KEY_TIMESPAN + " TEXT," + KEY_ASSIGNMENTSTATUS
-				+ " TEXT," + KEY_CAMERAIMAGE + " BLOB," + KEY_STREETNAME
-				+ " TEXT," + KEY_SITENAME + " TEXT" + KEY_TIMESTAMP + ")";
+				+ "(" 
+				+ KEY_ID + " INTEGER PRIMARY KEY," // 0
+				+ KEY_NAME + " TEXT," // 1
+				+ KEY_LAT + " TEXT," // 2
+				+ KEY_LON + " TEXT," // 3
+				+ KEY_REGION + " TEXT," // 4
+				+ KEY_AGENTS + " TEXT," // 5
+				+ KEY_SENDER + " TEXT," // 6
+				+ KEY_EXTERNAL_MISSION + " TEXT," // 7 
+				+ KEY_ASSIGNMENTDESCRIPTION	+ " TEXT," // 8 
+				+ KEY_TIMESPAN + " TEXT," // 9
+				+ KEY_ASSIGNMENTSTATUS + " TEXT," // 10 
+				+ KEY_CAMERAIMAGE + " BLOB," // 10
+				+ KEY_STREETNAME + " TEXT," // 11
+				+ KEY_SITENAME + " TEXT," // 12
+				+ KEY_TIMESTAMP + " TEXT)"; // 13
 		db.execSQL(CREATE_ASSIGNMENTS_TABLE);
 	}
 
@@ -91,14 +100,20 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 		Bitmap bmp = assignment.getCameraImage();
 		bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
 		byte[] photo = baos.toByteArray();
+		
+		String agents = new String();
+		List<Contact> receivers = assignment.getAgents();
+		for (Contact contact : receivers) {
+			agents.concat(contact.getContactName() + "/");
+		}
 
 		ContentValues values = new ContentValues();
 		values.put(KEY_NAME, assignment.getName());
 		values.put(KEY_LAT, assignment.getLat());
 		values.put(KEY_LON, assignment.getLon());
 		values.put(KEY_REGION, assignment.getRegion());
-		values.put(KEY_RECEIVER, assignment.getReceiver());
 		values.put(KEY_SENDER, assignment.getSender());
+		values.put(KEY_AGENTS, agents);
 		values.put(KEY_EXTERNAL_MISSION,
 				Boolean.toString(assignment.isExternalMission()));
 		values.put(KEY_ASSIGNMENTDESCRIPTION,
@@ -145,27 +160,35 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			do {
 				// Konvertera BLOB -> Bitmap
-				byte[] image = cursor.getBlob(9);
+				byte[] image = cursor.getBlob(11);
 				ByteArrayInputStream imageStream = new ByteArrayInputStream(
 						image);
 				Bitmap theImage = BitmapFactory.decodeStream(imageStream);
 
+				// Gör om strängar med agenter på uppdrag till en lista
+				List <Contact> agents = new ArrayList<Contact>();
+				String[] agentArray = cursor.getString(5).split("/");
+				for (String agent : agentArray) {
+					agents.add(new Contact(agent));
+				}
+				
 				Assignment assignment = new Assignment(Long.valueOf(cursor
 						.getString(0)), // id från DB
 						cursor.getString(1), // name
 						Long.parseLong(cursor.getString(2)), // lat
 						Long.parseLong(cursor.getString(3)), // lon
 						cursor.getString(4),// region
-						cursor.getString(5), // receiver
+						agents, // agents
 						cursor.getString(6), // sender
 						Boolean.parseBoolean(cursor.getString(7)), // isExternalMission
 						cursor.getString(8), // assDesc
 						cursor.getString(9), // timeSpan
 						AssignmentStatus.valueOf(cursor.getString(10)), // assStatus
 						theImage, // cameraImage
-						cursor.getString(10), // streetName
-						cursor.getString(11)); // siteName
-
+						cursor.getString(12), // streetName
+						cursor.getString(13), // siteName
+						Long.valueOf(cursor.getString(14))); // timeStamp
+				
 				assignmentList.add(assignment);
 			} while (cursor.moveToNext());
 		}
@@ -216,7 +239,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 				+ " = \"" + ass.getLon() + "\", " + KEY_REGION + " = \""
 				+ ass.getRegion() + "\", " + KEY_EXTERNAL_MISSION + " = \""
 				+ Boolean.toString(ass.isExternalMission()) + "\", " + KEY_NAME
-				+ " = \"" + ass.getName() + "\", " + KEY_RECEIVER + " = \""
+				+ " = \"" + ass.getName() + "\", " + KEY_AGENTS + " = \""
 				+ agents + "\", " + KEY_SENDER + " = \"" + ass.getSender()
 				+ "\", " + KEY_SITENAME + " = \"" + ass.getSiteName() + "\", "
 				+ KEY_STREETNAME + " = \"" + ass.getStreetName() + "\", "

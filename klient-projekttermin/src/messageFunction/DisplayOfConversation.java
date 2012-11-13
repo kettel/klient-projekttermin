@@ -27,10 +27,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.Database;
+
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-import database.Database;
 
 public class DisplayOfConversation extends Activity {
 
@@ -215,8 +216,8 @@ public class DisplayOfConversation extends Activity {
 
 			if(messageModel.getReciever().toString().equals(Contact)){
 
-				listOfConversations.add(messageModel.getSender().toString()+" ["+messageModel.getTimeStampInUnderstandableFormat()+"] "+"\n"+messageModel.getMessageContent().toString());
-				messageAndIdMap.put(messageModel.getSender().toString()+" ["+messageModel.getTimeStampInUnderstandableFormat()+"] "+"\n"+messageModel.getMessageContent().toString(), messageModel.getId());
+				listOfConversations.add(messageModel.getSender().toString()+" ["+messageModel.getMessageTimeStampSmart()+"] "+"\n"+messageModel.getMessageContent().toString());
+				messageAndIdMap.put(messageModel.getSender().toString()+" ["+messageModel.getMessageTimeStampSmart()+"] "+"\n"+messageModel.getMessageContent().toString(), messageModel.getId());
 			}
 		}
 

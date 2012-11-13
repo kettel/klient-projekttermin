@@ -2,8 +2,8 @@ package com.example.klien_projekttermin.database;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.klien_projekttermin.models.MessageModel;
-import com.example.klien_projekttermin.models.ModelInterface;
+import models.MessageModel;
+import models.ModelInterface;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,18 +22,11 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
 	// Contacts tabellnamn
 	private static final String TABLE_MESSAGES = "messages";
 
-<<<<<<< HEAD:klient-projekttermin/src/com/example/klien_projekttermin/database/DatabaseHandlerMessages.java
     // Contacts tabellkolumnnamn
     private static final String KEY_ID = "_id";
     private static final String KEY_MESSAGE_CONTENT = "content";
     private static final String KEY_RECEIVER = "receiver";
-=======
-	// Contacts tabellkolumnnamn
-	private static final String KEY_ID = "id";
-	private static final String KEY_MESSAGE_CONTENT = "content";
-	private static final String KEY_RECEIVER = "receiver";
-	private static final String KEY_SENDER = "sender";
->>>>>>> b746e32984d4f0180b7d9b77a85c85106da9ce2a:klient-projekttermin/src/database/DatabaseHandlerMessages.java
+    private static final String KEY_SENDER = "sender";
 	private static final String KEY_MESSAGE_TIMESTAMP = "timestamp";
 	private static final String KEY_IS_READ = "isRead";
 

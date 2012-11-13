@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import models.Assignment;
+import models.AssignmentStatus;
+import models.Contact;
+import models.MessageModel;
+import models.ModelInterface;
 import net.sqlcipher.database.SQLiteDatabase;
-
-import com.example.klien_projekttermin.models.Assignment;
-import com.example.klien_projekttermin.models.Contact;
-import com.example.klien_projekttermin.models.MessageModel;
-import com.example.klien_projekttermin.models.ModelInterface;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -102,18 +102,24 @@ public class Database {
 			Assignment ass = (Assignment) m;
 
 			ContentValues values = new ContentValues();
-
+			
+			String agents = new String();
+			List<Contact> receivers = ass.getAgents();
+			for (Contact contact : receivers) {
+				agents.concat(contact.getContactName() + "/");
+			}
+			
 			values.put(AssignmentTable.COLUMN_ASSIGNMENTDESCRIPTION,
 					ass.getAssignmentDescription());
 			values.put(AssignmentTable.COLUMN_ASSIGNMENTSTATUS,
-					ass.getAssignmentStatus());
+					ass.getAssignmentStatus().toString());
 			values.put(AssignmentTable.COLUMN_CAMERAIMAGE,
 					bitmapToByteArray(ass.getCameraImage()));
 			values.put(AssignmentTable.COLUMN_LAT, Long.toString(ass.getLat()));
 			values.put(AssignmentTable.COLUMN_LON, Long.toString(ass.getLon()));
 			values.put(AssignmentTable.COLUMN_NAME, ass.getName());
-			values.put(AssignmentTable.COLUMN_RECEIVER, ass.getReceiver());
 			values.put(AssignmentTable.COLUMN_SENDER, ass.getSender());
+			values.put(AssignmentTable.COLUMN_AGENTS, agents);
 			values.put(AssignmentTable.COLUMN_SITENAME, ass.getSiteName());
 			values.put(AssignmentTable.COLUMN_STREETNAME, ass.getStreetName());
 			values.put(AssignmentTable.COLUMN_TIMESPAN, ass.getTimeSpan());
@@ -123,17 +129,8 @@ public class Database {
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			Contact contact = (Contact) m;
 			ContentValues values = new ContentValues();
-			values.put(ContactsTable.COLUMN_CLASSIFICATION,
-					contact.getContactClassification());
-			values.put(ContactsTable.COLUMN_CLEARANCE_LEVEL,
-					contact.getContactClearanceLevel());
-			values.put(ContactsTable.COLUMN_COMMENT,
-					contact.getContactComment());
 			values.put(ContactsTable.COLUMN_CONTACT_NAME,
 					contact.getContactName());
-			values.put(ContactsTable.COLUMN_PH_NO,
-					contact.getContactPhoneNumber());
-			values.put(ContactsTable.COLUMN_EMAIL, contact.getContactEmail());
 
 			Uri contactUri = context.getContentResolver().insert(
 					DatabaseContentProviderContacts.CONTENT_URI, values);
@@ -254,15 +251,29 @@ public class Database {
 					ByteArrayInputStream imageStream = new ByteArrayInputStream(
 							image);
 					Bitmap theImage = BitmapFactory.decodeStream(imageStream);
-
+					// Gör om strängar med agenter på uppdrag till en lista
+					List <Contact> agents = new ArrayList<Contact>();
+					String[] agentArray = cursor.getString(5).split("/");
+					for (String agent : agentArray) {
+						agents.add(new Contact(agent));
+					}
+					
 					Assignment assignment = new Assignment(Long.valueOf(cursor
-							.getString(0)), cursor.getString(1),
-							Long.parseLong(cursor.getString(2)),
-							Long.parseLong(cursor.getString(3)),
-							cursor.getString(4), cursor.getString(5),
-							cursor.getString(6), cursor.getString(7),
-							cursor.getString(8), theImage,
-							cursor.getString(10), cursor.getString(11));
+							.getString(0)), // id från DB
+							cursor.getString(1), // name
+							Long.parseLong(cursor.getString(2)), // lat
+							Long.parseLong(cursor.getString(3)), // lon
+							cursor.getString(4),// region
+							agents, // agents
+							cursor.getString(6), // sender
+							Boolean.parseBoolean(cursor.getString(7)), // isExternalMission
+							cursor.getString(8), // assDesc
+							cursor.getString(9), // timeSpan
+							AssignmentStatus.valueOf(cursor.getString(10)), // assStatus
+							theImage, // cameraImage
+							cursor.getString(12), // streetName
+							cursor.getString(13), // siteName
+							Long.valueOf(cursor.getString(14))); // timeStamp
 
 					returnList.add(assignment);
 				} while (cursor.moveToNext());
@@ -274,11 +285,9 @@ public class Database {
 					Database.KEY_ID + " IS NOT null", null, null);
 			if (cursor.moveToFirst()) {
 				do {
-					Contact contact = new Contact(Long.valueOf(cursor
-							.getString(0)), cursor.getString(1),
-							Long.valueOf(cursor.getString(2)),
-							cursor.getString(3), cursor.getString(4),
-							cursor.getString(5), cursor.getString(6));
+					Contact contact = new Contact(
+	                		Long.valueOf(cursor.getString(0)),
+	                		cursor.getString(1));
 
 					returnList.add(contact);
 				} while (cursor.moveToNext());
@@ -291,11 +300,12 @@ public class Database {
 			// Loopa igenom alla rader och lägg till dem i listan
 			if (cursor.moveToFirst()) {
 				do {
-					MessageModel message = new MessageModel(Long.valueOf(cursor
-							.getString(0)), cursor.getString(1),
-							cursor.getString(2), Long.valueOf(cursor
-									.getString(3)), Boolean.valueOf(cursor
-									.getString(4)));
+					MessageModel message = new MessageModel(Long.valueOf(cursor.getString(0)),
+							cursor.getString(1),
+							cursor.getString(2),
+							cursor.getString(3),
+							Long.valueOf(cursor.getString(4)),
+							Boolean.valueOf(cursor.getString(5)));
 
 					returnList.add(message);
 				} while (cursor.moveToNext());
@@ -324,13 +334,12 @@ public class Database {
 			values.put(AssignmentTable.COLUMN_ASSIGNMENTDESCRIPTION,
 					ass.getAssignmentDescription());
 			values.put(AssignmentTable.COLUMN_ASSIGNMENTSTATUS,
-					ass.getAssignmentStatus());
+					ass.getAssignmentStatus().toString());
 			values.put(AssignmentTable.COLUMN_CAMERAIMAGE,
 					bitmapToByteArray(ass.getCameraImage()));
 			values.put(AssignmentTable.COLUMN_LAT, Long.toString(ass.getLat()));
 			values.put(AssignmentTable.COLUMN_LON, Long.toString(ass.getLon()));
 			values.put(AssignmentTable.COLUMN_NAME, ass.getName());
-			values.put(AssignmentTable.COLUMN_RECEIVER, ass.getReceiver());
 			values.put(AssignmentTable.COLUMN_SENDER, ass.getSender());
 			values.put(AssignmentTable.COLUMN_SITENAME, ass.getSiteName());
 			values.put(AssignmentTable.COLUMN_STREETNAME, ass.getStreetName());
@@ -342,15 +351,7 @@ public class Database {
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			Contact contact = (Contact) m;
 			ContentValues values = new ContentValues();
-			values.put(ContactsTable.COLUMN_CLASSIFICATION,
-					contact.getContactClassification());
-			values.put(ContactsTable.COLUMN_CLEARANCE_LEVEL,
-					contact.getContactClearanceLevel());
-			values.put(ContactsTable.COLUMN_COMMENT,
-					contact.getContactComment());
-			values.put(ContactsTable.COLUMN_CONTACT_NAME,
-					contact.getContactEmail());
-			values.put(ContactsTable.COLUMN_PH_NO, contact.getContactEmail());
+			values.put(ContactsTable.COLUMN_CONTACT_NAME, contact.getContactName());
 
 			updated = context.getContentResolver().update(
 					DatabaseContentProviderContacts.CONTENT_URI, values,

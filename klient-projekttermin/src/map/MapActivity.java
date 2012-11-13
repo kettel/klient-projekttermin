@@ -38,6 +38,7 @@ import android.widget.ProgressBar;
 import android.widget.ZoomControls;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.Database;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
 import com.nutiteq.components.KmlPlace;
@@ -59,7 +60,6 @@ import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
 
-import database.Database;
 
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för

@@ -23,9 +23,6 @@ public class Assignment implements ModelInterface {
 	private long lon;
 	// JSON-sträng med WSG-punkter för polygonmarkering av region på kartan
 	private String region;
-	// Användarnamnet på mottagaren för ett uppdrag (Om man vill specificera
-	// det)
-	private String receiver;
 	// Användarnamnet på den person som skapade uppdraget.
 	private String sender;
 	// Om uppdraget ska skickas till externa aktörer
@@ -57,9 +54,36 @@ public class Assignment implements ModelInterface {
 
 	/**
 	 * Konstruktor för att skapa ett uppdrag utan kartmarkering utan bild
+	 * med bara en adress (ej siteName)
 	 * 
 	 * @param name
-	 * @param receiver
+	 * @param sender
+	 * @param externalMission
+	 * @param agents
+	 * @param assignmentDescription
+	 * @param timeSpan
+	 * @param assignmentStatus
+	 * @param cameraImage
+	 * @param streetName
+	 */
+	public Assignment(String name, String sender,
+			boolean externalMission, String assignmentDescription,
+			String timeSpan, AssignmentStatus assignmentStatus,
+			String streetName) {
+		this.name = name;
+		this.sender = sender;
+		this.externalMission = externalMission;
+		this.assignmentDescription = assignmentDescription;
+		this.timeSpan = timeSpan;
+		this.assignmentStatus = assignmentStatus;
+		this.streetName = streetName;
+		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
+	}
+	
+	/**
+	 * Konstruktor för att skapa ett uppdrag utan kartmarkering utan bild
+	 * 
+	 * @param name
 	 * @param sender
 	 * @param externalMission
 	 * @param agents
@@ -70,12 +94,11 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, String receiver, String sender,
+	public Assignment(String name, String sender,
 			boolean externalMission, String assignmentDescription,
 			String timeSpan, AssignmentStatus assignmentStatus,
 			String streetName, String siteName) {
 		this.name = name;
-		this.receiver = receiver;
 		this.sender = sender;
 		this.externalMission = externalMission;
 		this.assignmentDescription = assignmentDescription;
@@ -90,7 +113,6 @@ public class Assignment implements ModelInterface {
 	 * Konstruktor för att skapa ett uppdrag utan kartmarkering med bild
 	 * 
 	 * @param name
-	 * @param receiver
 	 * @param sender
 	 * @param externalMission
 	 * @param assignmentDescription
@@ -100,12 +122,11 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, String receiver, String sender,
+	public Assignment(String name, String sender,
 			boolean externalMission, String assignmentDescription,
 			String timeSpan, AssignmentStatus assignmentStatus,
 			Bitmap cameraImage, String streetName, String siteName) {
 		this.name = name;
-		this.receiver = receiver;
 		this.sender = sender;
 		this.externalMission = externalMission;
 		this.assignmentDescription = assignmentDescription;
@@ -124,7 +145,6 @@ public class Assignment implements ModelInterface {
 	 * @param name
 	 * @param lat
 	 * @param lon
-	 * @param receiver
 	 * @param sender
 	 * @param externalMission
 	 * @param assignmentDescription
@@ -133,7 +153,7 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, long lat, long lon, String receiver,
+	public Assignment(String name, long lat, long lon, 
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
 			AssignmentStatus assignmentStatus, String streetName,
@@ -141,7 +161,6 @@ public class Assignment implements ModelInterface {
 		this.name = name;
 		this.lat = lat;
 		this.lon = lon;
-		this.receiver = receiver;
 		this.sender = sender;
 		this.externalMission = externalMission;
 		this.assignmentDescription = assignmentDescription;
@@ -158,7 +177,6 @@ public class Assignment implements ModelInterface {
 	 * @param name
 	 * @param lat
 	 * @param lon
-	 * @param receiver
 	 * @param sender
 	 * @param externalMission
 	 * @param assignmentDescription
@@ -168,7 +186,7 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, long lat, long lon, String receiver,
+	public Assignment(String name, long lat, long lon, 
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
 			AssignmentStatus assignmentStatus, Bitmap cameraImage,
@@ -176,7 +194,6 @@ public class Assignment implements ModelInterface {
 		this.name = name;
 		this.lat = lat;
 		this.lon = lon;
-		this.receiver = receiver;
 		this.sender = sender;
 		this.externalMission = externalMission;
 		this.assignmentDescription = assignmentDescription;
@@ -193,7 +210,6 @@ public class Assignment implements ModelInterface {
 	 * 
 	 * @param name
 	 * @param region
-	 * @param receiver
 	 * @param sender
 	 * @param externalMission
 	 * @param assignmentDescription
@@ -202,14 +218,13 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, String region, String receiver,
+	public Assignment(String name, String region, 
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
 			AssignmentStatus assignmentStatus, String streetName,
 			String siteName) {
 		this.name = name;
 		this.region = region;
-		this.receiver = receiver;
 		this.sender = sender;
 		this.externalMission = externalMission;
 		this.assignmentDescription = assignmentDescription;
@@ -225,7 +240,6 @@ public class Assignment implements ModelInterface {
 	 * 
 	 * @param name
 	 * @param region
-	 * @param receiver
 	 * @param sender
 	 * @param externalMission
 	 * @param assignmentDescription
@@ -235,14 +249,13 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, String region, String receiver,
+	public Assignment(String name, String region, 
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
 			AssignmentStatus assignmentStatus, Bitmap cameraImage,
 			String streetName, String siteName) {
 		this.name = name;
 		this.region = region;
-		this.receiver = receiver;
 		this.sender = sender;
 		this.externalMission = externalMission;
 		this.assignmentDescription = assignmentDescription;
@@ -263,7 +276,6 @@ public class Assignment implements ModelInterface {
 	 * @param lat
 	 * @param lon
 	 * @param region
-	 * @param receiver
 	 * @param sender
 	 * @param externalMission
 	 * @param assignmentDescription
@@ -274,16 +286,17 @@ public class Assignment implements ModelInterface {
 	 * @param siteName
 	 */
 	public Assignment(long id, String name, long lat, long lon, String region,
-			String receiver, String sender, boolean externalMission,
+			List<Contact> agents,
+			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
 			AssignmentStatus assignmentStatus, Bitmap cameraImage,
-			String streetName, String siteName) {
+			String streetName, String siteName, Long timeStamp) {
 		this.id = id;
 		this.name = name;
 		this.lat = lat;
 		this.lon = lon;
 		this.region = region;
-		this.receiver = receiver;
+		this.agents = agents;
 		this.sender = sender;
 		this.externalMission = externalMission;
 		this.assignmentDescription = assignmentDescription;
@@ -292,7 +305,7 @@ public class Assignment implements ModelInterface {
 		this.cameraImage = cameraImage;
 		this.streetName = streetName;
 		this.siteName = siteName;
-		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
+		this.assignmentTimeStamp = timeStamp;
 	}
 
 	public String getRegion() {
@@ -327,15 +340,16 @@ public class Assignment implements ModelInterface {
 		return lon;
 	}
 
-	public String getReceiver() {
-		return receiver;
-	}
-
 	public String getSender() {
 		return sender;
 	}
 
 	public Bitmap getCameraImage() {
+		// Om bilden är null och den ska hämtas...
+		if (cameraImage == null){
+			Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+			cameraImage = Bitmap.createBitmap(100, 100, conf);
+		}
 		return cameraImage;
 	}
 

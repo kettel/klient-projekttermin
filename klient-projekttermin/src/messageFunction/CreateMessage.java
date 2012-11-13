@@ -3,10 +3,11 @@ package messageFunction;
 import java.util.List;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.Database;
+
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-import database.Database;
 
 import models.MessageModel;
 import models.ModelInterface;
@@ -40,7 +41,7 @@ public class CreateMessage extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.menu.activity_create_new_message);
+		setContentView(R.layout.activity_create_new_message);
 		dataBase = new Database();
 
 		Bundle extras = getIntent().getExtras();
