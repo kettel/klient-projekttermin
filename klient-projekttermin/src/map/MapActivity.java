@@ -100,7 +100,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private LocationManager manager;
 	private MenuItem gpsFollowItem;
 	private MapManager mm = new MapManager();
-	private static String[] regionAlts = { "Ta bort polygon" , "Skapa uppdrag med polygon" };
+	private static String[] regionAlts = { "Ta bort region" , "Skapa uppdrag med region" };
 	private boolean onRetainCalled;
 
 	@Override
