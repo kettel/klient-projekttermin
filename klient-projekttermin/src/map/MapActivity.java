@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.json.me.JSONString;
-
 import models.Assignment;
 import models.ModelInterface;
 import routing.MapManager;
@@ -17,8 +15,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -41,11 +37,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ZoomControls;
 import assignment.AddAssignment;
-import assignment.AssignmentOverview;
 
 import com.example.klien_projekttermin.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
 import com.nutiteq.components.KmlPlace;
@@ -107,6 +100,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private MenuItem gpsFollowItem;
 	private MapManager mm = new MapManager();
 	private static String[] regionAlts = { "Ta bort polygon" , "Skapa uppdrag med polygon" };
+	private boolean onRetainCalled;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -165,6 +159,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		 * GPS:en ska vara påslagen vid start
 		 */
 		this.activateGPS(gpsOnOff);
+		onRetainCalled = false;
 	}
 
 	private void buildAlertMessageNoGps() {
@@ -265,7 +260,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				MenuInflater inflater = getMenuInflater();
 				inflater.inflate(R.menu.menu, m);
 				gpsFollowItem = m.findItem(R.id.menu_deactivate_gps);
-				gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
+				gpsFollowItem.setEnabled(manager
+						.isProviderEnabled(LocationManager.GPS_PROVIDER));
 				gpsFollowItem
 						.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 							public boolean onMenuItemClick(MenuItem item) {
@@ -342,14 +338,14 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		if (gpsFollowItem!=null) {
 			System.out.println("gps");
 			runOnUiThread(new Runnable() {
-				
+
 				public void run() {
 					// TODO Auto-generated method stu
-					System.out.println(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
-					gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));	
+					gpsFollowItem.setEnabled(manager
+							.isProviderEnabled(LocationManager.GPS_PROVIDER));
 				}
 			});
-			
+
 		}
 	}
 
@@ -594,6 +590,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	public void elementClicked(OnMapElement arg0) {
 	}
 
+	/**
+	 * Kollar om det är en man har
+	 */
 	public void elementEntered(OnMapElement arg0) {
 		if (arg0 instanceof Polygon) {
 			regionChoice(arg0);
@@ -603,8 +602,30 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void elementLeft(OnMapElement arg0) {
 	}
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		onRetainCalled = true;
+		return mapComponent;
+	}
+	
 
-//	public String toJSONString() {
-//		return null;
-//	}
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if (!onRetainCalled) {
+			mapComponent.stopMapping();
+			mapComponent = null;
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		if (!onRetainCalled) {
+			mapComponent.stopMapping();
+			mapComponent = null;
+		}
+	}
 }
