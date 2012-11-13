@@ -5,8 +5,8 @@
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- User permissions -->
     <user-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Features -->
@@ -17,7 +17,7 @@
         android:targetSdkVersion="15" />
 
     <application
-        android:icon="@drawable/loggakrona"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -36,19 +36,23 @@
         </activity>
         <activity
             android:name="messageFunction.CreateMessage"
-            android:label="@string/title_activity_create_new_message" >
+            android:label="title_activity_create_new_message" >
         </activity>
         <activity
             android:name="messageFunction.StartsidaMeddelanden"
-            android:label="@string/title_activity_startsida_meddelanden" >
+            android:label="startsida" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
+<<<<<<< HEAD
             android:label="@string/title_activity_inbox" >
+=======
+            android:label="inbox" >
+>>>>>>> b746e32984d4f0180b7d9b77a85c85106da9ce2a
         </activity>
         <activity
             android:name="camera.Camera"
-            android:label="@string/title_activity_camera" >
+            android:label="Camera" >
         </activity>
         <activity
             android:name="logger.LogViewer"
@@ -57,17 +61,31 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
-        <activity
-            android:name="messageFunction.DisplayOfConversation"
-            android:label="@string/title_activity_display_of_conversation" >
+        <activity 
+            android:name="assignment.AssignmentOverview"
+            android:label="HEJ" >
         </activity>
         <activity
             android:name="messageFunction.DisplayMessage"
-            android:label="@string/title_activity_message_view" >
+            android:label="display" >
         </activity>
+<<<<<<< HEAD
 
+=======
+        <activity android:name="assignment.AssignmentOverview" >
+        </activity>
+        
+        <activity android:name="assignment.AddAssignment" >
+        </activity>
+        <activity android:name="assignment.Uppdrag" >
+        </activity>
+>>>>>>> b746e32984d4f0180b7d9b77a85c85106da9ce2a
         <service android:name="communicationModule.CommunicationService" >
         </service>
     </application>
 
+<<<<<<< HEAD
 </manifest>
+=======
+</manifest>
+>>>>>>> b746e32984d4f0180b7d9b77a85c85106da9ce2a

@@ -40,7 +40,7 @@ public class CreateMessage extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_create_new_message);
+		setContentView(R.menu.activity_create_new_message);
 		dataBase = new Database();
 
 		Bundle extras = getIntent().getExtras();
