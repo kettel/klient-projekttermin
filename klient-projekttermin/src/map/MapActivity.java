@@ -17,6 +17,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -75,7 +77,7 @@ import database.Database;
  * 
  */
 public class MapActivity extends Activity implements Observer, MapListener,
-		Runnable, OnItemClickListener, OnMapElementListener{
+		Runnable, OnItemClickListener, OnMapElementListener {
 
 	private BasicMapComponent mapComponent;
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
@@ -102,6 +104,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private ProgressBar sp;
 	private Button clearSearch;
 	private LocationManager manager;
+	private MenuItem gpsFollowItem;
 	private MapManager mm = new MapManager();
 	private static String[] regionAlts = { "Ta bort polygon" , "Skapa uppdrag med polygon" };
 
@@ -114,7 +117,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		this.manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		this.locationSource = new AndroidGPSProvider(manager, 1000L);
 		this.setContentView(R.layout.activity_map);
-
+		/**
+		 * Kollar om gps är aktiverat
+		 */
 		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			buildAlertMessageNoGps();
 		}
@@ -169,9 +174,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				.setCancelable(false)
 				.setPositiveButton("Yes",
 						new DialogInterface.OnClickListener() {
-							public void onClick(
-									@SuppressWarnings("unused") final DialogInterface dialog,
-									@SuppressWarnings("unused") final int id) {
+							public void onClick(final DialogInterface dialog,
+									final int id) {
 								startActivity(new Intent(
 										Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 							}
@@ -179,6 +183,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
 					public void onClick(final DialogInterface dialog,
 							@SuppressWarnings("unused") final int id) {
+							final int id) {
 						dialog.cancel();
 					}
 				});
@@ -259,13 +264,15 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			public void run() {
 				MenuInflater inflater = getMenuInflater();
 				inflater.inflate(R.menu.menu, m);
-				MenuItem item = m.findItem(R.id.menu_deactivate_gps);
-				item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-					public boolean onMenuItemClick(MenuItem item) {
-						return gpsStatus(item);
-					}
-				});
-				item = m.findItem(R.id.menu_add_region);
+				gpsFollowItem = m.findItem(R.id.menu_deactivate_gps);
+				gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
+				gpsFollowItem
+						.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+							public boolean onMenuItemClick(MenuItem item) {
+								return gpsStatus(item);
+							}
+						});
+				MenuItem item = m.findItem(R.id.menu_add_region);
 				item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
 						return changeAddRegionMode(item);
@@ -325,6 +332,24 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		sm = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		lv.setAdapter(sm);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if (gpsFollowItem!=null) {
+			System.out.println("gps");
+			runOnUiThread(new Runnable() {
+				
+				public void run() {
+					// TODO Auto-generated method stu
+					System.out.println(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
+					gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));	
+				}
+			});
+			
+		}
 	}
 
 	@Override
@@ -556,6 +581,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		});
 		dialog.show();
 		
+	public void elementClicked(OnMapElement arg0) {
 	}
 	
 	public void createAssignmentFromRegion(OnMapElement arg){
