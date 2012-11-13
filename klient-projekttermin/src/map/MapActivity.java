@@ -616,13 +616,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		onRetainCalled = true;
 		return mapComponent;
 	}
-	
-
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		onRetainCalled = true;
-		return mapComponent;
-	}
 
 	@Override
 	protected void onPause() {
