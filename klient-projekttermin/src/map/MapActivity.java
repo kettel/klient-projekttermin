@@ -15,8 +15,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -39,11 +37,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ZoomControls;
 import assignment.AddAssignment;
-import assignment.AssignmentOverview;
 
 import com.example.klien_projekttermin.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
 import com.nutiteq.components.KmlPlace;
@@ -106,6 +101,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private MenuItem gpsFollowItem;
 	private MapManager mm = new MapManager();
 	private static String[] regionAlts = { "Ta bort polygon" , "Skapa uppdrag med polygon" };
+	private boolean onRetainCalled;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -164,6 +160,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		 * GPS:en ska vara påslagen vid start
 		 */
 		this.activateGPS(gpsOnOff);
+		onRetainCalled = false;
 	}
 
 	private void buildAlertMessageNoGps() {
@@ -190,36 +187,44 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 
 	private void haveNetworkConnection() {
-	    boolean haveConnectedWifi = false;
-	    boolean haveConnectedMobile = false;
+		boolean haveConnectedWifi = false;
+		boolean haveConnectedMobile = false;
 
-	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-	    for (NetworkInfo ni : netInfo) {
-	        if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-	            if (ni.isConnected())
-	                haveConnectedWifi = true;
-	        if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-	            if (ni.isConnected())
-	                haveConnectedMobile = true;
-	    }
-	    if(!haveConnectedWifi && !haveConnectedMobile){
-	    	 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	 	    builder.setMessage("No network connection enabled, do you want to enable it?")
-	 	    .setCancelable(false)
-	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                   startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
-	               }
-	           })
-	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	               public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                    dialog.cancel();
-	               }
-	           });
-	 	    final AlertDialog alert = builder.create();
-	 	    alert.show();
-	    }
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+		for (NetworkInfo ni : netInfo) {
+			if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+				if (ni.isConnected())
+					haveConnectedWifi = true;
+			if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+				if (ni.isConnected())
+					haveConnectedMobile = true;
+		}
+		if (!haveConnectedWifi && !haveConnectedMobile) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(
+					"No network connection enabled, do you want to enable it?")
+					.setCancelable(false)
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+								public void onClick(
+										@SuppressWarnings("unused") final DialogInterface dialog,
+										@SuppressWarnings("unused") final int id) {
+									startActivity(new Intent(
+											Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
+								}
+							})
+					.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+								public void onClick(
+										final DialogInterface dialog,
+										@SuppressWarnings("unused") final int id) {
+									dialog.cancel();
+								}
+							});
+			final AlertDialog alert = builder.create();
+			alert.show();
+		}
 	}
 
 	/**
@@ -263,7 +268,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				MenuInflater inflater = getMenuInflater();
 				inflater.inflate(R.menu.menu, m);
 				gpsFollowItem = m.findItem(R.id.menu_deactivate_gps);
-				gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
+				gpsFollowItem.setEnabled(manager
+						.isProviderEnabled(LocationManager.GPS_PROVIDER));
 				gpsFollowItem
 						.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 							public boolean onMenuItemClick(MenuItem item) {
@@ -338,16 +344,15 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		super.onResume();
 		getDatabaseInformation();
 		if (gpsFollowItem!=null) {
-			System.out.println("gps");
 			runOnUiThread(new Runnable() {
-				
+
 				public void run() {
 					// TODO Auto-generated method stu
-					System.out.println(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
-					gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));	
+					gpsFollowItem.setEnabled(manager
+							.isProviderEnabled(LocationManager.GPS_PROVIDER));
 				}
 			});
-			
+
 		}
 	}
 
@@ -532,9 +537,11 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					centerMapOnLocation(choice);
 					break;
 				case 2:
-					double[] coords = {searchSuggestions.getList().get(arg2)
-						.getPlace().getWgs().getLat(), searchSuggestions
-						.getList().get(arg2).getPlace().getWgs().getLon()};
+					double[] coords = {
+							searchSuggestions.getList().get(arg2).getPlace()
+									.getWgs().getLat(),
+							searchSuggestions.getList().get(arg2).getPlace()
+									.getWgs().getLon() };
 					createAssignment(coords);
 					break;
 				default:
@@ -550,15 +557,15 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		intent.putExtra(coordinates, coords);
 		MapActivity.this.startActivity(intent);
 	}
-	
-	public void regionChoice(OnMapElement arg){
+
+	public void regionChoice(OnMapElement arg) {
 		final OnMapElement argument = arg;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Regions val");
 		ListView modeList = new ListView(this);
 		CustomAdapter modeAdapter = new CustomAdapter(this,
 				android.R.layout.simple_list_item_1, android.R.id.text1,
-				regionAlts );
+				regionAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
@@ -592,6 +599,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	public void elementClicked(OnMapElement arg0) {
 	}
 
+	/**
+	 * Kollar om det är en man har
+	 */
 	public void elementEntered(OnMapElement arg0) {
 		if (arg0 instanceof Polygon) {
 			regionChoice(arg0);
@@ -600,5 +610,30 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 
 	public void elementLeft(OnMapElement arg0) {
+	}
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		onRetainCalled = true;
+		return mapComponent;
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if (!onRetainCalled) {
+			mapComponent.stopMapping();
+			mapComponent = null;
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		if (!onRetainCalled) {
+			mapComponent.stopMapping();
+			mapComponent = null;
+		}
 	}
 }
