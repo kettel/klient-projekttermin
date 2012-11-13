@@ -37,8 +37,8 @@
             android:label="title_activity_create_new_message" >
         </activity>
         <activity
-            android:name="messageFunction.StartsidaMeddelanden"
-            android:label="startsida" >
+            android:name="messageFunction.DisplayOfConversation"
+            android:label="DisplayOfConversation" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
@@ -55,21 +55,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
-        <activity 
-            android:name="assignment.AssignmentOverview"
-            android:label="HEJ" >
-        </activity>
-        <activity
-            android:name="messageFunction.DisplayMessage"
-            android:label="display" >
-        </activity>
         <activity android:name="assignment.AssignmentOverview" >
         </activity>
-        
         <activity android:name="assignment.AddAssignment" >
         </activity>
         <activity android:name="assignment.Uppdrag" >
         </activity>
+
         <service android:name="communicationModule.CommunicationService" >
         </service>
     </application>
