@@ -15,6 +15,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -69,7 +71,7 @@ import database.Database;
  * 
  */
 public class MapActivity extends Activity implements Observer, MapListener,
-		Runnable, OnItemClickListener,OnMapElementListener {
+		Runnable, OnItemClickListener, OnMapElementListener {
 
 	private BasicMapComponent mapComponent;
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
@@ -94,6 +96,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private ProgressBar sp;
 	private Button clearSearch;
 	private LocationManager manager;
+	private MenuItem gpsFollowItem;
 	private MapManager mm = new MapManager();
 
 	@Override
@@ -105,7 +108,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		this.manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		this.locationSource = new AndroidGPSProvider(manager, 1000L);
 		this.setContentView(R.layout.activity_map);
-
+		/**
+		 * Kollar om gps är aktiverat
+		 */
 		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			buildAlertMessageNoGps();
 		}
@@ -154,57 +159,69 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	}
 
 	private void buildAlertMessageNoGps() {
-	    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-	           .setCancelable(false)
-	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                   startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-	               }
-	           })
-	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	               public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                    dialog.cancel();
-	               }
-	           });
-	    final AlertDialog alert = builder.create();
-	    alert.show();
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(
+				"Your GPS seems to be disabled, do you want to enable it?")
+				.setCancelable(false)
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(final DialogInterface dialog,
+									final int id) {
+								startActivity(new Intent(
+										Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+							}
+						})
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(final DialogInterface dialog,
+							final int id) {
+						dialog.cancel();
+					}
+				});
+		final AlertDialog alert = builder.create();
+		alert.show();
 	}
-	
-	private void haveNetworkConnection() {
-	    boolean haveConnectedWifi = false;
-	    boolean haveConnectedMobile = false;
 
-	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-	    for (NetworkInfo ni : netInfo) {
-	        if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-	            if (ni.isConnected())
-	                haveConnectedWifi = true;
-	        if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-	            if (ni.isConnected())
-	                haveConnectedMobile = true;
-	    }
-	    if(!haveConnectedWifi && !haveConnectedMobile){
-	    	 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	 	    builder.setMessage("No network connection enabled, do you want to enable it?")
-	 	    .setCancelable(false)
-	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	               public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                   startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
-	               }
-	           })
-	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	               public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-	                    dialog.cancel();
-	               }
-	           });
-	 	    final AlertDialog alert = builder.create();
-	 	    alert.show();
-	    }
-	    else {
-	    	System.out.println("HEJ");
-	    }
+	private void haveNetworkConnection() {
+		boolean haveConnectedWifi = false;
+		boolean haveConnectedMobile = false;
+
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+		for (NetworkInfo ni : netInfo) {
+			if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+				if (ni.isConnected())
+					haveConnectedWifi = true;
+			if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+				if (ni.isConnected())
+					haveConnectedMobile = true;
+		}
+		if (!haveConnectedWifi && !haveConnectedMobile) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(
+					"No network connection enabled, do you want to enable it?")
+					.setCancelable(false)
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+								public void onClick(
+										@SuppressWarnings("unused") final DialogInterface dialog,
+										@SuppressWarnings("unused") final int id) {
+									startActivity(new Intent(
+											Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
+								}
+							})
+					.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+								public void onClick(
+										final DialogInterface dialog,
+										@SuppressWarnings("unused") final int id) {
+									dialog.cancel();
+								}
+							});
+			final AlertDialog alert = builder.create();
+			alert.show();
+		} else {
+			System.out.println("Har internet anslutning");
+		}
 	}
 
 	/**
@@ -237,7 +254,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			mapComponent.setLocationSource(null);
 		}
 	}
-	
+
 	/**
 	 * Skapa meny i actionbar
 	 */
@@ -247,13 +264,15 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			public void run() {
 				MenuInflater inflater = getMenuInflater();
 				inflater.inflate(R.menu.menu, m);
-				MenuItem item = m.findItem(R.id.menu_deactivate_gps);
-				item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-					public boolean onMenuItemClick(MenuItem item) {
-						return gpsStatus(item);
-					}
-				});
-				item = m.findItem(R.id.menu_add_region);
+				gpsFollowItem = m.findItem(R.id.menu_deactivate_gps);
+				gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
+				gpsFollowItem
+						.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+							public boolean onMenuItemClick(MenuItem item) {
+								return gpsStatus(item);
+							}
+						});
+				MenuItem item = m.findItem(R.id.menu_add_region);
 				item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
 						return changeAddRegionMode(item);
@@ -288,7 +307,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					new Thread(new Runnable() {
 
 						public void run() {
-							searchSuggestions.updateSearch(temp,locationSource.getLocation());
+							searchSuggestions.updateSearch(temp,
+									locationSource.getLocation());
 						}
 					}).start();
 				} else {
@@ -313,6 +333,24 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		sm = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		lv.setAdapter(sm);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if (gpsFollowItem!=null) {
+			System.out.println("gps");
+			runOnUiThread(new Runnable() {
+				
+				public void run() {
+					// TODO Auto-generated method stu
+					System.out.println(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));
+					gpsFollowItem.setEnabled(manager.isProviderEnabled( LocationManager.GPS_PROVIDER));	
+				}
+			});
+			
+		}
 	}
 
 	@Override
@@ -477,7 +515,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				android.R.layout.simple_list_item_1, android.R.id.text1,
 				searchAlts);
 		modeList.setAdapter(modeAdapter);
-		if (this.locationSource.getLocation()==null) {
+		if (this.locationSource.getLocation() == null) {
 			modeAdapter.navigationToggle();
 		}
 		builder.setView(modeList);
@@ -508,7 +546,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void elementClicked(OnMapElement arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void elementEntered(OnMapElement arg0) {
@@ -516,7 +554,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		if (arg0 instanceof Polygon) {
 			mapComponent.removePolygon(((Polygon) arg0));
 		}
-		
+
 	}
 
 	public void elementLeft(OnMapElement arg0) {
