@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.databaseProviderFaster;
+package com.example.klien_projekttermin.databaseProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

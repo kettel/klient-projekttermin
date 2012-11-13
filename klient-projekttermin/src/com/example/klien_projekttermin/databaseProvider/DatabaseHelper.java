@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.databaseProviderFaster;
+package com.example.klien_projekttermin.databaseProvider;
 
 import android.content.Context;
 import net.sqlcipher.database.SQLiteDatabase;

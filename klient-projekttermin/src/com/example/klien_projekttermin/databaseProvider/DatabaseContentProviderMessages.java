@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.databaseProviderFaster;
+package com.example.klien_projekttermin.databaseProvider;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
