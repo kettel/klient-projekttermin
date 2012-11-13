@@ -626,14 +626,4 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			mapComponent = null;
 		}
 	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
-		if (!onRetainCalled) {
-			mapComponent.stopMapping();
-			mapComponent = null;
-		}
-	}
 }
