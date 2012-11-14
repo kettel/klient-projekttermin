@@ -1,10 +1,8 @@
 package assignment;
 
 import java.lang.reflect.Type;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import map.MapActivity;
 import models.Assignment;
@@ -18,7 +16,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -48,9 +46,7 @@ public class AddAssignment extends ListActivity {
 	private EditText assignmentCoord;
 	private String json;
 	private String coordinates;
-	private String[] from = { "line1"};
-	private int[] to = { R.id.editText1};
-	private List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+	private ArrayList<String> data = new ArrayList<String>();
 	private String[] dataString = { "Name", "coord", "Uppdragsbeskrivning",
 			"uppskattadtid", "gatuadress", "uppdragsplats" };
 	private MenuItem saveItem;
@@ -59,16 +55,16 @@ public class AddAssignment extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.activity_add_assignment);
-		addContent();
-		SimpleEditTextItemAdapter adapter = new SimpleEditTextItemAdapter(this,
-				data, R.layout.textfield_item, from, to);
+
+		setContentView(R.layout.activity_add_assignment);		
+		ArrayAdapter<String> adapter= new SimpleEditTextItemAdapter(this,R.layout.textfield_item);
+		adapter.addAll(data);
 		setListAdapter(adapter);
 		Intent intent = getIntent();
 		json = intent.getStringExtra(MapActivity.coordinates);
 		Gson gson = new Gson();
-		Type type = new TypeToken<WgsPoint[]>() {}.getType();
+		Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
 		WgsPoint[] co = gson.fromJson(json, type);
 		setContentView(R.layout.activity_add_assignment);
 
@@ -80,48 +76,8 @@ public class AddAssignment extends ListActivity {
 			sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
 		}
 
-
 		db = new Database();
 	}
-
-	private void addContent() {
-		data.clear();
-		for (String s : dataString) {
-			HashMap<String, String> temp = new HashMap<String, String>();
-			temp.put("line1", s);
-			data.add(temp);
-		}
-	}
-
-	/**
-	 * L�gger till lyssnare till "add-uppdrag-knappen".
-	 * 
-	 * @param button
-	 */
-	public void setButtonClickListnerAddAssignment(Button button) {
-
-		// Skapar en humbug-bitmap.
-		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-		final Bitmap fakeImage = Bitmap.createBitmap(100, 100, conf);
-
-		// Lyssnar efter klick.
-		button.setOnClickListener(new View.OnClickListener() {
-
-			public void onClick(View v) {
-				communicationService.setContext(getApplicationContext());
-
-				if (!assignmentName.getText().toString().equals("")) {
-					Assignment newAssignment = new Assignment("niko", json, "self", false, "HEJ", "12", AssignmentStatus.NEED_HELP, null, "HEJ", "HEJ"); 
-					db.addToDB(newAssignment, getApplicationContext());
-					communicationService.sendAssignment(newAssignment);
-				}
-
-				// Stänger aktiviteten.
-				finish();
-			}
-		});
-	}
-
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
 
 		public void onServiceDisconnected(ComponentName arg0) {
@@ -136,11 +92,12 @@ public class AddAssignment extends ListActivity {
 		}
 
 	};
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_add_assignment, menu);
-		this.saveItem=menu.findItem(R.id.save);
-		this.cancelItem=menu.findItem(R.id.cancel);
+		this.saveItem = menu.findItem(R.id.save);
+		this.cancelItem = menu.findItem(R.id.cancel);
 		return true;
 	}
 
@@ -148,12 +105,31 @@ public class AddAssignment extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		if (item.equals(saveItem)) {
-			
-		}else if (item.equals(cancelItem)) {
+			saveToDB();
+		} else if (item.equals(cancelItem)) {
 			finish();
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-}
 
+	private void saveToDB() {
+		// Skapar en humbug-bitmap.
+		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+		final Bitmap fakeImage = Bitmap.createBitmap(100, 100, conf);
+
+		communicationService.setContext(getApplicationContext());
+
+		if (!assignmentName.getText().toString().equals("")) {
+			Assignment newAssignment = new Assignment("niko", json, "self",
+					false, "HEJ", "12", AssignmentStatus.NEED_HELP, null,
+					"HEJ", "HEJ");
+			db.addToDB(newAssignment, getApplicationContext());
+			communicationService.sendAssignment(newAssignment);
+		}
+
+		// Stänger aktiviteten.
+		finish();
+
+	}
+
+}
