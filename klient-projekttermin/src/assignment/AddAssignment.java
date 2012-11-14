@@ -48,8 +48,8 @@ public class AddAssignment extends ListActivity {
 	private EditText assignmentCoord;
 	private String json;
 	private String coordinates;
-	private String[] from = { "line1"};
-	private int[] to = { R.id.editText1};
+	private String[] from = { "line1" };
+	private int[] to = { R.id.editText1 };
 	private List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Name", "coord", "Uppdragsbeskrivning",
 			"uppskattadtid", "gatuadress", "uppdragsplats" };
@@ -59,29 +59,38 @@ public class AddAssignment extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_add_assignment);
 		addContent();
 		SimpleEditTextItemAdapter adapter = new SimpleEditTextItemAdapter(this,
 				data, R.layout.textfield_item, from, to);
 		setListAdapter(adapter);
+		int callingActivity = getIntent().getIntExtra("calling-activity", 0);
+
+		switch (callingActivity) {
+		case ActivityConstants.MAP_ACTIVITY:
+			fromMap();
+			break;
+		case ActivityConstants.MAIN_ACTIVITY:
+			// Activity2 is started from Activity3
+			break;
+		}
+		setContentView(R.layout.activity_add_assignment);
+		db = new Database();
+	}
+	
+	private void fromMap(){
 		Intent intent = getIntent();
 		json = intent.getStringExtra(MapActivity.coordinates);
 		Gson gson = new Gson();
-		Type type = new TypeToken<WgsPoint[]>() {}.getType();
+		Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
 		WgsPoint[] co = gson.fromJson(json, type);
-		setContentView(R.layout.activity_add_assignment);
-
-		/**
-		 * Lägg till detta i koordinat fältet
-		 */
 		StringBuilder sb = new StringBuilder();
 		for (WgsPoint wgsPoint : co) {
 			sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
 		}
-
-
-		db = new Database();
+		
 	}
 
 	private void addContent() {
@@ -111,7 +120,9 @@ public class AddAssignment extends ListActivity {
 				communicationService.setContext(getApplicationContext());
 
 				if (!assignmentName.getText().toString().equals("")) {
-					Assignment newAssignment = new Assignment("niko", json, "self", false, "HEJ", "12", AssignmentStatus.NEED_HELP, null, "HEJ", "HEJ"); 
+					Assignment newAssignment = new Assignment("niko", json,
+							"self", false, "HEJ", "12",
+							AssignmentStatus.NEED_HELP, null, "HEJ", "HEJ");
 					db.addToDB(newAssignment, getApplicationContext());
 					communicationService.sendAssignment(newAssignment);
 				}
@@ -136,11 +147,12 @@ public class AddAssignment extends ListActivity {
 		}
 
 	};
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_add_assignment, menu);
-		this.saveItem=menu.findItem(R.id.save);
-		this.cancelItem=menu.findItem(R.id.cancel);
+		this.saveItem = menu.findItem(R.id.save);
+		this.cancelItem = menu.findItem(R.id.cancel);
 		return true;
 	}
 
@@ -148,12 +160,11 @@ public class AddAssignment extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		if (item.equals(saveItem)) {
-			
-		}else if (item.equals(cancelItem)) {
+
+		} else if (item.equals(cancelItem)) {
 			finish();
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-}
 
+}
