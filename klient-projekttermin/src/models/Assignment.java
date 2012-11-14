@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import com.nutiteq.components.WgsPoint;
+
 import android.graphics.Bitmap;
 
 public class Assignment implements ModelInterface {
@@ -18,11 +20,11 @@ public class Assignment implements ModelInterface {
 	// Namnet på uppdraget
 	private String name;
 	// Latitud för uppdragspositionen
-	private long lat;
+	private double lat;
 	// Longitud för uppdragspositionen
-	private long lon;
+	private double lon;
 	// JSON-sträng med WSG-punkter för polygonmarkering av region på kartan
-	private String region;
+	private String region = "";
 	// Användarnamnet på den person som skapade uppdraget.
 	private String sender;
 	// Om uppdraget ska skickas till externa aktörer
@@ -153,7 +155,7 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, long lat, long lon, 
+	public Assignment(String name, double lat, double lon, 
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
 			AssignmentStatus assignmentStatus, String streetName,
@@ -285,7 +287,7 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(long id, String name, long lat, long lon, String region,
+	public Assignment(long id, String name, double lat, double lon, String region,
 			List<Contact> agents,
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
@@ -309,6 +311,9 @@ public class Assignment implements ModelInterface {
 	}
 
 	public String getRegion() {
+		if(region == null){
+			region = new WgsPoint((double) 0,(double) 0).toString();
+		}
 		return region;
 	}
 
@@ -332,11 +337,11 @@ public class Assignment implements ModelInterface {
 		return siteName;
 	}
 
-	public long getLat() {
+	public double getLat() {
 		return lat;
 	}
 
-	public long getLon() {
+	public double getLon() {
 		return lon;
 	}
 

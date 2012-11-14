@@ -57,36 +57,37 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
-        <activity 
-            android:name="assignment.AssignmentOverview" 
-            android:label="@string/assignmentOverview">
         <activity
-            android:name="messageFunction.DisplayMessage"
-            android:label="display" >
-        </activity>
-        <activity 
-            android:name="assignment.AddAssignment" 
-            android:label="@string/addAssignment">
-        </activity>
-        <activity 
-            android:name="assignment.Uppdrag" 
-            android:label="@string/uppdrag">
-        </activity>
-		
-        <!-- Database Content Providers -->
-        <provider
-            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" 
-            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" />
-   		<provider
-            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts" 
-            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts" />
-   		<provider
-            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments" 
-            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments" />
-        
-   		<!-- Communication Module Service -->
-        <service android:name="communicationModule.CommunicationService" >
-        </service>
+            android:name="assignment.AssignmentOverview"
+            android:label="@string/assignmentOverview" >
+            </activity>
+            <activity
+                android:name="messageFunction.DisplayMessage"
+                android:label="display" >
+            </activity>
+            <activity
+                android:name="assignment.AddAssignment"
+                android:label="@string/addAssignment" >
+            </activity>
+            <activity
+                android:name="assignment.Uppdrag"
+                android:label="@string/uppdrag" >
+            </activity>
+
+            <!-- Database Content Providers -->
+            <provider
+                android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages"
+                android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" />
+            <provider
+                android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts"
+                android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts" />
+            <provider
+                android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments"
+                android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments" />
+
+            <!-- Communication Module Service -->
+            <service android:name="communicationModule.CommunicationService" >
+            </service>
     </application>
 
 </manifest>

@@ -100,7 +100,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private LocationManager manager;
 	private MenuItem gpsFollowItem;
 	private MapManager mm = new MapManager();
-	private static String[] regionAlts = { "Ta bort region" , "Skapa uppdrag med region" };
+	private static String[] regionAlts = { "Ta bort region",
+			"Skapa uppdrag med region" };
 	private boolean onRetainCalled;
 
 	@Override
@@ -234,9 +235,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		Assignment a = new Assignment();
 		Database db = new Database();
 		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
+		System.out.println(db.getDBCount(a, getBaseContext()));
 		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
 			a = (Assignment) list.get(i);
-			addInterestPoint(new WgsPoint(a.getLat(), a.getLon()), a.getName());
+			addInterestPoint(a.getRegion());
 		}
 	}
 
@@ -343,7 +345,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		// TODO Auto-generated method stub
 		super.onResume();
 		getDatabaseInformation();
-		if (gpsFollowItem!=null) {
+		if (gpsFollowItem != null) {
 			runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -396,10 +398,14 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 * @param label
 	 *            Namn som syns om man klickar på punkten
 	 */
-	public void addInterestPoint(WgsPoint pointLocation, String label) {
-		PlaceLabel poiLabel = new PlaceLabel(label);
-		Place p = new Place(1, poiLabel, icons[2], pointLocation);
-		mapComponent.addPlace(p);
+	public void addInterestPoint(String region) {
+			Gson gson = new Gson();
+			String[] coords = gson.fromJson(region, String[].class);
+			WgsPoint wgs = coords[0];
+			for (WgsPoint wgsPoint : coords) {
+				Place p = new Place(1, " ", icons[2], wgsPoint);
+				mapComponent.addPlace(p);
+			}
 	}
 
 	/**
@@ -511,6 +517,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		final int choice = arg2;
+		final ArrayList<WgsPoint> coords = new ArrayList<WgsPoint>();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Meny");
 		ListView modeList = new ListView(this);
@@ -537,11 +544,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					centerMapOnLocation(choice);
 					break;
 				case 2:
-					double[] coords = {
-							searchSuggestions.getList().get(arg2).getPlace()
-									.getWgs().getLat(),
-							searchSuggestions.getList().get(arg2).getPlace()
-									.getWgs().getLon() };
+					coords.add(searchSuggestions.getList().get(arg2).getPlace()
+							.getWgs());
 					createAssignment(coords);
 					break;
 				default:
@@ -552,9 +556,14 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		dialog.show();
 	}
 
-	public void createAssignment(double[] coords) {
+	public void createAssignment(ArrayList<WgsPoint> coords) {
+		WgsPoint[] cord = new WgsPoint[coords.size()];
+		for (int i = 0; i < coords.size(); i++) {
+			cord[i] = coords.get(i);
+		}
+		Gson gson = new Gson();
 		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
-		intent.putExtra(coordinates, coords);
+		intent.putExtra(coordinates, gson.toJson(cord));
 		MapActivity.this.startActivity(intent);
 	}
 
@@ -587,8 +596,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		});
 		dialog.show();
 	}
-	
-	public void createAssignmentFromRegion(OnMapElement arg){
+
+	public void createAssignmentFromRegion(OnMapElement arg) {
 		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
 		Gson gson = new Gson();
 		WgsPoint[] ar = arg.getPoints();
@@ -611,6 +620,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void elementLeft(OnMapElement arg0) {
 	}
+
 	@Override
 	public Object onRetainNonConfigurationInstance() {
 		onRetainCalled = true;

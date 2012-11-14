@@ -115,8 +115,8 @@ public class Database {
 					ass.getAssignmentStatus().toString());
 			values.put(AssignmentTable.COLUMN_CAMERAIMAGE,
 					bitmapToByteArray(ass.getCameraImage()));
-			values.put(AssignmentTable.COLUMN_LAT, Long.toString(ass.getLat()));
-			values.put(AssignmentTable.COLUMN_LON, Long.toString(ass.getLon()));
+			values.put(AssignmentTable.COLUMN_LAT, Double.toString(ass.getLat()));
+			values.put(AssignmentTable.COLUMN_LON, Double.toString(ass.getLon()));
 			values.put(AssignmentTable.COLUMN_NAME, ass.getName());
 			values.put(AssignmentTable.COLUMN_SENDER, ass.getSender());
 			values.put(AssignmentTable.COLUMN_AGENTS, agents);
@@ -261,8 +261,8 @@ public class Database {
 					Assignment assignment = new Assignment(Long.valueOf(cursor
 							.getString(0)), // id från DB
 							cursor.getString(1), // name
-							Long.parseLong(cursor.getString(2)), // lat
-							Long.parseLong(cursor.getString(3)), // lon
+							Double.parseDouble(cursor.getString(2)), // lat
+							Double.parseDouble(cursor.getString(3)), // lon
 							cursor.getString(4),// region
 							agents, // agents
 							cursor.getString(6), // sender
@@ -337,8 +337,8 @@ public class Database {
 					ass.getAssignmentStatus().toString());
 			values.put(AssignmentTable.COLUMN_CAMERAIMAGE,
 					bitmapToByteArray(ass.getCameraImage()));
-			values.put(AssignmentTable.COLUMN_LAT, Long.toString(ass.getLat()));
-			values.put(AssignmentTable.COLUMN_LON, Long.toString(ass.getLon()));
+			values.put(AssignmentTable.COLUMN_LAT, Double.toString(ass.getLat()));
+			values.put(AssignmentTable.COLUMN_LON, Double.toString(ass.getLon()));
 			values.put(AssignmentTable.COLUMN_NAME, ass.getName());
 			values.put(AssignmentTable.COLUMN_SENDER, ass.getSender());
 			values.put(AssignmentTable.COLUMN_SITENAME, ass.getSiteName());

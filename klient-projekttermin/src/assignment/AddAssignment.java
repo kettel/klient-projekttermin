@@ -17,8 +17,8 @@ import android.widget.EditText;
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
 
-
 import com.google.gson.Gson;
+import com.nutiteq.components.WgsPoint;
 
 public class AddAssignment extends Activity {
 
@@ -29,20 +29,32 @@ public class AddAssignment extends Activity {
 	private EditText assignmentTime;
 	private EditText assignmentStreetName;
 	private EditText assignmentSpot;
-	double lat=0;
+	private EditText assignmnetCoords;
+	double lat = 0;
 	double lon = 0;
+	private String coordinates;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		DecimalFormat df = new DecimalFormat("#.00");
 		Intent intent = getIntent();
-		intent.getExtras();
+		coordinates = intent.getStringExtra(MapActivity.coordinates);
+		Gson gson = new Gson();
+		WgsPoint[] coords = gson.fromJson(
+				intent.getStringExtra(MapActivity.coordinates),
+				WgsPoint[].class);
 		setContentView(R.layout.activity_add_assignment);
 
 		// Hämtar och sätter vyerna från .xml -filen.
 		addAssignmentButton = (Button) findViewById(R.id.button_add_assignment);
 		assignmentName = (EditText) findViewById(R.id.assignment_name);
+		assignmnetCoords = (EditText) findViewById(R.id.assignment_coord);
+		for (int i = 0; i < coords.length; i++) {
+			lat = coords[i].getLat();
+			lon = coords[i].getLon();
+			assignmnetCoords.setText(lat + " , " + lon);
+		}
 		assignmentDescription = (EditText) findViewById(R.id.assignment_description);
 		assignmentTime = (EditText) findViewById(R.id.assignment_time);
 		assignmentStreetName = (EditText) findViewById(R.id.assignment_street_name);
@@ -70,12 +82,12 @@ public class AddAssignment extends Activity {
 			public void onClick(View v) {
 				if (!assignmentName.getText().toString().equals("")) {
 					Assignment newAssignment = new Assignment(assignmentName
-							.getText().toString(), "SELF", false,
+							.getText().toString(), coordinates, false,
 							assignmentDescription.getText().toString(),
 							assignmentTime.getText().toString(),
 							AssignmentStatus.NOT_STARTED, assignmentStreetName
 									.getText().toString());
-					db.addToDB(newAssignment, getApplication());
+					db.addToDB(newAssignment, getBaseContext());
 				}
 
 				// Stänger aktiviteten.
