@@ -1,4 +1,4 @@
-package database;
+package com.example.klien_projekttermin.database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import models.Assignment;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
+
+
 import android.content.Context;
 
 /**
@@ -59,7 +61,7 @@ public class Database{
 		}
 		return returnCount;
 	}
-	
+
 	/**
 	 * Ta bort ett objekt från databasen
 	 * @param m	ModelInterface	Det objekt som önskas tas bort
@@ -80,7 +82,7 @@ public class Database{
 			dhm.removeMessage((MessageModel)m);
 		}
 	}
-	
+
 	/**
 	 * Hämta alla poster i databasen för inskickad modell.
 	 * @param m	ModelInterface	Modellen styr från vilken databas data hämtas
@@ -104,7 +106,7 @@ public class Database{
 		}
 		return returnList;
 	}
-	
+
 	/**
 	 * Uppdatera värden för ett objekt i databasen
 	 * @param m	ModelInterface	Det uppdaterade objektet 
