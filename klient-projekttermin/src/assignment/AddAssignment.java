@@ -45,7 +45,7 @@ public class AddAssignment extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_assignment);
 		addContent();
-		SimpleAdapter adapter=new SimpleAdapter(this, data, R.layout.textfield_item, from, to);
+		SimpleEditTextItemAdapter adapter=new SimpleEditTextItemAdapter(this, data, R.layout.textfield_item, from, to);
 		setListAdapter(adapter);
 		DecimalFormat df = new DecimalFormat("#.00");
 		Intent intent = getIntent();
