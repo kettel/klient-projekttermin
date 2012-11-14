@@ -13,10 +13,13 @@ public class MessageModel implements ModelInterface {
 	private long id = -1;
 	// Om ett meddelande är oläst eller ej
 	private boolean isRead = false;
-
+	// Meddelandeinnehåll
 	private String messageContent;
+	// Mottagare av meddelandet
 	private String reciever;
+	// Vem som skickade meddelandet
 	private String sender;
+	// Tiddstämpel i UNIX Epoch-format för när meddelandet skapades
 	private Long messageTimeStamp;
 
 	/**
@@ -108,6 +111,10 @@ public class MessageModel implements ModelInterface {
 		return id;
 	}
 	
+	/**
+	 * Hämta vem som är avsändare av meddelandet
+	 * @return
+	 */
 	public String getSender(){
 		return sender;
 	}
