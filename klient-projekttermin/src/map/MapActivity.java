@@ -541,7 +541,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		final int choice = arg2;
-		final ArrayList<WgsPoint> coords = new ArrayList<WgsPoint>();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Meny");
 		ListView modeList = new ListView(this);

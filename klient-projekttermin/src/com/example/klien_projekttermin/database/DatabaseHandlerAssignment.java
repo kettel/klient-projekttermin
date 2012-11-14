@@ -3,8 +3,8 @@ package com.example.klien_projekttermin.database;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
 import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;

@@ -10,7 +10,6 @@ import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
@@ -53,7 +52,6 @@ public class AddAssignment extends ListActivity {
 			fromMap();
 			break;
 		case ActivityConstants.MAIN_ACTIVITY:
-			// Activity2 is started from Activity3
 			break;
 		}
 		db = new Database();
