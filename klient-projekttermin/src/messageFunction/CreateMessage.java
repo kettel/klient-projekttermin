@@ -1,6 +1,5 @@
 package messageFunction;
 
-import java.util.List;
 
 import com.example.klien_projekttermin.R;
 import communicationModule.CommunicationService;
@@ -9,7 +8,6 @@ import communicationModule.CommunicationService.CommunicationBinder;
 import database.Database;
 
 import models.MessageModel;
-import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -23,7 +21,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,9 +46,6 @@ public class CreateMessage extends Activity {
 			messageContent = extras.getString("MESSAGE");
 		}
 		
-		Intent intent = new Intent(this, CommunicationService.class);
-		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
 		message = (TextView) this.findViewById(R.id.editText2);
 		reciever = (TextView) this.findViewById(R.id.editText1);
 		message.setText(messageContent);
@@ -76,6 +70,9 @@ public class CreateMessage extends Activity {
 	 * @param v
 	 */
 	public void sendMessage(View v){
+		Intent connectionIntent = new Intent(this, CommunicationService.class);
+		bindService(connectionIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+		
 		String recievingContact = reciever.getText().toString();
 		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		messageObject = new MessageModel(message.getText().toString(), recievingContact, user); 

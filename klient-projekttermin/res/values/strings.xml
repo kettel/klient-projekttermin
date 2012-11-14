@@ -15,11 +15,12 @@
     <string name="title_activity_message_view">MessageView</string>
     <string name="sendMessage">Skicka</string>
     <string name="CreateANewMessage">Skapa nytt meddelande</string>
-    <string name="cancel">Cancel</string>
-    <string name="save">Save</string>
-    <string name="send">Send</string>
-    <string name="reciever">Reciever</string>
-    <string name="message">Message</string>
+    <string name="cancel">Avbryt</string>
+    <string name="save">Spara</string>
+    <string name="contact">Kontakt</string>
+    <string name="send">Skicka</string>
+    <string name="reciever">Mottagare</string>
+    <string name="message">Meddelande</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_map">Map</string>
