@@ -247,7 +247,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		System.out.println(db.getDBCount(a, getBaseContext()));
 		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
 			a = (Assignment) list.get(i);
-			addInterestPoint(a.getRegion());
+//			addInterestPoint(a.getRegion());
 		}
 	}
 
@@ -264,7 +264,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			WgsPoint[] co = gson.fromJson(a.getRegion(), type);
 			System.out.println(co.length);
 			for (WgsPoint wgsPoint : co) {
-				addInterestPoint(wgsPoint, "HEJ");
+				addInterestPoint(wgsPoint);
 			}
 		}
 	}
@@ -426,14 +426,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 * @param label
 	 *            Namn som syns om man klickar på punkten
 	 */
-	public void addInterestPoint(String region) {
-			Gson gson = new Gson();
-			String[] coords = gson.fromJson(region, String[].class);
-			WgsPoint wgs = coords[0];
-			for (WgsPoint wgsPoint : coords) {
-				Place p = new Place(1, " ", icons[2], wgsPoint);
+	public void addInterestPoint(WgsPoint region) {
+				Place p = new Place(1, " ", icons[2], region);
 				mapComponent.addPlace(p);
-			}
 	}
 
 	/**

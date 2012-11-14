@@ -30,13 +30,9 @@ public class AddAssignment extends Activity {
 	private EditText assignmentTime;
 	private EditText assignmentStreetName;
 	private EditText assignmentSpot;
-	private EditText assignmnetCoords;
 	double lat = 0;
 	double lon = 0;
-	private String coordinates;
 	private EditText assignmentCoord;
-	double lat=0;
-	double lon = 0;
 	String json;
 
 	@Override
