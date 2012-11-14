@@ -27,7 +27,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="sendMessage"
+<<<<<<< HEAD
             android:text="send_message"
+=======
+            android:text="@string/send"
+>>>>>>> e350331e54382fe04af42f1cb012854afcf9bb7a
             android:layout_alignParentBottom="true" 
             android:layout_alignParentRight="true"/>
 
