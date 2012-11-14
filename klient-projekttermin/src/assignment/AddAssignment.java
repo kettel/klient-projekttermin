@@ -2,7 +2,6 @@ package assignment;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import map.MapActivity;
 import models.Assignment;
@@ -122,7 +121,6 @@ public class AddAssignment extends ListActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-<<<<<<< HEAD
 	private void saveToDB() {
 		// Skapar en humbug-bitmap.
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
@@ -142,7 +140,4 @@ public class AddAssignment extends ListActivity {
 		finish();
 
 	}
-
-=======
->>>>>>> 572df686f6f500f79dc947696593648a06557d2d
 }
