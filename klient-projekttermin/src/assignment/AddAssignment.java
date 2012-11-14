@@ -66,6 +66,8 @@ public class AddAssignment extends Activity {
 
 		db = new Database();
 		setButtonClickListnerAddAssignment(addAssignmentButton);
+		
+		
 
 	}
 
@@ -91,16 +93,13 @@ public class AddAssignment extends Activity {
 							.getText().toString(), "SELF", false,
 							assignmentDescription.getText().toString(),
 							assignmentTime.getText().toString(),
-							AssignmentStatus.NOT_STARTED, assignmentStreetName
+							AssignmentStatus.STARTED, assignmentStreetName
 									.getText().toString());
 					
-					//Assignment poop =  new Assignment("Papegojja", 2365, 235, "Poopface", false, "Mörda kalle anka", "Tre timmar", AssignmentStatus.NEED_HELP, fakeImage, "I grerkland", "bajs");
 
 					db.addToDB(newAssignment, getApplicationContext());
 					communicationService.sendAssignment(newAssignment);
 					
-//					db.addToDB(newAssignment, getApplication());
-//					communicationService.sendAssignment(newAssignment);
 				}
 
 				// Stänger aktiviteten.
