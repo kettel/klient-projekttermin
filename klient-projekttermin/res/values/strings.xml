@@ -27,6 +27,7 @@
     <string name="message_hint">Message</string>
     <string name="send">Send</string>
     <string name="cancel">Cancel</string>
+     <string name="save">Save</string>
     <string name="addAssignment">Skapa uppdrag</string>
     <string name="assignmentLocation">Uppdragets plats</string>
     <string name="streetAddress">Gatuadress</string>

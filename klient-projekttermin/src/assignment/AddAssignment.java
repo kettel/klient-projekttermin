@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,11 +44,13 @@ public class AddAssignment extends ListActivity {
 	double lat = 0;
 	double lon = 0;
 	private String coordinates;
-	private String[] from = { "line1", "line2" };
-	private int[] to = { R.id.editText1, R.id.textView1 };
+	private String[] from = { "line1"};
+	private int[] to = { R.id.editText1};
 	private List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Name", "coord", "Uppdragsbeskrivning",
 			"uppskattadtid", "gatuadress", "uppdragsplats" };
+	private MenuItem saveItem;
+	private MenuItem cancelItem;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -72,8 +75,7 @@ public class AddAssignment extends ListActivity {
 		data.clear();
 		for (String s : dataString) {
 			HashMap<String, String> temp = new HashMap<String, String>();
-			temp.put("line1", "hint");
-			temp.put("line2", s);
+			temp.put("line1", s);
 			data.add(temp);
 		}
 	}
@@ -127,10 +129,23 @@ public class AddAssignment extends ListActivity {
 		}
 
 	};
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_add_assignment, menu);
+		this.saveItem=menu.findItem(R.id.save);
+		this.cancelItem=menu.findItem(R.id.cancel);
 		return true;
 	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		if (item.equals(saveItem)) {
+			
+		}else if (item.equals(cancelItem)) {
+			finish();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
 }
