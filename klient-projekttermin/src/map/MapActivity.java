@@ -37,6 +37,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ZoomControls;
+import assignment.ActivityConstants;
 import assignment.AddAssignment;
 
 import com.example.klien_projekttermin.R;
@@ -585,6 +586,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
 		intent.putExtra(coordinates, gson.toJson(coords, type));
+		intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
 		MapActivity.this.startActivity(intent);
 	}
 
@@ -625,6 +627,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
 		intent.putExtra(coordinates, gson.toJson(ar, type));
+		intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
 		MapActivity.this.startActivity(intent);
 	}
 

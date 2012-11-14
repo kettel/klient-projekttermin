@@ -60,17 +60,27 @@ public class AddAssignment extends ListActivity {
 		ArrayAdapter<String> adapter= new SimpleEditTextItemAdapter(this,R.layout.textfield_item);
 		adapter.addAll(data);
 		setListAdapter(adapter);
+		int callingActivity = getIntent().getIntExtra("calling-activity", 0);
+
+		switch (callingActivity) {
+		case ActivityConstants.MAP_ACTIVITY:
+			fromMap();
+			break;
+		case ActivityConstants.MAIN_ACTIVITY:
+			// Activity2 is started from Activity3
+			break;
+		}
+		setContentView(R.layout.activity_add_assignment);
+		db = new Database();
+	}
+	
+	private void fromMap(){
 		Intent intent = getIntent();
 		json = intent.getStringExtra(MapActivity.coordinates);
 		Gson gson = new Gson();
 		Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
 		WgsPoint[] co = gson.fromJson(json, type);
-		setContentView(R.layout.activity_add_assignment);
-
-		/**
-		 * Lägg till detta i koordinat fältet
-		 */
 		StringBuilder sb = new StringBuilder();
 		for (WgsPoint wgsPoint : co) {
 			sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
@@ -112,6 +122,7 @@ public class AddAssignment extends ListActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+<<<<<<< HEAD
 	private void saveToDB() {
 		// Skapar en humbug-bitmap.
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
@@ -132,4 +143,6 @@ public class AddAssignment extends ListActivity {
 
 	}
 
+=======
+>>>>>>> 572df686f6f500f79dc947696593648a06557d2d
 }
