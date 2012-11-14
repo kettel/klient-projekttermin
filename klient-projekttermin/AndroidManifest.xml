@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <!-- User permissions -->
+    <user-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Features -->
     <uses-feature android:name="android.hardware.camera" />
 
@@ -60,6 +60,9 @@
         <activity 
             android:name="assignment.AssignmentOverview" 
             android:label="@string/assignmentOverview">
+        <activity
+            android:name="messageFunction.DisplayMessage"
+            android:label="display" >
         </activity>
         <activity 
             android:name="assignment.AddAssignment" 
@@ -69,7 +72,19 @@
             android:name="assignment.Uppdrag" 
             android:label="@string/uppdrag">
         </activity>
-
+		
+        <!-- Database Content Providers -->
+        <provider
+            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" 
+            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" />
+   		<provider
+            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts" 
+            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts" />
+   		<provider
+            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments" 
+            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments" />
+        
+   		<!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" >
         </service>
     </application>

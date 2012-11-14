@@ -18,8 +18,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import database.Database;
 import com.example.klien_projekttermin.*;
+import com.example.klien_projekttermin.database.Database;
 
 public class AssignmentOverview extends Activity {
 

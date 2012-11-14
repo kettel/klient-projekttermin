@@ -18,8 +18,6 @@ import assignment.AssignmentOverview;
 
 public class MainActivity extends ListActivity {
 
-	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,6 +69,7 @@ public class MainActivity extends ListActivity {
 		}
 		return content;
 	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

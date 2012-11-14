@@ -3,13 +3,13 @@ package messageFunction;
 import java.util.List;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.Database;
+
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-import database.Database;
 
 import models.MessageModel;
-import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -36,7 +36,7 @@ public class CreateMessage extends Activity {
 	private String user;
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,7 +49,7 @@ public class CreateMessage extends Activity {
 			user = extras.getString("USER");
 			messageContent = extras.getString("MESSAGE");
 		}
-		
+
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
@@ -84,11 +84,11 @@ public class CreateMessage extends Activity {
 		//Sparar messageObject i databasen
 		dataBase.addToDB(messageObject,getApplicationContext());
 		//Skicka till kommunikationsmodulen
-		
+
 		if(communicationBond){
 			communicationService.sendMessage(messageObject);
 		}
-		
+
 		finish();
 
 		//Öppnar konversatinsvyn för kontakten man skickade till 

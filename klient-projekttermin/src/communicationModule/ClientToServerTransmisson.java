@@ -5,7 +5,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import database.Database;
+import com.example.klien_projekttermin.database.Database;
+
 import android.util.Log;
 
 public class ClientToServerTransmisson extends Thread  {

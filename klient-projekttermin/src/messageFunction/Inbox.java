@@ -9,8 +9,8 @@ import models.MessageModel;
 import models.ModelInterface;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.Database;
 
-import database.Database;
 
 import android.os.Bundle;
 import android.app.Activity;

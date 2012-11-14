@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import map.MapActivity;
 import models.Assignment;
+import models.AssignmentStatus;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,8 +15,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.Database;
 
-import database.Database;
+
 import com.google.gson.Gson;
 
 public class AddAssignment extends Activity {
@@ -23,7 +25,6 @@ public class AddAssignment extends Activity {
 	private Database db;
 	private Button addAssignmentButton;
 	private EditText assignmentName;
-	private EditText assignmentCoord;
 	private EditText assignmentDescription;
 	private EditText assignmentTime;
 	private EditText assignmentStreetName;
@@ -42,7 +43,6 @@ public class AddAssignment extends Activity {
 		// Hämtar och sätter vyerna från .xml -filen.
 		addAssignmentButton = (Button) findViewById(R.id.button_add_assignment);
 		assignmentName = (EditText) findViewById(R.id.assignment_name);
-		assignmentCoord = (EditText) findViewById(R.id.assignment_coord);
 		assignmentDescription = (EditText) findViewById(R.id.assignment_description);
 		assignmentTime = (EditText) findViewById(R.id.assignment_time);
 		assignmentStreetName = (EditText) findViewById(R.id.assignment_street_name);
@@ -69,14 +69,11 @@ public class AddAssignment extends Activity {
 
 			public void onClick(View v) {
 				if (!assignmentName.getText().toString().equals("")) {
-					Assignment newAssignment = new Assignment(45,assignmentName
-							.getText().toString(), lon, lat,
-							"Den här ska bort.",
-							"Ska automatiskt hämtas från den inloggade",
+					Assignment newAssignment = new Assignment(assignmentName
+							.getText().toString(), "SELF", false,
 							assignmentDescription.getText().toString(),
 							assignmentTime.getText().toString(),
-							"Status", fakeImage, assignmentStreetName
-									.getText().toString(), assignmentSpot
+							AssignmentStatus.NOT_STARTED, assignmentStreetName
 									.getText().toString());
 					db.addToDB(newAssignment, getApplication());
 				}
