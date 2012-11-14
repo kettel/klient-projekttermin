@@ -32,11 +32,27 @@
     <string name="Button">Test DB</string>
     <string name="title_activity_log_viewer">LogViewer</string>
     <string name="btnIntend">Ta bild</string>
-    <string name="app_name">Försvarsmaktens krishanteringssystem</string>
     <string name="btnIntendS">Ta (liten) bild</string>
     <string name="btnIntendV">Spela in film</string>
     <string name="cannot">Kan inte</string>
     <string name="album_name">Album</string>
     <string name="title_activity_camera">Camera</string>
     <string name="showAlbum">Album</string>
+    <string name="app_name">klient-projekttermin</string>
+    <string name="title_activity_uppdragslista">Uppdragslista</string>
+    <string name="title_activity_uppdrag">Uppdrag</string>
+    <string name="title_activity_add_assignment">AddAssignment</string>
+    <string name="title_activity_assignment_overview">AssignmentOverview</string>
+    <string name="receiver_hint">Receiver</string>
+    <string name="message_hint">Message</string>
+    <string name="addAssignment">Skapa uppdrag</string>
+    <string name="assignmentLocation">Uppdragets plats</string>
+    <string name="streetAddress">Gatu adress</string>
+    <string name="time">Uppskattad tid</string>
+    <string name="assignmentDescription">Uppdragsbeskrivning</string>
+    <string name="coordinates">Koordinater</string>
+    <string name="assignmentName">Uppdragets namn</string>
+    <string name="createAssignmentFromRegion">Skapa uppdrag för region</string>
+    <string name="inbox">inbox</string>
+
 </resources>

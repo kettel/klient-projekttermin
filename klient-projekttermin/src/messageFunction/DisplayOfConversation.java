@@ -28,10 +28,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.Database;
+
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-import database.Database;
 
 public class DisplayOfConversation extends Activity {
 
@@ -218,11 +219,13 @@ public class DisplayOfConversation extends Activity {
 		// Sorterar ut meddelanden kopplade till den person man tryckt på.
 		for (int i = 0; i < listOfMassageModels.size(); i++) {
 			messageModel = (MessageModel) listOfMassageModels.get(i);
-			if(messageModel.getReciever().toString().equals(Contact)){
+			
+			if(messageModel.getReciever().toString().equals(Contact)||messageModel.getSender().toString().equals(Contact)){
 				
-				listOfConversations.add(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString());
-				messageAndIdMap.put(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString(), messageModel.getId());
+				listOfConversations.add(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getMessageTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString());
+				messageAndIdMap.put(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getMessageTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString(), messageModel.getId());
 			}
+			
 		}
 
 		//Skapar en string[] som är lika lång som listan som hämtades.
@@ -236,7 +239,9 @@ public class DisplayOfConversation extends Activity {
 	}
 
 	public void sendMessage(View v){
+		communicationService.setContext(getApplicationContext());
 		Intent intent = new Intent(this, CommunicationService.class);
+		
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
@@ -253,7 +258,7 @@ public class DisplayOfConversation extends Activity {
 		if(communicationBond){
 			communicationService.sendMessage(messageObject);
 		}
-		
+
 		loadConversation(chosenContact);
 	}
 

@@ -1,10 +1,10 @@
-package database;
-
+package com.example.klien_projekttermin.database;
 import java.util.ArrayList;
 import java.util.List;
 
 import models.MessageModel;
 import models.ModelInterface;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -22,11 +22,11 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
 	// Contacts tabellnamn
 	private static final String TABLE_MESSAGES = "messages";
 
-	// Contacts tabellkolumnnamn
-	private static final String KEY_ID = "id";
-	private static final String KEY_MESSAGE_CONTENT = "content";
-	private static final String KEY_RECEIVER = "receiver";
-	private static final String KEY_SENDER = "sender";
+    // Contacts tabellkolumnnamn
+    private static final String KEY_ID = "_id";
+    private static final String KEY_MESSAGE_CONTENT = "content";
+    private static final String KEY_RECEIVER = "receiver";
+    private static final String KEY_SENDER = "sender";
 	private static final String KEY_MESSAGE_TIMESTAMP = "timestamp";
 	private static final String KEY_IS_READ = "isRead";
 
@@ -106,7 +106,7 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
         db.close();
         return count;
 	}
-	
+
 	/**
 	 * Returnerar alla meddelanden i en Array-lista. Meddelanden har nu ett ID från 
 	 * databasen.
@@ -140,18 +140,18 @@ public class DatabaseHandlerMessages extends SQLiteOpenHelper {
         // Returnera meddelandelistan
 		return messageList;
 	}
-	
-	
+
+
 	public void updateModel(MessageModel m) {
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		String UPDATE_MESSAGES = "UPDATE " + TABLE_MESSAGES + " SET "
         		+ KEY_MESSAGE_CONTENT + " = \""+ m.getMessageContent() + "\" ,"
                 + KEY_RECEIVER + " = \""+ m.getReciever() + "\" ,"
                 + KEY_SENDER + " = \""+ m.getSender() + "\" ,"
                 + KEY_IS_READ + " = \""+ (m.isRead()? "TRUE" : "FALSE") + "\" "
                 + "WHERE " + KEY_ID + " = " + Long.toString(m.getId());
-		
+
         db.execSQL(UPDATE_MESSAGES);
         
         db.close();

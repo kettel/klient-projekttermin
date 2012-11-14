@@ -9,8 +9,8 @@ import models.MessageModel;
 import models.ModelInterface;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.Database;
 
-import database.Database;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -185,14 +185,23 @@ public class Inbox extends Activity {
 		peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
 
 		listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
-		//String array över användare
+
 
 		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
 			messageModel = (MessageModel) peopleEngagedInConversation.get(i);
 
-			if (!setOfPeople.contains(messageModel.getReciever().toString())) {
-				setOfPeople.add(messageModel.getReciever().toString());
-				contactAndIdMap.put(messageModel.getReciever().toString(), messageModel.getId());
+			if(messageModel.getReciever().toString().equals(user)){
+				if(!setOfPeople.contains(messageModel.getSender().toString())){
+				setOfPeople.add(messageModel.getSender().toString());
+				contactAndIdMap.put(messageModel.getSender().toString(), messageModel.getId());
+				}
+			}
+			
+			else if (!setOfPeople.contains(messageModel.getReciever().toString())) {
+
+					setOfPeople.add(messageModel.getReciever().toString());
+					contactAndIdMap.put(messageModel.getReciever().toString(), messageModel.getId());
+				
 			}	
 		}
 		//Skapar en string[] som är lika lång som listan som hämtades.
