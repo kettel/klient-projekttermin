@@ -37,19 +37,17 @@ public class AddAssignment extends ListActivity {
 	double lat = 0;
 	double lon = 0;
 	private EditText assignmentCoord;
-	String json;
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	private String json;
 	private String coordinates;
 	private String[] from={"line1","line2"};
 	private int[] to={R.id.editText1,R.id.textView1};
 	private List<HashMap<String, String>> data=new ArrayList<HashMap<String,String>>();
 	private String[] dataString={"Name","coord","Uppdragsbeskrivning","uppskattadtid","gatuadress","uppdragsplats"};
-	@Override
+
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_add_assignment);
 		addContent();
 		SimpleAdapter adapter=new SimpleAdapter(this, data, R.layout.textfield_item, from, to);
@@ -61,19 +59,14 @@ public class AddAssignment extends ListActivity {
 		WgsPoint[] co = gson.fromJson(json, type);
 		setContentView(R.layout.activity_add_assignment);
 
-		// Hämtar och sätter vyerna från .xml -filen.
-		addAssignmentButton = (Button) findViewById(R.id.button_add_assignment);
-		assignmentCoord = (EditText) findViewById(R.id.assignment_coord);
+		/**
+		 * Lägg till detta i koordinat fältet
+		 */
 		StringBuilder sb = new StringBuilder();
 		for (WgsPoint wgsPoint : co) {
 			sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
 		}
-		assignmentCoord.setText(sb.toString());
-		assignmentName = (EditText) findViewById(R.id.assignment_name);
-		assignmentDescription = (EditText) findViewById(R.id.assignment_description);
-		assignmentTime = (EditText) findViewById(R.id.assignment_time);
-		assignmentStreetName = (EditText) findViewById(R.id.assignment_street_name);
-		assignmentSpot = (EditText) findViewById(R.id.assignment_spot);
+
 
 		db = new Database();
 	}
