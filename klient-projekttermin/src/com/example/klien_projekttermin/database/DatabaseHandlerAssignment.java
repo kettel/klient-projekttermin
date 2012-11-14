@@ -112,6 +112,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 		values.put(KEY_LAT, assignment.getLat());
 		values.put(KEY_LON, assignment.getLon());
 		values.put(KEY_REGION, assignment.getRegion());
+		System.out.println(KEY_REGION + "JMNNNNNNNNNNNNNNNNNN" + assignment.getRegion());
 		values.put(KEY_SENDER, assignment.getSender());
 		values.put(KEY_AGENTS, agents);
 		values.put(KEY_EXTERNAL_MISSION,

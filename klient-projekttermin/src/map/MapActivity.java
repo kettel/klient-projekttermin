@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.lang.reflect.Type;
 
 import models.Assignment;
 import models.ModelInterface;
@@ -62,6 +63,7 @@ import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för
@@ -112,13 +114,33 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		 */
 		this.manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		this.locationSource = new AndroidGPSProvider(manager, 1000L);
-		this.setContentView(R.layout.activity_map);
+		//this.setContentView(R.layout.activity_map);
 		/**
 		 * Kollar om gps är aktiverat
 		 */
 		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			buildAlertMessageNoGps();
 		}
+
+		/**
+		 * Hämtar listview till sökförslagen samt lägger till en adapter. Lägger
+		 * till en observer på searchSuggestions
+		 */
+		this.searchSuggestions.addObserver(this);
+		
+		this.haveNetworkConnection();
+		/**
+		 * Hämta information från databasen om aktuella uppdrag
+		 */
+//		this.getDatabaseInformation();
+		/**
+		 * GPS:en ska vara påslagen vid start
+		 */
+		
+	}
+	
+	public void createMap(){
+		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
 		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
@@ -126,12 +148,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
 		this.mapComponent.setOnMapElementListener(this);
-
-		/**
-		 * Hämtar listview till sökförslagen samt lägger till en adapter. Lägger
-		 * till en observer på searchSuggestions
-		 */
-		this.searchSuggestions.addObserver(this);
 		/**
 		 * Hämtar mapview och lägger till kartan i den
 		 */
@@ -152,15 +168,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 				mapComponent.zoomOut();
 			}
 		});
-		this.haveNetworkConnection();
-		/**
-		 * Hämta information från databasen om aktuella uppdrag
-		 */
-		this.getDatabaseInformation();
-		/**
-		 * GPS:en ska vara påslagen vid start
-		 */
-		this.activateGPS(gpsOnOff);
+		mapView.setVisibility(0);
+		activateGPS(gpsOnOff);
 		onRetainCalled = false;
 	}
 
@@ -238,7 +247,25 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		System.out.println("database "+db.getDBCount(a, getBaseContext()));
 		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
 			a = (Assignment) list.get(i);
-			addInterestPoint(a.getRegion());
+//			addInterestPoint(a.getRegion());
+		}
+	}
+
+	public void getDatabaseRegionInformation() {
+		Assignment a = new Assignment();
+		Database db = new Database();
+		Gson gson = new Gson();
+		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
+		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
+			a = (Assignment) list.get(i);
+			Type type = new TypeToken<WgsPoint[]>() {
+			}.getType();
+			System.out.println("FROM DATAABSE "  + a.getRegion());
+			WgsPoint[] co = gson.fromJson(a.getRegion(), type);
+			System.out.println(co.length);
+			for (WgsPoint wgsPoint : co) {
+				addInterestPoint(wgsPoint);
+			}
 		}
 	}
 
@@ -344,7 +371,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		getDatabaseInformation();
+		createMap();
+		getDatabaseRegionInformation();
 		if (gpsFollowItem != null) {
 			runOnUiThread(new Runnable() {
 
@@ -398,10 +426,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 * @param label
 	 *            Namn som syns om man klickar på punkten
 	 */
-	public void addInterestPoint(String region) {
-		System.out.println(region);
-			Gson gson = new Gson();
-			String[] coords = gson.fromJson(region, String[].class);
+	public void addInterestPoint(WgsPoint region) {
+				Place p = new Place(1, " ", icons[2], region);
+				mapComponent.addPlace(p);
 	}
 
 	/**
@@ -540,8 +567,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					centerMapOnLocation(choice);
 					break;
 				case 2:
-					coords.add(searchSuggestions.getList().get(arg2).getPlace()
-							.getWgs());
+					WgsPoint[] coords = { searchSuggestions.getList().get(choice)
+							.getPlace().getWgs() };
 					createAssignment(coords);
 					break;
 				default:
@@ -552,14 +579,12 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		dialog.show();
 	}
 
-	public void createAssignment(ArrayList<WgsPoint> coords) {
-		WgsPoint[] cord = new WgsPoint[coords.size()];
-		for (int i = 0; i < coords.size(); i++) {
-			cord[i] = coords.get(i);
-		}
+	public void createAssignment(WgsPoint[] coords) {
 		Gson gson = new Gson();
 		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
-		intent.putExtra(coordinates, gson.toJson(cord));
+		Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		intent.putExtra(coordinates, gson.toJson(coords, type));
 		MapActivity.this.startActivity(intent);
 	}
 
@@ -597,7 +622,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
 		Gson gson = new Gson();
 		WgsPoint[] ar = arg.getPoints();
-		intent.putExtra(coordinates, gson.toJson(ar));
+		Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		intent.putExtra(coordinates, gson.toJson(ar, type));
 		MapActivity.this.startActivity(intent);
 	}
 

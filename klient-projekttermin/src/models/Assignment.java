@@ -188,7 +188,7 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, long lat, long lon, 
+	public Assignment(String name, double lat, double lon, 
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
 			AssignmentStatus assignmentStatus, Bitmap cameraImage,

@@ -1,5 +1,6 @@
 package assignment;
 
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import android.widget.EditText;
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
@@ -43,6 +45,8 @@ public class AddAssignment extends ListActivity {
 
 	double lat = 0;
 	double lon = 0;
+	private EditText assignmentCoord;
+	private String json;
 	private String coordinates;
 	private String[] from = { "line1"};
 	private int[] to = { R.id.editText1};
@@ -55,18 +59,27 @@ public class AddAssignment extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_add_assignment);
 		addContent();
 		SimpleEditTextItemAdapter adapter = new SimpleEditTextItemAdapter(this,
 				data, R.layout.textfield_item, from, to);
 		setListAdapter(adapter);
-		DecimalFormat df = new DecimalFormat("#.00");
 		Intent intent = getIntent();
-		coordinates = intent.getStringExtra(MapActivity.coordinates);
+		json = intent.getStringExtra(MapActivity.coordinates);
 		Gson gson = new Gson();
-		WgsPoint[] coords = gson.fromJson(
-				intent.getStringExtra(MapActivity.coordinates),
-				WgsPoint[].class);
+		Type type = new TypeToken<WgsPoint[]>() {}.getType();
+		WgsPoint[] co = gson.fromJson(json, type);
+		setContentView(R.layout.activity_add_assignment);
+
+		/**
+		 * Lägg till detta i koordinat fältet
+		 */
+		StringBuilder sb = new StringBuilder();
+		for (WgsPoint wgsPoint : co) {
+			sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
+		}
+
 
 		db = new Database();
 	}
@@ -98,13 +111,7 @@ public class AddAssignment extends ListActivity {
 				communicationService.setContext(getApplicationContext());
 
 				if (!assignmentName.getText().toString().equals("")) {
-					Assignment newAssignment = new Assignment(assignmentName
-							.getText().toString(), coordinates, false,
-							assignmentDescription.getText().toString(),
-							assignmentTime.getText().toString(),
-							AssignmentStatus.STARTED, assignmentStreetName
-									.getText().toString());
-
+					Assignment newAssignment = new Assignment("niko", json, "self", false, "HEJ", "12", AssignmentStatus.NEED_HELP, null, "HEJ", "HEJ"); 
 					db.addToDB(newAssignment, getApplicationContext());
 					communicationService.sendAssignment(newAssignment);
 				}
@@ -149,3 +156,4 @@ public class AddAssignment extends ListActivity {
 	}
 	
 }
+
