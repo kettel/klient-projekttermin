@@ -7,10 +7,13 @@ import models.Contact;
 import models.ModelInterface;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Gallery;
+import android.widget.ImageView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
@@ -28,6 +31,7 @@ public class Uppdrag extends Activity {
 	private TextView textViewStreetname;
 	private TextView textViewCoord;
 	private CheckBox checkboxAssign;
+	private ImageView image;
 	List<ModelInterface> listAssignments;
 
 	@Override
@@ -54,6 +58,7 @@ public class Uppdrag extends Activity {
 		textViewStreetname = (TextView) findViewById(R.id.assignment_streetname_set);
 		textViewCoord = (TextView) findViewById(R.id.assignment_coordinates_set);
 		checkboxAssign = (CheckBox) findViewById(R.id.checkBox_assign);
+		image = (ImageView) findViewById(R.id.imageView1);
 
 		setCheckboxCheckedListener();
 
@@ -104,6 +109,20 @@ public class Uppdrag extends Activity {
 				textViewStreetname.setText(a.getStreetName());
 				textViewCoord.setText("Latitud: " + a.getLat() + "  Longitud: "
 						+ a.getLon());
+
+				
+				// Skapar en tom bitmap som jämförs med den tomma i assignment.
+				// Är den tom så har ingen bild bifogast och då sätts bilden.
+				Bitmap cameraImage;
+				Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf
+																// types
+				cameraImage = Bitmap.createBitmap(100, 100, conf);
+
+				if (a.getCameraImage() != cameraImage) {
+					image.setImageBitmap(a.getCameraImage());
+				}
+
+				
 			}
 
 		}
