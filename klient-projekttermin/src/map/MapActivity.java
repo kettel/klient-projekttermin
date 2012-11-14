@@ -244,7 +244,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		Assignment a = new Assignment();
 		Database db = new Database();
 		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
-		System.out.println(db.getDBCount(a, getBaseContext()));
+		System.out.println("database "+db.getDBCount(a, getBaseContext()));
 		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
 			a = (Assignment) list.get(i);
 //			addInterestPoint(a.getRegion());
@@ -654,7 +654,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		if (!onRetainCalled) {
+		if (!onRetainCalled&&mapComponent!=null) {
 			mapComponent.stopMapping();
 			mapComponent = null;
 		}

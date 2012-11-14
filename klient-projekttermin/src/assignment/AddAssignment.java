@@ -1,11 +1,15 @@
 package assignment;
 
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -13,15 +17,15 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SimpleAdapter;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;
 
-public class AddAssignment extends Activity {
+public class AddAssignment extends ListActivity {
 
 	private Database db;
 	private Button addAssignmentButton;
@@ -38,6 +42,18 @@ public class AddAssignment extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	private String coordinates;
+	private String[] from={"line1","line2"};
+	private int[] to={R.id.editText1,R.id.textView1};
+	private List<HashMap<String, String>> data=new ArrayList<HashMap<String,String>>();
+	private String[] dataString={"Name","coord","Uppdragsbeskrivning","uppskattadtid","gatuadress","uppdragsplats"};
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_add_assignment);
+		addContent();
+		SimpleAdapter adapter=new SimpleAdapter(this, data, R.layout.textfield_item, from, to);
+		setListAdapter(adapter);
 		Intent intent = getIntent();
 		json = intent.getStringExtra(MapActivity.coordinates);
 		Gson gson = new Gson();
@@ -60,8 +76,15 @@ public class AddAssignment extends Activity {
 		assignmentSpot = (EditText) findViewById(R.id.assignment_spot);
 
 		db = new Database();
-		setButtonClickListnerAddAssignment(addAssignmentButton);
-
+	}
+	private void addContent(){
+		data.clear();
+		for (String s : dataString) {
+			HashMap<String, String> temp=new HashMap<String, String>();
+			temp.put("line1", "hint");
+			temp.put("line2", s);
+			data.add(temp);
+		}
 	}
 
 	/**
