@@ -45,10 +45,8 @@ public class AssignmentOverview extends Activity {
 	// G�r en custom topmeny.
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// getMenuInflater().inflate(R.menu.activity_uppdragslista, menu);
+		 getMenuInflater().inflate(R.menu.activity_assignment_overview, menu);
 
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.top_menu_bar, menu);
 		return true;
 	}
 

@@ -29,7 +29,7 @@
     <string name="cancel">Cancel</string>
     <string name="addAssignment">Skapa uppdrag</string>
     <string name="assignmentLocation">Uppdragets plats</string>
-    <string name="streetAddress">Gatu adress</string>
+    <string name="streetAddress">Gatuadress</string>
     <string name="time">Uppskattad tid</string>
     <string name="assignmentDescription">Uppdragsbeskrivning</string>
     <string name="coordinates">Koordinater</string>

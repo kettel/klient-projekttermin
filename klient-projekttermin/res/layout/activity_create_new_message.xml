@@ -9,11 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:ems="10"
-<<<<<<< HEAD
-        android:hint="reciver"
-=======
         android:hint="@string/receiver_hint"
->>>>>>> e350331e54382fe04af42f1cb012854afcf9bb7a
         android:inputType="textPersonName" >
 
         <requestFocus />
@@ -25,11 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText1"
         android:ems="10"
-<<<<<<< HEAD
-        android:hint="message"
-=======
         android:hint="@string/message_hint"
->>>>>>> e350331e54382fe04af42f1cb012854afcf9bb7a
         android:inputType="textMultiLine" />
 
     <Button
@@ -40,11 +32,7 @@
         android:layout_below="@+id/editText2"
         android:gravity="center_vertical"
         android:onClick="sendMessage"
-<<<<<<< HEAD
-        android:text="send" />
-=======
         android:text="@string/send" />
->>>>>>> e350331e54382fe04af42f1cb012854afcf9bb7a
 
     <Button
         android:id="@+id/button3"
@@ -53,11 +41,7 @@
          android:layout_below="@+id/editText2"
         android:gravity="center_vertical"
         android:onClick="cancelButton"
-<<<<<<< HEAD
-        android:text="cancel"
-=======
         android:text="@string/cancel"
->>>>>>> e350331e54382fe04af42f1cb012854afcf9bb7a
         android:layout_toRightOf="@+id/button1" />
 
 </RelativeLayout>
