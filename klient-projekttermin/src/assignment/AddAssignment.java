@@ -1,6 +1,6 @@
 package assignment;
 
-import java.text.DecimalFormat;
+import java.lang.reflect.Type;
 
 import map.MapActivity;
 import models.Assignment;
@@ -18,6 +18,7 @@ import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;
 
 public class AddAssignment extends Activity {
@@ -33,28 +34,30 @@ public class AddAssignment extends Activity {
 	double lat = 0;
 	double lon = 0;
 	private String coordinates;
+	private EditText assignmentCoord;
+	double lat=0;
+	double lon = 0;
+	String json;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		DecimalFormat df = new DecimalFormat("#.00");
 		Intent intent = getIntent();
-		coordinates = intent.getStringExtra(MapActivity.coordinates);
+		json = intent.getStringExtra(MapActivity.coordinates);
 		Gson gson = new Gson();
-		WgsPoint[] coords = gson.fromJson(
-				intent.getStringExtra(MapActivity.coordinates),
-				WgsPoint[].class);
+		Type type = new TypeToken<WgsPoint[]>() {}.getType();
+		WgsPoint[] co = gson.fromJson(json, type);
 		setContentView(R.layout.activity_add_assignment);
 
 		// Hämtar och sätter vyerna från .xml -filen.
 		addAssignmentButton = (Button) findViewById(R.id.button_add_assignment);
-		assignmentName = (EditText) findViewById(R.id.assignment_name);
-		assignmnetCoords = (EditText) findViewById(R.id.assignment_coord);
-		for (int i = 0; i < coords.length; i++) {
-			lat = coords[i].getLat();
-			lon = coords[i].getLon();
-			assignmnetCoords.setText(lat + " , " + lon);
+		assignmentCoord = (EditText) findViewById(R.id.assignment_coord);
+		StringBuilder sb = new StringBuilder();
+		for (WgsPoint wgsPoint : co) {
+			sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
 		}
+		assignmentCoord.setText(sb.toString());
+		assignmentName = (EditText) findViewById(R.id.assignment_name);
 		assignmentDescription = (EditText) findViewById(R.id.assignment_description);
 		assignmentTime = (EditText) findViewById(R.id.assignment_time);
 		assignmentStreetName = (EditText) findViewById(R.id.assignment_street_name);
@@ -81,12 +84,7 @@ public class AddAssignment extends Activity {
 
 			public void onClick(View v) {
 				if (!assignmentName.getText().toString().equals("")) {
-					Assignment newAssignment = new Assignment(assignmentName
-							.getText().toString(), coordinates, false,
-							assignmentDescription.getText().toString(),
-							assignmentTime.getText().toString(),
-							AssignmentStatus.NOT_STARTED, assignmentStreetName
-									.getText().toString());
+					Assignment newAssignment = new Assignment("niko", json, "self", false, "HEJ", "12", AssignmentStatus.NEED_HELP, null, "HEJ", "HEJ"); 
 					db.addToDB(newAssignment, getBaseContext());
 				}
 
@@ -102,3 +100,4 @@ public class AddAssignment extends Activity {
 		return true;
 	}
 }
+
