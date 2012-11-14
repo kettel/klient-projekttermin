@@ -324,6 +324,9 @@ public class Assignment implements ModelInterface {
 	public List<Contact> getAgents() {
 		return agents;
 	}
+	public void addAgents(Contact self){
+		agents.add(self);
+	}
 
 	public String getName() {
 		return name;

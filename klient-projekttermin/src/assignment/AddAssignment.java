@@ -10,30 +10,38 @@ import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SimpleAdapter;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 public class AddAssignment extends ListActivity {
 
 	private Database db;
+	private CommunicationService communicationService;
+	private boolean communicationBond = false;
 	private Button addAssignmentButton;
 	private EditText assignmentName;
 	private EditText assignmentDescription;
 	private EditText assignmentTime;
 	private EditText assignmentStreetName;
 	private EditText assignmentSpot;
+	private EditText assignmnetCoords;
+
 	double lat = 0;
 	double lon = 0;
 	private EditText assignmentCoord;
@@ -44,13 +52,14 @@ public class AddAssignment extends ListActivity {
 	private List<HashMap<String, String>> data=new ArrayList<HashMap<String,String>>();
 	private String[] dataString={"Name","coord","Uppdragsbeskrivning","uppskattadtid","gatuadress","uppdragsplats"};
 
-
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_add_assignment);
 		addContent();
-		SimpleAdapter adapter=new SimpleAdapter(this, data, R.layout.textfield_item, from, to);
+		SimpleEditTextItemAdapter adapter = new SimpleEditTextItemAdapter(this,
+				data, R.layout.textfield_item, from, to);
 		setListAdapter(adapter);
 		Intent intent = getIntent();
 		json = intent.getStringExtra(MapActivity.coordinates);
@@ -70,10 +79,11 @@ public class AddAssignment extends ListActivity {
 
 		db = new Database();
 	}
-	private void addContent(){
+
+	private void addContent() {
 		data.clear();
 		for (String s : dataString) {
-			HashMap<String, String> temp=new HashMap<String, String>();
+			HashMap<String, String> temp = new HashMap<String, String>();
 			temp.put("line1", "hint");
 			temp.put("line2", s);
 			data.add(temp);
@@ -95,9 +105,12 @@ public class AddAssignment extends ListActivity {
 		button.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
+				communicationService.setContext(getApplicationContext());
+
 				if (!assignmentName.getText().toString().equals("")) {
 					Assignment newAssignment = new Assignment("niko", json, "self", false, "HEJ", "12", AssignmentStatus.NEED_HELP, null, "HEJ", "HEJ"); 
-					db.addToDB(newAssignment, getBaseContext());
+					db.addToDB(newAssignment, getApplicationContext());
+					communicationService.sendAssignment(newAssignment);
 				}
 
 				// Stänger aktiviteten.
@@ -105,6 +118,21 @@ public class AddAssignment extends ListActivity {
 			}
 		});
 	}
+
+	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
+
+		public void onServiceDisconnected(ComponentName arg0) {
+			communicationBond = false;
+		}
+
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			CommunicationBinder binder = (CommunicationBinder) service;
+			communicationService = binder.getService();
+			communicationBond = true;
+
+		}
+
+	};
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
