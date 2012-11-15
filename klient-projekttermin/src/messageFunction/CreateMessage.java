@@ -1,14 +1,6 @@
 package messageFunction;
 
-import java.util.List;
-
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
-
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
-
-
+import models.Contact;
 import models.MessageModel;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,18 +9,26 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
+import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.databaseProvider.Database;
+import com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
+
+import contacts.ContactsCursorAdapter;
 
 public class CreateMessage extends Activity {
-	private TextView reciever;
+	private AutoCompleteTextView reciever;
 	private TextView message;
 	private MessageModel messageObject;
 	private String messageContent;
@@ -40,10 +40,13 @@ public class CreateMessage extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		System.out.println("Nr 1");
 		setContentView(R.layout.activity_create_new_message);
-		dataBase = new Database();
-
+		dataBase = Database.getInstance(getApplicationContext());
+		Contact c=new Contact("eric");
+		dataBase.addToDB(c, getApplicationContext());
+		c=new Contact("erica");
+		dataBase.addToDB(c, getApplicationContext());
+		System.out.println("äre någeeeeeee "+dataBase.getDBCount(new Contact(), getApplicationContext()));
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			user = extras.getString("USER");
@@ -53,8 +56,14 @@ public class CreateMessage extends Activity {
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-		message = (TextView) this.findViewById(R.id.editText2);
-		reciever = (TextView) this.findViewById(R.id.editText1);
+		message = (TextView) this.findViewById(R.id.message);
+		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
+		Cursor cu = this.getContentResolver().query(
+				DatabaseContentProviderContacts.CONTENT_URI, null,
+				"_id IS NOT null", null, null);
+		System.out.println("finns de någe? "+cu.moveToNext());
+		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(), cu, 0));
+		cu.close();
 		message.setText(messageContent);
 	}
 
@@ -67,7 +76,9 @@ public class CreateMessage extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-			showAlertMessage();
+			if (!message.getText().equals("")) {
+				showAlertMessage();
+			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -96,18 +107,7 @@ public class CreateMessage extends Activity {
 		intent.putExtra("ChosenContact", recievingContact);
 		intent.putExtra("USER", user);
 		startActivity(intent);
-	}  
-
-	/*
-	 * Metoden ger användaren valet att avsluta meddelandeskaparfunktionen.
-	 * Metoden skapar en AlertDialog-ruta och låter användaren svara på frågan om att avsluta
-	 * Om användaren trycker ja avslutas aktiviteten, om användaren trycker nej stängs bara 
-	 * AlertDialog-rutan ner.
-	 * 
-	 */
-	public void cancelButton(View v){
-		showAlertMessage();
-	}
+	}		
 
 	public void showAlertMessage(){
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
