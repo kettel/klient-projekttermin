@@ -1,18 +1,18 @@
 package com.example.klien_projekttermin.databaseNewProviders;
 
-import com.example.klien_projekttermin.databaseNewProviders.Contact.Contacts;
+import models.Contact;
 
-import net.sqlcipher.database.SQLiteDatabase;
+import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
+
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
 
 public class ContactsDB {
-	private static boolean isLibraryLoaded = false;
+	
     /**
      * 
      */
@@ -21,20 +21,15 @@ public class ContactsDB {
 
     private static final ContactsDB  instance = new ContactsDB ();
 
-    public static ContactsDB  getInstance(Context context) {
-    	// Ladda vid behov in SQLCipher-bibliotek filer
-    	if (!isLibraryLoaded) {
-    		SQLiteDatabase.loadLibs(context);
-    		isLibraryLoaded = true;
-    	}
+    public static ContactsDB getInstance() {
         return instance;
     }
 
     // L�gg till en ny kontakt
-    public void addContact(ContentResolver contentResolver, String name) {
+    public void addContact(ContentResolver contentResolver, Contact contact) {
         ContentValues contentValue = new ContentValues();
         // note that we don't have to add an id as our table set id as autoincrement
-        contentValue.put(Contacts.NAME, name);
+        contentValue.put(Contacts.NAME, contact.getContactName());
         contentResolver.insert(Contacts.CONTENT_URI, contentValue);
     }
     

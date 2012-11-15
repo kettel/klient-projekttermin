@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.klien_projekttermin.databaseNewProviders.Contact.Contacts;
+import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
 import com.example.klien_projekttermin.databaseNewProviders.ContactsDB;
-import com.example.klien_projekttermin.databaseProvider.Database;
+import com.example.klien_projekttermin.databaseNewProviders.Database;
 
 import map.MapActivity;
 import messageFunction.Inbox;
@@ -58,9 +58,9 @@ public class MainActivity extends ListActivity {
 		});
 	}
 	private void testDB() {
-    	ContactsDB db = ContactsDB.getInstance(getApplicationContext());
-    	db.addContact(getContentResolver(), "Titeluran");
-    	Log.d("DB","Hur många notes i db: " + Integer.toString(db.getCount(getContentResolver())));
+    	Database db = Database.getInstance(getApplicationContext());
+    	db.addToDB(new Contact("titeluran"),getContentResolver());
+//    	Log.d("DB","Hur många notes i db: " + Integer.toString(db.getCount(getContentResolver())));
     	//Log.d("DB", "Alla namn: " + db.getAll(getContentResolver()));
     	Cursor cursor = getContentResolver().query(
     			Contacts.CONTENT_URI, null,Contacts.CONTACT_ID + " IS NOT null", null, null);

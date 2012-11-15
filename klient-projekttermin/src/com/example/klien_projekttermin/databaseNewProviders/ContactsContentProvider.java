@@ -2,7 +2,7 @@ package com.example.klien_projekttermin.databaseNewProviders;
 
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.databaseNewProviders.Contact.Contacts;
+import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
 
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -33,7 +33,7 @@ public class ContactsContentProvider extends ContentProvider {
 
     private static final String CONTACTS_TABLE_NAME = "contacts";
 
-    public static final String AUTHORITY = "com.example.testacontentprovider.providers.ContactsContentProvider";
+    public static final String AUTHORITY = "com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
