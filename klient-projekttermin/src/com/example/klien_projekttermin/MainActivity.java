@@ -4,11 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.example.klien_projekttermin.databaseNewProviders.Contact.Contacts;
+import com.example.klien_projekttermin.databaseNewProviders.ContactsDB;
+import com.example.klien_projekttermin.databaseProvider.Database;
+
 import map.MapActivity;
 import messageFunction.Inbox;
+import models.Contact;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,7 +31,7 @@ public class MainActivity extends ListActivity {
 		setContentView(R.layout.activity_main);
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-
+		testDB();
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -49,6 +56,25 @@ public class MainActivity extends ListActivity {
 			}
 
 		});
+	}
+	private void testDB() {
+    	ContactsDB db = ContactsDB.getInstance(getApplicationContext());
+    	db.addContact(getContentResolver(), "Titeluran");
+    	Log.d("DB","Hur många notes i db: " + Integer.toString(db.getCount(getContentResolver())));
+    	//Log.d("DB", "Alla namn: " + db.getAll(getContentResolver()));
+    	Cursor cursor = getContentResolver().query(
+    			Contacts.CONTENT_URI, null,Contacts.CONTACT_ID + " IS NOT null", null, null);
+    	Log.d("DB","Cursorstorlek: " + cursor.getCount());
+    	String ret = new String();
+    	if (cursor.moveToFirst()) {
+			do {
+				Log.d("DB","ID: " + Integer.toString(cursor.getInt(0)));
+				Log.d("DB","Namn: " + cursor.getString(1));
+				ret += cursor.getString(1);
+			} while (cursor.moveToNext());
+    	}
+    	Log.d("DB","Alla namn: " + ret);
+    	cursor.close();
 	}
 	/**
 	 * Genererar de menyval som ska gå att göra.

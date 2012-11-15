@@ -1,8 +1,14 @@
-package com.example.klien_projekttermin.databaseProvider;
+package com.example.klien_projekttermin.databaseNewProviders;
 
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.databaseProvider.Contact.Contacts;
+import com.example.klien_projekttermin.databaseNewProviders.Contact.Contacts;
+
+import net.sqlcipher.SQLException;
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteOpenHelper;
+import net.sqlcipher.database.SQLiteQueryBuilder;
+
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -10,10 +16,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
@@ -21,17 +23,17 @@ import android.util.Log;
  * @author Jason Wei
  * 
  */
-public class DatabaseContentProviderContacts extends ContentProvider {
+public class ContactsContentProvider extends ContentProvider {
+	String PASSWORD;
+    private static final String TAG = "ContactsContentProvider";
 
-    private static final String TAG = "DatabaseContentProviderContacts";
-
-    private static final String DATABASE_NAME = "tddd36.db";
+    private static final String DATABASE_NAME = "contacts.db";
 
     private static final int DATABASE_VERSION = 1;
 
-    private static final String CONTACTS_TABLE_NAME = "contact";
+    private static final String CONTACTS_TABLE_NAME = "contacts";
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts";
+    public static final String AUTHORITY = "com.example.testacontentprovider.providers.ContactsContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
@@ -47,10 +49,11 @@ public class DatabaseContentProviderContacts extends ContentProvider {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
+       
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + CONTACTS_TABLE_NAME + " (" + Database.KEY_ID
-                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + ContactsTable.COLUMN_CONTACT_NAME + " VARCHAR(255));");
+            db.execSQL("CREATE TABLE " + CONTACTS_TABLE_NAME + " (" + Contacts.CONTACT_ID
+                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Contacts.NAME + " VARCHAR(255));");
         }
 
         @Override
@@ -65,7 +68,7 @@ public class DatabaseContentProviderContacts extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String where, String[] whereArgs) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+		SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
         switch (sUriMatcher.match(uri)) {
             case CONTACTS:
                 break;
@@ -77,6 +80,7 @@ public class DatabaseContentProviderContacts extends ContentProvider {
         }
 
         int count = db.delete(CONTACTS_TABLE_NAME, where, whereArgs);
+        // Underr�tta lyssnare
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
@@ -104,8 +108,8 @@ public class DatabaseContentProviderContacts extends ContentProvider {
             values = new ContentValues();
         }
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long rowId = db.insert(CONTACTS_TABLE_NAME, Contacts.COLUMN_CONTACT_NAME, values);
+        SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
+        long rowId = db.insert(CONTACTS_TABLE_NAME, Contacts.NAME, values);
         if (rowId > 0) {
             Uri noteUri = ContentUris.withAppendedId(Contacts.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(noteUri, null);
@@ -137,7 +141,7 @@ public class DatabaseContentProviderContacts extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase(PASSWORD);
         Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
 
         c.setNotificationUri(getContext().getContentResolver(), uri);
@@ -146,7 +150,7 @@ public class DatabaseContentProviderContacts extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
         int count;
         switch (sUriMatcher.match(uri)) {
             case CONTACTS:
@@ -166,8 +170,8 @@ public class DatabaseContentProviderContacts extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, CONTACTS_TABLE_NAME + "/#", CONTACTS_ID);
 
         contactsProjectionMap = new HashMap<String, String>();
-        contactsProjectionMap.put(Contacts.COLUMN_ID, Contacts.COLUMN_ID);
-        contactsProjectionMap.put(Contacts.COLUMN_CONTACT_NAME, Contacts.COLUMN_CONTACT_NAME);
+        contactsProjectionMap.put(Contacts.CONTACT_ID, Contacts.CONTACT_ID);
+        contactsProjectionMap.put(Contacts.NAME, Contacts.NAME);
     }
 }
 
