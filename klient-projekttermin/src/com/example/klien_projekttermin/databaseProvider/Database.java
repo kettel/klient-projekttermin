@@ -85,6 +85,7 @@ public class Database {
 
 		// Initiera databasen för denna singleton
 		database = SQLiteDatabase.openOrCreateDatabase(dbFile, PASSWORD, null);
+		System.out.println("(Database.java): Laddat DB-lib?" + isLibraryLoaded);
 		return instance;
 	}
 
@@ -125,6 +126,7 @@ public class Database {
 			values.put(AssignmentTable.COLUMN_TIMESPAN, ass.getTimeSpan());
 			Uri assUri = context.getContentResolver().insert(
 					DatabaseContentProviderAssignments.CONTENT_URI, values);
+			System.out.println("SPARAT I DB: " + ass.getName());
 			Log.d("DB", "AssignmentURI: " + assUri);
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			Contact contact = (Contact) m;
@@ -243,6 +245,7 @@ public class Database {
 					DatabaseContentProviderAssignments.CONTENT_URI, null,
 					Database.KEY_ID + " IS NOT null", null, null);
 			// Loopa igenom alla rader och lägg till dem i listan
+			System.out.println("UTUTUTUTUTU");
 			if (cursor.moveToFirst()) {
 				do {
 					// Konvertera BLOB -> Bitmap
@@ -274,7 +277,7 @@ public class Database {
 							cursor.getString(12), // streetName
 							cursor.getString(13), // siteName
 							Long.valueOf(cursor.getString(14))); // timeStamp
-
+						System.out.println(cursor.getString(1)+ " NAME");
 					returnList.add(assignment);
 				} while (cursor.moveToNext());
 			}

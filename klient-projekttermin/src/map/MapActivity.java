@@ -1,10 +1,10 @@
 package map;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.lang.reflect.Type;
 
 import models.Assignment;
 import models.ModelInterface;
@@ -42,13 +42,14 @@ import assignment.AddAssignment;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
 import com.nutiteq.components.KmlPlace;
 import com.nutiteq.components.OnMapElement;
 import com.nutiteq.components.Place;
 import com.nutiteq.components.PlaceIcon;
-import com.nutiteq.components.PlaceLabel;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.listeners.MapListener;
@@ -62,9 +63,6 @@ import com.nutiteq.ui.ThreadDrivenPanning;
 import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för
@@ -106,6 +104,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	private static String[] regionAlts = { "Ta bort region",
 			"Skapa uppdrag med region" };
 	private boolean onRetainCalled;
+	private int callingActivity;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -115,12 +114,13 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		 */
 		this.manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		this.locationSource = new AndroidGPSProvider(manager, 1000L);
-		//this.setContentView(R.layout.activity_map);
+		// this.setContentView(R.layout.activity_map);
 		/**
 		 * Kollar om gps är aktiverat
 		 */
 		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			buildAlertMessageNoGps();
+
 		}
 
 		/**
@@ -128,19 +128,19 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		 * till en observer på searchSuggestions
 		 */
 		this.searchSuggestions.addObserver(this);
-		
+
 		this.haveNetworkConnection();
 		/**
 		 * Hämta information från databasen om aktuella uppdrag
 		 */
-//		this.getDatabaseInformation();
+		// this.getDatabaseInformation();
 		/**
 		 * GPS:en ska vara påslagen vid start
 		 */
-		
+
 	}
-	
-	public void createMap(){
+
+	public void createMap() {
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
@@ -245,10 +245,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		Assignment a = new Assignment();
 		Database db = new Database();
 		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
-		System.out.println("database "+db.getDBCount(a, getBaseContext()));
+		System.out.println("database " + db.getDBCount(a, getBaseContext()));
 		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
 			a = (Assignment) list.get(i);
-//			addInterestPoint(a.getRegion());
+			// addInterestPoint(a.getRegion());
 		}
 	}
 
@@ -261,11 +261,12 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			a = (Assignment) list.get(i);
 			Type type = new TypeToken<WgsPoint[]>() {
 			}.getType();
-			System.out.println("FROM DATAABSE "  + a.getRegion());
-			WgsPoint[] co = gson.fromJson(a.getRegion(), type);
-			System.out.println(co.length);
-			for (WgsPoint wgsPoint : co) {
-				addInterestPoint(wgsPoint);
+			System.out.println("FROM DATAABSE " + a.getRegion());
+			if (!a.getRegion().equals("")) {
+				WgsPoint[] co = gson.fromJson(a.getRegion(), type);
+				for (WgsPoint wgsPoint : co) {
+					addInterestPoint(wgsPoint);
+				}
 			}
 		}
 	}
@@ -372,8 +373,18 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		callingActivity = getIntent().getIntExtra("calling-activity", 0);
+
+		switch (callingActivity) {
+		case ActivityConstants.ADD_ASSIGNMENT_ACTIVITY:
+			
+			break;
+		case ActivityConstants.MAIN_ACTIVITY:
+			getDatabaseRegionInformation();
+			break;
+		}
 		createMap();
-		getDatabaseRegionInformation();
+		
 		if (gpsFollowItem != null) {
 			runOnUiThread(new Runnable() {
 
@@ -428,8 +439,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 *            Namn som syns om man klickar på punkten
 	 */
 	public void addInterestPoint(WgsPoint region) {
-				Place p = new Place(1, " ", icons[2], region);
-				mapComponent.addPlace(p);
+		Place p = new Place(1, " ", icons[2], region);
+		mapComponent.addPlace(p);
 	}
 
 	/**
@@ -541,6 +552,48 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		final int choice = arg2;
+		switch (callingActivity) {
+		case ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT:
+			displayAddCoordinatesToAssignment(choice);
+			break;
+		default:
+			displaySearchAlts(choice);
+			break;
+		}
+	}
+	
+	public void displayAddCoordinatesToAssignment(int ch){
+		final int choice = ch;
+		final Gson gson = new Gson();
+		final Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Koordinater");
+		builder.setMessage("Använd koordinater ?");
+		builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				Intent intent = new Intent(MapActivity.this, AddAssignment.class);
+				intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
+				WgsPoint[] coords = { searchSuggestions.getList()
+						.get(choice).getPlace().getWgs() };
+				intent.putExtra(coordinates, gson.toJson(coords, type));
+				MapActivity.this.startActivity(intent);
+				finish();
+			}
+		});
+		builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.setCancelable(false);
+		builder.create().show();
+	}
+	
+	
+	public void displaySearchAlts(int ch){
+		final int choice = ch;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Meny");
 		ListView modeList = new ListView(this);
@@ -567,8 +620,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 					centerMapOnLocation(choice);
 					break;
 				case 2:
-					WgsPoint[] coords = { searchSuggestions.getList().get(choice)
-							.getPlace().getWgs() };
+					WgsPoint[] coords = { searchSuggestions.getList()
+							.get(choice).getPlace().getWgs() };
 					createAssignment(coords);
 					break;
 				default:
@@ -656,7 +709,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		if (!onRetainCalled&&mapComponent!=null) {
+		if (!onRetainCalled && mapComponent != null) {
 			mapComponent.stopMapping();
 			mapComponent = null;
 		}

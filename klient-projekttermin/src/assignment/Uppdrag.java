@@ -18,7 +18,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
+import com.example.klien_projekttermin.databaseProvider.Database;
 
 public class Uppdrag extends Activity {
 
@@ -45,7 +45,7 @@ public class Uppdrag extends Activity {
 		assignmentID = intent.getExtras().getLong("assignmentID");
 
 		// Initierar databasen.
-		db = new Database();
+		db = Database.getInstance(this);
 
 		listAssignments = db.getAllFromDB(new Assignment(),
 				getApplicationContext());

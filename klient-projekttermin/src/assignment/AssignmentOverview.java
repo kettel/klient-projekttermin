@@ -19,7 +19,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.example.klien_projekttermin.*;
-import com.example.klien_projekttermin.database.Database;
+import com.example.klien_projekttermin.databaseProvider.Database;
 
 public class AssignmentOverview extends Activity {
 
@@ -34,7 +34,7 @@ public class AssignmentOverview extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
 
-		db = new Database();
+//		db = Database.getInstance(this);
 		listView = (ListView) findViewById(R.id.listView1);
 		loadAssignmentList();
 		setItemClickListner();
@@ -88,9 +88,11 @@ public class AssignmentOverview extends Activity {
 	 * @return
 	 */
 	private String[] getAssHeadsFromDatabase() {
-
-		assList = db.getAllFromDB(new Assignment(), getApplicationContext());
+		db = Database.getInstance(getApplicationContext());
+		assList = db.getAllFromDB(new Assignment(), this);
+		db.destroy();
 		int i = 0;
+		System.out.println(assList.size()+" heheheheheheheh");
 		String[] tempHeadArr = new String[assList.size()];
 
 		// H�ller koll p� ID varje position i adaptern erh�ller.
@@ -99,6 +101,7 @@ public class AssignmentOverview extends Activity {
 		for (ModelInterface a : assList) {
 			Assignment b = (Assignment) a;
 			tempHeadArr[i] = b.getName();
+			System.out.println(tempHeadArr[i]);
 			idInAdapter[i] = b.getId();
 			i++;
 		}
@@ -178,10 +181,10 @@ public class AssignmentOverview extends Activity {
 	 * Metoden tar bort ett uppdrag.
 	 */
 	public void eraseAssignment(long assignmentId) {
-
+		db = Database.getInstance(getApplicationContext());
 		List<ModelInterface> listAssignments = db.getAllFromDB(
 				new Assignment(), getApplicationContext());
-
+		db.destroy();
 		for (ModelInterface m : listAssignments) {
 
 			// Konverterar Modelinterfacet till ett Assignment.
@@ -194,7 +197,7 @@ public class AssignmentOverview extends Activity {
 			}
 
 		}
-
+		
 		loadAssignmentList();
 	}
 
