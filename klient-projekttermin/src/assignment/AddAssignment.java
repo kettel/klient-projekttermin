@@ -102,7 +102,7 @@ public class AddAssignment extends ListActivity {
 	}
 
 	private void saveToDB() {
-		communicationService.setContext(getApplicationContext());
+		communicatitonService.setContext(getApplicationContext());
 
 			Assignment newAssignment = new Assignment("niko", json, "self",
 					false, "HEJ", "12", AssignmentStatus.NEED_HELP, null,
