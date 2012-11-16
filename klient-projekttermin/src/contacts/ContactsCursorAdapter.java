@@ -44,7 +44,6 @@ public class ContactsCursorAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		final String text = convertToString(cursor);
-		System.out.println(text);
 		((TextView) view).setText(text);
 		((TextView) view).setTextColor(Color.BLACK);
 	}

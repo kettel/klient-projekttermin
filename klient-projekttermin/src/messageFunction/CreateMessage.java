@@ -15,7 +15,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.databaseNewProviders.Database;
@@ -26,7 +26,7 @@ import contacts.ContactsCursorAdapter;
 
 public class CreateMessage extends Activity {
 	private AutoCompleteTextView reciever;
-	private TextView message;
+	private EditText message;
 	private MessageModel messageObject;
 	private String messageContent;
 	private Database dataBase;
@@ -39,7 +39,12 @@ public class CreateMessage extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = Database.getInstance(getApplicationContext());
-
+//		Contact c=new Contact("eric");
+//		dataBase.addToDB(c, this.getContentResolver());
+//		c=new Contact("erica");
+//		dataBase.addToDB(c, this.getContentResolver());
+//		c=new Contact("anna");
+//		dataBase.addToDB(c, this.getContentResolver());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			user = extras.getString("USER");
@@ -49,12 +54,12 @@ public class CreateMessage extends Activity {
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-		message = (TextView) this.findViewById(R.id.editText1);
+		message = (EditText) this.findViewById(R.id.editText2);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
 
 		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
 				null, 0));
-		message.setText(messageContent);
+		//message.setText(messageContent);
 	}
 
 	@Override
@@ -66,7 +71,7 @@ public class CreateMessage extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-			if (!message.getText().equals("")) {
+			if (message.getText()==null) {
 				showAlertMessage();
 			}
 		}
