@@ -1,5 +1,6 @@
 package assignment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import models.Assignment;
@@ -8,6 +9,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +21,8 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.example.klien_projekttermin.*;
-import com.example.klien_projekttermin.databaseProvider.Database;
+import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
 
 public class AssignmentOverview extends Activity {
 
@@ -27,7 +30,8 @@ public class AssignmentOverview extends Activity {
 	String[] assignmentHeadlineArray;
 	long[] idInAdapter;
 	Database db;
-	List<ModelInterface> assList;
+	ArrayList<ModelInterface> assList;
+	private Cursor cursor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -89,8 +93,11 @@ public class AssignmentOverview extends Activity {
 	 */
 	private String[] getAssHeadsFromDatabase() {
 		db = Database.getInstance(getApplicationContext());
-		assList = db.getAllFromDB(new Assignment(), this);
-		db.destroy();
+				cursor = getContentResolver().query(
+		    			Assignments.CONTENT_URI, null,Assignments.ASSIGNMENT_ID + " IS NOT null", null, null);
+				assList = new ArrayList<ModelInterface>(cursor.getCount());
+				
+				cursor.close();
 		int i = 0;
 		System.out.println(assList.size()+" heheheheheheheh");
 		String[] tempHeadArr = new String[assList.size()];
@@ -162,7 +169,7 @@ public class AssignmentOverview extends Activity {
 					// Om anv�ndaren trycker p� ja s� k�rs metoden
 					// eraseAssignment()
 					public void onClick(DialogInterface dialog, int which) {
-						eraseAssignment(eraseById);
+//						eraseAssignment(eraseById);
 					}
 				});
 		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "AVBRYT",
@@ -181,24 +188,23 @@ public class AssignmentOverview extends Activity {
 	 * Metoden tar bort ett uppdrag.
 	 */
 	public void eraseAssignment(long assignmentId) {
-		db = Database.getInstance(getApplicationContext());
-		List<ModelInterface> listAssignments = db.getAllFromDB(
-				new Assignment(), getApplicationContext());
-		db.destroy();
-		for (ModelInterface m : listAssignments) {
-
-			// Konverterar Modelinterfacet till ett Assignment.
-			Assignment a = (Assignment) m;
-
-			// J�mf�r ID:T som clickhold:ats p� med befindliga Assignments fr�n
-			// databasen och tar bort det uppdraget.
-			if (a.getId() == assignmentId) {
-				db.deleteFromDB(a, getApplicationContext());
-			}
-
-		}
+//		db = Database.getInstance(getApplicationContext());
+//		List<ModelInterface> listAssignments = db.getAllFromDB(
+//				new Assignment(), getApplicationContext());
+//		for (ModelInterface m : listAssignments) {
+//
+//			// Konverterar Modelinterfacet till ett Assignment.
+//			Assignment a = (Assignment) m;
+//
+////			 J�mf�r ID:T som clickhold:ats p� med befindliga Assignments fr�n
+//			 databasen och tar bort det uppdraget.
+//			if (a.getId() == assignmentId) {
+//				db.deleteFromDB(a, getApplicationContext());
+//			}
+//
+//		}
 		
-		loadAssignmentList();
+//		loadAssignmentList();
 	}
 
 }

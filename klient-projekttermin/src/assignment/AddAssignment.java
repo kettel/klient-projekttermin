@@ -11,13 +11,16 @@ import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseProvider.Database;
+import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable;
+import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;
@@ -40,7 +43,8 @@ public class AddAssignment extends ListActivity{
 	private int[] to = { R.id.editText1 };
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
-
+	private Cursor cursor;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,6 +102,8 @@ public class AddAssignment extends ListActivity{
 
 	};
 
+	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_add_assignment, menu);
@@ -120,10 +126,12 @@ public class AddAssignment extends ListActivity{
 		db = Database.getInstance(getApplicationContext());
 		HashMap<Integer, String>temp=((SimpleEditTextItemAdapter)getListAdapter()).getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), json, "eric", false, temp.get(2),temp.get(3) , AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5));
-		db.addToDB(newAssignment, getApplicationContext());
-		db.destroy();
-		System.out.println(db.getAllFromDB(newAssignment, getApplicationContext()));
+		db.addToDB(newAssignment, getContentResolver());
+		cursor = getContentResolver().query(
+    			Assignments.CONTENT_URI, null,Assignments.ASSIGNMENT_ID + " IS NOT null", null, null);
+		int index = cursor.getColumnIndex(AssignmentTable.Assignments.ASSIGNMENT_ID);
+		System.out.println(cursor.getString(index));
+		cursor.close();
 		finish();
-
 	}
 }

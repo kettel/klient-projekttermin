@@ -377,14 +377,14 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 		switch (callingActivity) {
 		case ActivityConstants.ADD_ASSIGNMENT_ACTIVITY:
-			
-			break;
+
+		break;
 		case ActivityConstants.MAIN_ACTIVITY:
 			getDatabaseRegionInformation();
-			break;
+		break;
 		}
 		createMap();
-		
+
 		if (gpsFollowItem != null) {
 			runOnUiThread(new Runnable() {
 
@@ -561,8 +561,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			break;
 		}
 	}
-	
-	public void displayAddCoordinatesToAssignment(int ch){
+
+	public void displayAddCoordinatesToAssignment(int ch) {
 		final int choice = ch;
 		final Gson gson = new Gson();
 		final Type type = new TypeToken<WgsPoint[]>() {
@@ -573,26 +573,28 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				Intent intent = new Intent(MapActivity.this, AddAssignment.class);
-				intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
-				WgsPoint[] coords = { searchSuggestions.getList()
-						.get(choice).getPlace().getWgs() };
+				Intent intent = new Intent(MapActivity.this,
+						AddAssignment.class);
+				intent.putExtra("calling-activity",
+						ActivityConstants.MAP_ACTIVITY);
+				WgsPoint[] coords = { searchSuggestions.getList().get(choice)
+						.getPlace().getWgs() };
 				intent.putExtra(coordinates, gson.toJson(coords, type));
 				MapActivity.this.startActivity(intent);
 				finish();
 			}
 		});
-		builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		});
+		builder.setNegativeButton("cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
 		builder.setCancelable(false);
 		builder.create().show();
 	}
-	
-	
-	public void displaySearchAlts(int ch){
+
+	public void displaySearchAlts(int ch) {
 		final int choice = ch;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Meny");

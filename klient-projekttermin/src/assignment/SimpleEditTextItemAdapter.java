@@ -20,9 +20,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.AdapterView.OnItemClickListener;
 
+import camera.Camera;
+
 import com.example.klien_projekttermin.R;
-import com.nutiteq.components.OnMapElement;
-import com.nutiteq.components.Polygon;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
@@ -36,12 +36,10 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			int[] to) {
 		super(context, data, resource, from, to);
 		this.context = context;
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
 		View v = super.getView(position, convertView, parent);
 		EditText editText = (EditText) v.findViewById(R.id.editText1);
 		if (itemStrings.get(position) != null) {
@@ -99,19 +97,24 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
-		Intent intent = new Intent(context, MapActivity.class);
-		intent.putExtra("calling-activity",
-		ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
+		final Intent intent = new Intent(context, Camera.class);
+		
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
 				switch (arg2) {
 				case 0:
-					
+					intent.putExtra("calling-activity",
+							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
+					context.startActivity(intent);
+					((AddAssignment)context).finish();
 					break;
 				case 1:
-					
+					intent.putExtra("calling-activity",
+							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
+					context.startActivity(intent);
+					((AddAssignment)context).finish();
 					break;
 				default:
 					break;
