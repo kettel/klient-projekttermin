@@ -54,11 +54,9 @@ public class CreateMessage extends Activity {
 
 		message = (TextView) this.findViewById(R.id.message);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
-		Cursor cu = this.getContentResolver().query(
-				ContactTable.Contacts.CONTENT_URI, null, "_id IS NOT null",
-				null, null);
+
 		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
-				cu, 0));
+				null, 0));
 		message.setText(messageContent);
 	}
 
