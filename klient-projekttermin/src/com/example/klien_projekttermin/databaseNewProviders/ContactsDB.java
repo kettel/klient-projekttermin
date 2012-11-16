@@ -1,6 +1,9 @@
 package com.example.klien_projekttermin.databaseNewProviders;
 
+import java.util.List;
+
 import models.Contact;
+import models.ModelInterface;
 
 import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
 
@@ -70,6 +73,12 @@ public class ContactsDB {
         int delete = contentResolver.delete(Contacts.CONTENT_URI, null, null);
         System.out.println("DELETED " + delete + " RECORDS FROM CONTACTS DB");
     }
+
+	public List<ModelInterface> getAllAssignments(
+			ContentResolver contentResolver) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
 

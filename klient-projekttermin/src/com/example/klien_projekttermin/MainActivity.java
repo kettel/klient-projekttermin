@@ -16,6 +16,7 @@ import messageFunction.Inbox;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;
+import models.ModelInterface;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
