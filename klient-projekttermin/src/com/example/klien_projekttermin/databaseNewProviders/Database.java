@@ -4,15 +4,18 @@ import java.util.List;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import models.Assignment;
 import models.Contact;
 import models.ModelInterface;
 import net.sqlcipher.database.SQLiteDatabase;
 
 public class Database {
+	// SQLCipher-lösen
+	public static final String PASSWORD = "password";
 	
 	private static boolean isLibraryLoaded = false;
 	
-	// TODO: assignmentDB
+	private static AssignmentsDB assignmentsDB;
 	private static ContactsDB contactsDB;
 	// TODO: messageDB
 	
@@ -27,7 +30,7 @@ public class Database {
     		isLibraryLoaded = true;
     	}
     	// Hämta DB från var och en av de tre (snart fyra ContentProv wrappers)
-    	// TODO: assignmentDB
+    	assignmentsDB = AssignmentsDB.getInstance();
     	contactsDB = ContactsDB.getInstance();
     	// TODO: messageDB
         return instance;
@@ -36,7 +39,8 @@ public class Database {
 	public void addToDB(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			// TODO
+			Assignment assignment = (Assignment) m;
+			assignmentsDB.addAssignment(contentResolver, assignment);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			Contact contact = (Contact) m;
