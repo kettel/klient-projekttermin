@@ -3,7 +3,6 @@ package com.example.klien_projekttermin.databaseNewProviders;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
 import com.example.klien_projekttermin.databaseNewProviders.MessageTable.Messages;
 
 import models.MessageModel;
@@ -52,7 +51,6 @@ public class MessagesDB {
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
 		Cursor cursor = contentResolver.query(Messages.CONTENT_URI, null,
 				Messages.MESSAGE_ID + " IS NOT null", null, null);
-		Log.d("DB","Storlekt på Meddelande-cursorn: " + cursor.getCount());
 		if (cursor.moveToFirst()) {
 			do {
 				String content = new String(), receiver = new String(), sender = new String();
@@ -93,7 +91,7 @@ public class MessagesDB {
 		values.put(Messages.TIMESTAMP,
 				Long.toString(message.getMessageTimeStamp()));
 		values.put(Messages.ISREAD, Boolean.toString(message.isRead()));
-		int updated = contentResolver.update(Assignments.CONTENT_URI, values,
+		int updated = contentResolver.update(Messages.CONTENT_URI, values,
 				Messages.MESSAGE_ID + " = " + Long.toString(message.getId()),
 				null);
 		Log.d("DB", "Uppdaterade " + updated + " messages.");

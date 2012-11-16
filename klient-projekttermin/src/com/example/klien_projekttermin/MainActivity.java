@@ -90,9 +90,25 @@ public class MainActivity extends ListActivity {
 		for (ModelInterface modelInterface : contacts) {
 			Contact contact = (Contact) modelInterface;
 			Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
+			Contact updatedContact = new Contact(contact.getId(),"Uppdaterat kontaktnamn..");
+			db.updateModel(updatedContact, getContentResolver());
+		}
+		Log.d("DB","** Uppdaterade kontakter **");
+		contacts = db.getAllFromDB(new Contact(), getContentResolver());
+		for (ModelInterface modelInterface : contacts) {
+			Contact contact = (Contact) modelInterface;
+			Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
 		}
 		Log.d("DB","** Meddelanden **");
 		List <ModelInterface> messages = db.getAllFromDB(new MessageModel(), getContentResolver());
+		for (ModelInterface modelInterface : messages) {
+			MessageModel mess = (MessageModel) modelInterface;
+			Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
+			MessageModel updatedMess = new MessageModel(mess.getId(),"Updated content", "Updated receiver", "Updated sender", mess.getMessageTimeStamp(), true);
+			db.updateModel(updatedMess, getContentResolver());
+		}
+		Log.d("DB","** Uppdaterade meddelanden **");
+		messages = db.getAllFromDB(new MessageModel(), getContentResolver());
 		for (ModelInterface modelInterface : messages) {
 			MessageModel mess = (MessageModel) modelInterface;
 			Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
