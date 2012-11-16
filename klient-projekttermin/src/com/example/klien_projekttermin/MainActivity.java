@@ -75,6 +75,15 @@ public class MainActivity extends ListActivity {
 		for (ModelInterface modelInterface : assignments) {
 			Assignment assignment = (Assignment) modelInterface;
 			Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
+			Assignment assignmentUpdate = new Assignment("Uppdaterat namn", "Uppdaterad sändare", false, "Uppdaterad beskrivning", "Uppdaterat tidsspann", AssignmentStatus.NEED_HELP, "Uppdaterad gatunamn", "Uppdaterad plats");
+			assignmentUpdate.setId(assignment.getId());
+			db.updateModel(assignmentUpdate, getContentResolver());
+		}
+		Log.d("DB", "** Uppdaterade uppdrag **");
+		assignments = db.getAllFromDB(new Assignment(), getContentResolver());
+		for (ModelInterface modelInterface : assignments) {
+			Assignment assignment = (Assignment) modelInterface;
+			Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
 		}
 		Log.d("DB","** Kontakter **");
 		List <ModelInterface> contacts = db.getAllFromDB(new Contact(), getContentResolver());
