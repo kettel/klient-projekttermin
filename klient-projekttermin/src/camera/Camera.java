@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.VideoView;
+import assignment.ActivityConstants;
 
 public class Camera extends Activity {
 	private static final int ACTION_TAKE_PHOTO_B = 1;
@@ -215,10 +216,20 @@ public class Camera extends Activity {
 			dispatchTakeVideoIntent();
 		}
 	};
+	private int callingActivity;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		callingActivity = getIntent().getIntExtra("calling-activity", 0);
+
+		switch (callingActivity) {
+		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
+			
+			break;
+		case ActivityConstants.MAIN_ACTIVITY:
+			break;
+		}
 		setContentView(R.layout.activity_camera);
 
 		mImageView = (ImageView) findViewById(R.id.imageView1);

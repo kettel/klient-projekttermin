@@ -4,24 +4,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import map.CustomAdapter;
 import map.MapActivity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.example.klien_projekttermin.R;
+import com.nutiteq.components.OnMapElement;
+import com.nutiteq.components.Polygon;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
 
 	private HashMap<Integer, String> itemStrings = new HashMap<Integer, String>();
 	private Context context;
+	private static String[] pictureAlts = { "Bifoga bild","Ta bild"};
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -72,16 +80,48 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				itemStrings.put(position, s);
 			}
 		}
-		if (hasFocus && v.getId() == 1) {
+		if (hasFocus && v.getId() == 6) {
 			final EditText Caption = (EditText) v;
 			String s = Caption.getText().toString();
 			if (s.isEmpty()) {
-				coordinateField();
+				pictureAlternatives();
 			}
 		}
 	}
 
-	public void coordinateField() {
+	private void pictureAlternatives() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle("Bild alternativ");
+		ListView modeList = new ListView(context);
+		CustomAdapter modeAdapter = new CustomAdapter(context,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				pictureAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		Intent intent = new Intent(context, MapActivity.class);
+		intent.putExtra("calling-activity",
+		ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					
+					break;
+				case 1:
+					
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
+
+	private void coordinateField() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
 		builder.setMessage("Vill du hämta koordinater från kartan?");

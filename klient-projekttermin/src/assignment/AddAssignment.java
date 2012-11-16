@@ -33,7 +33,7 @@ public class AddAssignment extends ListActivity{
 	private String json;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Name", "coord", "Uppdragsbeskrivning",
-			"uppskattadtid", "gatuadress", "uppdragsplats" };
+			"uppskattadtid", "gatuadress", "uppdragsplats", "bild" };
 	private MenuItem saveItem;
 	private MenuItem cancelItem;
 	private String[] from = { "line1" };
