@@ -20,8 +20,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseProvider.Database;
-import com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts;
+import com.example.klien_projekttermin.databaseNewProviders.ContactTable;
+import com.example.klien_projekttermin.databaseNewProviders.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -42,11 +42,7 @@ public class CreateMessage extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = Database.getInstance(getApplicationContext());
-		Contact c=new Contact("eric");
-		dataBase.addToDB(c, getApplicationContext());
-		c=new Contact("erica");
-		dataBase.addToDB(c, getApplicationContext());
-		System.out.println("äre någeeeeeee "+dataBase.getDBCount(new Contact(), getApplicationContext()));
+
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			user = extras.getString("USER");
@@ -59,11 +55,10 @@ public class CreateMessage extends Activity {
 		message = (TextView) this.findViewById(R.id.message);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
 		Cursor cu = this.getContentResolver().query(
-				DatabaseContentProviderContacts.CONTENT_URI, null,
-				"_id IS NOT null", null, null);
-		System.out.println("finns de någe? "+cu.moveToNext());
-		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(), cu, 0));
-		cu.close();
+				ContactTable.Contacts.CONTENT_URI, null, "_id IS NOT null",
+				null, null);
+		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
+				cu, 0));
 		message.setText(messageContent);
 	}
 
@@ -84,61 +79,69 @@ public class CreateMessage extends Activity {
 	}
 
 	/**
-	 * Metoden skapar ett meddelande objekt och skickar det vidare till komunikationsmodulen. Metoden sparar ocks� de skapade meddelandena i skickat mappen
+	 * Metoden skapar ett meddelande objekt och skickar det vidare till
+	 * komunikationsmodulen. Metoden sparar ocks� de skapade meddelandena i
+	 * skickat mappen
+	 * 
 	 * @param v
 	 */
-	public void sendMessage(View v){
+	public void sendMessage(View v) {
 		String recievingContact = reciever.getText().toString();
 		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-		messageObject = new MessageModel(message.getText().toString(), recievingContact, user); 
+		messageObject = new MessageModel(message.getText().toString(),
+				recievingContact, user);
 
-		//Sparar messageObject i databasen
-		dataBase.addToDB(messageObject,getApplicationContext());
-		//Skicka till kommunikationsmodulen
+		// Sparar messageObject i databasen
+		dataBase.addToDB(messageObject, getContentResolver());
+		// Skicka till kommunikationsmodulen
 
-		if(communicationBond){
+		if (communicationBond) {
 			communicationService.sendMessage(messageObject);
 		}
 
 		finish();
 
-		//Öppnar konversatinsvyn för kontakten man skickade till 
+		// Öppnar konversatinsvyn för kontakten man skickade till
 		Intent intent = new Intent(this, DisplayOfConversation.class);
 		intent.putExtra("ChosenContact", recievingContact);
 		intent.putExtra("USER", user);
 		startActivity(intent);
-	}		
+	}
 
-	public void showAlertMessage(){
+	public void showAlertMessage() {
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("Avsluta?");
 		alertDialog.setMessage("Vill du avsluta?");
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA", new DialogInterface.OnClickListener() {
+		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA",
+				new DialogInterface.OnClickListener() {
 
-			//Om användaren trycker på ja så körs metoden eraseMessage()
-			public void onClick(DialogInterface dialog, int which) {
-				finish();
-			}
-		});
-		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ", new DialogInterface.OnClickListener() {
+					// Om användaren trycker på ja så körs metoden
+					// eraseMessage()
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				});
+		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ",
+				new DialogInterface.OnClickListener() {
 
-			public void onClick(DialogInterface dialog, int which) {
-				//Gör inget
-			}
-		});
+					public void onClick(DialogInterface dialog, int which) {
+						// Gör inget
+					}
+				});
 		alertDialog.show();
 	}
+
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 
-		public void onServiceConnected(ComponentName className,IBinder service) {
+		public void onServiceConnected(ComponentName className, IBinder service) {
 			System.out.println("OnServiceConnection");
 			CommunicationBinder binder = (CommunicationBinder) service;
 			communicationService = binder.getService();
 			communicationBond = true;
 		}
+
 		public void onServiceDisconnected(ComponentName arg0) {
 			communicationBond = false;
 		}
 	};
 }
-
