@@ -52,6 +52,7 @@ public class MessagesDB {
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
 		Cursor cursor = contentResolver.query(Messages.CONTENT_URI, null,
 				Messages.MESSAGE_ID + " IS NOT null", null, null);
+		Log.d("DB","Storlekt på Meddelande-cursorn: " + cursor.getCount());
 		if (cursor.moveToFirst()) {
 			do {
 				String content = new String(), receiver = new String(), sender = new String();
@@ -80,7 +81,7 @@ public class MessagesDB {
 				returnList.add(message);
 			} while (cursor.moveToNext());
 		}
-		return null;
+		return returnList;
 	}
 
 	public void updateMessage(ContentResolver contentResolver, MessageModel message) {

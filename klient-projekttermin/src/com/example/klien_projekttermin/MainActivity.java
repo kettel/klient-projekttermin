@@ -4,14 +4,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.example.klien_projekttermin.databaseNewProviders.Database;
+
 import camera.Camera;
 
 
 import map.MapActivity;
 import messageFunction.Inbox;
+import models.Assignment;
+import models.AssignmentStatus;
+import models.Contact;
+import models.MessageModel;
+import models.ModelInterface;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,6 +32,7 @@ public class MainActivity extends ListActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		testDB(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		String[] from = { "line1", "line2" };
@@ -54,6 +64,30 @@ public class MainActivity extends ListActivity {
 			}
 
 		});
+	}
+	private void testDB(Context context) {
+		Database db = Database.getInstance(context);
+		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning", "Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED,"Gatunamn", "Platsnamn"),getContentResolver());
+		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
+		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera", "Sändare"), getContentResolver());
+		Log.d("DB","** Uppdrag **");
+		List <ModelInterface> assignments = db.getAllFromDB(new Assignment(), getContentResolver());
+		for (ModelInterface modelInterface : assignments) {
+			Assignment assignment = (Assignment) modelInterface;
+			Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
+		}
+		Log.d("DB","** Kontakter **");
+		List <ModelInterface> contacts = db.getAllFromDB(new Contact(), getContentResolver());
+		for (ModelInterface modelInterface : contacts) {
+			Contact contact = (Contact) modelInterface;
+			Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
+		}
+		Log.d("DB","** Meddelanden **");
+		List <ModelInterface> messages = db.getAllFromDB(new MessageModel(), getContentResolver());
+		for (ModelInterface modelInterface : messages) {
+			MessageModel mess = (MessageModel) modelInterface;
+			Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
+		}
 	}
 	/**
 	 * Genererar de menyval som ska gå att göra.
