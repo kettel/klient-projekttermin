@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- User permissions -->
-    <user-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <!-- Features -->
     <uses-feature android:name="android.hardware.camera" />
 
@@ -23,7 +24,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -76,14 +77,14 @@
         </activity>
 
         <!-- Database Content Providers -->
-   		<provider
-            android:name="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider" 
+        <provider
+            android:name="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider"
             android:authorities="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider" />
-   		<provider
-            android:name="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider" 
+        <provider
+            android:name="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider"
             android:authorities="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider" />
-        
-   		<!-- Communication Module Service -->
+
+        <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" >
         </service>
     </application>

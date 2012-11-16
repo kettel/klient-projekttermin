@@ -1,7 +1,6 @@
 package assignment;
 
 import java.lang.reflect.Type;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,77 +8,75 @@ import java.util.List;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
+import models.ModelInterface;
 import android.app.ListActivity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
+import com.example.klien_projekttermin.databaseNewProviders.Database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class AddAssignment extends ListActivity {
+public class AddAssignment extends ListActivity{
 
-	private Database db;
 	private CommunicationService communicationService;
-	private boolean communicationBond = false;
-	private Button addAssignmentButton;
-	private EditText assignmentName;
-	private EditText assignmentDescription;
-	private EditText assignmentTime;
-	private EditText assignmentStreetName;
-	private EditText assignmentSpot;
-	private EditText assignmnetCoords;
 
 	double lat = 0;
 	double lon = 0;
-	private EditText assignmentCoord;
 	private String json;
-	private String coordinates;
-	private String[] from = { "line1" };
-	private int[] to = { R.id.editText1 };
-	private List<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
+	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Name", "coord", "Uppdragsbeskrivning",
-			"uppskattadtid", "gatuadress", "uppdragsplats" };
+			"uppskattadtid", "gatuadress", "uppdragsplats", "bild" };
 	private MenuItem saveItem;
 	private MenuItem cancelItem;
-
+	private String[] from = { "line1" };
+	private int[] to = { R.id.editText1 };
+	private Database db;
+	private SimpleEditTextItemAdapter adapter;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
+		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
+		
 		setContentView(R.layout.activity_add_assignment);
-		addContent();
-		SimpleEditTextItemAdapter adapter = new SimpleEditTextItemAdapter(this,
+		loadContent();
+		adapter = new SimpleEditTextItemAdapter(this,
 				data, R.layout.textfield_item, from, to);
 		setListAdapter(adapter);
 		int callingActivity = getIntent().getIntExtra("calling-activity", 0);
 
 		switch (callingActivity) {
 		case ActivityConstants.MAP_ACTIVITY:
-			fromMap();
+			adapter.textToItem(1,fromMap());
 			break;
 		case ActivityConstants.MAIN_ACTIVITY:
-			// Activity2 is started from Activity3
 			break;
 		}
-		setContentView(R.layout.activity_add_assignment);
-		db = new Database();
 	}
-	
-	private void fromMap(){
+
+	private void loadContent() {
+		data.clear();
+		for (String s : dataString) {
+			HashMap<String, String> temp = new HashMap<String, String>();
+			temp.put(from[0], s);
+			data.add(temp);
+		}
+	}
+
+	private String fromMap() {
 		Intent intent = getIntent();
 		json = intent.getStringExtra(MapActivity.coordinates);
 		Gson gson = new Gson();
@@ -90,59 +87,17 @@ public class AddAssignment extends ListActivity {
 		for (WgsPoint wgsPoint : co) {
 			sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
 		}
-		
-	}
-
-	private void addContent() {
-		data.clear();
-		for (String s : dataString) {
-			HashMap<String, String> temp = new HashMap<String, String>();
-			temp.put("line1", s);
-			data.add(temp);
-		}
-	}
-
-	/**
-	 * L�gger till lyssnare till "add-uppdrag-knappen".
-	 * 
-	 * @param button
-	 */
-	public void setButtonClickListnerAddAssignment(Button button) {
-
-		// Skapar en humbug-bitmap.
-		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-		final Bitmap fakeImage = Bitmap.createBitmap(100, 100, conf);
-
-		// Lyssnar efter klick.
-		button.setOnClickListener(new View.OnClickListener() {
-
-			public void onClick(View v) {
-				communicationService.setContext(getApplicationContext());
-
-				if (!assignmentName.getText().toString().equals("")) {
-					Assignment newAssignment = new Assignment("niko", json,
-							"self", false, "HEJ", "12",
-							AssignmentStatus.NEED_HELP, null, "HEJ", "HEJ");
-					db.addToDB(newAssignment, getApplicationContext());
-					communicationService.sendAssignment(newAssignment);
-				}
-
-				// Stänger aktiviteten.
-				finish();
-			}
-		});
+		return sb.toString();
 	}
 
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
 
 		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
 		}
 
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			CommunicationBinder binder = (CommunicationBinder) service;
 			communicationService = binder.getService();
-			communicationBond = true;
 
 		}
 
@@ -158,13 +113,20 @@ public class AddAssignment extends ListActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
 		if (item.equals(saveItem)) {
-
+			saveToDB();
 		} else if (item.equals(cancelItem)) {
 			finish();
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void saveToDB() {
+		db = Database.getInstance(getApplicationContext());
+		HashMap<Integer, String>temp=((SimpleEditTextItemAdapter)getListAdapter()).getItemStrings();
+		Assignment newAssignment = new Assignment(temp.get(0), json, "eric", false, temp.get(2),temp.get(3) , AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5));
+		db.addToDB(newAssignment, getContentResolver());
+		communicationService.sendAssignment(newAssignment);
+		finish();
+	}
 }

@@ -3,8 +3,8 @@ package com.example.klien_projekttermin.database;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
 import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;
@@ -112,14 +112,13 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 		values.put(KEY_LAT, assignment.getLat());
 		values.put(KEY_LON, assignment.getLon());
 		values.put(KEY_REGION, assignment.getRegion());
-		System.out.println(KEY_REGION + "JMNNNNNNNNNNNNNNNNNN" + assignment.getRegion());
 		values.put(KEY_SENDER, assignment.getSender());
 		values.put(KEY_AGENTS, agents);
 		values.put(KEY_EXTERNAL_MISSION,
 				Boolean.toString(assignment.isExternalMission()));
 		values.put(KEY_ASSIGNMENTDESCRIPTION,
 				assignment.getAssignmentDescription());
-		values.put(KEY_TIMESPAN, assignment.getTimeSpan().toString());
+		values.put(KEY_TIMESPAN, assignment.getTimeSpan());
 		values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus()
 				.toString());
 		// Hmm.. Hur i H-E kommer detta att fungera? Bild -> String -> Binär ->

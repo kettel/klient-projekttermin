@@ -19,6 +19,8 @@ import android.net.Uri;
 import android.util.Log;
 
 public class AssignmentsContentProvider extends ContentProvider {
+	// Om databasen är skapad eller ej
+	private static boolean isInitialized = false;
 	
 	private static final String PASSWORD = Database.PASSWORD;
 	
@@ -47,7 +49,24 @@ public class AssignmentsContentProvider extends ContentProvider {
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(Assignments.DATABASE_CREATE);
+        	String DATABASE_CREATE = "CREATE TABLE " 
+    				+ Assignments.TABLE_NAME + "("
+    	            + Assignments.ASSIGNMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "  
+    	    		+ Assignments.NAME + " VARCHAR(255), "
+    	            + Assignments.LAT + " VARCHAR(255), "
+    	    		+ Assignments.LON + " VARCHAR(255), "
+    	    		+ Assignments.REGION + " LONGTEXT, "
+    	            + Assignments.AGENTS + " LONGTEXT, "
+    	            + Assignments.SENDER + " VARCHAR(255), "
+    	            + Assignments.EXTERNAL_MISSION + " VARCHAR(255), "
+    	            + Assignments.DESCRIPTION + " TEXT, "
+    	            + Assignments.TIMESPAN + " VARCHAR(255), "
+    	            + Assignments.STATUS + " VARCHAR(255), "
+    	            + Assignments.CAMERAIMAGE + " BLOB, "
+    	            + Assignments.STREETNAME + " VARCHAR(255), "
+    	            + Assignments.SITENAME + " VARCHAR(255), " 
+    	            + Assignments.TIMESTAMP + " VARCHAR(255));";
+            db.execSQL(DATABASE_CREATE);
         }
 
         @Override
@@ -116,6 +135,16 @@ public class AssignmentsContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         dbHelper = new DatabaseHelper(getContext());
+        
+        // Om Assignments inte är skapad än
+        if(!isInitialized){
+        	SQLiteDatabase.loadLibs(getContext());
+        	SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
+        	db.close();
+        	isInitialized = true;
+        	Database.isLibraryLoaded = true;
+        }
+        
         return true;
     }
 

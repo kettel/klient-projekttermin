@@ -18,7 +18,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
+import com.example.klien_projekttermin.databaseProvider.Database;
 
 public class Uppdrag extends Activity {
 
@@ -45,7 +45,7 @@ public class Uppdrag extends Activity {
 		assignmentID = intent.getExtras().getLong("assignmentID");
 
 		// Initierar databasen.
-		db = new Database();
+		db = Database.getInstance(this);
 
 		listAssignments = db.getAllFromDB(new Assignment(),
 				getApplicationContext());
@@ -110,7 +110,6 @@ public class Uppdrag extends Activity {
 				textViewCoord.setText("Latitud: " + a.getLat() + "  Longitud: "
 						+ a.getLon());
 
-				
 				// Skapar en tom bitmap som jämförs med den tomma i assignment.
 				// Är den tom så har ingen bild bifogast och då sätts bilden.
 				Bitmap cameraImage;
@@ -122,7 +121,6 @@ public class Uppdrag extends Activity {
 					image.setImageBitmap(a.getCameraImage());
 				}
 
-				
 			}
 
 		}

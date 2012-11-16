@@ -24,7 +24,7 @@ public class AssignmentTable {
 		// Kolumnnamn i databasen
 		public static final String NAME = "name";
 		public static final String LAT = "lat";
-		public static final String LON = "long";
+		public static final String LON = "lon";
 		public static final String REGION = "region";
 		public static final String SENDER = "sender";
 		public static final String AGENTS = "agents";
@@ -37,24 +37,5 @@ public class AssignmentTable {
 		public static final String SITENAME = "sitename";
 		public static final String TIMESTAMP = "timestamp";
 		
-		// Skapa databasen
-		// Database creation SQL statement
-		public static final String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " 
-				+ TABLE_NAME + "("
-	            + ASSIGNMENT_ID + " integer primary key autoincrement,"  
-	    		+ NAME + " TEXT,"
-	            + LAT + " TEXT,"
-	    		+ LON + " TEXT,"
-	    		+ REGION + " TEXT,"
-	            + AGENTS + " TEXT,"
-	            + SENDER + " TEXT,"
-	            + EXTERNAL_MISSION + " TEXT,"
-	            + DESCRIPTION + " TEXT,"
-	            + TIMESPAN + " TEXT,"
-	            + STATUS + " TEXT,"
-	            + CAMERAIMAGE + " BLOB,"
-	            + STREETNAME + " TEXT,"
-	            + SITENAME + " TEXT," 
-	            + TIMESTAMP + " TEXT);";
 	}
 }
