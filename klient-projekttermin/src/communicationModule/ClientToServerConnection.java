@@ -38,6 +38,7 @@ public class ClientToServerConnection extends Thread  {
 	private boolean connected = false;
 	private boolean ContextIsReady = false; 
 	private Context context = null;
+	private int waitTime = 0;
 	
 	/**
 	 * en tom konstruktor
@@ -88,15 +89,20 @@ public class ClientToServerConnection extends Thread  {
 		while(true){
 			//etaberar kontakt
 			try {
-				System.out.println("try");
 				requestSocet = new Socket(ServerIP,ServerPort);
 				input = new BufferedReader(new InputStreamReader(requestSocet.getInputStream()));
 				output = new PrintWriter(requestSocet.getOutputStream(), true);
 				setConnetion(true);
 			} catch (Exception e) {
-				System.out.println("errrorororor");
 				setConnetion(false);
 				Log.e("Connection", ("Error: " + e.toString()));
+				try {
+					waitTime = waitTime+1;
+					this.wait(waitTime);
+				} catch (Exception e2) {
+					Log.e("Thread", "Wating error: " + e2.toString());
+				}
+				
 			}
 			
 			while(isConnection()){
@@ -124,11 +130,14 @@ public class ClientToServerConnection extends Thread  {
 				// sicka data
 				if(sendData && isConnection()){
 					output.println(transmisson);
-					System.out.println("this is checkerror" + output.checkError());
+					// Checks and handels errors in the stream
+					if(output.checkError()){
+						Log.i("output", "Transmisson failed");
+						setConnetion(false);
+					}
 					Log.i("output", "sending Transmisson");
 					sendData(false);
 				}
-				// connection check
 			}
 		}
 	}

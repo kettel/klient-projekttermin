@@ -102,6 +102,12 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	@Override
+	protected void onDestroy (){
+		super.onDestroy();
+		
+		unbindService(communicationServiceConnection);
+	}
 	
 		private ServiceConnection communicationServiceConnection = new ServiceConnection() {
 			
