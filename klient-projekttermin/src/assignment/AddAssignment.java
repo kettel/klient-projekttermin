@@ -3,10 +3,12 @@ package assignment;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
+import models.ModelInterface;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -63,7 +65,6 @@ public class AddAssignment extends ListActivity{
 		case ActivityConstants.MAIN_ACTIVITY:
 			break;
 		}
-//		db = Database.getInstance(getApplicationContext());
 	}
 
 	private void loadContent() {
@@ -102,6 +103,8 @@ public class AddAssignment extends ListActivity{
 
 	};
 
+	private List<ModelInterface> ass;
+
 	
 
 	@Override
@@ -127,11 +130,11 @@ public class AddAssignment extends ListActivity{
 		HashMap<Integer, String>temp=((SimpleEditTextItemAdapter)getListAdapter()).getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), json, "eric", false, temp.get(2),temp.get(3) , AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5));
 		db.addToDB(newAssignment, getContentResolver());
-		cursor = getContentResolver().query(
-    			Assignments.CONTENT_URI, null,Assignments.ASSIGNMENT_ID + " IS NOT null", null, null);
-		int index = cursor.getColumnIndex(AssignmentTable.Assignments.ASSIGNMENT_ID);
-		System.out.println(cursor.getString(index));
-		cursor.close();
+		ass = db.getAllFromDB(new Assignment(), getContentResolver());
+		for (ModelInterface as : ass) {
+			Assignment a = (Assignment) as;
+			System.out.println(a.getName());
+		}
 		finish();
 	}
 }

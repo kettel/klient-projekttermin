@@ -110,7 +110,6 @@ public class Uppdrag extends Activity {
 				textViewCoord.setText("Latitud: " + a.getLat() + "  Longitud: "
 						+ a.getLon());
 
-				
 				// Skapar en tom bitmap som jämförs med den tomma i assignment.
 				// Är den tom så har ingen bild bifogast och då sätts bilden.
 				Bitmap cameraImage;
@@ -122,7 +121,6 @@ public class Uppdrag extends Activity {
 					image.setImageBitmap(a.getCameraImage());
 				}
 
-				
 			}
 
 		}
