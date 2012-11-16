@@ -135,7 +135,7 @@ public class Database {
 					contact.getContactName());
 
 			Uri contactUri = context.getContentResolver().insert(
-					DatabaseContentProviderContacts.CONTENT_URI, values);
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI, values);
 			Log.d("DB", "ContactURI: " + contactUri);
 		} else if (dbRep.equalsIgnoreCase("message")) {
 			MessageModel mess = (MessageModel) m;
@@ -181,7 +181,7 @@ public class Database {
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			// SELECT * WHERE _id IS NOT null
 			Cursor cursor = context.getContentResolver().query(
-					DatabaseContentProviderContacts.CONTENT_URI, null,
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI, null,
 					Database.KEY_ID + " IS NOT null", null, null);
 			returnCount = cursor.getCount();
 			cursor.close();
@@ -216,7 +216,7 @@ public class Database {
 			// null, null);
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			deleted = context.getContentResolver().delete(
-					DatabaseContentProviderContacts.CONTENT_URI,
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI,
 					Database.KEY_ID + " = " + Long.toString(m.getId()), null);
 		} else if (dbRep.equalsIgnoreCase("message")) {
 			deleted = context.getContentResolver().delete(
@@ -284,7 +284,7 @@ public class Database {
 			cursor.close();
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			Cursor cursor = context.getContentResolver().query(
-					DatabaseContentProviderContacts.CONTENT_URI, null,
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI, null,
 					Database.KEY_ID + " IS NOT null", null, null);
 			if (cursor.moveToFirst()) {
 				do {
@@ -357,7 +357,7 @@ public class Database {
 			values.put(ContactsTable.COLUMN_CONTACT_NAME, contact.getContactName());
 
 			updated = context.getContentResolver().update(
-					DatabaseContentProviderContacts.CONTENT_URI, values,
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI, values,
 					Database.KEY_ID + " = " + Long.toString(m.getId()), null);
 
 		} else if (dbRep.equalsIgnoreCase("message")) {

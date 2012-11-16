@@ -4,11 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
+import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
+import com.example.klien_projekttermin.databaseNewProviders.ContactsDB;
+import com.example.klien_projekttermin.databaseNewProviders.Database;
+
 import map.MapActivity;
 import messageFunction.Inbox;
+import models.Assignment;
+import models.AssignmentStatus;
+import models.Contact;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,7 +34,7 @@ public class MainActivity extends ListActivity {
 		setContentView(R.layout.activity_main);
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-
+		testDB();
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -49,6 +59,40 @@ public class MainActivity extends ListActivity {
 			}
 
 		});
+	}
+	private void testDB() {
+    	Database db = Database.getInstance(getApplicationContext());
+    	db.addToDB(new Contact("titeluran"),getContentResolver());
+//    	Log.d("DB","Hur många notes i db: " + Integer.toString(db.getCount(getContentResolver())));
+    	//Log.d("DB", "Alla namn: " + db.getAll(getContentResolver()));
+    	Cursor cursor = getContentResolver().query(
+    			Contacts.CONTENT_URI, null,Contacts.CONTACT_ID + " IS NOT null", null, null);
+    	Log.d("DB","Cursorstorlek: " + cursor.getCount());
+    	String ret = new String();
+    	if (cursor.moveToFirst()) {
+			do {
+				Log.d("DB","ID: " + Integer.toString(cursor.getInt(0)));
+				Log.d("DB","Namn: " + cursor.getString(1));
+				ret += cursor.getString(1);
+			} while (cursor.moveToNext());
+    	}
+    	Log.d("DB","Alla kontaktnamn: " + ret);
+    	cursor.close();
+    	
+    	db.addToDB(new Assignment("nisse", "kalle", false, "katt i träd", "1 dag", AssignmentStatus.NOT_STARTED, null, "Alsättersgatan 1", "Lekplats"),getContentResolver());
+    	cursor = getContentResolver().query(
+    			Assignments.CONTENT_URI, null,Assignments.ASSIGNMENT_ID + " IS NOT null", null, null);
+    	Log.d("DB","Cursorstorlek: " + cursor.getCount());
+    	ret = new String();
+    	if (cursor.moveToFirst()) {
+			do {
+				Log.d("DB","ID: " + Integer.toString(cursor.getInt(0)));
+				Log.d("DB","Namn: " + cursor.getString(1));
+				Log.d("DB", "Något mer.. " + cursor.getString(5));
+				ret += cursor.getString(1);
+			} while (cursor.moveToNext());
+    	}
+    	Log.d("DB","Alla kontaktnamn: " + ret);
 	}
 	/**
 	 * Genererar de menyval som ska gå att göra.

@@ -20,7 +20,7 @@ public class DatabaseContentProviderMessages extends ContentProvider{
 	private static final int MESSAGES = 10;
 	private static final int MESSAGE_ID = 20;
 
-	private static final String AUTHORITY = "com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages";
+	public static final String AUTHORITY = "com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages";
 
 	private static final String BASE_PATH = "klien-projekttermin/message";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
