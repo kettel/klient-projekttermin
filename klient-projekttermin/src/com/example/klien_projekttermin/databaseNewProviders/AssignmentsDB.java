@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
-import com.example.klien_projekttermin.databaseProvider.Database;
-import com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments;
 
 import models.Assignment;
 import models.AssignmentStatus;

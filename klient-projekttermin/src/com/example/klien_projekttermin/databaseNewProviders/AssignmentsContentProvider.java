@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
 
-import models.Assignment;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;

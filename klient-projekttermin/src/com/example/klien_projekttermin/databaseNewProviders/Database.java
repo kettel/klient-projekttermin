@@ -3,13 +3,8 @@ package com.example.klien_projekttermin.databaseNewProviders;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
-import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
-
 import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.util.Log;
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
@@ -91,7 +86,7 @@ public class Database {
 			returnList = assignmentsDB.getAllAssignments(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			returnList = contactsDB.getAllAssignments(contentResolver);
+			returnList = contactsDB.getAllContacts(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			returnList = messagesDB.getAllMessages(contentResolver);
