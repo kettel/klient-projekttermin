@@ -1,5 +1,6 @@
 package messageFunction;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -42,6 +43,7 @@ public class DisplayOfConversation extends Activity {
 	private HashMap<String, Long> messageAndIdMap = new HashMap<String, Long>();
 	private String chosenContact;
 	private Database dataBase;
+	private String timeStamp;
 	private String user;
 	private MessageModel messageObject;
 	private String[] options = {"AVBRYT","RADERA","VIDAREBEFORDRA"};
@@ -57,9 +59,6 @@ public class DisplayOfConversation extends Activity {
 		message = (TextView) this.findViewById(R.id.messageBox);
 
 		dataBase = new Database();
-
-		Intent intent = new Intent(this, CommunicationService.class);
-		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 		//Metoden testar om någonting skickades med från Inbox och skriver i så fall ut det till strängen chosenContact
 		Bundle extras = getIntent().getExtras();
@@ -91,7 +90,7 @@ public class DisplayOfConversation extends Activity {
 		listViewOfConversationInputs.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
-				showOptions(position);
+				showLongClickOptions(position);
 				return true;
 			}
 		});	
@@ -120,7 +119,7 @@ public class DisplayOfConversation extends Activity {
 	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort en konversation
 	 * Metoden ger också användaren två valmöjligheter, JA eller Avbryt
 	 */
-	public void showOptions(int position){
+	public void showLongClickOptions(int position){
 		final int messageNumber = position;
 
 		AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
@@ -194,31 +193,39 @@ public class DisplayOfConversation extends Activity {
 
 	}
 
+	/*
+	 * Tar in en long med ett meddelandes timestamp i millisekunder och gör om det till ett förståeligt format
+	 * med år,månad,dag,timme,minut,sekund,hundradel
+	 */
+	public String understandableTimeStamp(Long millisecondTime){
+		SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("EEEEEEE, d MMM yyyy HH:mm:ss");
+
+		return simpleTimeFormat.format(millisecondTime).toString();
+	}
+
 	public String[] getInformationFromDatabase(String Contact){
 
 		MessageModel messageModel;
 		String[] stringArrayOfConversationContent;
 		LinkedList<String> listOfConversations = new LinkedList<String>();
 		Iterator<String> listIterator;
-		String currentTime;
 
 		//Hämtar en lista med alla messagemodels som finns i databasen.
 		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
-		MessageModel a = (MessageModel) listOfMassageModels.get(0);
-
+		
 		//		Den listview som kontakterna kommerpresenteras i
 		listViewOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
-		//		//String array �ver anv�ndare
 
 		// Sorterar ut meddelanden kopplade till den person man tryckt på.
 		for (int i = 0; i < listOfMassageModels.size(); i++) {
 			messageModel = (MessageModel) listOfMassageModels.get(i);
-
-			if(messageModel.getReciever().toString().equals(Contact)){
-
-				listOfConversations.add(messageModel.getSender().toString()+" ["+messageModel.getMessageTimeStampSmart()+"] "+"\n"+messageModel.getMessageContent().toString());
-				messageAndIdMap.put(messageModel.getSender().toString()+" ["+messageModel.getMessageTimeStampSmart()+"] "+"\n"+messageModel.getMessageContent().toString(), messageModel.getId());
+			
+			if(messageModel.getReciever().toString().equals(Contact)||messageModel.getSender().toString().equals(Contact)){
+				
+				listOfConversations.add(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getMessageTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString());
+				messageAndIdMap.put(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getMessageTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString(), messageModel.getId());
 			}
+			
 		}
 
 		//Skapar en string[] som är lika lång som listan som hämtades.
@@ -232,6 +239,10 @@ public class DisplayOfConversation extends Activity {
 	}
 
 	public void sendMessage(View v){
+		communicationService.setContext(getApplicationContext());
+		Intent intent = new Intent(this, CommunicationService.class);
+		
+		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 

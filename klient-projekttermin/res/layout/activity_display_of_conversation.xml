@@ -1,34 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content" >
 
-        <ListView
-            android:id="@+id/displayOfConversation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/messageBox"
-            android:layout_alignParentTop="true">
-        </ListView>
-    
+    <ListView
+        android:id="@+id/displayOfConversation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/messageBox"
+        android:layout_alignParentTop="true" >
+    </ListView>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/layout2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#C8C8C8" >
+
         <EditText
             android:id="@+id/messageBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/sendButton"
             android:ems="10"
             android:inputType="textMultiLine"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/sendButton" >
+            android:paddingTop="20dp" >
         </EditText>
 
         <Button
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:onClick="sendMessage"
-            android:text="@string/send"
-            android:layout_alignParentBottom="true" 
-            android:layout_alignParentRight="true"/>
+            android:text="@string/sendMessage" />
+    </RelativeLayout>
 
 </RelativeLayout>

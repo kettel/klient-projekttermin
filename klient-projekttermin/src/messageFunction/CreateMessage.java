@@ -1,6 +1,5 @@
 package messageFunction;
 
-import models.Contact;
 import models.MessageModel;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.KeyEvent;
@@ -20,7 +18,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.ContactTable;
 import com.example.klien_projekttermin.databaseNewProviders.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
@@ -83,7 +80,8 @@ public class CreateMessage extends Activity {
 	 * 
 	 * @param v
 	 */
-	public void sendMessage(View v) {
+	public void sendMessage(View v){
+		communicationService.setContext(getApplicationContext());
 		String recievingContact = reciever.getText().toString();
 		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		messageObject = new MessageModel(message.getText().toString(),

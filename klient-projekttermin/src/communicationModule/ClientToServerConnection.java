@@ -38,12 +38,12 @@ public class ClientToServerConnection extends Thread  {
 	private boolean connected = false;
 	private boolean ContextIsReady = false; 
 	private Context context = null;
-	
+
 	/**
 	 * en tom konstruktor
 	 */
 	public ClientToServerConnection(){
-		
+
 	}
 	/**
 	 * Används för att förhindra att data sickas 
@@ -82,9 +82,9 @@ public class ClientToServerConnection extends Thread  {
 		this.context = context;
 		ContextIsReady = true;
 	}
-	
+
 	public void run() {
-		
+
 		while(true){
 			//etaberar kontakt
 			try {
@@ -96,7 +96,7 @@ public class ClientToServerConnection extends Thread  {
 				setConnetion(false);
 				Log.e("Connection", ("Error: " + e.toString()));
 			}
-			
+
 			while(isConnection()){			
 				try {
 					if(input.ready() && ContextIsReady){
@@ -118,7 +118,7 @@ public class ClientToServerConnection extends Thread  {
 				} catch (Exception e) {
 					Log.e("Crash in input", "inputString: " + e.toString());
 				}
-			
+
 				if(sendData && isConnection()){
 					output.println(transmisson);
 					Log.i("output", "sending Transmisson");
