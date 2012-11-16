@@ -84,6 +84,7 @@ public class MainActivity extends ListActivity {
 		for (ModelInterface modelInterface : assignments) {
 			Assignment assignment = (Assignment) modelInterface;
 			Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
+			db.deleteFromDB(assignment, getContentResolver());
 		}
 		Log.d("DB","** Kontakter **");
 		List <ModelInterface> contacts = db.getAllFromDB(new Contact(), getContentResolver());
@@ -98,6 +99,7 @@ public class MainActivity extends ListActivity {
 		for (ModelInterface modelInterface : contacts) {
 			Contact contact = (Contact) modelInterface;
 			Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
+			db.deleteFromDB(contact, getContentResolver());
 		}
 		Log.d("DB","** Meddelanden **");
 		List <ModelInterface> messages = db.getAllFromDB(new MessageModel(), getContentResolver());
@@ -112,7 +114,14 @@ public class MainActivity extends ListActivity {
 		for (ModelInterface modelInterface : messages) {
 			MessageModel mess = (MessageModel) modelInterface;
 			Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
+			db.deleteFromDB(mess, getContentResolver());
 		}
+		assignments = db.getAllFromDB(new Assignment(), getContentResolver());
+		contacts = db.getAllFromDB(new Contact(), getContentResolver());
+		messages = db.getAllFromDB(new MessageModel(), getContentResolver());
+		Log.d("DB","Antal uppdrag: " + assignments.size());
+		Log.d("DB","Antal kontakter: " + contacts.size());
+		Log.d("DB","Antal meddelanden: " + messages.size());
 	}
 	/**
 	 * Genererar de menyval som ska gå att göra.
