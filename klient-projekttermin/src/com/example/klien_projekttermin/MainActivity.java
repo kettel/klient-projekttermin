@@ -50,7 +50,8 @@ public class MainActivity extends ListActivity {
 				case 0:
 					if(communicationBond){
 						communicationService.setContext(getApplicationContext());
-						communicationService.sendMessage(new MessageModel("Hello, this is pandaphone.","test"));
+						System.out.println("hej hej");
+						communicationService.sendMessage(new MessageModel("Hello, this is dog.","test"));
 					}
 					break;
 					

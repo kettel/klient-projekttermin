@@ -88,16 +88,19 @@ public class ClientToServerConnection extends Thread  {
 		while(true){
 			//etaberar kontakt
 			try {
+				System.out.println("try");
 				requestSocet = new Socket(ServerIP,ServerPort);
 				input = new BufferedReader(new InputStreamReader(requestSocet.getInputStream()));
 				output = new PrintWriter(requestSocet.getOutputStream(), true);
 				setConnetion(true);
 			} catch (Exception e) {
+				System.out.println("errrorororor");
 				setConnetion(false);
 				Log.e("Connection", ("Error: " + e.toString()));
 			}
 			
-			while(isConnection()){			
+			while(isConnection()){
+				// inkommande data.
 				try {
 					if(input.ready() && ContextIsReady){
 						inputString = input.readLine();
@@ -118,12 +121,14 @@ public class ClientToServerConnection extends Thread  {
 				} catch (Exception e) {
 					Log.e("Crash in input", "inputString: " + e.toString());
 				}
-			
+				// sicka data
 				if(sendData && isConnection()){
 					output.println(transmisson);
+					System.out.println("this is checkerror" + output.checkError());
 					Log.i("output", "sending Transmisson");
 					sendData(false);
 				}
+				// connection check
 			}
 		}
 	}
