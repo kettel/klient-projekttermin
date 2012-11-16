@@ -57,14 +57,18 @@ public class Camera extends Activity {
 	private File getAlbumDir() {
 		File storageDir = null;
 
-		
-		if (Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState())) {
-			storageDir = mAlbumStorageDirFactory
-					.getAlbumStorageDir(getAlbumName());
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+			storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
+			System.out.println("pathen är: " + storageDir.getPath());
+			try {
+				storageDir.createNewFile();
+				System.out.println("inte catch");
+			} catch (Exception e) {
+				System.out.println("catched: " + e.toString());
+			}
 			if (storageDir != null) {
 				if (!storageDir.mkdirs()) {
-					if (!storageDir.exists()) {
+					if (!storageDir.exists()){
 						Log.d("CameraSample", "failed to create directory");
 						return null;
 					}
@@ -100,10 +104,10 @@ public class Camera extends Activity {
     }
 
 	private File setUpPhotoFile() throws IOException {
-
+		System.out.println("setting up PhotoFIle");
 		File f = createImageFile();
 		mCurrentPhotoPath = f.getAbsolutePath();
-
+		System.out.println("f: " + f.getAbsolutePath() );
 		return f;
 	}
 
@@ -135,7 +139,7 @@ public class Camera extends Activity {
 
 		/* Decode JPEG filen till en bitmap */
 		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-
+		
 		/* Assosierar bitmap till ImageView */
 		mImageView.setImageBitmap(bitmap);
 		mVideoUri = null;
@@ -144,8 +148,7 @@ public class Camera extends Activity {
 	}
 
 	private void galleryAddPic() {
-		Intent mediaScanIntent = new Intent(
-				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
+		Intent mediaScanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
 		File f = new File(mCurrentPhotoPath);
 		Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
@@ -185,6 +188,7 @@ public class Camera extends Activity {
 	}
 
 	private void handleSmallCameraPhoto(Intent intent) {
+		System.out.println("handel small");
 		Bundle extras = intent.getExtras();
 		mImageBitmap = (Bitmap) extras.get("data");
 		mImageView.setImageBitmap(mImageBitmap);
@@ -194,7 +198,7 @@ public class Camera extends Activity {
 	}
 
 	private void handleBigCameraPhoto() {
-
+		System.out.println("Current path is " + mCurrentPhotoPath);
 		if (mCurrentPhotoPath != null) {
 			setPic();
 			galleryAddPic();
@@ -240,7 +244,7 @@ public class Camera extends Activity {
 		mVideoView = (VideoView) findViewById(R.id.videoView1);
 		mImageBitmap = null;
 		mVideoUri = null;
-		
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
 		} else {
@@ -289,6 +293,7 @@ public class Camera extends Activity {
 		switch (requestCode) {
 		case ACTION_TAKE_PHOTO_B: {
 			if (resultCode == RESULT_OK) {
+				System.out.println("result ok");
 				handleBigCameraPhoto();
 			}
 			break;
@@ -296,6 +301,7 @@ public class Camera extends Activity {
 
 		case ACTION_TAKE_PHOTO_S: {
 			if (resultCode == RESULT_OK) {
+				System.out.println("small ok");
 				handleSmallCameraPhoto(data);
 			}
 			break;
