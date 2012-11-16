@@ -5,6 +5,7 @@ import java.util.List;
 import models.Contact;
 import models.ModelInterface;
 
+import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
 import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
 
 
@@ -78,6 +79,16 @@ public class ContactsDB {
 			ContentResolver contentResolver) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void delete(ContentResolver contentResolver, Contact contact) {
+		contentResolver.delete(Contacts.CONTENT_URI, Contacts.CONTACT_ID + " = " + Long.toString(contact.getId()), null);
+		
+	}
+
+	public void updateContact(ContentResolver contentResolver, Contact contact) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

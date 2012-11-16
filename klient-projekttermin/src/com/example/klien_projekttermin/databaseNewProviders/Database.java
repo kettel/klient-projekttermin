@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.util.Log;
 import models.Assignment;
 import models.Contact;
+import models.MessageModel;
 import models.ModelInterface;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -23,7 +24,7 @@ public class Database {
 	
 	private static AssignmentsDB assignmentsDB;
 	private static ContactsDB contactsDB;
-	// TODO: messageDB
+	private static MessagesDB messagesDB;
 	
 	private Database(){}
 	
@@ -38,22 +39,20 @@ public class Database {
     	// Hämta DB från var och en av de tre (snart fyra ContentProv wrappers)
     	assignmentsDB = AssignmentsDB.getInstance();
     	contactsDB = ContactsDB.getInstance();
-    	// TODO: messageDB
+    	messagesDB = MessagesDB.getInstance();
         return instance;
 	}
 	
 	public void addToDB(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			Assignment assignment = (Assignment) m;
-			assignmentsDB.addAssignment(contentResolver, assignment);
+			assignmentsDB.addAssignment(contentResolver, (Assignment) m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			Contact contact = (Contact) m;
-			contactsDB.addContact(contentResolver, contact);
+			contactsDB.addContact(contentResolver, (Contact) m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			// TODO
+			messagesDB.addMessage(contentResolver, (MessageModel) m);
 		}
 	}
 	
@@ -61,19 +60,13 @@ public class Database {
 		String dbRep = m.getDatabaseRepresentation();
 		int returnCount = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			Cursor cursor = contentResolver.query(
-	    			Assignments.CONTENT_URI, null,Assignments.ASSIGNMENT_ID + " IS NOT null", null, null);
-	    	returnCount = cursor.getCount();
-	    	cursor.close();
+			returnCount = assignmentsDB.getCount(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			Cursor cursor = contentResolver.query(
-	    			Contacts.CONTENT_URI, null,Contacts.CONTACT_ID + " IS NOT null", null, null);
-	    	returnCount = cursor.getCount();
-	    	cursor.close();
+			returnCount = contactsDB.getCount(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			// TODO Message Count
+			returnCount = messagesDB.getCount(contentResolver);
 		}
 		return returnCount;
 	}
@@ -81,13 +74,13 @@ public class Database {
 	public void deleteFromDB(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			// TODO
+			assignmentsDB.delete(contentResolver,(Assignment) m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			// TODO
+			contactsDB.delete(contentResolver, (Contact)m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			// TODO
+			messagesDB.delete(contentResolver, (MessageModel)m);
 		}
 	}
 	
@@ -101,7 +94,7 @@ public class Database {
 			returnList = contactsDB.getAllAssignments(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			// TODO
+			returnList = messagesDB.getAllMessages(contentResolver);
 		}
 		return returnList;
 	}
@@ -109,15 +102,13 @@ public class Database {
 	public void updateModel(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			Assignment assignment = (Assignment) m;
-			assignmentsDB.addAssignment(contentResolver, assignment);
+			assignmentsDB.updateAssignment(contentResolver, (Assignment) m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			Contact contact = (Contact) m;
-			contactsDB.addContact(contentResolver, contact);
+			contactsDB.updateContact(contentResolver, (Contact) m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			// TODO
+			messagesDB.updateMessage(contentResolver, (MessageModel)m);
 		}
 	}
 }

@@ -165,4 +165,24 @@ public class AssignmentsDB {
 		}
 		return ret;
 	}
+
+	public void delete(ContentResolver contentResolver, Assignment assignment) {
+		contentResolver.delete(Assignments.CONTENT_URI, Assignments.ASSIGNMENT_ID + " = " + Long.toString(assignment.getId()), null);
+		
+	}
+
+	public void updateAssignment(ContentResolver contentResolver,
+			Assignment assignment) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public int getCount(ContentResolver contentResolver) {
+		int returnCount = 0;
+		Cursor cursor = contentResolver.query(
+    			Assignments.CONTENT_URI, null,Assignments.ASSIGNMENT_ID + " IS NOT null", null, null);
+    	returnCount = cursor.getCount();
+    	cursor.close();
+    	return returnCount;
+	}
 }
