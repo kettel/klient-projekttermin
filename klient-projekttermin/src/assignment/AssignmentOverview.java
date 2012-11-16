@@ -65,12 +65,9 @@ public class AssignmentOverview extends ListActivity {
 
 	public void loadAssignmentList() {
 		assignmentHeadlineArray = getAssHeadsFromDatabase();
-		System.out.println("LÄNGD : " + assignmentHeadlineArray[0]);
-
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
 				getContentResolver().query(Assignments.CONTENT_URI, null, null,
 						null, null), false);
-
 		this.setListAdapter(adapter);
 	}
 
