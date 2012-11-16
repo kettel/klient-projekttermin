@@ -89,17 +89,16 @@ public class Camera extends Activity {
 				.format(new Date());
 		String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
 		File albumF = getAlbumDir();
+		dirChecker();
 		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX,
 				albumF);
 		dirChecker();
 		return imageF;
 	}
 	private void dirChecker() {
-        File FiledirChecker = new File("/storage/sdcard0/Pictures/Album"); // PATH+dir = /mnt/sdcard/Pictures/Hafs
-
+        File FiledirChecker = new File("/storage/sdcard0/Pictures/Album/");
         if (!FiledirChecker.isDirectory()){
             FiledirChecker.mkdirs();
-       System.out.println("ÄR INTE ETT DIR");
         }
     }
 
@@ -269,15 +268,15 @@ public class Camera extends Activity {
 	}
 	
 	private void createButtons(){
-		Button picBtn = (Button) findViewById(R.id.btnIntend);
+		Button picBtn = (Button) findViewById(R.id.takePicture);
 		setBtnListenerOrDisable(picBtn, mTakePicOnClickListener,
 				MediaStore.ACTION_IMAGE_CAPTURE);
 
-		Button picSBtn = (Button) findViewById(R.id.btnIntendS);
+		Button picSBtn = (Button) findViewById(R.id.goAlbum);
 		setBtnListenerOrDisable(picSBtn, mTakePicSOnClickListener,
 				MediaStore.ACTION_IMAGE_CAPTURE);
 
-		Button vidBtn = (Button) findViewById(R.id.btnIntendV);
+		Button vidBtn = (Button) findViewById(R.id.makeMovie);
 		setBtnListenerOrDisable(vidBtn, mTakeVidOnClickListener,
 				MediaStore.ACTION_VIDEO_CAPTURE);
 	}
