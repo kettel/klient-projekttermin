@@ -1,9 +1,15 @@
 package com.example.klien_projekttermin.databaseNewProviders;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
+import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.util.Log;
 import models.Assignment;
 import models.Contact;
 import models.ModelInterface;
@@ -52,18 +58,66 @@ public class Database {
 	}
 	
 	public int getDBCount(ModelInterface m, ContentResolver contentResolver){
-		return 0;
+		String dbRep = m.getDatabaseRepresentation();
+		int returnCount = 0;
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			Cursor cursor = contentResolver.query(
+	    			Assignments.CONTENT_URI, null,Assignments.ASSIGNMENT_ID + " IS NOT null", null, null);
+	    	returnCount = cursor.getCount();
+	    	cursor.close();
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			Cursor cursor = contentResolver.query(
+	    			Contacts.CONTENT_URI, null,Contacts.CONTACT_ID + " IS NOT null", null, null);
+	    	returnCount = cursor.getCount();
+	    	cursor.close();
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			// TODO Message Count
+		}
+		return returnCount;
 	}
 	
 	public void deleteFromDB(ModelInterface m, ContentResolver contentResolver){
-		
+		String dbRep = m.getDatabaseRepresentation();
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			// TODO
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			// TODO
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			// TODO
+		}
 	}
 	
 	public List<ModelInterface> getAllFromDB(ModelInterface m, ContentResolver contentResolver){
-		return null;
+		String dbRep = m.getDatabaseRepresentation();
+		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			returnList = assignmentsDB.getAllAssignments(contentResolver);
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			returnList = contactsDB.getAllAssignments(contentResolver);
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			// TODO
+		}
+		return returnList;
 	}
 	
 	public void updateModel(ModelInterface m, ContentResolver contentResolver){
-		
+		String dbRep = m.getDatabaseRepresentation();
+		if (dbRep.equalsIgnoreCase("assignment")) {
+			Assignment assignment = (Assignment) m;
+			assignmentsDB.addAssignment(contentResolver, assignment);
+		}
+		else if(dbRep.equalsIgnoreCase("contact")){
+			Contact contact = (Contact) m;
+			contactsDB.addContact(contentResolver, contact);
+		}
+		else if(dbRep.equalsIgnoreCase("message")){
+			// TODO
+		}
 	}
 }
