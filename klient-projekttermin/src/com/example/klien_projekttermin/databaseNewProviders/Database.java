@@ -19,7 +19,7 @@ public class Database {
 	// SQLCipher-lösen
 	public static final String PASSWORD = "password";
 	
-	private static boolean isLibraryLoaded = false;
+	public static boolean isLibraryLoaded = false;
 	
 	private static AssignmentsDB assignmentsDB;
 	private static ContactsDB contactsDB;

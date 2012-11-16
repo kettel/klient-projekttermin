@@ -19,6 +19,8 @@ import android.net.Uri;
 import android.util.Log;
 
 public class AssignmentsContentProvider extends ContentProvider {
+	// Om databasen är skapad eller ej
+	private static boolean isInitialized = false;
 	
 	private static final String PASSWORD = Database.PASSWORD;
 	
@@ -133,6 +135,16 @@ public class AssignmentsContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         dbHelper = new DatabaseHelper(getContext());
+        
+        // Om Assignments inte är skapad än
+        if(!isInitialized){
+        	SQLiteDatabase.loadLibs(getContext());
+        	SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
+        	db.close();
+        	isInitialized = true;
+        	Database.isLibraryLoaded = true;
+        }
+        
         return true;
     }
 

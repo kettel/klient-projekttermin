@@ -6,22 +6,12 @@ import java.util.List;
 
 import camera.Camera;
 
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
-import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
-import com.example.klien_projekttermin.databaseNewProviders.ContactsDB;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
 
 import map.MapActivity;
 import messageFunction.Inbox;
-import models.Assignment;
-import models.AssignmentStatus;
-import models.Contact;
-import models.ModelInterface;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
