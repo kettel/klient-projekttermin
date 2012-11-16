@@ -20,9 +20,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
+import com.example.klien_projekttermin.database.AssignmentTable;
+import com.example.klien_projekttermin.database.Database;
+import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;

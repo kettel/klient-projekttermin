@@ -77,14 +77,14 @@
 
         <!-- Database Content Providers -->
    		<provider
-            android:name="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider" 
-            android:authorities="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider" />
+            android:name="com.example.klien_projekttermin.database.ContactsContentProvider" 
+            android:authorities="com.example.klien_projekttermin.database.ContactsContentProvider" />
    		<provider
-            android:name="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider" 
-            android:authorities="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider" />
+            android:name="com.example.klien_projekttermin.database.AssignmentsContentProvider" 
+            android:authorities="com.example.klien_projekttermin.database.AssignmentsContentProvider" />
    		<provider
-            android:name="com.example.klien_projekttermin.databaseNewProviders.MessagesContentProvider" 
-            android:authorities="com.example.klien_projekttermin.databaseNewProviders.MessagesContentProvider" />
+            android:name="com.example.klien_projekttermin.database.MessagesContentProvider" 
+            android:authorities="com.example.klien_projekttermin.database.MessagesContentProvider" />
         
    		<!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" >

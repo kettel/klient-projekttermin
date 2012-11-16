@@ -56,7 +56,7 @@ public class DisplayOfConversation extends Activity {
 
 		message = (TextView) this.findViewById(R.id.messageBox);
 
-		dataBase = new Database();
+		dataBase = Database.getInstance(getApplicationContext());
 
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -174,7 +174,7 @@ public class DisplayOfConversation extends Activity {
 			messageModelInList = (MessageModel) listOfMassageModels.get(i);
 
 			if(messageModelInList.getId()==id){
-				dataBase.deleteFromDB(messageModelInList, getApplicationContext());
+				dataBase.deleteFromDB(messageModelInList, getContentResolver());
 				break;
 			}
 		}
@@ -203,7 +203,7 @@ public class DisplayOfConversation extends Activity {
 		String currentTime;
 
 		//Hämtar en lista med alla messagemodels som finns i databasen.
-		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
+		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getContentResolver());
 		MessageModel a = (MessageModel) listOfMassageModels.get(0);
 
 		//		Den listview som kontakterna kommerpresenteras i
@@ -238,7 +238,7 @@ public class DisplayOfConversation extends Activity {
 		messageObject = new MessageModel(message.getText().toString(), chosenContact, user); 
 
 		//Sparar messageObject i databasen
-		dataBase.addToDB(messageObject,getApplicationContext());
+		dataBase.addToDB(messageObject,getContentResolver());
 		//Gömmer tangentbordet på skärmen
 		inm.hideSoftInputFromWindow(message.getWindowToken(), 0);
 		//Tar bort texten ur textrutan

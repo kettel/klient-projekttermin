@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.database.Database;
 
 import camera.Camera;
 

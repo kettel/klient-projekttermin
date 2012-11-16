@@ -12,17 +12,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseProvider.Database;
+import com.example.klien_projekttermin.database.Database;
 
 public class Uppdrag extends Activity {
 
-	Database db;
+	Database db = Database.getInstance(getApplicationContext());
 	private long assignmentID;
 	private TextView textViewAssName;
 	private TextView textViewDescription;
@@ -48,7 +47,7 @@ public class Uppdrag extends Activity {
 		db = Database.getInstance(this);
 
 		listAssignments = db.getAllFromDB(new Assignment(),
-				getApplicationContext());
+				getContentResolver());
 
 		// H�mtar textvyerna som ska s�ttas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
@@ -144,7 +143,7 @@ public class Uppdrag extends Activity {
 							if (a.getId() == assignmentID) {
 								a.addAgents(new Contact());
 								db.updateModel((ModelInterface) a,
-										getApplicationContext());
+										getContentResolver());
 							}
 
 						}

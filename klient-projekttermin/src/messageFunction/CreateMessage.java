@@ -42,7 +42,7 @@ public class CreateMessage extends Activity {
 		super.onCreate(savedInstanceState);
 		System.out.println("Nr 1");
 		setContentView(R.layout.activity_create_new_message);
-		dataBase = new Database();
+		dataBase = Database.getInstance(getApplicationContext());
 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -82,7 +82,7 @@ public class CreateMessage extends Activity {
 		messageObject = new MessageModel(message.getText().toString(), recievingContact, user); 
 
 		//Sparar messageObject i databasen
-		dataBase.addToDB(messageObject,getApplicationContext());
+		dataBase.addToDB(messageObject,getContentResolver());
 		//Skicka till kommunikationsmodulen
 
 		if(communicationBond){

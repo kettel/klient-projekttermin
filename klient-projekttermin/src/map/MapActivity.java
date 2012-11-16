@@ -243,10 +243,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 */
 	public void getDatabaseInformation() {
 		Assignment a = new Assignment();
-		Database db = new Database();
-		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
-		System.out.println("database " + db.getDBCount(a, getBaseContext()));
-		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
+		Database db = Database.getInstance(getApplicationContext());
+		List<ModelInterface> list = db.getAllFromDB(a, getContentResolver());
+		System.out.println("database " + db.getDBCount(a, getContentResolver()));
+		for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
 			a = (Assignment) list.get(i);
 			// addInterestPoint(a.getRegion());
 		}
@@ -254,10 +254,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void getDatabaseRegionInformation() {
 		Assignment a = new Assignment();
-		Database db = new Database();
+		Database db = Database.getInstance(getApplicationContext());
 		Gson gson = new Gson();
-		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
-		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
+		List<ModelInterface> list = db.getAllFromDB(a, getContentResolver());
+		for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
 			a = (Assignment) list.get(i);
 			Type type = new TypeToken<WgsPoint[]>() {
 			}.getType();

@@ -19,7 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.database.Database;
 
 public class AssignmentOverview extends Activity {
 
