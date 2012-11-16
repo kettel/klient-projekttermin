@@ -49,7 +49,7 @@ public class CreateMessage extends Activity {
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-		message = (TextView) this.findViewById(R.id.message);
+		message = (TextView) this.findViewById(R.id.editText1);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
 
 		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
