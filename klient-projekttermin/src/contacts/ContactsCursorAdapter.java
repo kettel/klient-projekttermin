@@ -31,7 +31,7 @@ public class ContactsCursorAdapter extends CursorAdapter {
 
 	    return contentResolver.query(
 				ContactTable.Contacts.CONTENT_URI, null, ContactTable.Contacts.NAME+" like '%"+constraint.toString()+"%'",
-				null, null);
+				null, ContactTable.Contacts.NAME);
 	}
 
 	@Override
