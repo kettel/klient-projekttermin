@@ -40,8 +40,8 @@ import android.widget.ZoomControls;
 import assignment.ActivityConstants;
 import assignment.AddAssignment;
 
+import com.example.klien_projekttermin.databaseNewProviders.*;
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nutiteq.BasicMapComponent;
@@ -243,10 +243,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 */
 	public void getDatabaseInformation() {
 		Assignment a = new Assignment();
-		Database db = new Database();
-		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
-		System.out.println("database " + db.getDBCount(a, getBaseContext()));
-		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
+		Database db = Database.getInstance(getApplicationContext());
+		List<ModelInterface> list = db.getAllFromDB(a, getContentResolver());
+		System.out.println("database " + db.getDBCount(a, getContentResolver()));
+		for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
 			a = (Assignment) list.get(i);
 			// addInterestPoint(a.getRegion());
 		}
@@ -254,10 +254,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void getDatabaseRegionInformation() {
 		Assignment a = new Assignment();
-		Database db = new Database();
+		Database db = Database.getInstance(getApplicationContext());
 		Gson gson = new Gson();
-		List<ModelInterface> list = db.getAllFromDB(a, getBaseContext());
-		for (int i = 0; i < db.getDBCount(a, getBaseContext()); i++) {
+		List<ModelInterface> list = db.getAllFromDB(a, getContentResolver());
+		for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
 			a = (Assignment) list.get(i);
 			Type type = new TypeToken<WgsPoint[]>() {
 			}.getType();
@@ -374,7 +374,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		// TODO Auto-generated method stub
 		super.onResume();
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
-
+		createMap();
 		switch (callingActivity) {
 		case ActivityConstants.ADD_ASSIGNMENT_ACTIVITY:
 
@@ -382,8 +382,11 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		case ActivityConstants.MAIN_ACTIVITY:
 			getDatabaseRegionInformation();
 		break;
+		default:
+			getDatabaseRegionInformation();
+			break;
 		}
-		createMap();
+		
 
 		if (gpsFollowItem != null) {
 			runOnUiThread(new Runnable() {
@@ -439,6 +442,7 @@ public class MapActivity extends Activity implements Observer, MapListener,
 	 *            Namn som syns om man klickar på punkten
 	 */
 	public void addInterestPoint(WgsPoint region) {
+		System.out.println("REGIONEN " + region);
 		Place p = new Place(1, " ", icons[2], region);
 		mapComponent.addPlace(p);
 	}

@@ -78,6 +78,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				itemStrings.put(position, s);
 			}
 		}
+		if (hasFocus && v.getId() == 1) {
+			final EditText Caption = (EditText) v;
+			String s = Caption.getText().toString();
+			if (s.isEmpty()) {
+				coordinateField();
+			}
+		}
 		if (hasFocus && v.getId() == 6) {
 			final EditText Caption = (EditText) v;
 			String s = Caption.getText().toString();
