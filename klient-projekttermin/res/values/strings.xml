@@ -57,6 +57,7 @@
     <string name="assignmentName">Uppdragets namn</string>
     <string name="createAssignmentFromRegion">Skapa uppdrag för region</string>
     <string name="inbox">inbox</string>
-    <string name="title_activity_log_in_function">LogInFunction</string>
+    <string name="title_activity_log_in_function">Inloggning</string>
+    <string name="logIn">Logga In</string>
 
 </resources>

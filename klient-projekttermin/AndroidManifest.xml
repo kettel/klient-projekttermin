@@ -37,11 +37,7 @@
         <activity
             android:name="messageFunction.Inbox"
             android:label="@string/inbox" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
         <activity
             android:name="messageFunction.DisplayOfConversation"
@@ -87,7 +83,11 @@
         <activity
             android:name="loginFunction.LogInFunction"
             android:label="@string/title_activity_log_in_function" >
-            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

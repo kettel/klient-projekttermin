@@ -6,13 +6,24 @@ import java.security.KeyStore.PasswordProtection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import messageFunction.DisplayOfConversation;
+import models.AuthenticationModel;
+
+import com.example.klien_projekttermin.MainActivity;
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.R.layout;
 import com.example.klien_projekttermin.R.menu;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 import android.R.id;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -21,23 +32,28 @@ import android.widget.Toast;
 public class LogInFunction extends Activity {
 	private TextView userNameView;
 	private TextView passwordView;
-	private CharSequence userName;
-	private CharSequence password;
-	private String userNameString;
-	private String passwordHash;
+	private String userName;
+	private String password;
 	private String passwordHashReference;
-
+	private String userNameReference;
+	private Boolean isAccessGranted = false;
+	private CommunicationService communicationService;
+	private AuthenticationModel AM;
+	private boolean communicationBond = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
+		
 		try {
 			createPassWordHashRepresentation();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+//		Intent intent = new Intent(this, CommunicationService.class);
+//		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 	}
 
@@ -53,9 +69,19 @@ public class LogInFunction extends Activity {
 	public void logIn(View v) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 		userNameView = (TextView) this.findViewById(R.id.userName);
 		passwordView = (TextView) this.findViewById(R.id.password);
-		userName = userNameView.getText();
-		password = passwordView.getText();
-
+		userName = userNameView.getText().toString();
+		password = passwordView.getText().toString();
+		
+		AuthenticationModel authenticationModel = new AuthenticationModel(userName, hashPassword(password));
+		
+		sendAuthenticationRequestToServer(authenticationModel);
+	}
+	
+	/*
+	 * Metoden skapar en hashrepresentation av de inmatade lösenordet med hjälp av SHA-2
+	 */
+	public String hashPassword(String password) throws NoSuchAlgorithmException{
+		
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.update(password.toString().getBytes());
 
@@ -68,24 +94,48 @@ public class LogInFunction extends Activity {
 			if(hex.length()==1) hexString.append('0');
 			hexString.append(hex);
 		}
-
-		passwordHash = hexString.toString();
-
-		Toast.makeText(getApplicationContext(), passwordHash, Toast.LENGTH_SHORT).show();
-
-		
-		if(passwordHash.equals(passwordHashReference)){
-			Toast.makeText(getApplicationContext(), "JA!", Toast.LENGTH_SHORT).show();
-
-//			finish();
-		}
+		return hexString.toString();
 	}
-
+	
+	/*
+	 * Metoden skickar iväg autenticeringsförfrågan till servern
+	 */
+	public void sendAuthenticationRequestToServer(AuthenticationModel authenticationModel){
+		
+//		if(communicationBond){
+//			communicationService.sendAuthenticationModel(authenticationModel);
+//		}
+		sendAuthenticationRequestToLocalDatabase(authenticationModel);
+	}
+	
+	/*
+	 * Metoden authenticerar användaren mot den lokala databasen
+	 */
+	private void sendAuthenticationRequestToLocalDatabase(AuthenticationModel authenticationModel){
+		
+		if (authenticationModel.getPasswordHash().equals(passwordHashReference)&&authenticationModel.getUserName().equals(userName)) {
+			accessGranted();
+		}
+		else {
+			Toast.makeText(getApplicationContext(), "Användarnamn eller lösenord är felaktigt, försök igen!", Toast.LENGTH_SHORT).show();
+		}
+		
+	}
+		
+	public void accessGranted(){
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.putExtra("USER", userName);
+		startActivity(intent);
+	}
+	
 	/*
 	 * Metoden skapar en hashrepresentation av ett hårdkodat lösenord
 	 */
 	public void createPassWordHashRepresentation() throws NoSuchAlgorithmException{
 		String password = "fredrik";
+		userNameReference = "A";
+		
+		AM = new AuthenticationModel(password, userNameReference);
 
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.update(password.getBytes());
@@ -100,16 +150,18 @@ public class LogInFunction extends Activity {
 			hexString.append(hex);
 		}
 		passwordHashReference = hexString.toString();
-		
-		Toast.makeText(getApplicationContext(), passwordHashReference, Toast.LENGTH_SHORT).show();
-
 	}
 
-	/*
-	 * Metoden hashar lösenordet och verifierar hashsträngen mot lösenordsHashen databasen
-	 */
+	private ServiceConnection serviceConnection = new ServiceConnection() {
 
-	/*
-	 * 
-	 */
+		public void onServiceConnected(ComponentName className,IBinder service) {
+			System.out.println("OnServiceConnection");
+			CommunicationBinder binder = (CommunicationBinder) service;
+			communicationService = binder.getService();
+			communicationBond = true;
+		}
+		public void onServiceDisconnected(ComponentName arg0) {
+			communicationBond = false;
+		}
+	};
 }
