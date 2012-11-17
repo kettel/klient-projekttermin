@@ -38,7 +38,6 @@ public class AddAssignment extends ListActivity{
 	private String[] dataString = { "Name", "coord", "Uppdragsbeskrivning",
 			"uppskattadtid", "gatuadress", "uppdragsplats", "bild" };
 	private MenuItem saveItem;
-	private MenuItem cancelItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.editText1 };
 	private Database db;
@@ -107,7 +106,6 @@ public class AddAssignment extends ListActivity{
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_add_assignment, menu);
 		this.saveItem = menu.findItem(R.id.save);
-		this.cancelItem = menu.findItem(R.id.cancel);
 		return true;
 	}
 
@@ -115,8 +113,6 @@ public class AddAssignment extends ListActivity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.equals(saveItem)) {
 			saveToDB();
-		} else if (item.equals(cancelItem)) {
-			finish();
 		}
 		return super.onOptionsItemSelected(item);
 	}

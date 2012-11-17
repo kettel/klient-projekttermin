@@ -1,6 +1,7 @@
 package messageFunction;
 
 import models.MessageModel;
+import android.R.bool;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
@@ -39,12 +41,6 @@ public class CreateMessage extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = Database.getInstance(getApplicationContext());
-//		Contact c=new Contact("eric");
-//		dataBase.addToDB(c, this.getContentResolver());
-//		c=new Contact("erica");
-//		dataBase.addToDB(c, this.getContentResolver());
-//		c=new Contact("anna");
-//		dataBase.addToDB(c, this.getContentResolver());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			user = extras.getString("USER");
@@ -59,13 +55,20 @@ public class CreateMessage extends Activity {
 
 		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
 				null, 0));
-		//message.setText(messageContent);
+		message.setText(messageContent);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_create_new_message, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		sendMessage(item);
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -85,7 +88,7 @@ public class CreateMessage extends Activity {
 	 * 
 	 * @param v
 	 */
-	public void sendMessage(View v){
+	public boolean sendMessage(MenuItem v){
 		communicationService.setContext(getApplicationContext());
 		String recievingContact = reciever.getText().toString();
 		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
@@ -107,6 +110,7 @@ public class CreateMessage extends Activity {
 		intent.putExtra("ChosenContact", recievingContact);
 		intent.putExtra("USER", user);
 		startActivity(intent);
+		return true;
 	}
 
 	public void showAlertMessage() {

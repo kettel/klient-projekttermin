@@ -163,7 +163,7 @@ public class DisplayOfConversation extends Activity {
 
 	public void eraseMessage(String messageText){
 
-		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 		MessageModel messageModelInList;
 		long id = messageAndIdMap.get(messageText);
 		Integer a = listOfMassageModels.size();
