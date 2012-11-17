@@ -1,7 +1,6 @@
 package messageFunction;
 
 import models.MessageModel;
-import android.R.bool;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -14,8 +13,6 @@ import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
@@ -66,7 +63,6 @@ public class CreateMessage extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
 		sendMessage(item);
 		return super.onOptionsItemSelected(item);
 	}
@@ -89,9 +85,8 @@ public class CreateMessage extends Activity {
 	 * @param v
 	 */
 	public boolean sendMessage(MenuItem v){
-		communicationService.setContext(getApplicationContext());
+		//communicationService.setContext(getApplicationContext());
 		String recievingContact = reciever.getText().toString();
-		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		messageObject = new MessageModel(message.getText().toString(),
 				recievingContact, user);
 

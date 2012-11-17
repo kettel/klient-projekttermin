@@ -43,7 +43,6 @@ public class DisplayOfConversation extends Activity {
 	private HashMap<String, Long> messageAndIdMap = new HashMap<String, Long>();
 	private String chosenContact;
 	private Database dataBase;
-	private String timeStamp;
 	private String user;
 	private MessageModel messageObject;
 	private String[] options = {"AVBRYT","RADERA","VIDAREBEFORDRA"};
@@ -166,7 +165,6 @@ public class DisplayOfConversation extends Activity {
 		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 		MessageModel messageModelInList;
 		long id = messageAndIdMap.get(messageText);
-		Integer a = listOfMassageModels.size();
 
 
 		for (int i = 0; i < listOfMassageModels.size(); i++) {
@@ -244,7 +242,7 @@ public class DisplayOfConversation extends Activity {
 		
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 
 		messageObject = new MessageModel(message.getText().toString(), chosenContact, user); 
 
