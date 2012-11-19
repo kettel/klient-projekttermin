@@ -10,46 +10,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:completionThreshold="1"
         android:ems="10"
         android:hint="@string/reciever"
-        android:paddingTop="15dp"
-        android:completionThreshold="1" >
-
-        <requestFocus />
+        android:paddingTop="15dp" >
+            <requestFocus />
     </AutoCompleteTextView>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/receiver"
-        android:paddingTop="20dp" >
 
         <ScrollView
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/receiver"
-            android:layout_toLeftOf="@+id/button1" >
+            android:layout_below="@+id/receiver" >
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/message"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/message"
                 android:inputType="textMultiLine" />
+            
+            <requestFocus />
         </ScrollView>
-
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/ic_menu_send"
-            android:gravity="center_horizontal"
-            android:onClick="sendMessage" />
-    </RelativeLayout>
 
 </RelativeLayout>

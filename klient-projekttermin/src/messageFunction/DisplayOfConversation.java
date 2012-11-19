@@ -26,6 +26,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
@@ -43,7 +44,6 @@ public class DisplayOfConversation extends Activity {
 	private HashMap<String, Long> messageAndIdMap = new HashMap<String, Long>();
 	private String chosenContact;
 	private Database dataBase;
-	private String timeStamp;
 	private String user;
 	private MessageModel messageObject;
 	private String[] options = {"AVBRYT","RADERA","VIDAREBEFORDRA"};
@@ -55,13 +55,17 @@ public class DisplayOfConversation extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_of_conversation);
+		
+		Intent intent = new Intent(this, CommunicationService.class);
+		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 		message = (TextView) this.findViewById(R.id.messageBox);
 
-		dataBase = new Database();
+		dataBase = Database.getInstance(getApplicationContext());
 
 		//Metoden testar om någonting skickades med från Inbox och skriver i så fall ut det till strängen chosenContact
 		Bundle extras = getIntent().getExtras();
+		
 		if (extras != null) {
 			chosenContact = extras.getString("ChosenContact");
 			user = extras.getString("USER");
@@ -80,6 +84,12 @@ public class DisplayOfConversation extends Activity {
 	public void onStart(){
 		super.onStart();
 		addOnLongClickListener();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		unbindService(serviceConnection);
+		super.onDestroy();
 	}
 
 	/*
@@ -102,6 +112,7 @@ public class DisplayOfConversation extends Activity {
 	 */
 	public void loadConversation(String contact){
 
+		Toast.makeText(getApplicationContext(), "HIT", Toast.LENGTH_SHORT).show();
 		conversationContentArray = getInformationFromDatabase(contact);
 
 		// First paramenter - Context
@@ -163,17 +174,16 @@ public class DisplayOfConversation extends Activity {
 
 	public void eraseMessage(String messageText){
 
-		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 		MessageModel messageModelInList;
 		long id = messageAndIdMap.get(messageText);
-		Integer a = listOfMassageModels.size();
 
 
 		for (int i = 0; i < listOfMassageModels.size(); i++) {
 			messageModelInList = (MessageModel) listOfMassageModels.get(i);
 
 			if(messageModelInList.getId()==id){
-				dataBase.deleteFromDB(messageModelInList, getApplicationContext());
+				dataBase.deleteFromDB(messageModelInList, getContentResolver());
 				break;
 			}
 		}
@@ -211,8 +221,10 @@ public class DisplayOfConversation extends Activity {
 		Iterator<String> listIterator;
 
 		//Hämtar en lista med alla messagemodels som finns i databasen.
-		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
+		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getContentResolver());
 		
+		MessageModel a = (MessageModel) listOfMassageModels.get(0);
+
 		//		Den listview som kontakterna kommerpresenteras i
 		listViewOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
 
@@ -221,11 +233,9 @@ public class DisplayOfConversation extends Activity {
 			messageModel = (MessageModel) listOfMassageModels.get(i);
 			
 			if(messageModel.getReciever().toString().equals(Contact)||messageModel.getSender().toString().equals(Contact)){
-				
 				listOfConversations.add(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getMessageTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString());
 				messageAndIdMap.put(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getMessageTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString(), messageModel.getId());
 			}
-			
 		}
 
 		//Skapar en string[] som är lika lång som listan som hämtades.
@@ -239,17 +249,15 @@ public class DisplayOfConversation extends Activity {
 	}
 
 	public void sendMessage(View v){
-		communicationService.setContext(getApplicationContext());
-		Intent intent = new Intent(this, CommunicationService.class);
 		
-		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+		Toast.makeText(getApplicationContext(), "HIT KOM DU", Toast.LENGTH_SHORT).show();
 
-		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 
 		messageObject = new MessageModel(message.getText().toString(), chosenContact, user); 
 
 		//Sparar messageObject i databasen
-		dataBase.addToDB(messageObject,getApplicationContext());
+		dataBase.addToDB(messageObject,getContentResolver());
 		//Gömmer tangentbordet på skärmen
 		inm.hideSoftInputFromWindow(message.getWindowToken(), 0);
 		//Tar bort texten ur textrutan
@@ -258,7 +266,6 @@ public class DisplayOfConversation extends Activity {
 		if(communicationBond){
 			communicationService.sendMessage(messageObject);
 		}
-
 		loadConversation(chosenContact);
 	}
 

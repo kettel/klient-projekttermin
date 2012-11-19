@@ -1,8 +1,8 @@
-package com.example.klien_projekttermin.databaseNewProviders;
+package com.example.klien_projekttermin.database;
 
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
+import com.example.klien_projekttermin.database.ContactTable.Contacts;
 
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -35,7 +35,7 @@ public class ContactsContentProvider extends ContentProvider {
 
     private static final String CONTACTS_TABLE_NAME = "contacts";
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider";
+    public static final String AUTHORITY = "com.example.klien_projekttermin.database.ContactsContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
@@ -124,6 +124,16 @@ public class ContactsContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         dbHelper = new DatabaseHelper(getContext());
+        
+        // Om Assignments inte är skapad än samt om SQLite-biblioteken 
+        // inte är laddade
+        if(!Database.isLibraryLoaded){
+        	SQLiteDatabase.loadLibs(getContext());
+        	SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
+        	db.close();
+        	Database.isLibraryLoaded = true;
+        }
+        
         return true;
     }
 

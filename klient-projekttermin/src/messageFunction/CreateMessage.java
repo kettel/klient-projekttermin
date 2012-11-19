@@ -12,13 +12,13 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.database.Database;
+
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -39,12 +39,6 @@ public class CreateMessage extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = Database.getInstance(getApplicationContext());
-//		Contact c=new Contact("eric");
-//		dataBase.addToDB(c, this.getContentResolver());
-//		c=new Contact("erica");
-//		dataBase.addToDB(c, this.getContentResolver());
-//		c=new Contact("anna");
-//		dataBase.addToDB(c, this.getContentResolver());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			user = extras.getString("USER");
@@ -54,18 +48,24 @@ public class CreateMessage extends Activity {
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-		message = (EditText) this.findViewById(R.id.editText2);
+		message = (EditText) this.findViewById(R.id.message);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
 
 		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
 				null, 0));
-		//message.setText(messageContent);
+		message.setText(messageContent);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_create_new_message, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		sendMessage(item);
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -77,24 +77,28 @@ public class CreateMessage extends Activity {
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+	
 
-	/**
+	@Override
+	protected void onDestroy() {
+		unbindService(serviceConnection);
+		super.onDestroy();
+	}
+
+	/*
 	 * Metoden skapar ett meddelande objekt och skickar det vidare till
 	 * komunikationsmodulen. Metoden sparar ocks� de skapade meddelandena i
 	 * skickat mappen
-	 * 
-	 * @param v
+	 *
 	 */
-	public void sendMessage(View v){
-		communicationService.setContext(getApplicationContext());
+	public boolean sendMessage(MenuItem v){
 		String recievingContact = reciever.getText().toString();
-		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		messageObject = new MessageModel(message.getText().toString(),
 				recievingContact, user);
 
-		// Sparar messageObject i databasen
-		dataBase.addToDB(messageObject, getContentResolver());
-		// Skicka till kommunikationsmodulen
+		//Sparar messageObject i databasen
+		dataBase.addToDB(messageObject,getContentResolver());
+		//Skicka till kommunikationsmodulen
 
 		if (communicationBond) {
 			communicationService.sendMessage(messageObject);
@@ -107,6 +111,7 @@ public class CreateMessage extends Activity {
 		intent.putExtra("ChosenContact", recievingContact);
 		intent.putExtra("USER", user);
 		startActivity(intent);
+		return true;
 	}
 
 	public void showAlertMessage() {
@@ -116,19 +121,19 @@ public class CreateMessage extends Activity {
 		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA",
 				new DialogInterface.OnClickListener() {
 
-					// Om användaren trycker på ja så körs metoden
-					// eraseMessage()
-					public void onClick(DialogInterface dialog, int which) {
-						finish();
-					}
-				});
+			// Om användaren trycker på ja så körs metoden
+			// eraseMessage()
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		});
 		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ",
 				new DialogInterface.OnClickListener() {
 
-					public void onClick(DialogInterface dialog, int which) {
-						// Gör inget
-					}
-				});
+			public void onClick(DialogInterface dialog, int which) {
+				// Gör inget
+			}
+		});
 		alertDialog.show();
 	}
 

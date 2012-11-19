@@ -32,7 +32,7 @@ public class ClientToServerConnection extends Thread  {
 	private PrintWriter  output = null;
 	private BufferedReader input = null;
 	private String inputString = null;
-	private Database database = new Database();
+	private Database database;
 	private Gson gson = new Gson();
 	private boolean sendData = false;
 	private boolean connected = false;
@@ -79,6 +79,7 @@ public class ClientToServerConnection extends Thread  {
 	 * @param context  använd getApplicationContext()
 	 */
 	public synchronized void setContext(Context context){
+		database = Database.getInstance(context);
 		this.context = context;
 		ContextIsReady = true;
 	}
@@ -104,13 +105,13 @@ public class ClientToServerConnection extends Thread  {
 						Log.i("incomeing", inputString);
 						if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
 							MessageModel message = gson.fromJson(inputString, MessageModel.class);
-							database.addToDB(message, this.context);
+							database.addToDB(message, this.context.getContentResolver());
 						}else if (inputString.contains("\"databasetRepresentation\":\"assignment\"")) {
 							Assignment assignment = gson.fromJson(inputString, Assignment.class);
-							database.addToDB(assignment, this.context);
+							database.addToDB(assignment, this.context.getContentResolver());
 						}else if (inputString.contains("\"databasetRepresentation\":\"contact\"")) {
 							Contact contact = gson.fromJson(inputString, Contact.class);
-							database.addToDB(contact, context);
+							database.addToDB(contact, context.getContentResolver());
 						}else {
 							Log.e("Database input problem","Did not recognise inputtype.");
 						}

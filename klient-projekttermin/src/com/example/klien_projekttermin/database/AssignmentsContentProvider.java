@@ -1,10 +1,9 @@
-package com.example.klien_projekttermin.databaseNewProviders;
+package com.example.klien_projekttermin.database;
 
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
+import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 
-import models.Assignment;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
@@ -19,8 +18,6 @@ import android.net.Uri;
 import android.util.Log;
 
 public class AssignmentsContentProvider extends ContentProvider {
-	// Om databasen är skapad eller ej
-	private static boolean isInitialized = false;
 	
 	private static final String PASSWORD = Database.PASSWORD;
 	
@@ -30,7 +27,7 @@ public class AssignmentsContentProvider extends ContentProvider {
 
     private static final int DATABASE_VERSION = 1;
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider";
+    public static final String AUTHORITY = "com.example.klien_projekttermin.database.AssignmentsContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
@@ -136,12 +133,12 @@ public class AssignmentsContentProvider extends ContentProvider {
     public boolean onCreate() {
         dbHelper = new DatabaseHelper(getContext());
         
-        // Om Assignments inte är skapad än
-        if(!isInitialized){
+        // Om Assignments inte är skapad än samt om SQLite-biblioteken 
+        // inte är laddade
+        if(!Database.isLibraryLoaded){
         	SQLiteDatabase.loadLibs(getContext());
         	SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
         	db.close();
-        	isInitialized = true;
         	Database.isLibraryLoaded = true;
         }
         

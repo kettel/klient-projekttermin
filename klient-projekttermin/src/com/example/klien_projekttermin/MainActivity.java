@@ -4,11 +4,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.example.klien_projekttermin.database.Database;
+
+import camera.Camera;
+
 import map.MapActivity;
 import messageFunction.Inbox;
+import models.Assignment;
+import models.AssignmentStatus;
+import models.Contact;
+import models.MessageModel;
+import models.ModelInterface;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,12 +31,15 @@ import camera.Camera;
 import com.google.android.gcm.GCMRegistrar;
 
 public class MainActivity extends ListActivity {
+	
+	private String userName;
 
 	private static final String SENDER_ID = "943011390551";
 
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		testDB(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		GCMRegistrar.checkDevice(this);
@@ -36,6 +50,12 @@ public class MainActivity extends ListActivity {
 		} else {
 		  System.out.println("Already registerd");
 		}
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			userName = extras.getString("USER");
+		}
+		
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -48,15 +68,20 @@ public class MainActivity extends ListActivity {
 				switch (arg2) {
 				case 0:
 					myIntent = new Intent(MainActivity.this,MapActivity.class);
+					myIntent.putExtra("USER", userName);
+
 					break;
 				case 1:
 					myIntent = new Intent(MainActivity.this,Inbox.class);
+					myIntent.putExtra("USER", userName);
 					break;
 				case 2:
 					myIntent = new Intent(MainActivity.this,AssignmentOverview.class);
+					myIntent.putExtra("USER", userName);
 					break;
 				case 3:
 					myIntent = new Intent(MainActivity.this,Camera.class);
+					myIntent.putExtra("USER", userName);
 					break;
 				default:
 					break;
@@ -65,6 +90,64 @@ public class MainActivity extends ListActivity {
 			}
 
 		});
+	}
+	private void testDB(Context context) {
+		Database db = Database.getInstance(context);
+		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning", "Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED,"Gatunamn", "Platsnamn"),getContentResolver());
+		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
+		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera", "Sändare"), getContentResolver());
+		Log.d("DB","** Uppdrag **");
+		List <ModelInterface> assignments = db.getAllFromDB(new Assignment(), getContentResolver());
+		for (ModelInterface modelInterface : assignments) {
+			Assignment assignment = (Assignment) modelInterface;
+			Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
+			Assignment assignmentUpdate = new Assignment("Uppdaterat namn", "Uppdaterad sändare", false, "Uppdaterad beskrivning", "Uppdaterat tidsspann", AssignmentStatus.NEED_HELP, "Uppdaterad gatunamn", "Uppdaterad plats");
+			assignmentUpdate.setId(assignment.getId());
+			db.updateModel(assignmentUpdate, getContentResolver());
+		}
+		Log.d("DB", "** Uppdaterade uppdrag **");
+		assignments = db.getAllFromDB(new Assignment(), getContentResolver());
+		for (ModelInterface modelInterface : assignments) {
+			Assignment assignment = (Assignment) modelInterface;
+			Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
+			db.deleteFromDB(assignment, getContentResolver());
+		}
+		Log.d("DB","** Kontakter **");
+		List <ModelInterface> contacts = db.getAllFromDB(new Contact(), getContentResolver());
+		for (ModelInterface modelInterface : contacts) {
+			Contact contact = (Contact) modelInterface;
+			Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
+			Contact updatedContact = new Contact(contact.getId(),"Uppdaterat kontaktnamn..");
+			db.updateModel(updatedContact, getContentResolver());
+		}
+		Log.d("DB","** Uppdaterade kontakter **");
+		contacts = db.getAllFromDB(new Contact(), getContentResolver());
+		for (ModelInterface modelInterface : contacts) {
+			Contact contact = (Contact) modelInterface;
+			Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
+			db.deleteFromDB(contact, getContentResolver());
+		}
+		Log.d("DB","** Meddelanden **");
+		List <ModelInterface> messages = db.getAllFromDB(new MessageModel(), getContentResolver());
+		for (ModelInterface modelInterface : messages) {
+			MessageModel mess = (MessageModel) modelInterface;
+			Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
+			MessageModel updatedMess = new MessageModel(mess.getId(),"Updated content", "Updated receiver", "Updated sender", mess.getMessageTimeStamp(), true);
+			db.updateModel(updatedMess, getContentResolver());
+		}
+		Log.d("DB","** Uppdaterade meddelanden **");
+		messages = db.getAllFromDB(new MessageModel(), getContentResolver());
+		for (ModelInterface modelInterface : messages) {
+			MessageModel mess = (MessageModel) modelInterface;
+			Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
+			db.deleteFromDB(mess, getContentResolver());
+		}
+		assignments = db.getAllFromDB(new Assignment(), getContentResolver());
+		contacts = db.getAllFromDB(new Contact(), getContentResolver());
+		messages = db.getAllFromDB(new MessageModel(), getContentResolver());
+		Log.d("DB","Antal uppdrag: " + assignments.size());
+		Log.d("DB","Antal kontakter: " + contacts.size());
+		Log.d("DB","Antal meddelanden: " + messages.size());
 	}
 	/**
 	 * Genererar de menyval som ska gå att göra.

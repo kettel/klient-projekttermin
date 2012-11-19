@@ -12,17 +12,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseProvider.Database;
+import com.example.klien_projekttermin.database.Database;
 
-public class Uppdrag extends Activity {
 
-	Database db;
+public class AssignmentDetails extends Activity {
+
+	Database db = Database.getInstance(getApplicationContext());
 	private long assignmentID;
 	private TextView textViewAssName;
 	private TextView textViewDescription;
@@ -48,7 +49,7 @@ public class Uppdrag extends Activity {
 		db = Database.getInstance(this);
 
 		listAssignments = db.getAllFromDB(new Assignment(),
-				getApplicationContext());
+				getContentResolver());
 
 		// H�mtar textvyerna som ska s�ttas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
@@ -59,7 +60,7 @@ public class Uppdrag extends Activity {
 		textViewCoord = (TextView) findViewById(R.id.assignment_coordinates_set);
 		checkboxAssign = (CheckBox) findViewById(R.id.checkBox_assign);
 		image = (ImageView) findViewById(R.id.imageView1);
-
+		
 		setCheckboxCheckedListener();
 
 		// S�tter texten som ska visas i uppdragsvyn.
@@ -79,10 +80,10 @@ public class Uppdrag extends Activity {
 
 				// J�mf�r ID:T som clickats p� med befindliga Assignments fr�n
 				// databasen och s�tter den texten.
-				// if (c == assignmentID) {
+//				 if (c == assignmentID) {
 				// TODO: Här ska man kolla om man själv är med i listan och i så
 				// fall bocka i checkbocen för att man har åttagit den.
-				// }
+//				 }
 			}
 
 		}
@@ -144,7 +145,7 @@ public class Uppdrag extends Activity {
 							if (a.getId() == assignmentID) {
 								a.addAgents(new Contact());
 								db.updateModel((ModelInterface) a,
-										getApplicationContext());
+										getContentResolver());
 							}
 
 						}

@@ -40,8 +40,8 @@ import android.widget.ZoomControls;
 import assignment.ActivityConstants;
 import assignment.AddAssignment;
 
-import com.example.klien_projekttermin.databaseNewProviders.*;
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nutiteq.BasicMapComponent;

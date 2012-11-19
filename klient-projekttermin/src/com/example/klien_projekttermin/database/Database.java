@@ -3,130 +3,107 @@ package com.example.klien_projekttermin.database;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentResolver;
+import android.content.Context;
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
+import net.sqlcipher.database.SQLiteDatabase;
 
-
-import android.content.Context;
-
-/**
- * En klass med metoder för Create, Remove, Update, Delete (CRUD)
- * operationer på databasen.
- * @author kettel
- *
- */
-public class Database{
-	/**
-	 * Lägg till ett uppdrag/kontakt/meddelande till rätt databas
-	 * @param m			ModellInterface av objekt som ska läggas till
-	 * @param context	Aktivitetens kontext så data läggs i rätt databas
-	 */
-	public void addToDB(ModelInterface m, Context context){
+public class Database {
+	// SQLCipher-lösen
+	public static final String PASSWORD = "password";
+	
+	public static boolean isLibraryLoaded = false;
+	
+	private static AssignmentsDB assignmentsDB;
+	private static ContactsDB contactsDB;
+	private static MessagesDB messagesDB;
+	
+	private Database(){}
+	
+	private static Database instance = new Database();
+	
+	public static Database getInstance(Context context){
+		// Ladda vid behov in SQLCipher-bibliotek filer
+    	if (!isLibraryLoaded) {
+    		SQLiteDatabase.loadLibs(context);
+    		isLibraryLoaded = true;
+    	}
+    	// Hämta DB från var och en av de tre (snart fyra ContentProv wrappers)
+    	assignmentsDB = AssignmentsDB.getInstance();
+    	contactsDB = ContactsDB.getInstance();
+    	messagesDB = MessagesDB.getInstance();
+        return instance;
+	}
+	
+	public void addToDB(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.addAssignment((Assignment)m);
+			assignmentsDB.addAssignment(contentResolver, (Assignment) m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			dhc.addContact((Contact)m);
+			contactsDB.addContact(contentResolver, (Contact) m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.addMessage((MessageModel)m);
+			messagesDB.addMessage(contentResolver, (MessageModel) m);
 		}
 	}
-	/**
-	 * Räkna antal poster i vald databas
-	 * @param m			datatypen för den databas som ska räknas samman
-	 * @param context	programkontexten så rätt databas kan väljas
-	 * @return
-	 */
-	public int getDBCount(ModelInterface m, Context context){
+	
+	public int getDBCount(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		int returnCount = 0;
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			returnCount = dha.getAssignmentCount();
+			returnCount = assignmentsDB.getCount(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			returnCount = dhc.getContactCount();
+			returnCount = contactsDB.getCount(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			returnCount = dhm.getMessageCount();
+			returnCount = messagesDB.getCount(contentResolver);
 		}
 		return returnCount;
 	}
-
-	/**
-	 * Ta bort ett objekt från databasen
-	 * @param m	ModelInterface	Det objekt som önskas tas bort
-	 * @param context
-	 */
-	public void deleteFromDB(ModelInterface m, Context context){
+	
+	public void deleteFromDB(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.removeAssignment((Assignment)m);
+			assignmentsDB.delete(contentResolver,(Assignment) m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			dhc.removeContact((Contact)m);
+			contactsDB.delete(contentResolver, (Contact)m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.removeMessage((MessageModel)m);
+			messagesDB.delete(contentResolver, (MessageModel)m);
 		}
 	}
-
-	/**
-	 * Hämta alla poster i databasen för inskickad modell.
-	 * @param m	ModelInterface	Modellen styr från vilken databas data hämtas
-	 * @param context
-	 * @return	List<ModelInterface>	Alla objekt från vald databas
-	 */
-	public List<ModelInterface> getAllFromDB(ModelInterface m, Context context){
+	
+	public List<ModelInterface> getAllFromDB(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			returnList = dha.getAllAssignments();
+			returnList = assignmentsDB.getAllAssignments(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			returnList = dhc.getAllContacts();
+			returnList = contactsDB.getAllContacts(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			returnList = dhm.getAllMessages();
+			returnList = messagesDB.getAllMessages(contentResolver);
 		}
 		return returnList;
 	}
-
-	/**
-	 * Uppdatera värden för ett objekt i databasen
-	 * @param m	ModelInterface	Det uppdaterade objektet 
-	 * 							(OBS! Måste ha samma Id-nummer som
-	 * 							det objekt det ska ersätta)
-	 * @param context
-	 */
-	public void updateModel(ModelInterface m, Context context) {
+	
+	public void updateModel(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			DatabaseHandlerAssignment dha = new DatabaseHandlerAssignment(context);
-			dha.updateModel((Assignment)m);
+			assignmentsDB.updateAssignment(contentResolver, (Assignment) m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			DatabaseHandlerContacts dhc = new DatabaseHandlerContacts(context);
-			dhc.updateModel((Contact)m);
+			contactsDB.updateContact(contentResolver, (Contact) m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
-			DatabaseHandlerMessages dhm = new DatabaseHandlerMessages(context);
-			dhm.updateModel((MessageModel)m);
+			messagesDB.updateMessage(contentResolver, (MessageModel)m);
 		}
 	}
 }

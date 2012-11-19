@@ -1,12 +1,12 @@
-package com.example.klien_projekttermin.databaseNewProviders;
+package com.example.klien_projekttermin.database;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import models.Contact;
 import models.ModelInterface;
 
-import com.example.klien_projekttermin.databaseNewProviders.ContactTable.Contacts;
-
+import com.example.klien_projekttermin.database.ContactTable.Contacts;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -30,10 +30,9 @@ public class ContactsDB {
 
     // L�gg till en ny kontakt
     public void addContact(ContentResolver contentResolver, Contact contact) {
-        ContentValues contentValue = new ContentValues();
-        // note that we don't have to add an id as our table set id as autoincrement
-        contentValue.put(Contacts.NAME, contact.getContactName());
-        contentResolver.insert(Contacts.CONTENT_URI, contentValue);
+        ContentValues values = new ContentValues();
+        values.put(Contacts.NAME, contact.getContactName());
+        contentResolver.insert(Contacts.CONTENT_URI, values);
     }
     
     public int getCount(ContentResolver contentResolver){
@@ -74,10 +73,39 @@ public class ContactsDB {
         System.out.println("DELETED " + delete + " RECORDS FROM CONTACTS DB");
     }
 
-	public List<ModelInterface> getAllAssignments(
-			ContentResolver contentResolver) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ModelInterface> getAllContacts(ContentResolver contentResolver) {
+		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
+		Cursor cursor = contentResolver.query(
+    			Contacts.CONTENT_URI, null,Contacts.CONTACT_ID + " IS NOT null", null, null);
+    	if (cursor.moveToFirst()) {
+			do {
+				long id = 0;
+				String name = new String();
+				for (int i = 0; i < cursor.getColumnCount(); i++){
+					if(cursor.getColumnName(i).equalsIgnoreCase(Contacts.CONTACT_ID)){
+						id = cursor.getInt(i);
+					}else if(cursor.getColumnName(i).equalsIgnoreCase(Contacts.NAME)){
+						name = cursor.getString(i);
+					}
+				}
+				Contact contact = new Contact(id,name);
+				returnList.add(contact);
+			} while (cursor.moveToNext());
+    	}
+    	cursor.close();
+    	return returnList;
+	}
+
+	public void delete(ContentResolver contentResolver, Contact contact) {
+		contentResolver.delete(Contacts.CONTENT_URI, Contacts.CONTACT_ID + " = " + Long.toString(contact.getId()), null);
+		
+	}
+	
+	public void updateContact(ContentResolver contentResolver, Contact contact) {
+		ContentValues values = new ContentValues();
+        values.put(Contacts.NAME, contact.getContactName());
+        int updated = contentResolver.update(Contacts.CONTENT_URI, values, null, null);
+        Log.d("DB", "Uppdaterade " + updated + " contacts.");
 	}
 
 }

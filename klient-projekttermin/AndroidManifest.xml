@@ -48,11 +48,6 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -61,15 +56,16 @@
         </activity>
         <activity
             android:name="messageFunction.CreateMessage"
-            android:label="@string/new_message" >
-        </activity>
-        <activity
-            android:name="messageFunction.DisplayOfConversation"
-            android:label="@string/displayConversation" >
+            android:label="title_activity_create_new_message" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
             android:label="@string/inbox" >
+            
+        </activity>
+        <activity
+            android:name="messageFunction.DisplayOfConversation"
+            android:label="DisplayOfConversation" >
         </activity>
         <activity
             android:name="camera.Camera"
@@ -83,21 +79,23 @@
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
         <activity
-            android:name="assignment.AssignmentOverview"
-            android:label="@string/assignmentOverview" >
-        </activity>
-        <activity
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-        <activity
-            android:name="assignment.AddAssignment"
-            android:label="@string/addAssignment"
-            android:windowSoftInputMode="adjustPan" >
+        <activity android:name="assignment.AssignmentOverview" >
         </activity>
         <activity
-            android:name="assignment.Uppdrag"
+            android:name="assignment.AssignmentDetails"
             android:label="@string/uppdrag" >
+        </activity>
+        <activity
+            android:name="loginFunction.LogInFunction"
+            android:label="@string/title_activity_log_in_function" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!-- Database Content Providers -->
@@ -109,9 +107,15 @@
             android:authorities="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider" />
 
         <!-- Communication Module Service -->
+<<<<<<< HEAD
         <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
+=======
+        <service android:name="communicationModule.CommunicationService" >
+        </service>
+
+>>>>>>> fd2574312622f98ddb8350d8b74786088a1af518
     </application>
 
 </manifest>
