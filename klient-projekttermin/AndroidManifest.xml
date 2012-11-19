@@ -48,6 +48,11 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -87,6 +92,8 @@
         </activity>
         <activity android:name="assignment.AssignmentOverview" >
         </activity>
+        <activity android:name="assignment.AddAssignment" >
+        </activity>
         <activity
             android:name="assignment.AssignmentDetails"
             android:label="@string/uppdrag" >
@@ -94,11 +101,6 @@
         <activity
             android:name="loginFunction.LogInFunction"
             android:label="title_activity_log_in_function" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <!-- Database Content Providers -->

@@ -60,8 +60,7 @@ public class AssignmentOverview extends ListActivity {
 	public void loadAssignmentList() {
 		getAssHeadsFromDatabase();
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				getContentResolver().query(Assignments.CONTENT_URI, null,
-						"_id is not null", null, null), false);
+				null, false);
 		this.setListAdapter(adapter);
 	}
 

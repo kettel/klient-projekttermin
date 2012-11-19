@@ -43,7 +43,7 @@ public class AddAssignment extends ListActivity{
 			"uppskattadtid", "gatuadress", "uppdragsplats", "bild" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
-	private int[] to = { R.id.editText1 };
+	private int[] to = { R.id.text_item };
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
 	
