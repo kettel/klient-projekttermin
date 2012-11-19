@@ -12,11 +12,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
+import camera.PhotoGallery;
 
+import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
@@ -68,6 +71,9 @@ public class AddAssignment extends ListActivity {
 			break;
 		case ActivityConstants.MAIN_ACTIVITY:
 			break;
+		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
+			adapter.textToItem(6,fromCamera());
+			break;
 		}
 	}
 
@@ -78,6 +84,16 @@ public class AddAssignment extends ListActivity {
 			temp.put(from[0], s);
 			data.add(temp);
 		}
+	}
+	
+	private String fromCamera(){
+		Intent intent = getIntent();
+		json = intent.getStringExtra(PhotoGallery.picture);
+		Gson gson = new Gson();
+		Type type = new TypeToken<Bitmap>() {
+		}.getType();
+		Bitmap bm = gson.fromJson(json, type);
+		return json;
 	}
 
 	private String fromMap() {
@@ -133,4 +149,11 @@ public class AddAssignment extends ListActivity {
 		communicationService.sendAssignment(newAssignment);
 		finish();
 	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+//		communicationService.unbindService(communicationServiceConnection);
+	}
+	
 }

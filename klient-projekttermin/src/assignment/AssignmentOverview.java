@@ -20,7 +20,6 @@ import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 import com.example.klien_projekttermin.database.Database;
 
-
 public class AssignmentOverview extends ListActivity {
 
 	private long[] idInAdapter;

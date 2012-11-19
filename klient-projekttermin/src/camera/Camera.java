@@ -1,5 +1,6 @@
 package camera;
 
+import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import android.os.Bundle;
 import android.app.Activity;
@@ -25,11 +26,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.VideoView;
-import assignment.ActivityConstants;
 
 public class Camera extends Activity {
 	private static final int ACTION_TAKE_PHOTO_B = 1;
-	private static final int ACTION_TAKE_PHOTO_S = 2;
+	private static final int ACTION_PHOTO_ALBUM = 2;
 	private static final int ACTION_TAKE_VIDEO = 3;
 
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
@@ -172,13 +172,18 @@ public class Camera extends Activity {
 				f = null;
 				mCurrentPhotoPath = null;
 			}
+			startActivityForResult(takePictureIntent, actionCode);
 			break;
-
+		case ACTION_PHOTO_ALBUM:
+			Intent intent = new Intent(Camera.this, PhotoGallery.class);
+			intent.putExtra("calling-activity", ActivityConstants.CAMERA);
+			startActivity(intent);
+			break;
 		default:
 			break;
 		}
 
-		startActivityForResult(takePictureIntent, actionCode);
+		
 	}
 
 	private void dispatchTakeVideoIntent() {
@@ -222,7 +227,7 @@ public class Camera extends Activity {
 
 	Button.OnClickListener mTakePicSOnClickListener = new Button.OnClickListener() {
 		public void onClick(View v) {
-			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_S);
+			dispatchTakePictureIntent(ACTION_PHOTO_ALBUM);
 		}
 	};
 
@@ -254,7 +259,10 @@ public class Camera extends Activity {
 
 		switch (callingActivity) {
 		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
-			
+			Intent intent = new Intent(Camera.this, PhotoGallery.class);
+			intent.putExtra("calling-activity", ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
+			startActivity(intent);
+			finish();
 		break;
 		case ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT:
 			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
@@ -298,7 +306,7 @@ public class Camera extends Activity {
 			break;
 		} // ACTION_TAKE_PHOTO_B
 
-		case ACTION_TAKE_PHOTO_S: {
+		case ACTION_PHOTO_ALBUM: {
 			if (resultCode == RESULT_OK) {
 				System.out.println("small ok");
 				handleSmallCameraPhoto(data);
