@@ -39,11 +39,7 @@ import android.widget.ProgressBar;
 import android.widget.ZoomControls;
 import assignment.AddAssignment;
 
-<<<<<<< HEAD
-import com.example.klien_projekttermin.databaseNewProviders.*;
 import com.example.klien_projekttermin.ActivityConstants;
-=======
->>>>>>> 13a21c6b69279e4a3965429d7cd3fad12590d984
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;

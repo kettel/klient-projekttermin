@@ -113,9 +113,10 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				dialog.dismiss();
 				switch (arg2) {
 				case 0:
+//					for
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-					((Activity) context).startActivityForResult(intent, 1);
+//					((Activity) context).startActivityForResult(intent, 1);
 					 ((AddAssignment)context).finish();
 					break;
 				case 1:
