@@ -85,6 +85,7 @@ public class Database {
 
 		// Initiera databasen för denna singleton
 		database = SQLiteDatabase.openOrCreateDatabase(dbFile, PASSWORD, null);
+		System.out.println("(Database.java): Laddat DB-lib?" + isLibraryLoaded);
 		return instance;
 	}
 
@@ -115,8 +116,8 @@ public class Database {
 					ass.getAssignmentStatus().toString());
 			values.put(AssignmentTable.COLUMN_CAMERAIMAGE,
 					bitmapToByteArray(ass.getCameraImage()));
-			values.put(AssignmentTable.COLUMN_LAT, Long.toString(ass.getLat()));
-			values.put(AssignmentTable.COLUMN_LON, Long.toString(ass.getLon()));
+			values.put(AssignmentTable.COLUMN_LAT, Double.toString(ass.getLat()));
+			values.put(AssignmentTable.COLUMN_LON, Double.toString(ass.getLon()));
 			values.put(AssignmentTable.COLUMN_NAME, ass.getName());
 			values.put(AssignmentTable.COLUMN_SENDER, ass.getSender());
 			values.put(AssignmentTable.COLUMN_AGENTS, agents);
@@ -125,6 +126,7 @@ public class Database {
 			values.put(AssignmentTable.COLUMN_TIMESPAN, ass.getTimeSpan());
 			Uri assUri = context.getContentResolver().insert(
 					DatabaseContentProviderAssignments.CONTENT_URI, values);
+			System.out.println("SPARAT I DB: " + ass.getName());
 			Log.d("DB", "AssignmentURI: " + assUri);
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			Contact contact = (Contact) m;
@@ -133,7 +135,7 @@ public class Database {
 					contact.getContactName());
 
 			Uri contactUri = context.getContentResolver().insert(
-					DatabaseContentProviderContacts.CONTENT_URI, values);
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI, values);
 			Log.d("DB", "ContactURI: " + contactUri);
 		} else if (dbRep.equalsIgnoreCase("message")) {
 			MessageModel mess = (MessageModel) m;
@@ -179,7 +181,7 @@ public class Database {
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			// SELECT * WHERE _id IS NOT null
 			Cursor cursor = context.getContentResolver().query(
-					DatabaseContentProviderContacts.CONTENT_URI, null,
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI, null,
 					Database.KEY_ID + " IS NOT null", null, null);
 			returnCount = cursor.getCount();
 			cursor.close();
@@ -214,7 +216,7 @@ public class Database {
 			// null, null);
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			deleted = context.getContentResolver().delete(
-					DatabaseContentProviderContacts.CONTENT_URI,
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI,
 					Database.KEY_ID + " = " + Long.toString(m.getId()), null);
 		} else if (dbRep.equalsIgnoreCase("message")) {
 			deleted = context.getContentResolver().delete(
@@ -243,6 +245,7 @@ public class Database {
 					DatabaseContentProviderAssignments.CONTENT_URI, null,
 					Database.KEY_ID + " IS NOT null", null, null);
 			// Loopa igenom alla rader och lägg till dem i listan
+			System.out.println("UTUTUTUTUTU");
 			if (cursor.moveToFirst()) {
 				do {
 					// Konvertera BLOB -> Bitmap
@@ -261,8 +264,8 @@ public class Database {
 					Assignment assignment = new Assignment(Long.valueOf(cursor
 							.getString(0)), // id från DB
 							cursor.getString(1), // name
-							Long.parseLong(cursor.getString(2)), // lat
-							Long.parseLong(cursor.getString(3)), // lon
+							Double.parseDouble(cursor.getString(2)), // lat
+							Double.parseDouble(cursor.getString(3)), // lon
 							cursor.getString(4),// region
 							agents, // agents
 							cursor.getString(6), // sender
@@ -274,14 +277,14 @@ public class Database {
 							cursor.getString(12), // streetName
 							cursor.getString(13), // siteName
 							Long.valueOf(cursor.getString(14))); // timeStamp
-
+						System.out.println(cursor.getString(1)+ " NAME");
 					returnList.add(assignment);
 				} while (cursor.moveToNext());
 			}
 			cursor.close();
 		} else if (dbRep.equalsIgnoreCase("contact")) {
 			Cursor cursor = context.getContentResolver().query(
-					DatabaseContentProviderContacts.CONTENT_URI, null,
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI, null,
 					Database.KEY_ID + " IS NOT null", null, null);
 			if (cursor.moveToFirst()) {
 				do {
@@ -337,8 +340,8 @@ public class Database {
 					ass.getAssignmentStatus().toString());
 			values.put(AssignmentTable.COLUMN_CAMERAIMAGE,
 					bitmapToByteArray(ass.getCameraImage()));
-			values.put(AssignmentTable.COLUMN_LAT, Long.toString(ass.getLat()));
-			values.put(AssignmentTable.COLUMN_LON, Long.toString(ass.getLon()));
+			values.put(AssignmentTable.COLUMN_LAT, Double.toString(ass.getLat()));
+			values.put(AssignmentTable.COLUMN_LON, Double.toString(ass.getLon()));
 			values.put(AssignmentTable.COLUMN_NAME, ass.getName());
 			values.put(AssignmentTable.COLUMN_SENDER, ass.getSender());
 			values.put(AssignmentTable.COLUMN_SITENAME, ass.getSiteName());
@@ -354,7 +357,7 @@ public class Database {
 			values.put(ContactsTable.COLUMN_CONTACT_NAME, contact.getContactName());
 
 			updated = context.getContentResolver().update(
-					DatabaseContentProviderContacts.CONTENT_URI, values,
+					com.example.klien_projekttermin.databaseProvider.Contact.Contacts.CONTENT_URI, values,
 					Database.KEY_ID + " = " + Long.toString(m.getId()), null);
 
 		} else if (dbRep.equalsIgnoreCase("message")) {

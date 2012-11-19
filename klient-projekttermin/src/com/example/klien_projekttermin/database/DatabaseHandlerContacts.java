@@ -53,7 +53,7 @@ public class DatabaseHandlerContacts extends SQLiteOpenHelper{
     
     /**
      * Lägg till en kontakt
-     * @param Contact	Den kontakt som ska läggas till i databasen
+     * @param ContactTable	Den kontakt som ska läggas till i databasen
      */
     public void addContact(Contact contact) {
         SQLiteDatabase db = this.getWritableDatabase();

@@ -75,6 +75,7 @@ public class LogInFunction extends Activity {
 		AuthenticationModel authenticationModel = new AuthenticationModel(userName, hashPassword(password));
 		
 		sendAuthenticationRequestToServer(authenticationModel);
+		passwordView.getEditableText().clear();
 	}
 	
 	/*

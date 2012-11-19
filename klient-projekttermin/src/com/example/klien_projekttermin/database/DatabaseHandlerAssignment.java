@@ -3,8 +3,8 @@ package com.example.klien_projekttermin.database;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
 import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;
@@ -118,7 +118,7 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 				Boolean.toString(assignment.isExternalMission()));
 		values.put(KEY_ASSIGNMENTDESCRIPTION,
 				assignment.getAssignmentDescription());
-		values.put(KEY_TIMESPAN, assignment.getTimeSpan().toString());
+		values.put(KEY_TIMESPAN, assignment.getTimeSpan());
 		values.put(KEY_ASSIGNMENTSTATUS, assignment.getAssignmentStatus()
 				.toString());
 		// Hmm.. Hur i H-E kommer detta att fungera? Bild -> String -> Binär ->
@@ -175,8 +175,8 @@ public class DatabaseHandlerAssignment extends SQLiteOpenHelper {
 				Assignment assignment = new Assignment(Long.valueOf(cursor
 						.getString(0)), // id från DB
 						cursor.getString(1), // name
-						Long.parseLong(cursor.getString(2)), // lat
-						Long.parseLong(cursor.getString(3)), // lon
+						Double.parseDouble(cursor.getString(2)), // lat
+						Double.parseDouble(cursor.getString(3)), // lon
 						cursor.getString(4),// region
 						agents, // agents
 						cursor.getString(6), // sender

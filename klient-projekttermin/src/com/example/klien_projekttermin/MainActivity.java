@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import camera.Camera;
+
+
 import map.MapActivity;
 import messageFunction.Inbox;
 import android.app.ListActivity;
@@ -24,7 +27,6 @@ public class MainActivity extends ListActivity {
 		setContentView(R.layout.activity_main);
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		getListView().setOnItemClickListener(new OnItemClickListener() {
@@ -42,6 +44,9 @@ public class MainActivity extends ListActivity {
 				case 2:
 					myIntent = new Intent(MainActivity.this,AssignmentOverview.class);
 					break;
+				case 3:
+					myIntent = new Intent(MainActivity.this,Camera.class);
+					break;
 				default:
 					break;
 				}
@@ -58,8 +63,8 @@ public class MainActivity extends ListActivity {
 	private List<HashMap<String, String>> generateMenuContent(){
 		List<HashMap<String, String>>content=new ArrayList<HashMap<String,String>>();
 		//Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer. Notera att det krävs en subtitle till varje item.
-		String[] menuItems={"Karta","Meddelanden", "Uppdragshanteraren"};
-		String[] menuSubtitle={"Visar en karta","Visar Inkorgen", ""};
+		String[] menuItems={"Karta","Meddelanden", "Uppdragshanteraren", "Kamera"};
+		String[] menuSubtitle={"Visar en karta","Visar Inkorgen", "Visar tillgängliga uppdrag", "Ta bilder"};
 		//Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();

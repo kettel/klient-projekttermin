@@ -5,10 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
-    <EditText
-        android:id="@+id/editText1"
-        android:inputType="textPersonName"
-        android:layout_width="fill_parent"
+    <AutoCompleteTextView
+        android:id="@+id/receiver"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:ems="10"
@@ -18,19 +17,19 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText1"
+        android:layout_below="@+id/receiver"
         android:paddingTop="20dp" >
 
         <ScrollView
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/button1"
+            android:layout_toLeftOf="@+id/sendButton"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/editText1" >
+            android:layout_below="@+id/receiver" >
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/message"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -41,7 +40,7 @@
         </ScrollView>
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
