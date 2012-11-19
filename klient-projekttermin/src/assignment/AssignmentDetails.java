@@ -8,7 +8,6 @@ import models.Contact;
 import models.ModelInterface;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.CheckBox;
@@ -18,11 +17,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.database.Database;
+
 
 public class AssignmentDetails extends Activity {
 
-	Database db;
+	Database db = Database.getInstance(getApplicationContext());
 	private long assignmentID;
 	private TextView textViewAssName;
 	private TextView textViewDescription;
@@ -57,6 +57,7 @@ public class AssignmentDetails extends Activity {
 		// Hittar rätt assignment i databasen och sätter den tillgänglig i denna
 		// klass.
 		setCurrentAssignmentToReach();
+
 
 		// H�mtar textvyerna som ska s�ttas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
@@ -163,6 +164,7 @@ public class AssignmentDetails extends Activity {
 						// Sätter status för att uppdraget är påbörjat.
 						currentAssignment
 								.setAssignmentStatus(AssignmentStatus.STARTED);
+
 
 						// Uppdaterar Uppdraget med den nya kontakten.
 						db.updateModel((ModelInterface) currentAssignment,

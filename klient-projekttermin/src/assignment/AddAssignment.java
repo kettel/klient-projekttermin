@@ -3,12 +3,10 @@ package assignment;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
-import models.ModelInterface;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,14 +18,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+//=======
+//import com.example.klien_projekttermin.database.AssignmentTable;
+//import com.example.klien_projekttermin.database.Database;							Gamla databasen?
+//import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
+//>>>>>>> 88c1ca7af27e59d30407a431aa7fcf855e8d5993
 
-public class AddAssignment extends ListActivity{
+public class AddAssignment extends ListActivity {
 
 	private CommunicationService communicationService;
 
@@ -42,24 +45,26 @@ public class AddAssignment extends ListActivity{
 	private int[] to = { R.id.editText1 };
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
-		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
-		
+		Intent intent = new Intent(this.getApplicationContext(),
+				CommunicationService.class);
+		bindService(intent, communicationServiceConnection,
+				Context.BIND_AUTO_CREATE);
+
 		setContentView(R.layout.activity_add_assignment);
 		loadContent();
-		adapter = new SimpleEditTextItemAdapter(this,
-				data, R.layout.textfield_item, from, to);
+		adapter = new SimpleEditTextItemAdapter(this, data,
+				R.layout.textfield_item, from, to);
 		setListAdapter(adapter);
 		int callingActivity = getIntent().getIntExtra("calling-activity", 0);
 
 		switch (callingActivity) {
 		case ActivityConstants.MAP_ACTIVITY:
-			adapter.textToItem(1,fromMap());
+			adapter.textToItem(1, fromMap());
 			break;
 		case ActivityConstants.MAIN_ACTIVITY:
 			break;
@@ -119,8 +124,11 @@ public class AddAssignment extends ListActivity{
 
 	private void saveToDB() {
 		db = Database.getInstance(getApplicationContext());
-		HashMap<Integer, String>temp=((SimpleEditTextItemAdapter)getListAdapter()).getItemStrings();
-		Assignment newAssignment = new Assignment(temp.get(0), json, "eric", false, temp.get(2),temp.get(3) , AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5));
+		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) getListAdapter())
+				.getItemStrings();
+		Assignment newAssignment = new Assignment(temp.get(0), json, "eric",
+				false, temp.get(2), temp.get(3), AssignmentStatus.NOT_STARTED,
+				temp.get(4), temp.get(5));
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();

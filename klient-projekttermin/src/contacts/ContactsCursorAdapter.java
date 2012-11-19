@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import com.example.klien_projekttermin.databaseNewProviders.ContactTable;
+import com.example.klien_projekttermin.database.ContactTable;
 
 public class ContactsCursorAdapter extends CursorAdapter {
 	ContentResolver contentResolver;

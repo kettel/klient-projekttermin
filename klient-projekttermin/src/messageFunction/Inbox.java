@@ -157,7 +157,7 @@ public class Inbox extends Activity {
 			messageModelInList = (MessageModel) peopleEngagedInConversation.get(i);
 
 			if(messageModelInList.getReciever().toString().equals(contact)){
-				dataBase.deleteFromDB(messageModelInList, getApplicationContext());
+				dataBase.deleteFromDB(messageModelInList, getContentResolver());
 			}
 		}
 		loadListOfSenders();
@@ -177,12 +177,12 @@ public class Inbox extends Activity {
 	public String[] getInformationFromDatabase(){
 		String[] arrayOfPeopleEngagedInConversation;
 		Object[] objectsInSetOfPeople;
-		dataBase = new Database();
+		dataBase = Database.getInstance(getApplicationContext());
 		MessageModel messageModel;
 		HashSet<String> setOfPeople = new HashSet<String>();
 
 		//Hämtar en lista med alla MessageModels som finns lagrade i databasen
-		peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
+		peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getContentResolver());
 
 		listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
 

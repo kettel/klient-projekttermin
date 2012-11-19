@@ -29,7 +29,6 @@ import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
-
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -57,7 +56,7 @@ public class DisplayOfConversation extends Activity {
 
 		message = (TextView) this.findViewById(R.id.messageBox);
 
-		dataBase = new Database();
+		dataBase = Database.getInstance(getApplicationContext());
 
 		//Metoden testar om någonting skickades med från Inbox och skriver i så fall ut det till strängen chosenContact
 		Bundle extras = getIntent().getExtras();
@@ -171,7 +170,7 @@ public class DisplayOfConversation extends Activity {
 			messageModelInList = (MessageModel) listOfMassageModels.get(i);
 
 			if(messageModelInList.getId()==id){
-				dataBase.deleteFromDB(messageModelInList, getApplicationContext());
+				dataBase.deleteFromDB(messageModelInList, getContentResolver());
 				break;
 			}
 		}
@@ -209,8 +208,10 @@ public class DisplayOfConversation extends Activity {
 		Iterator<String> listIterator;
 
 		//Hämtar en lista med alla messagemodels som finns i databasen.
-		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
-		
+
+		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getContentResolver());
+		MessageModel a = (MessageModel) listOfMassageModels.get(0);
+
 		//		Den listview som kontakterna kommerpresenteras i
 		listViewOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
 
@@ -247,7 +248,7 @@ public class DisplayOfConversation extends Activity {
 		messageObject = new MessageModel(message.getText().toString(), chosenContact, user); 
 
 		//Sparar messageObject i databasen
-		dataBase.addToDB(messageObject,getApplicationContext());
+		dataBase.addToDB(messageObject,getContentResolver());
 		//Gömmer tangentbordet på skärmen
 		inm.hideSoftInputFromWindow(message.getWindowToken(), 0);
 		//Tar bort texten ur textrutan
