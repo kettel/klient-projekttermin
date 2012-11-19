@@ -30,6 +30,7 @@ public class AssignmentDetails extends Activity {
 	private TextView textViewSpot;
 	private TextView textViewStreetname;
 	private TextView textViewCoord;
+	private TextView agentCount;
 	private CheckBox checkboxAssign;
 	private ImageView image;
 	private List<ModelInterface> listAssignments;
@@ -45,7 +46,7 @@ public class AssignmentDetails extends Activity {
 		// assignmentoverview.
 		Intent intent = getIntent();
 		assignmentID = intent.getExtras().getLong("assignmentID");
-		currentUser = intent.getExtras().getString("currentUser");
+		// currentUser = intent.getExtras().getString("currentUser");
 
 		// Initierar databasen.
 		db = Database.getInstance(this);
@@ -64,6 +65,7 @@ public class AssignmentDetails extends Activity {
 		textViewSpot = (TextView) findViewById(R.id.assignment_spot_set);
 		textViewStreetname = (TextView) findViewById(R.id.assignment_streetname_set);
 		textViewCoord = (TextView) findViewById(R.id.assignment_coordinates_set);
+		agentCount = (TextView) findViewById(R.id.textView_agentCount);
 		checkboxAssign = (CheckBox) findViewById(R.id.checkBox_assign);
 		image = (ImageView) findViewById(R.id.imageView1);
 
@@ -125,10 +127,11 @@ public class AssignmentDetails extends Activity {
 	}
 
 	/**
-	 * S�tter texten som ska visas i uppdragsvyn.
+	 * Sätter texten som ska visas i uppdragsvyn.
 	 */
 	public void setAssignmentToView() {
 
+		// agentCount.setText(currentAssignment.getAgents().size());
 		textViewAssName.setText(currentAssignment.getName());
 		textViewDescription.setText(currentAssignment
 				.getAssignmentDescription());
@@ -136,7 +139,8 @@ public class AssignmentDetails extends Activity {
 		textViewSpot.setText(currentAssignment.getSiteName());
 		textViewStreetname.setText(currentAssignment.getStreetName());
 		textViewCoord.setText("Latitud: " + currentAssignment.getLat()
-				+ "  Longitud: " + currentAssignment.getLon());
+				+ "  Longitud: " + currentAssignment.getLon() + "ID: "
+				+ currentAssignment.getId());
 
 	}
 

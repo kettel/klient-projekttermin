@@ -33,7 +33,7 @@ public class AssignmentOverview extends ListActivity {
 		setContentView(R.layout.activity_assignment_overview);
 		
 		Intent extrasFromIntent = new Intent();
-		currentUser = extrasFromIntent.getExtras().getString("USER");
+		//currentUser = extrasFromIntent.getExtras().getString("USER");
 	}
 
 	// G�r en custom topmeny.
@@ -70,7 +70,7 @@ public class AssignmentOverview extends ListActivity {
 	}
 
 	/**
-	 * H�mtar en stringarray med str�ngar som representerar uppdragen.
+	 * Hämtar en stringarray med strängar som representerar uppdragen.
 	 * 
 	 * @return
 	 */
@@ -90,9 +90,10 @@ public class AssignmentOverview extends ListActivity {
 		}
 		return tempHeadArr;
 	}
+	
 
 	/**
-	 * S�tter en klicklyssnare p� listvyn.
+	 * Sätter en klicklyssnare på listvyn.
 	 */
 	public void setItemClickListner() {
 		this.getListView().setOnItemClickListener(new OnItemClickListener() {
