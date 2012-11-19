@@ -40,6 +40,7 @@ public class CreateMessage extends Activity {
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = Database.getInstance(getApplicationContext());
 		Bundle extras = getIntent().getExtras();
+		
 		if (extras != null) {
 			user = extras.getString("USER");
 			messageContent = extras.getString("MESSAGE");
@@ -93,8 +94,7 @@ public class CreateMessage extends Activity {
 	 */
 	public boolean sendMessage(MenuItem v){
 		String recievingContact = reciever.getText().toString();
-		messageObject = new MessageModel(message.getText().toString(),
-				recievingContact, user);
+		messageObject = new MessageModel(message.getText().toString(), recievingContact, user);
 
 		//Sparar messageObject i databasen
 		dataBase.addToDB(messageObject,getContentResolver());

@@ -34,7 +34,6 @@ import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-
 public class DisplayOfConversation extends Activity {
 
 	private ListView listViewOfConversationInputs;
@@ -112,7 +111,6 @@ public class DisplayOfConversation extends Activity {
 	 */
 	public void loadConversation(String contact){
 
-		Toast.makeText(getApplicationContext(), "HIT", Toast.LENGTH_SHORT).show();
 		conversationContentArray = getInformationFromDatabase(contact);
 
 		// First paramenter - Context
@@ -169,6 +167,7 @@ public class DisplayOfConversation extends Activity {
 	public void forwardMessage(String messageContent){
 		Intent intent = new Intent(this, CreateMessage.class);
 		intent.putExtra("MESSAGE",messageContent);
+		intent.putExtra("USER",user);
 		startActivity(intent);
 	}
 
