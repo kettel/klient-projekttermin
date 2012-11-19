@@ -12,17 +12,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.database.Database;
 
 
 public class AssignmentDetails extends Activity {
 
-	Database db;
+	Database db = Database.getInstance(getApplicationContext());
 	private long assignmentID;
 	private TextView textViewAssName;
 	private TextView textViewDescription;

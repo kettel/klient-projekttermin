@@ -1,5 +1,8 @@
 package assignment;
 
+import com.example.klien_projekttermin.database.AssignmentTable;
+import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,9 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable;
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
 
 public class AssignmentCursorAdapter extends CursorAdapter {
 

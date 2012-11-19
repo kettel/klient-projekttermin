@@ -8,8 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- User permissions -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <user-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Features -->
     <uses-feature android:name="android.hardware.camera" />
 
@@ -24,11 +23,6 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -37,15 +31,16 @@
         </activity>
         <activity
             android:name="messageFunction.CreateMessage"
-            android:label="@string/new_message" >
-        </activity>
-        <activity
-            android:name="messageFunction.DisplayOfConversation"
-            android:label="@string/displayConversation" >
+            android:label="title_activity_create_new_message" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
             android:label="@string/inbox" >
+            
+        </activity>
+        <activity
+            android:name="messageFunction.DisplayOfConversation"
+            android:label="DisplayOfConversation" >
         </activity>
         <activity
             android:name="camera.Camera"
@@ -59,34 +54,40 @@
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
         <activity
-            android:name="assignment.AssignmentOverview"
-            android:label="@string/assignmentOverview" >
-        </activity>
-        <activity
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-        <activity
-            android:name="assignment.AddAssignment"
-            android:label="@string/addAssignment"
-            android:windowSoftInputMode="adjustPan" >
+        <activity android:name="assignment.AssignmentOverview" >
         </activity>
         <activity
             android:name="assignment.AssignmentDetails"
             android:label="@string/uppdrag" >
         </activity>
+        <activity
+            android:name="loginFunction.LogInFunction"
+            android:label="@string/title_activity_log_in_function" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <!-- Database Content Providers -->
-        <provider
-            android:name="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider"
-            android:authorities="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider" />
-        <provider
-            android:name="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider"
-            android:authorities="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider" />
-
+   		<provider
+            android:name="com.example.klien_projekttermin.database.ContactsContentProvider" 
+            android:authorities="com.example.klien_projekttermin.database.ContactsContentProvider" />
+   		<provider
+            android:name="com.example.klien_projekttermin.database.AssignmentsContentProvider" 
+            android:authorities="com.example.klien_projekttermin.database.AssignmentsContentProvider" />
+   		<provider
+            android:name="com.example.klien_projekttermin.database.MessagesContentProvider" 
+            android:authorities="com.example.klien_projekttermin.database.MessagesContentProvider" />
+        
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" >
         </service>
+
     </application>
 
 </manifest>

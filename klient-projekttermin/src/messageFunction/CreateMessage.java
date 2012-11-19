@@ -17,7 +17,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.database.Database;
+
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -47,7 +48,7 @@ public class CreateMessage extends Activity {
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-		message = (EditText) this.findViewById(R.id.editText2);
+		message = (EditText) this.findViewById(R.id.message);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
 
 		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
@@ -76,23 +77,28 @@ public class CreateMessage extends Activity {
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+	
 
-	/**
+	@Override
+	protected void onDestroy() {
+		unbindService(serviceConnection);
+		super.onDestroy();
+	}
+
+	/*
 	 * Metoden skapar ett meddelande objekt och skickar det vidare till
 	 * komunikationsmodulen. Metoden sparar ocks� de skapade meddelandena i
 	 * skickat mappen
-	 * 
-	 * @param v
+	 *
 	 */
 	public boolean sendMessage(MenuItem v){
-		//communicationService.setContext(getApplicationContext());
 		String recievingContact = reciever.getText().toString();
 		messageObject = new MessageModel(message.getText().toString(),
 				recievingContact, user);
 
-		// Sparar messageObject i databasen
-		dataBase.addToDB(messageObject, getContentResolver());
-		// Skicka till kommunikationsmodulen
+		//Sparar messageObject i databasen
+		dataBase.addToDB(messageObject,getContentResolver());
+		//Skicka till kommunikationsmodulen
 
 		if (communicationBond) {
 			communicationService.sendMessage(messageObject);
@@ -115,19 +121,19 @@ public class CreateMessage extends Activity {
 		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA",
 				new DialogInterface.OnClickListener() {
 
-					// Om användaren trycker på ja så körs metoden
-					// eraseMessage()
-					public void onClick(DialogInterface dialog, int which) {
-						finish();
-					}
-				});
+			// Om användaren trycker på ja så körs metoden
+			// eraseMessage()
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		});
 		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ",
 				new DialogInterface.OnClickListener() {
 
-					public void onClick(DialogInterface dialog, int which) {
-						// Gör inget
-					}
-				});
+			public void onClick(DialogInterface dialog, int which) {
+				// Gör inget
+			}
+		});
 		alertDialog.show();
 	}
 

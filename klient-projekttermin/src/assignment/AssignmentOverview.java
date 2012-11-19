@@ -17,8 +17,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
+import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
+import com.example.klien_projekttermin.database.Database;
 
 public class AssignmentOverview extends ListActivity {
 

@@ -1,11 +1,11 @@
-package com.example.klien_projekttermin.databaseNewProviders;
+package com.example.klien_projekttermin.database;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
+import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 
 import models.Assignment;
 import models.AssignmentStatus;
@@ -30,27 +30,27 @@ public class AssignmentsDB {
 
 	public void addAssignment(ContentResolver contentResolver,
 			Assignment assignment) {
-		ContentValues contentValue = new ContentValues();
-		contentValue.put(Assignments.NAME, assignment.getName());
-		contentValue.put(Assignments.LAT, assignment.getLat());
-		contentValue.put(Assignments.LON, assignment.getLon());
-		contentValue.put(Assignments.REGION, assignment.getRegion());
-		contentValue.put(Assignments.SENDER, assignment.getSender());
-		contentValue.put(Assignments.AGENTS,
+		ContentValues values = new ContentValues();
+		values.put(Assignments.NAME, assignment.getName());
+		values.put(Assignments.LAT, assignment.getLat());
+		values.put(Assignments.LON, assignment.getLon());
+		values.put(Assignments.REGION, assignment.getRegion());
+		values.put(Assignments.SENDER, assignment.getSender());
+		values.put(Assignments.AGENTS,
 				listToString(assignment.getAgents()));
-		contentValue.put(Assignments.EXTERNAL_MISSION,
+		values.put(Assignments.EXTERNAL_MISSION,
 				assignment.isExternalMission());
-		contentValue.put(Assignments.DESCRIPTION,
+		values.put(Assignments.DESCRIPTION,
 				assignment.getAssignmentDescription());
-		contentValue.put(Assignments.TIMESPAN, assignment.getTimeSpan());
-		contentValue.put(Assignments.STATUS, assignment.getAssignmentStatus()
+		values.put(Assignments.TIMESPAN, assignment.getTimeSpan());
+		values.put(Assignments.STATUS, assignment.getAssignmentStatus()
 				.toString());
-		contentValue.put(Assignments.CAMERAIMAGE,
+		values.put(Assignments.CAMERAIMAGE,
 				bitmapToByteArray(assignment.getCameraImage()));
-		contentValue.put(Assignments.STREETNAME, assignment.getStreetName());
-		contentValue.put(Assignments.SITENAME, assignment.getSiteName());
-		contentValue.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
-		contentResolver.insert(Assignments.CONTENT_URI, contentValue);
+		values.put(Assignments.STREETNAME, assignment.getStreetName());
+		values.put(Assignments.SITENAME, assignment.getSiteName());
+		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
+		contentResolver.insert(Assignments.CONTENT_URI, values);
 	}
 
 	public List<ModelInterface> getAllAssignments(
@@ -58,7 +58,6 @@ public class AssignmentsDB {
 		List<ModelInterface> assignmentList = new ArrayList<ModelInterface>();
 		Cursor cursor = contentResolver.query(Assignments.CONTENT_URI, null,
 				Assignments.ASSIGNMENT_ID + " IS NOT null", null, null);
-		Log.d("DB", "Fann en cursor med storlek: " + cursor.getCount());
 		if (cursor.moveToFirst()) {
 			do {
 				String name = new String(), region = new String(), sender = new String(), description = new String(), timespan = new String(), streetname = new String(), sitename = new String();
@@ -164,5 +163,50 @@ public class AssignmentsDB {
 			ret += ret + m.getContactName() + "/";
 		}
 		return ret;
+	}
+
+	public void delete(ContentResolver contentResolver, Assignment assignment) {
+		contentResolver.delete(
+				Assignments.CONTENT_URI,
+				Assignments.ASSIGNMENT_ID + " = "
+						+ Long.toString(assignment.getId()), null);
+
+	}
+
+	public void updateAssignment(ContentResolver contentResolver,
+			Assignment assignment) {
+		ContentValues values = new ContentValues();
+		values.put(Assignments.NAME, assignment.getName());
+		values.put(Assignments.LAT, assignment.getLat());
+		values.put(Assignments.LON, assignment.getLon());
+		values.put(Assignments.REGION, assignment.getRegion());
+		values.put(Assignments.SENDER, assignment.getSender());
+		values.put(Assignments.AGENTS,
+				listToString(assignment.getAgents()));
+		values.put(Assignments.EXTERNAL_MISSION,
+				assignment.isExternalMission());
+		values.put(Assignments.DESCRIPTION,
+				assignment.getAssignmentDescription());
+		values.put(Assignments.TIMESPAN, assignment.getTimeSpan());
+		values.put(Assignments.STATUS, assignment.getAssignmentStatus()
+				.toString());
+		values.put(Assignments.CAMERAIMAGE,
+				bitmapToByteArray(assignment.getCameraImage()));
+		values.put(Assignments.STREETNAME, assignment.getStreetName());
+		values.put(Assignments.SITENAME, assignment.getSiteName());
+		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
+		int updated = contentResolver.update(Assignments.CONTENT_URI, values,
+				Assignments.ASSIGNMENT_ID + " = " + Long.toString(assignment.getId()),
+				null);
+		Log.d("DB", "Uppdaterade " + updated + " assignments.");
+	}
+
+	public int getCount(ContentResolver contentResolver) {
+		int returnCount = 0;
+		Cursor cursor = contentResolver.query(Assignments.CONTENT_URI, null,
+				Assignments.ASSIGNMENT_ID + " IS NOT null", null, null);
+		returnCount = cursor.getCount();
+		cursor.close();
+		return returnCount;
 	}
 }
