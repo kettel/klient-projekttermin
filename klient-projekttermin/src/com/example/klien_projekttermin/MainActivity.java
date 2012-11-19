@@ -17,12 +17,25 @@ import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
 import camera.Camera;
 
+import com.google.android.gcm.GCMRegistrar;
+
 public class MainActivity extends ListActivity {
+
+	private static final String SENDER_ID = "943011390551";
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		GCMRegistrar.checkDevice(this);
+		GCMRegistrar.checkManifest(this);
+		final String regId = GCMRegistrar.getRegistrationId(this);
+		if (regId.equals("")) {
+		  GCMRegistrar.register(this, SENDER_ID);
+		} else {
+		  System.out.println("Already registerd");
+		}
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),

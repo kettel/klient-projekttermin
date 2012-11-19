@@ -3,12 +3,10 @@ package assignment;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
-import models.ModelInterface;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
