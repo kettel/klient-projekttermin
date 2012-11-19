@@ -26,6 +26,7 @@ public class MainActivity extends ListActivity {
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
+	private int testInt = 1;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,8 @@ public class MainActivity extends ListActivity {
 					if(communicationBond){
 						communicationService.setContext(getApplicationContext());
 						System.out.println("hej hej");
-						communicationService.sendMessage(new MessageModel("Hello, this is dog.","test"));
+						testInt++;
+						communicationService.sendMessage(new MessageModel("Message nr " + Integer.toString(testInt),"test"));
 					}
 					break;
 					
@@ -105,7 +107,6 @@ public class MainActivity extends ListActivity {
 	@Override
 	protected void onDestroy (){
 		super.onDestroy();
-		
 		unbindService(communicationServiceConnection);
 	}
 	

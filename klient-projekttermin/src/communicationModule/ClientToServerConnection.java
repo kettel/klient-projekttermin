@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.google.gson.Gson;
 import com.nutiteq.wrappers.List;
@@ -28,7 +30,7 @@ public class ClientToServerConnection extends Thread  {
 	private String ServerIP = "94.254.72.38";
 	private int ServerPort = 17234;
 	private Socket requestSocet =  null;
-	private String transmisson = null;
+	private Queue <String> transmissonQueue = new LinkedList<String>();
 	private PrintWriter  output = null;
 	private BufferedReader input = null;
 	private String inputString = null;
@@ -38,7 +40,7 @@ public class ClientToServerConnection extends Thread  {
 	private boolean connected = false;
 	private boolean ContextIsReady = false; 
 	private Context context = null;
-	private int waitTime = 0;
+	private int waitTime = 1;
 	
 	/**
 	 * en tom konstruktor
@@ -58,7 +60,11 @@ public class ClientToServerConnection extends Thread  {
 	 * @param transmisson en Gson sträng
 	 */
 	public synchronized void sendTransmisson(String transmisson){
-		this.transmisson = transmisson;
+		if(!isConnection()){
+			System.out.println("no connection");
+		}
+		this.transmissonQueue.add(transmisson);
+		System.out.println("Current que size is: " + Integer.toString(this.transmissonQueue.size()));
 		sendData = true;
 	}
 	/**
@@ -83,6 +89,21 @@ public class ClientToServerConnection extends Thread  {
 		this.context = context;
 		ContextIsReady = true;
 	}
+	private synchronized void timeToWait(){
+		if(waitTime < 60000){
+			waitTime = waitTime+30;
+		}
+		try {
+			this.wait(waitTime);	
+		} catch (Exception e) {
+			Log.e("Thread", "Wating error: " + e.toString());
+		}
+		
+	}
+	
+	private void resetTimeToWait(){
+		waitTime = 1;
+	}
 	
 	public void run() {
 		
@@ -95,17 +116,12 @@ public class ClientToServerConnection extends Thread  {
 				setConnetion(true);
 			} catch (Exception e) {
 				setConnetion(false);
-				Log.e("Connection", ("Error: " + e.toString()));
-				try {
-					waitTime = waitTime+1;
-					this.wait(waitTime);
-				} catch (Exception e2) {
-					Log.e("Thread", "Wating error: " + e2.toString());
-				}
-				
+				Log.e("Connection", ("Connection failed: " + "Time is " + Integer.toString(waitTime)));
+				timeToWait();
 			}
 			
 			while(isConnection()){
+				resetTimeToWait();
 				// inkommande data.
 				try {
 					if(input.ready() && ContextIsReady){
@@ -129,8 +145,12 @@ public class ClientToServerConnection extends Thread  {
 				}
 				// sicka data
 				if(sendData && isConnection()){
-					output.println(transmisson);
-					// Checks and handels errors in the stream
+					if(!this.transmissonQueue.isEmpty()){
+						for (int i = 0; i < this.transmissonQueue.size(); i++) {
+							output.println(this.transmissonQueue.poll());
+						}
+					};
+					// kollar och kontrolerar fel i streamen
 					if(output.checkError()){
 						Log.i("output", "Transmisson failed");
 						setConnetion(false);
