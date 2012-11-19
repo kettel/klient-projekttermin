@@ -33,6 +33,8 @@ import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
 import camera.Camera;
 
+//import com.google.android.gcm.GCMRegistrar;
+
 public class MainActivity extends ListActivity {
 	
 	private String userName;
@@ -40,12 +42,20 @@ public class MainActivity extends ListActivity {
 	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
-	
+	private static final String SENDER_ID = "943011390551";
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		testDB(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+//		GCMRegistrar.checkDevice(this);
+//		GCMRegistrar.checkManifest(this);
+//		final String regId = GCMRegistrar.getRegistrationId(this);
+//		if (regId.equals("")) {
+//		  GCMRegistrar.register(this, SENDER_ID);
+//		} else {
+//		  System.out.println("Already registerd");
+//		}
 		
 		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
 		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);

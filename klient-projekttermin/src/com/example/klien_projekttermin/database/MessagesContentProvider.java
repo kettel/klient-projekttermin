@@ -122,7 +122,6 @@ private static final String PASSWORD = Database.PASSWORD;
     @Override
     public boolean onCreate() {
         dbHelper = new DatabaseHelper(getContext());
-        
         // Om Assignments inte är skapad än samt om SQLite-biblioteken 
         // inte är laddade
         if(!Database.isLibraryLoaded){
