@@ -29,7 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.database.Database;
 
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
@@ -222,7 +222,8 @@ public class DisplayOfConversation extends Activity {
 
 		//Hämtar en lista med alla messagemodels som finns i databasen.
 		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getContentResolver());
-		Integer a = listOfMassageModels.size();
+		
+		MessageModel a = (MessageModel) listOfMassageModels.get(0);
 
 		//		Den listview som kontakterna kommerpresenteras i
 		listViewOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);

@@ -1,5 +1,7 @@
 package contacts;
 
+import com.example.klien_projekttermin.database.ContactTable;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import com.example.klien_projekttermin.databaseNewProviders.ContactTable;
 
 public class ContactsCursorAdapter extends CursorAdapter {
 	ContentResolver contentResolver;

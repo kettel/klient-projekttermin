@@ -17,7 +17,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.database.Database;
 
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
@@ -39,7 +39,6 @@ public class CreateMessage extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = Database.getInstance(getApplicationContext());
-		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			user = extras.getString("USER");
@@ -97,9 +96,9 @@ public class CreateMessage extends Activity {
 		messageObject = new MessageModel(message.getText().toString(),
 				recievingContact, user);
 
-		// Sparar messageObject i database
-		dataBase.addToDB(messageObject, getContentResolver());
-		// Skicka till kommunikationsmodulen
+		//Sparar messageObject i databasen
+		dataBase.addToDB(messageObject,getContentResolver());
+		//Skicka till kommunikationsmodulen
 
 		if (communicationBond) {
 			communicationService.sendMessage(messageObject);
