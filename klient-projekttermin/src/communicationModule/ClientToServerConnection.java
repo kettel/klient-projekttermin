@@ -17,6 +17,7 @@ import models.ModelInterface;
 
 import database.Database;
 import android.content.Context;
+import android.text.format.Time;
 import android.util.Log;
 
 /**
@@ -41,7 +42,7 @@ public class ClientToServerConnection extends Thread  {
 	private boolean ContextIsReady = false; 
 	private Context context = null;
 	private int waitTime = 1;
-	
+	private long heartbeatTime = 0;
 	/**
 	 * en tom konstruktor
 	 */
@@ -60,11 +61,7 @@ public class ClientToServerConnection extends Thread  {
 	 * @param transmisson en Gson sträng
 	 */
 	public synchronized void sendTransmisson(String transmisson){
-		if(!isConnection()){
-			System.out.println("no connection");
-		}
 		this.transmissonQueue.add(transmisson);
-		System.out.println("Current que size is: " + Integer.toString(this.transmissonQueue.size()));
 		sendData = true;
 	}
 	/**
@@ -89,6 +86,9 @@ public class ClientToServerConnection extends Thread  {
 		this.context = context;
 		ContextIsReady = true;
 	}
+	/**
+	 * väntar till reconnect, samt ökar väntetiden kontiueligt upp till en minut. 
+	 */
 	private synchronized void timeToWait(){
 		if(waitTime < 60000){
 			waitTime = waitTime+30;
@@ -100,15 +100,29 @@ public class ClientToServerConnection extends Thread  {
 		}
 		
 	}
-	
+	/**
+	 * nollställer väntetiden till en reconnect
+	 */
 	private void resetTimeToWait(){
 		waitTime = 1;
 	}
+	private boolean timeToheartbeat(long currentTime){
+		
+		if(heartbeatTime == 0){
+			heartbeatTime = System.currentTimeMillis();
+		}
+		
+		if(currentTime >= heartbeatTime+30000){
+			heartbeatTime = System.currentTimeMillis();
+			return true;
+		}else {
+			return false;
+		}
+	}
 	
 	public void run() {
-		
 		while(true){
-			//etaberar kontakt
+			//etablerar kontakt
 			try {
 				requestSocet = new Socket(ServerIP,ServerPort);
 				input = new BufferedReader(new InputStreamReader(requestSocet.getInputStream()));
@@ -157,6 +171,16 @@ public class ClientToServerConnection extends Thread  {
 					}
 					Log.i("output", "sending Transmisson");
 					sendData(false);
+				}
+				//Fixar heartbeat
+				if(timeToheartbeat(System.currentTimeMillis()) && isConnection()){
+					output.println("Heart");
+					// kollar och kontrolerar fel i streamen
+					if(output.checkError()){
+						Log.i("output", "Hearbeat failed");
+						setConnetion(false);
+					}
+					Log.i("output", "seading heartbeat");
 				}
 			}
 		}

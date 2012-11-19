@@ -52,8 +52,7 @@ public class MainActivity extends ListActivity {
 					if(communicationBond){
 						communicationService.setContext(getApplicationContext());
 						System.out.println("hej hej");
-						testInt++;
-						communicationService.sendMessage(new MessageModel("Message nr " + Integer.toString(testInt),"test"));
+						communicationService.sendMessage(new MessageModel("Message nr " + Integer.toString(testInt),"steffe"));
 					}
 					break;
 					
