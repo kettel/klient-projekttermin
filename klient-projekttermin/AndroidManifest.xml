@@ -83,6 +83,9 @@
    		<provider
             android:name="com.example.klien_projekttermin.database.MessagesContentProvider" 
             android:authorities="com.example.klien_projekttermin.database.MessagesContentProvider" />
+   		<provider
+            android:name="com.example.klien_projekttermin.database.AuthenticationContentProvider" 
+            android:authorities="com.example.klien_projekttermin.database.AuthenticationContentProvider" />
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" >
         </service>

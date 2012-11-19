@@ -10,8 +10,7 @@ public class AssignmentTable {
 	
 	public static final class Assignments implements BaseColumns{
 		// Default-innehåll för URI, typ och ID
-		public static final Uri CONTENT_URI = Uri.parse("content://"
-				+ AssignmentsContentProvider.AUTHORITY + "/assignments");
+		public static final Uri CONTENT_URI = Uri.parse("content://"+ AssignmentsContentProvider.AUTHORITY + "/assignments");
 
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/";
 
