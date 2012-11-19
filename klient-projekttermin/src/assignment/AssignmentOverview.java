@@ -113,7 +113,7 @@ public class AssignmentOverview extends ListActivity {
 	}
 
 	/*
-	 * Tills�tt lyssnare i meddelandelistan som lyssnar efter l�nga tryckningar
+	 * Tillsatt lyssnare i meddelandelistan som lyssnar efterz tryckningar
 	 * p� listobjekt
 	 */
 	public void setLongItemClickListener() {

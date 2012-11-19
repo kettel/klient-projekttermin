@@ -22,7 +22,7 @@ import com.example.klien_projekttermin.database.Database;
 
 public class AssignmentDetails extends Activity {
 
-	Database db = Database.getInstance(getApplicationContext());
+	Database db;/* = Database.getInstance(getApplicationContext());*/
 	private long assignmentID;
 	private TextView textViewAssName;
 	private TextView textViewDescription;
@@ -98,8 +98,7 @@ public class AssignmentDetails extends Activity {
 		List<Contact> assigned = currentAssignment.getAgents();
 		for (Contact c : assigned) {
 
-			// TODO: Läg till användaren som är inloggad så man vet om mans ka
-			// klicka i lådan eller inte.
+			// Kollar om den inloggade han antagit uppdraget och checkar i rutan isf.
 			if (c.getContactName().equals(currentUser)) {
 				// Klicka i låådan checkboxchecked
 				checkboxAssign.setChecked(true);
