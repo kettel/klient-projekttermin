@@ -6,12 +6,14 @@ import java.util.Map;
 
 import map.CustomAdapter;
 import map.MapActivity;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.sax.StartElementListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,6 +24,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import camera.Camera;
 
+import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
@@ -29,7 +32,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 	private HashMap<Integer, String> itemStrings = new HashMap<Integer, String>();
 	private Context context;
-	private static String[] pictureAlts = { "Bifoga bild","Ta bild"};
+	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" };
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -58,8 +61,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	public HashMap<Integer, String> getItemStrings() {
 		return itemStrings;
 	}
-
-
 
 	public void setItemStrings(HashMap<Integer, String> itemStrings) {
 		this.itemStrings = itemStrings;
@@ -105,7 +106,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
 		final Intent intent = new Intent(context, Camera.class);
-		
+
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
@@ -114,14 +115,14 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				case 0:
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-					context.startActivity(intent);
-					((AddAssignment)context).finish();
+					((Activity) context).startActivityForResult(intent, 1);
+					 ((AddAssignment)context).finish();
 					break;
 				case 1:
 					intent.putExtra("calling-activity",
 							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
 					context.startActivity(intent);
-					((AddAssignment)context).finish();
+					((AddAssignment) context).finish();
 					break;
 				default:
 					break;
@@ -130,6 +131,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		});
 		dialog.show();
 	}
+
+
 
 	private void coordinateField() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -143,7 +146,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				intent.putExtra("calling-activity",
 						ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
 				context.startActivity(intent);
-				((AddAssignment)context).finish();
+				((AddAssignment) context).finish();
 			}
 		});
 		builder.setNegativeButton("cancel",

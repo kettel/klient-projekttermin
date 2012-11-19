@@ -52,6 +52,10 @@
             android:label="Camera" >
         </activity>
         <activity
+            android:name="camera.PhotoGallery"
+            android:label="@string/title_activity_photo_gallery" >
+        </activity>
+        <activity
             android:name="logger.LogViewer"
             android:label="@string/title_activity_log_viewer" >
             <meta-data
@@ -75,7 +79,6 @@
             android:name="assignment.AssignmentDetails"
             android:label="@string/uppdrag" >
         </activity>
-
         <!-- Database Content Providers -->
         <provider
             android:name="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider"

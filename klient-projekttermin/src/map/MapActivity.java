@@ -37,10 +37,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ZoomControls;
-import assignment.ActivityConstants;
 import assignment.AddAssignment;
 
 import com.example.klien_projekttermin.databaseNewProviders.*;
+import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
