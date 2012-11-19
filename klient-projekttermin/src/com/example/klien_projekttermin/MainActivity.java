@@ -19,6 +19,10 @@ import camera.Camera;
 
 public class MainActivity extends ListActivity {
 
+	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
+	private CommunicationService communicationService;
+	private boolean communicationBond = false;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,4 +83,27 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+
+	@Override
+	protected void onDestroy (){
+		super.onDestroy();
+		unbindService(communicationServiceConnection);
+	}
+	
+		private ServiceConnection communicationServiceConnection = new ServiceConnection() {
+			
+			public void onServiceConnected(ComponentName className,IBinder service) {
+	        	CommunicationBinder binder = (CommunicationBinder) service;
+	            communicationService = binder.getService();
+	            communicationBond = true;
+	        }
+	        public void onServiceDisconnected(ComponentName arg0) {
+	        	communicationBond = false;
+	        }
+
+
+	    };
+	
+
+
 }

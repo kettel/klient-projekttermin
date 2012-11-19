@@ -1,11 +1,13 @@
+
 package communicationModule;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.Queue;
 
-import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.nutiteq.wrappers.List;
 
@@ -14,7 +16,9 @@ import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
 
+import database.Database;
 import android.content.Context;
+import android.text.format.Time;
 import android.util.Log;
 
 /**
@@ -28,7 +32,7 @@ public class ClientToServerConnection extends Thread  {
 	private String ServerIP = "94.254.72.38";
 	private int ServerPort = 17234;
 	private Socket requestSocet =  null;
-	private String transmisson = null;
+	private Queue <String> transmissonQueue = new LinkedList<String>();
 	private PrintWriter  output = null;
 	private BufferedReader input = null;
 	private String inputString = null;
@@ -38,12 +42,13 @@ public class ClientToServerConnection extends Thread  {
 	private boolean connected = false;
 	private boolean ContextIsReady = false; 
 	private Context context = null;
-
+	private int waitTime = 1;
+	private long heartbeatTime = 0;
 	/**
 	 * en tom konstruktor
 	 */
 	public ClientToServerConnection(){
-
+		
 	}
 	/**
 	 * Används för att förhindra att data sickas 
@@ -57,7 +62,7 @@ public class ClientToServerConnection extends Thread  {
 	 * @param transmisson en Gson sträng
 	 */
 	public synchronized void sendTransmisson(String transmisson){
-		this.transmisson = transmisson;
+		this.transmissonQueue.add(transmisson);
 		sendData = true;
 	}
 	/**
@@ -82,11 +87,43 @@ public class ClientToServerConnection extends Thread  {
 		this.context = context;
 		ContextIsReady = true;
 	}
-
+	/**
+	 * väntar till reconnect, samt ökar väntetiden kontiueligt upp till en minut. 
+	 */
+	private synchronized void timeToWait(){
+		if(waitTime < 60000){
+			waitTime = waitTime+30;
+		}
+		try {
+			this.wait(waitTime);	
+		} catch (Exception e) {
+			Log.e("Thread", "Wating error: " + e.toString());
+		}
+		
+	}
+	/**
+	 * nollställer väntetiden till en reconnect
+	 */
+	private void resetTimeToWait(){
+		waitTime = 1;
+	}
+	private boolean timeToheartbeat(long currentTime){
+		
+		if(heartbeatTime == 0){
+			heartbeatTime = System.currentTimeMillis();
+		}
+		
+		if(currentTime >= heartbeatTime+30000){
+			heartbeatTime = System.currentTimeMillis();
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
 	public void run() {
-
 		while(true){
-			//etaberar kontakt
+			//etablerar kontakt
 			try {
 				requestSocet = new Socket(ServerIP,ServerPort);
 				input = new BufferedReader(new InputStreamReader(requestSocet.getInputStream()));
@@ -94,10 +131,13 @@ public class ClientToServerConnection extends Thread  {
 				setConnetion(true);
 			} catch (Exception e) {
 				setConnetion(false);
-				Log.e("Connection", ("Error: " + e.toString()));
+				Log.e("Connection", ("Connection failed: " + "Time is " + Integer.toString(waitTime)));
+				timeToWait();
 			}
-
-			while(isConnection()){			
+			
+			while(isConnection()){
+				resetTimeToWait();
+				// inkommande data.
 				try {
 					if(input.ready() && ContextIsReady){
 						inputString = input.readLine();
@@ -118,13 +158,33 @@ public class ClientToServerConnection extends Thread  {
 				} catch (Exception e) {
 					Log.e("Crash in input", "inputString: " + e.toString());
 				}
-
+				// sicka data
 				if(sendData && isConnection()){
-					output.println(transmisson);
+					if(!this.transmissonQueue.isEmpty()){
+						for (int i = 0; i < this.transmissonQueue.size(); i++) {
+							output.println(this.transmissonQueue.poll());
+						}
+					};
+					// kollar och kontrolerar fel i streamen
+					if(output.checkError()){
+						Log.i("output", "Transmisson failed");
+						setConnetion(false);
+					}
 					Log.i("output", "sending Transmisson");
 					sendData(false);
+				}
+				//Fixar heartbeat
+				if(timeToheartbeat(System.currentTimeMillis()) && isConnection()){
+					output.println("Heart");
+					// kollar och kontrolerar fel i streamen
+					if(output.checkError()){
+						Log.i("output", "Hearbeat failed");
+						setConnetion(false);
+					}
+					Log.i("output", "seading heartbeat");
 				}
 			}
 		}
 	}
+>>>>>>> communicationModule
 }
