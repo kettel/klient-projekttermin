@@ -4,12 +4,23 @@
     android:versionName="1.0" >
 
     <!-- Permissions -->
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- User permissions -->
+    <uses-permission android:name="com.example.klien_projekttermin.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <!-- App receives GCM messages. -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- GCM connects to Google Services. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Permissions -->
+    <permission
+        android:name="com.example.klien_projekttermin.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
     <!-- Features -->
     <uses-feature android:name="android.hardware.camera" />
 
@@ -21,14 +32,21 @@
         android:icon="@drawable/loggakrona"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <!-- Receiver -->
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.example.klien_projekttermin" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -37,15 +55,16 @@
         </activity>
         <activity
             android:name="messageFunction.CreateMessage"
-            android:label="@string/new_message" >
-        </activity>
-        <activity
-            android:name="messageFunction.DisplayOfConversation"
-            android:label="@string/displayConversation" >
+            android:label="title_activity_create_new_message" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
             android:label="@string/inbox" >
+            
+        </activity>
+        <activity
+            android:name="messageFunction.DisplayOfConversation"
+            android:label="DisplayOfConversation" >
         </activity>
         <activity
             android:name="camera.Camera"
@@ -63,33 +82,37 @@
                 android:value="com.example.klien_projekttermin.MainActivity" />
         </activity>
         <activity
-            android:name="assignment.AssignmentOverview"
-            android:label="@string/assignmentOverview" >
-        </activity>
-        <activity
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-        <activity
-            android:name="assignment.AddAssignment"
-            android:label="@string/addAssignment"
-            android:windowSoftInputMode="adjustPan" >
+        <activity android:name="assignment.AssignmentOverview" >
         </activity>
         <activity
             android:name="assignment.AssignmentDetails"
             android:label="@string/uppdrag" >
         </activity>
+        <activity
+            android:name="loginFunction.LogInFunction"
+            android:label="@string/title_activity_log_in_function" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <!-- Database Content Providers -->
         <provider
-            android:name="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider"
-            android:authorities="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider" />
+            android:name="com.example.klien_projekttermin.databaseProviders.ContactsContentProvider"
+            android:authorities="com.example.klien_projekttermin.databaseProviders.ContactsContentProvider" />
         <provider
-            android:name="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider"
-            android:authorities="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider" />
+            android:name="com.example.klien_projekttermin.databaseProviders.AssignmentsContentProvider"
+            android:authorities="com.example.klien_projekttermin.databaseProviders.AssignmentsContentProvider" />
 
         <!-- Communication Module Service -->
-        <service android:name="communicationModule.CommunicationService" >
-        </service>
+        <service android:name="communicationModule.CommunicationService" />
+        <!-- GCM service -->
+        <service android:name=".GCMIntentService" />
     </application>
 
 </manifest>

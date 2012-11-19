@@ -14,24 +14,25 @@
         android:ems="10"
         android:hint="@string/reciever"
         android:paddingTop="15dp" >
-
-        <requestFocus />
+            <requestFocus />
     </AutoCompleteTextView>
 
-    <ScrollView
-        android:id="@+id/scrollview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/receiver" >
-
-        <EditText
-            android:id="@+id/editText2"
-            android:layout_width="fill_parent"
+        <ScrollView
+            android:id="@+id/scrollview"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/message"
-            android:inputType="textMultiLine" />
-    </ScrollView>
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/receiver" >
+
+            <EditText
+                android:id="@+id/message"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/message"
+                android:inputType="textMultiLine" />
+            
+            <requestFocus />
+        </ScrollView>
 
 </RelativeLayout>
