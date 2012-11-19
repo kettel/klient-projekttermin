@@ -3,6 +3,7 @@ package assignment;
 import java.util.List;
 
 import models.Assignment;
+import models.AssignmentStatus;
 import models.Contact;
 import models.ModelInterface;
 import android.app.Activity;
@@ -33,10 +34,7 @@ public class AssignmentDetails extends Activity {
 	private ImageView image;
 	private List<ModelInterface> listAssignments;
 	private Assignment currentAssignment;
-
-	// TestAnvändatre_______---------------------------------
-
-	Contact currentUser = new Contact("nikola"); // -------------TeSTA---------
+	private String currentUser;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +45,7 @@ public class AssignmentDetails extends Activity {
 		// assignmentoverview.
 		Intent intent = getIntent();
 		assignmentID = intent.getExtras().getLong("assignmentID");
+		currentUser = intent.getExtras().getString("currentUser");
 
 		// Initierar databasen.
 		db = Database.getInstance(this);
@@ -98,7 +97,7 @@ public class AssignmentDetails extends Activity {
 
 			// TODO: Läg till användaren som är inloggad så man vet om mans ka
 			// klicka i lådan eller inte.
-			if (c.getContactName().equals(currentUser.getContactName())) {
+			if (c.getContactName().equals(currentUser)) {
 				// Klicka i låådan checkboxchecked
 				checkboxAssign.setChecked(true);
 				checkboxAssign.setEnabled(false);
@@ -139,17 +138,6 @@ public class AssignmentDetails extends Activity {
 		textViewCoord.setText("Latitud: " + currentAssignment.getLat()
 				+ "  Longitud: " + currentAssignment.getLon());
 
-		/*
-		 * // Skapar en tom bitmap som jämförs med den tomma i assignment. // Är
-		 * den tom så har ingen bild bifogast och då sätts bilden. Bitmap
-		 * cameraImage; Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see
-		 * other conf // types cameraImage = Bitmap.createBitmap(100, 100,
-		 * conf);
-		 * 
-		 * if (currentAssignment.getCameraImage() != cameraImage) {
-		 * image.setImageBitmap(currentAssignment.getCameraImage()); }
-		 */
-
 	}
 
 	/**
@@ -164,16 +152,15 @@ public class AssignmentDetails extends Activity {
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
 
-						// Trash KOD:
-						Contact testContact = new Contact("nikola");
-						currentAssignment.addAgents(testContact);
-
 						checkboxAssign.setEnabled(false); // disable checkbox
 
 						// TODO: byt ut new Contact till den kontakten man är.!
-						currentAssignment.addAgents(testContact);
-						
+						currentAssignment.addAgents(new Contact(currentUser));
+						// Sätter status för att uppdraget är påbörjat.
+						currentAssignment
+								.setAssignmentStatus(AssignmentStatus.STARTED);
 
+						// Uppdaterar Uppdraget med den nya kontakten.
 						db.updateModel((ModelInterface) currentAssignment,
 								getContentResolver());
 

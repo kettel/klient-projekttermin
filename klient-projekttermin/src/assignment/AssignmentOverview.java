@@ -25,11 +25,15 @@ public class AssignmentOverview extends ListActivity {
 	private long[] idInAdapter;
 	private Database db;
 	private List<ModelInterface> assList;
+	private String currentUser;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
+		
+		Intent extrasFromIntent = new Intent();
+		currentUser = extrasFromIntent.getExtras().getString("USER");
 	}
 
 	// G�r en custom topmeny.
@@ -100,6 +104,7 @@ public class AssignmentOverview extends ListActivity {
 						AssignmentDetails.class);
 				
 				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
+				myIntent.putExtra("currentUser", currentUser);
 				AssignmentOverview.this.startActivity(myIntent);
 			}
 		});
