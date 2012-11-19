@@ -23,7 +23,6 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-           
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -60,12 +59,11 @@
         </activity>
         <activity android:name="assignment.AssignmentOverview" >
         </activity>
-        <activity android:name="assignment.AddAssignment" >
+        <activity
+            android:name="assignment.AssignmentDetails"
+            android:label="@string/uppdrag" >
         </activity>
-        <activity android:name="assignment.Uppdrag" >
-        </activity>
-        
-            <activity
+        <activity
             android:name="loginFunction.LogInFunction"
             android:label="@string/title_activity_log_in_function" >
             <intent-filter>
@@ -77,14 +75,11 @@
 
         <!-- Database Content Providers -->
         <provider
-            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages"
-            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderMessages" />
+            android:name="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider"
+            android:authorities="com.example.klien_projekttermin.databaseNewProviders.ContactsContentProvider" />
         <provider
-            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts"
-            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderContacts" />
-        <provider
-            android:name="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments"
-            android:authorities="com.example.klien_projekttermin.databaseProvider.DatabaseContentProviderAssignments" />
+            android:name="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider"
+            android:authorities="com.example.klien_projekttermin.databaseNewProviders.AssignmentsContentProvider" />
 
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" >

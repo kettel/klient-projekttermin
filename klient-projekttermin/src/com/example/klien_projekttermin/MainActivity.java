@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import camera.Camera;
-
-
 import map.MapActivity;
 import messageFunction.Inbox;
 import android.app.ListActivity;
@@ -18,13 +15,22 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
+import camera.Camera;
 
 public class MainActivity extends ListActivity {
+	
+	private String userName;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			userName = extras.getString("USER");
+		}
+		
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -37,15 +43,20 @@ public class MainActivity extends ListActivity {
 				switch (arg2) {
 				case 0:
 					myIntent = new Intent(MainActivity.this,MapActivity.class);
+					myIntent.putExtra("USER", userName);
+
 					break;
 				case 1:
 					myIntent = new Intent(MainActivity.this,Inbox.class);
+					myIntent.putExtra("USER", userName);
 					break;
 				case 2:
 					myIntent = new Intent(MainActivity.this,AssignmentOverview.class);
+					myIntent.putExtra("USER", userName);
 					break;
 				case 3:
 					myIntent = new Intent(MainActivity.this,Camera.class);
+					myIntent.putExtra("USER", userName);
 					break;
 				default:
 					break;

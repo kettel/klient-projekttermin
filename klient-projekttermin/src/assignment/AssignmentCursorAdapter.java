@@ -32,7 +32,6 @@ public class AssignmentCursorAdapter extends CursorAdapter {
 	public String convertToString(Cursor cursor) {
 		final int columnIndex=cursor.getColumnIndexOrThrow(AssignmentTable.Assignments.NAME);
 		final String str=cursor.getString(columnIndex);
-		System.out.println("tjeeena: "+str);
 		return str;
 	}
 

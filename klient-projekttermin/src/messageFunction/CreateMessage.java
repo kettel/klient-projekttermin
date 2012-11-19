@@ -1,13 +1,5 @@
 package messageFunction;
 
-
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
-
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
-
-import models.Contact;
 import models.MessageModel;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,18 +8,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.ContactTable;
+import com.example.klien_projekttermin.databaseNewProviders.Database;
+
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -35,7 +26,7 @@ import contacts.ContactsCursorAdapter;
 
 public class CreateMessage extends Activity {
 	private AutoCompleteTextView reciever;
-	private TextView message;
+	private EditText message;
 	private MessageModel messageObject;
 	private String messageContent;
 	private Database dataBase;
@@ -47,16 +38,8 @@ public class CreateMessage extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_message);
+		dataBase = Database.getInstance(getApplicationContext());
 		
-		dataBase = new Database();
-//		database = Database.getInstance(getApplicationContext());
-		
-//		Contact c=new Contact("eric");
-//		dataBase.addToDB(c, this.getContentResolver());
-//		c=new Contact("erica");
-//		dataBase.addToDB(c, this.getContentResolver());
-//		c=new Contact("anna");
-//		dataBase.addToDB(c, this.getContentResolver());
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			user = extras.getString("USER");
@@ -66,12 +49,12 @@ public class CreateMessage extends Activity {
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-		message = (TextView) this.findViewById(R.id.message);
+		message = (EditText) this.findViewById(R.id.message);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
 
 		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
 				null, 0));
-		//message.setText(messageContent);
+		message.setText(messageContent);
 	}
 
 	@Override
@@ -81,30 +64,41 @@ public class CreateMessage extends Activity {
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		sendMessage(item);
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-			if (!message.getText().equals("")) {
+			if (message.getText()==null) {
 				showAlertMessage();
 			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+	
 
-	/**
+	@Override
+	protected void onDestroy() {
+		unbindService(serviceConnection);
+		super.onDestroy();
+	}
+
+	/*
 	 * Metoden skapar ett meddelande objekt och skickar det vidare till
 	 * komunikationsmodulen. Metoden sparar ocks� de skapade meddelandena i
 	 * skickat mappen
-	 * 
-	 * @param v
+	 *
 	 */
-	public void sendMessage(View v) {
+	public boolean sendMessage(MenuItem v){
 		String recievingContact = reciever.getText().toString();
-		InputMethodManager inm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
 		messageObject = new MessageModel(message.getText().toString(),
 				recievingContact, user);
 
 		// Sparar messageObject i database
-		dataBase.addToDB(messageObject, getApplicationContext());
+		dataBase.addToDB(messageObject, getContentResolver());
 		// Skicka till kommunikationsmodulen
 
 		if (communicationBond) {
@@ -118,6 +112,7 @@ public class CreateMessage extends Activity {
 		intent.putExtra("ChosenContact", recievingContact);
 		intent.putExtra("USER", user);
 		startActivity(intent);
+		return true;
 	}
 
 	public void showAlertMessage() {
@@ -127,19 +122,19 @@ public class CreateMessage extends Activity {
 		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA",
 				new DialogInterface.OnClickListener() {
 
-					// Om användaren trycker på ja så körs metoden
-					// eraseMessage()
-					public void onClick(DialogInterface dialog, int which) {
-						finish();
-					}
-				});
+			// Om användaren trycker på ja så körs metoden
+			// eraseMessage()
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		});
 		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ",
 				new DialogInterface.OnClickListener() {
 
-					public void onClick(DialogInterface dialog, int which) {
-						// Gör inget
-					}
-				});
+			public void onClick(DialogInterface dialog, int which) {
+				// Gör inget
+			}
+		});
 		alertDialog.show();
 	}
 

@@ -261,7 +261,6 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			a = (Assignment) list.get(i);
 			Type type = new TypeToken<WgsPoint[]>() {
 			}.getType();
-			System.out.println("FROM DATAABSE " + a.getRegion());
 			if (!a.getRegion().equals("")) {
 				WgsPoint[] co = gson.fromJson(a.getRegion(), type);
 				for (WgsPoint wgsPoint : co) {

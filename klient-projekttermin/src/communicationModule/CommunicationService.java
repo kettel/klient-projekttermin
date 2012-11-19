@@ -68,7 +68,6 @@ public class CommunicationService extends Service{
 	 */
 	@Override
 	public IBinder onBind(Intent intent) {
-		System.out.println("onBind");
 		return binder;
 	}
 	/**
@@ -78,7 +77,6 @@ public class CommunicationService extends Service{
 	 */
 	public class CommunicationBinder extends Binder{
 		public CommunicationService getService(){
-			System.out.println("getService");
 			return CommunicationService.this;
 		}
 	}

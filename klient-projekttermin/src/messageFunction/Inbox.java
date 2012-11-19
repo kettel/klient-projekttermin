@@ -4,13 +4,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import logger.logger;
 import models.MessageModel;
 import models.ModelInterface;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
-
+import com.example.klien_projekttermin.databaseNewProviders.Database;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -34,12 +32,18 @@ public class Inbox extends Activity {
 	private HashMap<String, Long> contactAndIdMap = new HashMap<String, Long>();
 	private List<ModelInterface> peopleEngagedInConversation;
 	private Database dataBase; 
-	private String user = "Steffe";
+	private String userName;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			userName = extras.getString("USER");
+		}
+		
 		//Ropar p� en metod som skapar en lista �ver alla kontakter som anv�ndaren har haft en konversation med.
 		loadListOfSenders();
 	}
@@ -157,7 +161,7 @@ public class Inbox extends Activity {
 			messageModelInList = (MessageModel) peopleEngagedInConversation.get(i);
 
 			if(messageModelInList.getReciever().toString().equals(contact)){
-				dataBase.deleteFromDB(messageModelInList, getApplicationContext());
+				dataBase.deleteFromDB(messageModelInList, getContentResolver());
 			}
 		}
 		loadListOfSenders();
@@ -170,19 +174,19 @@ public class Inbox extends Activity {
 		Intent intent = new Intent(this, DisplayOfConversation.class);
 		//Metoden skickar med namnet p� den kontakt som klickades p�.
 		intent.putExtra("ChosenContact", chosenContact);
-		intent.putExtra("USER", user);
+		intent.putExtra("USER", userName);
 		startActivity(intent);
 	}
 
 	public String[] getInformationFromDatabase(){
+		dataBase = Database.getInstance(getApplicationContext());
 		String[] arrayOfPeopleEngagedInConversation;
 		Object[] objectsInSetOfPeople;
-		dataBase = new Database();
 		MessageModel messageModel;
 		HashSet<String> setOfPeople = new HashSet<String>();
 
 		//Hämtar en lista med alla MessageModels som finns lagrade i databasen
-		peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getApplicationContext());
+		peopleEngagedInConversation = dataBase.getAllFromDB(new MessageModel(),getContentResolver());
 
 		listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
 
@@ -190,7 +194,7 @@ public class Inbox extends Activity {
 		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
 			messageModel = (MessageModel) peopleEngagedInConversation.get(i);
 
-			if(messageModel.getReciever().toString().equals(user)){
+			if(messageModel.getReciever().toString().equals(userName)){
 				if(!setOfPeople.contains(messageModel.getSender().toString())){
 				setOfPeople.add(messageModel.getSender().toString());
 				contactAndIdMap.put(messageModel.getSender().toString(), messageModel.getId());
@@ -222,7 +226,7 @@ public class Inbox extends Activity {
 	 */
 	public void createNewMessage(View v){
 		Intent intent = new Intent(this, CreateMessage.class);
-		intent.putExtra("USER",user);
+		intent.putExtra("USER",userName);
 		startActivity(intent);
 	}
 }

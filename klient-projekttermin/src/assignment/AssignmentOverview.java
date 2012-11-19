@@ -15,16 +15,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable;
-import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
 import com.example.klien_projekttermin.databaseNewProviders.Database;
+import com.example.klien_projekttermin.databaseNewProviders.AssignmentTable.Assignments;
 
 public class AssignmentOverview extends ListActivity {
 
-	private String[] assignmentHeadlineArray;
 	private long[] idInAdapter;
 	private Database db;
 	private List<ModelInterface> assList;
@@ -33,11 +30,6 @@ public class AssignmentOverview extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
-
-		// db = Database.getInstance(this);
-		loadAssignmentList();
-		setItemClickListner();
-		setLongItemClickListener();
 	}
 
 	// G�r en custom topmeny.
@@ -60,17 +52,16 @@ public class AssignmentOverview extends ListActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-
+		loadAssignmentList();
+		setItemClickListner();
+		setLongItemClickListener();
 	}
 
 	public void loadAssignmentList() {
-		assignmentHeadlineArray = getAssHeadsFromDatabase();
-		System.out.println("LÄNGD : " + assignmentHeadlineArray[0]);
-
+		getAssHeadsFromDatabase();
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				getContentResolver().query(Assignments.CONTENT_URI, null, null,
-						null, null), false);
-
+				getContentResolver().query(Assignments.CONTENT_URI, null,
+						"_id is not null", null, null), false);
 		this.setListAdapter(adapter);
 	}
 
@@ -105,12 +96,11 @@ public class AssignmentOverview extends ListActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int itemClicked, long arg3) {
 
-//				Intent myIntent = new Intent(AssignmentOverview.this,
-//						Uppdrag.class);
-//
-//				// Skickar med ID:t p� det klickade uppdtaget.
-//				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
-//				AssignmentOverview.this.startActivity(myIntent);
+				Intent myIntent = new Intent(AssignmentOverview.this,
+						AssignmentDetails.class);
+				
+				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
+				AssignmentOverview.this.startActivity(myIntent);
 			}
 		});
 	}
@@ -122,11 +112,14 @@ public class AssignmentOverview extends ListActivity {
 	public void setLongItemClickListener() {
 		// Skapar en lyssnare som lyssnar efter l�nga intryckningar
 		this.getListView().setOnItemLongClickListener(
+				
 				new OnItemLongClickListener() {
 
+					
 					public boolean onItemLongClick(AdapterView<?> arg0,
 							View arg1, int eraseAtPos, long arg3) {
 						showEraseOption(idInAdapter[eraseAtPos]);
+						
 						return true;
 					}
 				});

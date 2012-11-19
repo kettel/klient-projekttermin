@@ -24,8 +24,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,7 +77,7 @@ public class LogInFunction extends Activity {
 		
 		AuthenticationModel authenticationModel = new AuthenticationModel(userName, hashPassword(password));
 		
-		sendAuthenticationRequestToServer(authenticationModel);
+		sendAuthenticationRequestToServer(v, authenticationModel);
 		passwordView.getEditableText().clear();
 	}
 	
@@ -101,26 +104,36 @@ public class LogInFunction extends Activity {
 	/*
 	 * Metoden skickar iväg autenticeringsförfrågan till servern
 	 */
-	public void sendAuthenticationRequestToServer(AuthenticationModel authenticationModel){
+	public void sendAuthenticationRequestToServer(View v, AuthenticationModel authenticationModel){
 		
 //		if(communicationBond){
 //			communicationService.sendAuthenticationModel(authenticationModel);
 //		}
-		sendAuthenticationRequestToLocalDatabase(authenticationModel);
+		sendAuthenticationRequestToLocalDatabase(v, authenticationModel);
 	}
 	
 	/*
 	 * Metoden authenticerar användaren mot den lokala databasen
 	 */
-	private void sendAuthenticationRequestToLocalDatabase(AuthenticationModel authenticationModel){
+	private void sendAuthenticationRequestToLocalDatabase(View v, AuthenticationModel authenticationModel){
 		
-		if (authenticationModel.getPasswordHash().equals(passwordHashReference)&&authenticationModel.getUserName().equals(userName)) {
+		
+		if (authenticationModel.getPasswordHash().equals(passwordHashReference)&&authenticationModel.getUserName().equals(userNameReference)) {
 			accessGranted();
 		}
-		else {
-			Toast.makeText(getApplicationContext(), "Användarnamn eller lösenord är felaktigt, försök igen!", Toast.LENGTH_SHORT).show();
-		}
 		
+		else {
+			// get your custom_toast.xml ayout
+//			LayoutInflater inflater = getLayoutInflater();
+//
+//			View layout = inflater.inflate(R.layout.activity_log_in_function,(ViewGroup) findViewById(R.id.LogInFunction));
+//			
+//			Toast toast = new Toast(getApplicationContext());
+			Toast.makeText(getApplicationContext(), "Användarnamn eller lösenord är felaktigt, försök igen!", Toast.LENGTH_SHORT).show();
+//			toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+//			toast.setView(layout);
+//			toast.show();
+		}
 	}
 		
 	public void accessGranted(){
