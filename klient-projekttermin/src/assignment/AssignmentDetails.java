@@ -61,7 +61,7 @@ public class AssignmentDetails extends Activity {
 				Context.BIND_AUTO_CREATE);
 		// ----End----
 
-		// H�mtar intent f�r att n� extras s� som ID:t som clickades p� i
+		// Hämtar intent för att nå extras så som ID:t som clickades på i
 		// assignmentoverview.
 		Intent intent = getIntent();
 		assignmentID = intent.getExtras().getLong("assignmentID");
@@ -173,13 +173,13 @@ public class AssignmentDetails extends Activity {
 		textViewCoord.setText("Latitud: " + currentAssignment.getLat()
 				+ "  Longitud: " + currentAssignment.getLon() + "ID: "
 				+ currentAssignment.getId());
-		//agentCount.setText("(" + currentAssignment.getAgents().size() + ")");
-
+		
+		//Fyller en sträng med aktuella agenter.
 		String temp = "";
 		for (int i = 0; i < currentAssignment.getAgents().size(); i++) {
-			temp = temp + currentAssignment.getAgents().get(i).getContactName() + ",";
+			temp = temp + currentAssignment.getAgents().get(i).getContactName() + ", ";
 		}
-		agentCount.setText("Antal: " + currentAssignment.getAgents().size() + "(" + temp + ")");
+		agentCount.setText(" Antal: " + currentAssignment.getAgents().size() + "(" + temp + ")");
 		
 	}
 

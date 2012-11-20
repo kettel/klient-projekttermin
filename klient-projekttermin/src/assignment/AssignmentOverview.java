@@ -3,6 +3,7 @@ package assignment;
 import java.util.List;
 
 import models.Assignment;
+import models.AssignmentStatus;
 import models.ModelInterface;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -156,7 +157,6 @@ public class AssignmentOverview extends ListActivity {
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int eraseAtPos, long arg3) {
 				showEraseOption(idInAdapter[eraseAtPos]);
-
 				return true;
 			}
 		});
@@ -217,6 +217,10 @@ public class AssignmentOverview extends ListActivity {
 			Assignment a = (Assignment) m;
 			if (a.getId() == assignmentId) {
 				db.deleteFromDB(a, getContentResolver());
+				// Sätter status för att uppdraget är påbörjat.
+				a.setAssignmentStatus(AssignmentStatus.STARTED);
+				
+				communicationService.sendAssignment(a);
 			}
 
 		}
