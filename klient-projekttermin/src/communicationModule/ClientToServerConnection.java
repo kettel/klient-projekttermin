@@ -12,7 +12,6 @@ import com.google.gson.Gson;
 import com.nutiteq.wrappers.List;
 
 import models.Assignment;
-import models.AssignmentStatus;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
@@ -153,25 +152,13 @@ public class ClientToServerConnection extends Thread  {
 							if(CommunicationService != null){
 								CommunicationService.handelIncomeingMessage();
 							}
-						}else if (inputString.contains("\"databaseRepresentation\":\"assignment\"")) {
-							System.out.println("ASIIIIIIIIIIIIIIIIIGNMENT!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+						}else if (inputString.contains("\"databasetRepresentation\":\"assignment\"")) {
 							Assignment assignment = gson.fromJson(inputString, Assignment.class);
-							if(assignment.getAssignmentStatus() == AssignmentStatus.STARTED || assignment.getAssignmentStatus() == AssignmentStatus.NEED_HELP ){
-								System.out.println("going to uppdate assignment: " + assignment.getName());
-								database.updateModel((ModelInterface) assignment, this.context.getContentResolver());
-							}else if(assignment.getAssignmentStatus() == AssignmentStatus.NOT_STARTED){
-								System.out.println("assignment added: " + assignment.getName());
-								database.addToDB(assignment, this.context.getContentResolver());	
-							}else if(assignment.getAssignmentStatus() == AssignmentStatus.FINISHED){
-								System.out.println("assignment erased: " + assignment.getName());
-								database.deleteFromDB((ModelInterface) assignment, this.context.getContentResolver());
-							}
-							
-							
+							database.addToDB(assignment, this.context.getContentResolver());
 							if(CommunicationService != null){
 								CommunicationService.handelIncomeingAssignment();
 							}
-						}else if (inputString.contains("\"databaseRepresentation\":\"contact\"")) {
+						}else if (inputString.contains("\"databasetRepresentation\":\"contact\"")) {
 							Contact contact = gson.fromJson(inputString, Contact.class);
 							database.addToDB(contact, context.getContentResolver());
 						}else {
