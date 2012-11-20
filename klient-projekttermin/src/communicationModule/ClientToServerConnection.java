@@ -152,13 +152,15 @@ public class ClientToServerConnection extends Thread  {
 							if(CommunicationService != null){
 								CommunicationService.handelIncomeingMessage();
 							}
-						}else if (inputString.contains("\"databasetRepresentation\":\"assignment\"")) {
+						}else if (inputString.contains("\"databaseRepresentation\":\"assignment\"")) {
 							Assignment assignment = gson.fromJson(inputString, Assignment.class);
+							System.out.println("geson here: " + assignment.getName() );
 							database.addToDB(assignment, this.context.getContentResolver());
-							if(CommunicationService != null){
-								CommunicationService.handelIncomeingAssignment();
-							}
-						}else if (inputString.contains("\"databasetRepresentation\":\"contact\"")) {
+							System.out.println("After database add");
+//							if(CommunicationService != null){
+//								CommunicationService.handelIncomeingAssignment();
+//							}
+						}else if (inputString.contains("\"databaseRepresentation\":\"contact\"")) {
 							Contact contact = gson.fromJson(inputString, Contact.class);
 							database.addToDB(contact, context.getContentResolver());
 						}else {

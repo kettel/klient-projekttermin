@@ -45,7 +45,7 @@ private static final String PASSWORD = Database.PASSWORD;
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-        	String DATABASE_CREATE = "create table if not exists "
+        	String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
         			+ Messages.TABLE_NAME+ "(" 
         			+ Messages.MESSAGE_ID + " integer primary key autoincrement, " 
         			+ Messages.CONTENT + " text, " 
