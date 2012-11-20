@@ -1,5 +1,6 @@
 package assignment;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import models.Assignment;
@@ -19,6 +20,9 @@ import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.nutiteq.components.WgsPoint;
 
 
 public class AssignmentDetails extends Activity {
@@ -110,8 +114,15 @@ public class AssignmentDetails extends Activity {
 				textViewTime.setText(a.getTimeSpan());
 				textViewSpot.setText(a.getSiteName());
 				textViewStreetname.setText(a.getStreetName());
-				textViewCoord.setText("Latitud: " + a.getLat() + "  Longitud: "
-						+ a.getLon());
+				Gson gson = new Gson();
+				Type type = new TypeToken<WgsPoint[]>() {
+				}.getType();
+				WgsPoint[] co = gson.fromJson(a.getRegion(), type);
+				for (WgsPoint wgsPoint : co) {
+					textViewCoord.setText("Latitud: " + wgsPoint.getLat() + "  Longitud: "
+							+ wgsPoint.getLon());
+				}
+				
 
 				// Skapar en tom bitmap som jämförs med den tomma i assignment.
 				// Är den tom så har ingen bild bifogast och då sätts bilden.
