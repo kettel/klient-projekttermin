@@ -26,7 +26,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
@@ -249,8 +248,6 @@ public class DisplayOfConversation extends Activity {
 
 	public void sendMessage(View v){
 		
-		Toast.makeText(getApplicationContext(), "HIT KOM DU", Toast.LENGTH_SHORT).show();
-
 		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 
 		messageObject = new MessageModel(message.getText().toString(), chosenContact, user); 

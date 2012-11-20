@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.klien_projekttermin.database.Database;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 import camera.Camera;
 
@@ -16,9 +17,12 @@ import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -26,17 +30,20 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
-import camera.Camera;
 
 public class MainActivity extends ListActivity {
 	
 	private String userName;
-
+	private CommunicationService communicationService;
+	private boolean communicationBond = false;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		testDB(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
+		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -51,6 +58,7 @@ public class MainActivity extends ListActivity {
 			Intent myIntent = null;
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+				communicationService.setContext(getApplicationContext());
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:
@@ -78,64 +86,6 @@ public class MainActivity extends ListActivity {
 
 		});
 	}
-	private void testDB(Context context) {
-		Database db = Database.getInstance(context);
-		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning", "Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED,"Gatunamn", "Platsnamn"),getContentResolver());
-		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
-		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera", "Sändare"), getContentResolver());
-		Log.d("DB","** Uppdrag **");
-		List <ModelInterface> assignments = db.getAllFromDB(new Assignment(), getContentResolver());
-		for (ModelInterface modelInterface : assignments) {
-			Assignment assignment = (Assignment) modelInterface;
-			Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
-			Assignment assignmentUpdate = new Assignment("Uppdaterat namn", "Uppdaterad sändare", false, "Uppdaterad beskrivning", "Uppdaterat tidsspann", AssignmentStatus.NEED_HELP, "Uppdaterad gatunamn", "Uppdaterad plats");
-			assignmentUpdate.setId(assignment.getId());
-			db.updateModel(assignmentUpdate, getContentResolver());
-		}
-		Log.d("DB", "** Uppdaterade uppdrag **");
-		assignments = db.getAllFromDB(new Assignment(), getContentResolver());
-		for (ModelInterface modelInterface : assignments) {
-			Assignment assignment = (Assignment) modelInterface;
-			Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
-			db.deleteFromDB(assignment, getContentResolver());
-		}
-		Log.d("DB","** Kontakter **");
-		List <ModelInterface> contacts = db.getAllFromDB(new Contact(), getContentResolver());
-		for (ModelInterface modelInterface : contacts) {
-			Contact contact = (Contact) modelInterface;
-			Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
-			Contact updatedContact = new Contact(contact.getId(),"Uppdaterat kontaktnamn..");
-			db.updateModel(updatedContact, getContentResolver());
-		}
-		Log.d("DB","** Uppdaterade kontakter **");
-		contacts = db.getAllFromDB(new Contact(), getContentResolver());
-		for (ModelInterface modelInterface : contacts) {
-			Contact contact = (Contact) modelInterface;
-			Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
-			db.deleteFromDB(contact, getContentResolver());
-		}
-		Log.d("DB","** Meddelanden **");
-		List <ModelInterface> messages = db.getAllFromDB(new MessageModel(), getContentResolver());
-		for (ModelInterface modelInterface : messages) {
-			MessageModel mess = (MessageModel) modelInterface;
-			Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
-			MessageModel updatedMess = new MessageModel(mess.getId(),"Updated content", "Updated receiver", "Updated sender", mess.getMessageTimeStamp(), true);
-			db.updateModel(updatedMess, getContentResolver());
-		}
-		Log.d("DB","** Uppdaterade meddelanden **");
-		messages = db.getAllFromDB(new MessageModel(), getContentResolver());
-		for (ModelInterface modelInterface : messages) {
-			MessageModel mess = (MessageModel) modelInterface;
-			Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
-			db.deleteFromDB(mess, getContentResolver());
-		}
-		assignments = db.getAllFromDB(new Assignment(), getContentResolver());
-		contacts = db.getAllFromDB(new Contact(), getContentResolver());
-		messages = db.getAllFromDB(new MessageModel(), getContentResolver());
-		Log.d("DB","Antal uppdrag: " + assignments.size());
-		Log.d("DB","Antal kontakter: " + contacts.size());
-		Log.d("DB","Antal meddelanden: " + messages.size());
-	}
 	/**
 	 * Genererar de menyval som ska gå att göra.
 	 * @return
@@ -162,4 +112,18 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	
+	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
+		
+		public void onServiceConnected(ComponentName className,IBinder service) {
+		     CommunicationBinder binder = (CommunicationBinder) service;
+	            communicationService = binder.getService();
+	            communicationBond = true;
+		}
+		
+		public void onServiceDisconnected(ComponentName arg0) {
+		      	communicationBond = false;
+		}
+
+	   };
 }

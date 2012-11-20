@@ -85,10 +85,11 @@ public class LogInFunction extends Activity {
 
 		AuthenticationModel authenticationModel = new AuthenticationModel(userName, hashPassword(password));
 
-//		authenticate(authenticationModel);
 
-		sendAuthenticationRequestToServer(v, authenticationModel);
-		passwordView.getEditableText().clear();
+//				authenticate(authenticationModel);
+
+				sendAuthenticationRequestToServer(v, authenticationModel);
+				passwordView.getEditableText().clear();
 	}
 
 	/*
@@ -110,22 +111,22 @@ public class LogInFunction extends Activity {
 	 * Metoden hämtar authenticeringsinformationen från databasen
 	 */
 	public void authenticate(AuthenticationModel authenticationModel){
-		//Här är du fi fäään!
+
 		dataBase = Database.getInstance(getApplicationContext());
 
 		listOfAuthenticationModels = dataBase.getAllFromDB(new AuthenticationModel(), getContentResolver());
 		AuthenticationModel authenticatioReference;
 
-		for (int i = 0; i < listOfAuthenticationModels.size(); i++) {
-			authenticatioReference = (AuthenticationModel) listOfAuthenticationModels.get(i);
-
-			if(authenticatioReference.getUserName().equals(authenticationModel.getUserName())&&
-					authenticatioReference.getPasswordHash().equals(authenticationModel.getPasswordHash())){
-				accessGranted();
-			}
-		}
-		//Visas om fel lösenord eller användarnamn skrivs in.
-		Toast.makeText(getApplicationContext(), "Användarnamn eller lösenord är felaktigt, försök igen!", Toast.LENGTH_SHORT).show();
+//		for (int i = 0; i < listOfAuthenticationModels.size(); i++) {
+//			authenticatioReference = (AuthenticationModel) listOfAuthenticationModels.get(i);
+//
+//			if(authenticatioReference.getUserName().equals(authenticationModel.getUserName())&&
+//					authenticatioReference.getPasswordHash().equals(authenticationModel.getPasswordHash())){
+//				accessGranted();
+//			}
+//		}
+//		//Visas om fel lösenord eller användarnamn skrivs in.
+//		Toast.makeText(getApplicationContext(), "Användarnamn eller lösenord är felaktigt, försök igen!", Toast.LENGTH_SHORT).show();
 	}
 	/*
 	 * Metoden skapar en hashrepresentation av de inmatade lösenordet med hjälp av SHA-2
@@ -163,15 +164,15 @@ public class LogInFunction extends Activity {
 	 */
 	private void sendAuthenticationRequestToLocalDatabase(View v, AuthenticationModel authenticationModel){
 
+	
 
-		if (authenticationModel.getPasswordHash().equals(passwordHashReference)&&authenticationModel.getUserName().equals(userNameReference)) {
+		
+		if (authenticationModel.getUserName().toString().equals(userNameReference)&&authenticationModel.getPasswordHash().equals(passwordHashReference)) {
 			accessGranted();
 		}
 
 		else {
-				Toast toast = new Toast(getApplicationContext());
 			Toast.makeText(getApplicationContext(), "Användarnamn eller lösenord är felaktigt, försök igen!", Toast.LENGTH_SHORT).show();
-					toast.show();
 		}
 	}
 
@@ -186,8 +187,8 @@ public class LogInFunction extends Activity {
 	 * Metoden skapar en hashrepresentation av ett hårdkodat lösenord
 	 */
 	public void createPassWordHashRepresentation() throws NoSuchAlgorithmException{
-		String password = "fredrik";
-		userNameReference = "A";
+		String password = "a";
+		userNameReference = "fredde";
 
 		AM = new AuthenticationModel(password, userNameReference);
 

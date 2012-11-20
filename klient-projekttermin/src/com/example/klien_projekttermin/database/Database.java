@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.widget.Toast;
 import models.Assignment;
 import models.AuthenticationModel;
 import models.Contact;

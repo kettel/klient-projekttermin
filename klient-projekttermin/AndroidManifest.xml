@@ -36,7 +36,6 @@
         <activity
             android:name="messageFunction.Inbox"
             android:label="@string/inbox" >
-            
         </activity>
         <activity
             android:name="messageFunction.DisplayOfConversation"
