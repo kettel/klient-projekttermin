@@ -46,7 +46,6 @@ public class CreateMessage extends Activity {
 			messageContent = extras.getString("MESSAGE");
 		}
 		
-		user = "Fredde";
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.example.klien_projekttermin.database.Database;
+
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -36,6 +38,7 @@ public class MainActivity extends ListActivity {
 	private String userName;
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
+	private Database dataBase;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,10 @@ public class MainActivity extends ListActivity {
 		
 		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
 		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
+		
+//		Contact contact = new Contact("strighild");
+//		
+//		dataBase.addToDB(contact, getContentResolver());
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
