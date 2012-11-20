@@ -1,9 +1,11 @@
 package communicationModule;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
 
@@ -19,17 +21,20 @@ import models.MessageModel;
  * @author Eric
  *
  */
-public class CommunicationService extends Service{
+public class CommunicationService extends Service implements IncomeingDataListners{
 	private final IBinder binder = new CommunicationBinder();
 	
 	private Gson gson = new Gson();
 	private String transmisson = "";
+	private List<IncomeingDataListners> messageListners = new ArrayList<IncomeingDataListners>();
+	private List<IncomeingDataListners> AssignmentListners = new ArrayList<IncomeingDataListners>();
 	ClientToServerConnection ClientToServer = null;
 	/**
 	 * Denna konstruktor körs när servicen registeras. skapar och kör ClientToServerConnection
 	 */
 	public CommunicationService(){
 		ClientToServer = new ClientToServerConnection();
+		ClientToServer.RegisterCommunicationService(this);
 		ClientToServer.start();
 	}
 	/**
@@ -37,7 +42,6 @@ public class CommunicationService extends Service{
 	 * @param message medelandet som ska skickas.
 	 */
 	public void sendMessage(MessageModel message){
-		System.out.println("sendMessage");
 		transmisson = gson.toJson(message);
 		ClientToServer.sendTransmisson(transmisson);
 	}
@@ -81,6 +85,44 @@ public class CommunicationService extends Service{
 			return CommunicationService.this;
 		}
 	}
+    // HÄR FÖLJER ALLA LYSNARMETODER
+	public void handelIncomeingMessage() {
+		if(messageListners != null){
+			for (int i = 0; i < messageListners.size(); i++) {
+				messageListners.get(i).handelIncomeingMessage();
+			}
+		}
+	}
 
+	public void registerIncomeingMessagelistener(IncomeingDataListners newListener){
+		if(!messageListners.contains(newListener)){
+			messageListners.add(newListener);
+		}
+	}
+	
+	public void unregisterIncomeingMessagelistener(IncomeingDataListners listener){
+		if(messageListners.contains(listener)){
+			messageListners.remove(listener);
+		}
+	}
+	
+	public void handelIncomeingAssignment() {
+		if(AssignmentListners != null){
+			for (int i = 0; i < AssignmentListners.size(); i++) {
+				AssignmentListners.get(i).handelIncomeingAssignment();
+			}
+		}
+	}
+	
+	public void registerIncomeingAssignmentListners (IncomeingDataListners newListener){
+		if(!AssignmentListners.contains(newListener)){
+			AssignmentListners.add(newListener);
+		}
+	}
+	public void unregisterIncomeingAssignmentListners(IncomeingDataListners listener){
+		if(AssignmentListners.contains(listener)){
+			AssignmentListners.remove(listener);
+		}
+	}
 }
 

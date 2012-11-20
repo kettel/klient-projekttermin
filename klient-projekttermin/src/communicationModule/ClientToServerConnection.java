@@ -43,11 +43,15 @@ public class ClientToServerConnection extends Thread  {
 	private Context context = null;
 	private int waitTime = 1;
 	private long heartbeatTime = 0;
+	private IncomeingDataListners CommunicationService = null;
 	/**
 	 * en tom konstruktor
 	 */
 	public ClientToServerConnection(){
 		
+	}
+	public void RegisterCommunicationService(IncomeingDataListners listner){
+		CommunicationService = listner;
 	}
 	/**
 	 * Används för att förhindra att data sickas 
@@ -92,7 +96,7 @@ public class ClientToServerConnection extends Thread  {
 	 */
 	private synchronized void timeToWait(){
 		if(waitTime < 60000){
-			waitTime = waitTime+30;
+			waitTime = waitTime+50;
 		}
 		try {
 			this.wait(waitTime);	
@@ -145,10 +149,16 @@ public class ClientToServerConnection extends Thread  {
 						if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
 							MessageModel message = gson.fromJson(inputString, MessageModel.class);
 							database.addToDB(message, this.context.getContentResolver());
-						}else if (inputString.contains("\"databasetRepresentation\":\"assignment\"")) {
+							if(CommunicationService != null){
+								CommunicationService.handelIncomeingMessage();
+							}
+						}else if (inputString.contains("\"databaseRepresentation\":\"assignment\"")) {
 							Assignment assignment = gson.fromJson(inputString, Assignment.class);
 							database.addToDB(assignment, this.context.getContentResolver());
-						}else if (inputString.contains("\"databasetRepresentation\":\"contact\"")) {
+							if(CommunicationService != null){
+								CommunicationService.handelIncomeingAssignment();
+							}
+						}else if (inputString.contains("\"databaseRepresentation\":\"contact\"")) {
 							Contact contact = gson.fromJson(inputString, Contact.class);
 							database.addToDB(contact, context.getContentResolver());
 						}else {

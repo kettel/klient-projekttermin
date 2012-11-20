@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
+import communicationModule.IncomeingDataListners;
 import communicationModule.CommunicationService.CommunicationBinder;
 
 import communicationModule.CommunicationService;
@@ -38,7 +39,7 @@ import assignment.AssignmentOverview;
 
 //import com.google.android.gcm.GCMRegistrar;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends ListActivity{
 	
 	private String userName;
 
@@ -86,7 +87,6 @@ public class MainActivity extends ListActivity {
 				case 0:
 					myIntent = new Intent(MainActivity.this,MapActivity.class);
 					myIntent.putExtra("USER", userName);
-
 					break;
 				case 1:
 					myIntent = new Intent(MainActivity.this,Inbox.class);
