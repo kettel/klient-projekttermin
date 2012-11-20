@@ -28,7 +28,8 @@ import communicationModule.CommunicationService.CommunicationBinder;
 
 public class AssignmentDetails extends Activity {
 
-	Database db;/* = Database.getInstance(getApplicationContext()); */
+
+	private Database db;/* = Database.getInstance(getApplicationContext()); */
 	private long assignmentID;
 	private TextView textViewAssName;
 	private TextView textViewDescription;
@@ -49,10 +50,12 @@ public class AssignmentDetails extends Activity {
 
 	// -------End
 
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_uppdrag);
+		db = Database.getInstance(getApplicationContext());
 
 		// -------ComService---
 		Intent intentServer = new Intent(this.getApplicationContext(),
@@ -66,12 +69,6 @@ public class AssignmentDetails extends Activity {
 		Intent intent = getIntent();
 		assignmentID = intent.getExtras().getLong("assignmentID");
 		currentUser = intent.getExtras().getString("currentUser");
-		
-		// -----------TrashCode
-				Toast toast = Toast.makeText(getApplicationContext(), "User: "
-						+ currentUser, Toast.LENGTH_SHORT);
-				toast.show();
-				// ----End
 
 		// Initierar databasen.
 		db = Database.getInstance(this);

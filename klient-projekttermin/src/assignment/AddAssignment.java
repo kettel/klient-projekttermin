@@ -44,7 +44,7 @@ public class AddAssignment extends ListActivity {
 			"uppskattadtid", "gatuadress", "uppdragsplats", "bild" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
-	private int[] to = { R.id.editText1 };
+	private int[] to = { R.id.text_item };
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
 	private String currentUser;
@@ -69,12 +69,6 @@ public class AddAssignment extends ListActivity {
 		int callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		currentUser = getIntent().getExtras().getString("currentUser");
 
-		// -----------TrashCode
-		Toast toast = Toast.makeText(getApplicationContext(), "User: "
-				+ currentUser, Toast.LENGTH_SHORT);
-		toast.show();
-		// ----End
-
 		switch (callingActivity) {
 		case ActivityConstants.MAP_ACTIVITY:
 			adapter.textToItem(1, fromMap());
@@ -86,15 +80,6 @@ public class AddAssignment extends ListActivity {
 			break;
 		}
 	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (communicationBond) {
-			unbindService(communicationServiceConnection);
-		}
-	}
-
 	private void loadContent() {
 		data.clear();
 		for (String s : dataString) {
@@ -138,6 +123,7 @@ public class AddAssignment extends ListActivity {
 
 		public void onServiceDisconnected(ComponentName arg0) {
 			communicationBond = false;
+
 		}
 
 	};
@@ -171,4 +157,11 @@ public class AddAssignment extends ListActivity {
 		finish();
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(communicationBond)
+		unbindService(communicationServiceConnection);
+	}
+	
 }

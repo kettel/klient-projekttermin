@@ -8,6 +8,7 @@ import models.ModelInterface;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -22,6 +23,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.AssignmentTable;
 import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
@@ -43,17 +45,15 @@ public class AssignmentOverview extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
+		
+		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
+		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
 
 		// Hämtar extras
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			currentUser = extras.getString("USER");
 		}
-		// -----------TrashCode
-		Toast toast = Toast.makeText(getApplicationContext(), "User: "
-				+ currentUser, Toast.LENGTH_SHORT);
-		toast.show();
-		// ----End
 
 	}
 	
@@ -97,9 +97,11 @@ public class AssignmentOverview extends ListActivity {
 
 	public void loadAssignmentList() {
 		getAssHeadsFromDatabase();
+		/**
+		 * SE FAN TILL ATT ÄNDRA DEN HÅRDKODADE CURSORN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		 */
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				getContentResolver().query(Assignments.CONTENT_URI, null,
-						"_id is not null", null, null), false);
+				getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
 		this.setListAdapter(adapter);
 	}
 
@@ -113,7 +115,6 @@ public class AssignmentOverview extends ListActivity {
 		assList = db.getAllFromDB(new Assignment(), getContentResolver());
 		int i = 0;
 		String[] tempHeadArr = new String[assList.size()];
-		System.out.println("SIZE : " + assList.size());
 		idInAdapter = new long[assList.size()];
 
 		for (ModelInterface a : assList) {
@@ -180,8 +181,8 @@ public class AssignmentOverview extends ListActivity {
 	};
 
 	/*
-	 * Metoden skapar en dialogruta som fr�gar anv�ndaren om denne vill ta bort
-	 * en konversation Metoden ger ocks� anv�ndaren tv� valm�jligheter, JA eller
+	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort
+	 * en konversation Metoden ger också användaren två valmöjligheter, JA eller
 	 * Avbryt
 	 */
 	public void showEraseOption(final long eraseById) {
@@ -216,9 +217,10 @@ public class AssignmentOverview extends ListActivity {
 		for (ModelInterface m : listAssignments) {
 			Assignment a = (Assignment) m;
 			if (a.getId() == assignmentId) {
+				communicationService.setContext(getApplicationContext());
 				db.deleteFromDB(a, getContentResolver());
-				// Sätter status för att uppdraget är påbörjat.
-				a.setAssignmentStatus(AssignmentStatus.STARTED);
+				// Sätter status för att uppdraget har avslutats.
+				a.setAssignmentStatus(AssignmentStatus.FINISHED);
 				
 				communicationService.sendAssignment(a);
 			}
