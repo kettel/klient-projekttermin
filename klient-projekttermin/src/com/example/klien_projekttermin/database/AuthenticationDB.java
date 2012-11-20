@@ -22,10 +22,12 @@ public class AuthenticationDB {
 		return instance;
 	}
 
-	public void addAuthenticationComponents(ContentResolver contentResolver, AuthenticationModel authenticationModel) {
+	public void addAuthenticationContent(ContentResolver contentResolver, AuthenticationModel authentication) {
 		ContentValues values = new ContentValues();
-		values.put(Authentications.USERNAME, authenticationModel.getUserName());
-		values.put(Authentications.PASSWORD, authenticationModel.getPasswordHash());
+		values.put(Authentications.USERNAME, authentication.getUserName());
+		values.put(Authentications.PASSWORD, authentication.getPasswordHash());
+		values.put(Authentications.AUTHENTICATION_ID, authentication.getId());
+		
 		contentResolver.insert(Authentications.CONTENT_URI, values);
 	}
 
@@ -38,30 +40,29 @@ public class AuthenticationDB {
 		return returnCount;
 	}
 
-	public void delete(ContentResolver contentResolver, AuthenticationModel authenticationModel) {
-		contentResolver.delete(Authentications.CONTENT_URI, Authentications.AUTHENTICATION_ID + " = " + Long.toString(authenticationModel.getId()), null);
+	public void delete(ContentResolver contentResolver, AuthenticationModel authentication) {
+		contentResolver.delete(Authentications.CONTENT_URI, Authentications.AUTHENTICATION_ID + " = " + Long.toString(authentication.getId()), null);
 	}
 
-	public List<ModelInterface> getAllAuthenticationComponents(ContentResolver contentResolver) {
+	public List<ModelInterface> getAllAuthenticationModels(ContentResolver contentResolver) {
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
 		Cursor cursor = contentResolver.query(Authentications.CONTENT_URI, null,
 				Authentications.AUTHENTICATION_ID + " IS NOT null", null, null);
 		if (cursor.moveToFirst()) {
 			do {
-				String userName = new String(), password = new String();
-				long id = 0;
+				String userName = new String(), Password = new String(); long authenticationId = 0;
 
 				for (int i = 0; i < cursor.getColumnCount(); i++) {
 					String currentCol = cursor.getColumnName(i);
-					if (currentCol.equalsIgnoreCase(Authentications.AUTHENTICATION_ID)) {
-						id = cursor.getInt(i);
-					} else if (currentCol.equalsIgnoreCase(Authentications.USERNAME)) {
+					if (currentCol.equalsIgnoreCase(Authentications.USERNAME)) {
 						userName = cursor.getString(i);
+					} else if (currentCol.equalsIgnoreCase(Authentications.AUTHENTICATION_ID)) {
+						authenticationId = cursor.getInt(i);
 					} else if (currentCol.equalsIgnoreCase(Authentications.PASSWORD)) {
-						password = cursor.getString(i);
-					} 
+						Password = cursor.getString(i);
+					}
 				}
-				AuthenticationModel authenticationModel = new AuthenticationModel(id, userName, password);
+				AuthenticationModel authenticationModel = new AuthenticationModel(authenticationId, userName, Password);
 				returnList.add(authenticationModel);
 			} while (cursor.moveToNext());
 		}
@@ -69,14 +70,14 @@ public class AuthenticationDB {
 	}
 
 	public void updateAuthentication(ContentResolver contentResolver, AuthenticationModel authenticationModel) {
-		
 		ContentValues values = new ContentValues();
 		values.put(Authentications.USERNAME, authenticationModel.getUserName());
 		values.put(Authentications.PASSWORD, authenticationModel.getPasswordHash());
-		
+		values.put(Authentications.AUTHENTICATION_ID, authenticationModel.getId());
 		int updated = contentResolver.update(Authentications.CONTENT_URI, values,
-				Authentications.AUTHENTICATION_ID + " = " + Long.toString(authenticationModel.getId()),null);
-		Log.d("DB", "Uppdaterade " + updated + " authentications.");
+				Authentications.AUTHENTICATION_ID + " = " + Long.toString(authenticationModel.getId()),
+				null);
+		Log.d("DB", "Uppdaterade " + updated + " messages.");
 	}
 
 }

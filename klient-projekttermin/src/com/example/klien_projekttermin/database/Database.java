@@ -54,7 +54,7 @@ public class Database {
 			messagesDB.addMessage(contentResolver, (MessageModel) m);
 		}
 		else if(dbRep.equalsIgnoreCase("authentication")){
-			authenticationDB.addAuthenticationComponents(contentResolver, (AuthenticationModel) m);
+			authenticationDB.addAuthenticationContent(contentResolver, (AuthenticationModel) m);
 		}
 	}
 
@@ -105,7 +105,7 @@ public class Database {
 			returnList = messagesDB.getAllMessages(contentResolver);
 		}
 		else if(dbRep.equalsIgnoreCase("authentication")){
-			returnList = authenticationDB.getAllAuthenticationComponents(contentResolver);
+			returnList = authenticationDB.getAllAuthenticationModels(contentResolver);
 		}
 		return returnList;
 	}
