@@ -47,7 +47,7 @@ public class AuthenticationContentProvider extends ContentProvider{
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			String DATABASE_CREATE = "create table "
+			String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
 					+ Authentications.TABLE_NAME + "("
 					+ Authentications.USERNAME + " text, "
 					+ Authentications.PASSWORD + " text);";
