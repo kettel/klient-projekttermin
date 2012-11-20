@@ -171,8 +171,7 @@ public class AssignmentDetails extends Activity {
 		textViewSpot.setText(currentAssignment.getSiteName());
 		textViewStreetname.setText(currentAssignment.getStreetName());
 		textViewCoord.setText("Latitud: " + currentAssignment.getLat()
-				+ "  Longitud: " + currentAssignment.getLon() + "ID: "
-				+ currentAssignment.getId());
+				+ "  Longitud: " + currentAssignment.getLon());
 		
 		//Fyller en sträng med aktuella agenter.
 		String temp = "";
@@ -184,7 +183,7 @@ public class AssignmentDetails extends Activity {
 	}
 
 	/**
-	 * Lyssnar på om checkboen checkas i gör gör den därefter ocheckbar och
+	 * Lyssnar på om checkboen checkas i gö den därefter ocheckbar och
 	 * agenten läggs till till det uppdraget.
 	 */
 	public void setCheckboxCheckedListener() {
