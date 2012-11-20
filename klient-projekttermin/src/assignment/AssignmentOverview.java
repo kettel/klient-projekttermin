@@ -6,19 +6,25 @@ import models.Assignment;
 import models.ModelInterface;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 import com.example.klien_projekttermin.database.Database;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 public class AssignmentOverview extends ListActivity {
 
@@ -26,17 +32,39 @@ public class AssignmentOverview extends ListActivity {
 	private Database db;
 	private List<ModelInterface> assList;
 	private String currentUser;
+	
+	//--------ComService
+		private CommunicationService communicationService;
+		private boolean communicationBond = false;
+		//----End
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
-		
-		Intent extrasFromIntent = new Intent();
-		//currentUser = extrasFromIntent.getExtras().getString("USER");
+
+		// Hämtar extras
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			currentUser = extras.getString("USER");
+		}
+		// -----------TrashCode
+		Toast toast = Toast.makeText(getApplicationContext(), "User: "
+				+ currentUser, Toast.LENGTH_SHORT);
+		toast.show();
+		// ----End
+
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (communicationBond) {
+			unbindService(communicationServiceConnection);
+		}
 	}
 
-	// G�r en custom topmeny.
+	// Gör en custom topmeny.
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_assignment_overview, menu);
@@ -44,11 +72,16 @@ public class AssignmentOverview extends ListActivity {
 		return true;
 	}
 
+	/**
+	 * Startar aktiviteten som skapar uppdrag
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		Intent intent = new Intent(AssignmentOverview.this, AddAssignment.class);
+		intent.putExtra("currentUser", currentUser);
 		AssignmentOverview.this.startActivity(intent);
+
 		return true;
 
 	}
@@ -90,7 +123,6 @@ public class AssignmentOverview extends ListActivity {
 		}
 		return tempHeadArr;
 	}
-	
 
 	/**
 	 * Sätter en klicklyssnare på listvyn.
@@ -103,7 +135,7 @@ public class AssignmentOverview extends ListActivity {
 
 				Intent myIntent = new Intent(AssignmentOverview.this,
 						AssignmentDetails.class);
-				
+
 				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
 				myIntent.putExtra("currentUser", currentUser);
 				AssignmentOverview.this.startActivity(myIntent);
@@ -112,24 +144,40 @@ public class AssignmentOverview extends ListActivity {
 	}
 
 	/*
-	 * Tillsatt lyssnare i meddelandelistan som lyssnar efterz tryckningar
-	 * p� listobjekt
+	 * Tillsatt lyssnare i meddelandelistan som lyssnar efterz tryckningar p�
+	 * listobjekt
 	 */
 	public void setLongItemClickListener() {
 		// Skapar en lyssnare som lyssnar efter l�nga intryckningar
 		this.getListView().setOnItemLongClickListener(
-				
-				new OnItemLongClickListener() {
 
-					
-					public boolean onItemLongClick(AdapterView<?> arg0,
-							View arg1, int eraseAtPos, long arg3) {
-						showEraseOption(idInAdapter[eraseAtPos]);
-						
-						return true;
-					}
-				});
+		new OnItemLongClickListener() {
+
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int eraseAtPos, long arg3) {
+				showEraseOption(idInAdapter[eraseAtPos]);
+
+				return true;
+			}
+		});
 	}
+	
+	/**
+	 * ComService för att skicka till server
+	 */
+	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			CommunicationBinder binder = (CommunicationBinder) service;
+			communicationService = binder.getService();
+			communicationBond = true;
+		}
+
+		public void onServiceDisconnected(ComponentName arg0) {
+			communicationBond = false;
+		}
+
+	};
 
 	/*
 	 * Metoden skapar en dialogruta som fr�gar anv�ndaren om denne vill ta bort

@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 import camera.PhotoGallery;
 
 import com.example.klien_projekttermin.ActivityConstants;
@@ -27,15 +28,13 @@ import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
-//=======
-//import com.example.klien_projekttermin.database.AssignmentTable;
-//import com.example.klien_projekttermin.database.Database;							Gamla databasen?
-//import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
-//>>>>>>> 88c1ca7af27e59d30407a431aa7fcf855e8d5993
 
 public class AddAssignment extends ListActivity {
 
+	// --------ComService
 	private CommunicationService communicationService;
+	private boolean communicationBond = false;
+	// ----End
 
 	double lat = 0;
 	double lon = 0;
@@ -48,22 +47,33 @@ public class AddAssignment extends ListActivity {
 	private int[] to = { R.id.editText1 };
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
+	private String currentUser;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// ----ComService
 		Intent intent = new Intent(this.getApplicationContext(),
 				CommunicationService.class);
 		bindService(intent, communicationServiceConnection,
 				Context.BIND_AUTO_CREATE);
+		// ---End
 
 		setContentView(R.layout.activity_add_assignment);
 		loadContent();
 		adapter = new SimpleEditTextItemAdapter(this, data,
 				R.layout.textfield_item, from, to);
 		setListAdapter(adapter);
+
 		int callingActivity = getIntent().getIntExtra("calling-activity", 0);
+		currentUser = getIntent().getExtras().getString("currentUser");
+
+		// -----------TrashCode
+		Toast toast = Toast.makeText(getApplicationContext(), "User: "
+				+ currentUser, Toast.LENGTH_SHORT);
+		toast.show();
+		// ----End
 
 		switch (callingActivity) {
 		case ActivityConstants.MAP_ACTIVITY:
@@ -72,8 +82,16 @@ public class AddAssignment extends ListActivity {
 		case ActivityConstants.MAIN_ACTIVITY:
 			break;
 		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
-			adapter.textToItem(6,fromCamera());
+			adapter.textToItem(6, fromCamera());
 			break;
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (communicationBond) {
+			unbindService(communicationServiceConnection);
 		}
 	}
 
@@ -85,8 +103,8 @@ public class AddAssignment extends ListActivity {
 			data.add(temp);
 		}
 	}
-	
-	private String fromCamera(){
+
+	private String fromCamera() {
 		Intent intent = getIntent();
 		json = intent.getStringExtra(PhotoGallery.picture);
 		Gson gson = new Gson();
@@ -112,13 +130,14 @@ public class AddAssignment extends ListActivity {
 
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
 
-		public void onServiceDisconnected(ComponentName arg0) {
-		}
-
-		public void onServiceConnected(ComponentName name, IBinder service) {
+		public void onServiceConnected(ComponentName className, IBinder service) {
 			CommunicationBinder binder = (CommunicationBinder) service;
 			communicationService = binder.getService();
+			communicationBond = true;
+		}
 
+		public void onServiceDisconnected(ComponentName arg0) {
+			communicationBond = false;
 		}
 
 	};
@@ -127,6 +146,7 @@ public class AddAssignment extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_add_assignment, menu);
 		this.saveItem = menu.findItem(R.id.save);
+		communicationService.setContext(getApplicationContext()); // --ComService
 		return true;
 	}
 
@@ -139,21 +159,16 @@ public class AddAssignment extends ListActivity {
 	}
 
 	private void saveToDB() {
-		db = Database.getInstance(getApplicationContext());
+		 db = Database.getInstance(getApplicationContext());
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) getListAdapter())
 				.getItemStrings();
-		Assignment newAssignment = new Assignment(temp.get(0), json, "eric",
-				false, temp.get(2), temp.get(3), AssignmentStatus.NOT_STARTED,
-				temp.get(4), temp.get(5));
+		Assignment newAssignment = new Assignment(temp.get(0), json,
+				currentUser, false, temp.get(2), temp.get(3),
+				AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5));
+		
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
 	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-//		communicationService.unbindService(communicationServiceConnection);
-	}
-	
 }
