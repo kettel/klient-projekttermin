@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.example.klien_projekttermin.database.Database;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
@@ -33,17 +35,30 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
 
+
+//import com.google.android.gcm.GCMRegistrar;
+
 public class MainActivity extends ListActivity {
 	
 	private String userName;
+
+
+	public static final String LOGCONTENT = "com.exampel.klien_projekttermin";
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
-	private Database dataBase;
-	
+	private static final String SENDER_ID = "943011390551";
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+//		GCMRegistrar.checkDevice(this);
+//		GCMRegistrar.checkManifest(this);
+//		final String regId = GCMRegistrar.getRegistrationId(this);
+//		if (regId.equals("")) {
+//		  GCMRegistrar.register(this, SENDER_ID);
+//		} else {
+//		  System.out.println("Already registerd");
+//		}
 		
 		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
 		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
@@ -119,11 +134,17 @@ public class MainActivity extends ListActivity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+
+	@Override
+	protected void onDestroy (){
+		super.onDestroy();
+		unbindService(communicationServiceConnection);
+	}
 	
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
 		
 		public void onServiceConnected(ComponentName className,IBinder service) {
-		     CommunicationBinder binder = (CommunicationBinder) service;
+		        CommunicationBinder binder = (CommunicationBinder) service;
 	            communicationService = binder.getService();
 	            communicationBond = true;
 		}

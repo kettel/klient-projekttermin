@@ -4,11 +4,23 @@
     android:versionName="1.0" >
 
     <!-- Permissions -->
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- User permissions -->
-    <user-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.example.klien_projekttermin.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- App receives GCM messages. -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- GCM connects to Google Services. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Permissions -->
+    <permission
+        android:name="com.example.klien_projekttermin.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
     <!-- Features -->
     <uses-feature android:name="android.hardware.camera" />
 
@@ -20,9 +32,22 @@
         android:icon="@drawable/loggakrona"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <!-- Receiver -->
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.example.klien_projekttermin" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
+           
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -46,6 +71,10 @@
             android:label="Camera" >
         </activity>
         <activity
+            android:name="camera.PhotoGallery"
+            android:label="@string/title_activity_photo_gallery" >
+        </activity>
+        <activity
             android:name="logger.LogViewer"
             android:label="@string/title_activity_log_viewer" >
             <meta-data
@@ -58,19 +87,27 @@
         </activity>
         <activity android:name="assignment.AssignmentOverview" >
         </activity>
+        <activity android:name="assignment.AddAssignment" 
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+        <activity
+            android:name="assignment.AddAssignment"
+            android:label="@string/addAssignment"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
         <activity
             android:name="assignment.AssignmentDetails"
             android:label="@string/uppdrag" >
         </activity>
         <activity
             android:name="loginFunction.LogInFunction"
-            android:label="@string/title_activity_log_in_function" >
-            <intent-filter>
+            android:label="title_activity_log_in_function" >
+             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
 
         <!-- Database Content Providers -->
       	<provider
@@ -86,9 +123,9 @@
             android:name="com.example.klien_projekttermin.database.AuthenticationContentProvider" 
             android:authorities="com.example.klien_projekttermin.database.AuthenticationContentProvider" />
         <!-- Communication Module Service -->
-        <service android:name="communicationModule.CommunicationService" >
-        </service>
-
+        <service android:name="communicationModule.CommunicationService" />
+        <!-- GCM service -->
+        <service android:name=".GCMIntentService" />
     </application>
 
 </manifest>

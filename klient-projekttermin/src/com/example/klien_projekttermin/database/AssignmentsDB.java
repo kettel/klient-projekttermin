@@ -86,7 +86,10 @@ public class AssignmentsDB {
 					} else if (currentCol.equalsIgnoreCase(Assignments.AGENTS)) {
 						String[] agentArray = cursor.getString(i).split("/");
 						for (String agent : agentArray) {
-							agents.add(new Contact(agent));
+//							agents.add(new Contact(agent));
+							if(!agent.equals("")){
+								agents.add(new Contact(agent));
+								}
 						}
 					} else if (currentCol
 							.equalsIgnoreCase(Assignments.EXTERNAL_MISSION)) {

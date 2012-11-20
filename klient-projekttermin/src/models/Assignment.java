@@ -372,6 +372,9 @@ public class Assignment implements ModelInterface {
 	public AssignmentStatus getAssignmentStatus() {
 		return assignmentStatus;
 	}
+	public void setAssignmentStatus(AssignmentStatus newStatus){
+		assignmentStatus = newStatus;
+	}
 	
 	public Long getTimeStamp(){
 		return assignmentTimeStamp;

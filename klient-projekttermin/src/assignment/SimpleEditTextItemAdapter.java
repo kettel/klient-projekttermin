@@ -6,6 +6,7 @@ import java.util.Map;
 
 import map.CustomAdapter;
 import map.MapActivity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -15,21 +16,23 @@ import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.AdapterView.OnItemClickListener;
-
 import camera.Camera;
 
+import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
 
+	@SuppressLint("UseSparseArrays")
 	private HashMap<Integer, String> itemStrings = new HashMap<Integer, String>();
 	private Context context;
-	private static String[] pictureAlts = { "Bifoga bild","Ta bild"};
+	private String items;
+	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" };
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -38,28 +41,30 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		this.context = context;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = super.getView(position, convertView, parent);
-		EditText editText = (EditText) v.findViewById(R.id.editText1);
-		if (itemStrings.get(position) != null) {
-			editText.setText(itemStrings.get(position));
-		} else {
-			editText.setText(null);
+
+		EditText editText = (EditText) v.findViewById(R.id.text_item);
+		if (editText!=null) {
+			if (itemStrings.get(position) != null) {
+				editText.setText(itemStrings.get(position));
+			} else {
+				editText.setText(null);
+			}
+			editText.setHint(((HashMap<String, String>) this.getItem(position))
+					.get("line1"));
+			editText.setId(position);
+			editText.setOnFocusChangeListener(this);
 		}
-		editText.setHint(((HashMap<String, String>) this.getItem(position))
-				.get("line1"));
-		;
-		editText.setId(position);
-		editText.setOnFocusChangeListener(this);
+		
 		return v;
 	}
 
 	public HashMap<Integer, String> getItemStrings() {
 		return itemStrings;
 	}
-
-
 
 	public void setItemStrings(HashMap<Integer, String> itemStrings) {
 		this.itemStrings = itemStrings;
@@ -104,24 +109,20 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
-		final Intent intent = new Intent(context, Camera.class);
-		
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
 				switch (arg2) {
 				case 0:
-					intent.putExtra("calling-activity",
-							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
+					Intent intent = createIntent(ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 					context.startActivity(intent);
-					((AddAssignment)context).finish();
+					((AddAssignment) context).finish();
 					break;
 				case 1:
-					intent.putExtra("calling-activity",
-							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
-					context.startActivity(intent);
-					((AddAssignment)context).finish();
+					Intent intent2 = createIntent(ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
+					context.startActivity(intent2);
+					((AddAssignment) context).finish();
 					break;
 				default:
 					break;
@@ -129,6 +130,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			}
 		});
 		dialog.show();
+	}
+	
+	private Intent createIntent(int id){
+		Intent intent = new Intent(context, Camera.class);
+		intent.putExtra("calling-activity",id);
+		intent.putExtra(items, itemStrings);
+		return intent;
 	}
 
 	private void coordinateField() {
@@ -143,7 +151,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				intent.putExtra("calling-activity",
 						ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
 				context.startActivity(intent);
-				((AddAssignment)context).finish();
+				((AddAssignment) context).finish();
 			}
 		});
 		builder.setNegativeButton("cancel",

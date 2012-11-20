@@ -37,6 +37,7 @@
     <string name="title_activity_search">SearchActivity</string>
     <string name="mark_region">Markera region</string>
     <string name="title_activity_dbtest">DBTest</string>
+     <string name="title_activity_photo_gallery">Fotogalleri</string>
     <string name="Button">Test DB</string>
     <string name="title_activity_log_viewer">LogViewer</string>
     <string name="btnIntend">Ta bild</string>
@@ -67,3 +68,4 @@
     <string name="assignmentOverview">Uppdrags översikt</string>
 
 </resources>
+

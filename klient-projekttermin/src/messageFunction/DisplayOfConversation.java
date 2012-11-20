@@ -29,7 +29,6 @@ import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
-
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
