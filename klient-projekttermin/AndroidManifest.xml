@@ -92,7 +92,10 @@
         </activity>
         <activity android:name="assignment.AssignmentOverview" >
         </activity>
-        <activity android:name="assignment.AddAssignment" >
+        <activity
+            android:name="assignment.AddAssignment"
+            android:label="@string/addAssignment"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="assignment.AssignmentDetails"

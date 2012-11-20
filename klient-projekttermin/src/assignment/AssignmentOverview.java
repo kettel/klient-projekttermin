@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.AssignmentTable;
 import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 import com.example.klien_projekttermin.database.Database;
 
@@ -60,7 +61,7 @@ public class AssignmentOverview extends ListActivity {
 	public void loadAssignmentList() {
 		getAssHeadsFromDatabase();
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				null, false);
+				getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
 		this.setListAdapter(adapter);
 	}
 
@@ -74,7 +75,7 @@ public class AssignmentOverview extends ListActivity {
 		assList = db.getAllFromDB(new Assignment(), getContentResolver());
 		int i = 0;
 		String[] tempHeadArr = new String[assList.size()];
-		System.out.println("SIZE : " + assList.size());
+//		System.out.println("SIZE : " + assList.size());
 		idInAdapter = new long[assList.size()];
 
 		for (ModelInterface a : assList) {

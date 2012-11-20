@@ -17,14 +17,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import camera.PhotoGallery;
 
 import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.AssignmentTable;
 import com.example.klien_projekttermin.database.Database;
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.nutiteq.components.WgsPoint;
@@ -46,6 +43,7 @@ public class AddAssignment extends ListActivity{
 	private int[] to = { R.id.text_item };
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
+	private boolean communicationBond=false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -109,12 +107,13 @@ public class AddAssignment extends ListActivity{
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
 
 		public void onServiceDisconnected(ComponentName arg0) {
+			communicationBond = false;
 		}
 
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			CommunicationBinder binder = (CommunicationBinder) service;
 			communicationService = binder.getService();
-
+			communicationBond = true;
 		}
 
 	};
@@ -146,7 +145,8 @@ public class AddAssignment extends ListActivity{
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-//		communicationService.unbindService(communicationServiceConnection);
+		if(communicationBond)
+		unbindService(communicationServiceConnection);
 	}
 	
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import map.CustomAdapter;
 import map.MapActivity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -27,6 +28,7 @@ import com.example.klien_projekttermin.R;
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
 
+	@SuppressLint("UseSparseArrays")
 	private HashMap<Integer, String> itemStrings = new HashMap<Integer, String>();
 	private Context context;
 	private String items;
@@ -39,11 +41,11 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		this.context = context;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = super.getView(position, convertView, parent);
 		EditText editText = (EditText) v.findViewById(R.id.text_item);
-		System.out.println("hallå "+editText);
 		if (editText!=null) {
 			if (itemStrings.get(position) != null) {
 				editText.setText(itemStrings.get(position));
@@ -72,28 +74,28 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	}
 
 	public void onFocusChange(View v, boolean hasFocus) {
-//		if (!hasFocus) {
-//			final int position = v.getId();
-//			final EditText Caption = (EditText) v;
-//			String s = Caption.getText().toString();
-//			if (!s.isEmpty()) {
-//				itemStrings.put(position, s);
-//			}
-//		}
-//		if (hasFocus && v.getId() == 1) {
-//			final EditText Caption = (EditText) v;
-//			String s = Caption.getText().toString();
-//			if (s.isEmpty()) {
-//				coordinateField();
-//			}
-//		}
-//		if (hasFocus && v.getId() == 6) {
-//			final EditText Caption = (EditText) v;
-//			String s = Caption.getText().toString();
-//			if (s.isEmpty()) {
-//				pictureAlternatives();
-//			}
-//		}
+		if (!hasFocus) {
+			final int position = v.getId();
+			final EditText Caption = (EditText) v;
+			String s = Caption.getText().toString();
+			if (!s.isEmpty()) {
+				itemStrings.put(position, s);
+			}
+		}
+		if (hasFocus && v.getId() == 1) {
+			final EditText Caption = (EditText) v;
+			String s = Caption.getText().toString();
+			if (s.isEmpty()) {
+				coordinateField();
+			}
+		}
+		if (hasFocus && v.getId() == 6) {
+			final EditText Caption = (EditText) v;
+			String s = Caption.getText().toString();
+			if (s.isEmpty()) {
+				pictureAlternatives();
+			}
+		}
 	}
 
 	private void pictureAlternatives() {
