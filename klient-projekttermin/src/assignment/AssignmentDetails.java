@@ -169,14 +169,14 @@ public class AssignmentDetails extends Activity {
 		textViewStreetname.setText(currentAssignment.getStreetName());
 		textViewCoord.setText("Latitud: " + currentAssignment.getLat()
 				+ "  Longitud: " + currentAssignment.getLon());
-		
+
 		//Fyller en sträng med aktuella agenter.
 		String temp = "";
 		for (int i = 0; i < currentAssignment.getAgents().size(); i++) {
 			temp = temp + currentAssignment.getAgents().get(i).getContactName() + ", ";
 		}
 		agentCount.setText(" Antal: " + currentAssignment.getAgents().size() + "(" + temp + ")");
-		
+
 	}
 
 	/**
@@ -197,11 +197,11 @@ public class AssignmentDetails extends Activity {
 						checkboxAssign.setEnabled(false); // disable checkbox
 
 						currentAssignment.addAgents(new Contact(currentUser));
-						
+
 						// Sätter status för att uppdraget är påbörjat.
 						currentAssignment
 								.setAssignmentStatus(AssignmentStatus.STARTED);
-						
+
 						// Uppdaterar Uppdraget med den nya kontakten.
 						db.updateModel((ModelInterface) currentAssignment,
 								getContentResolver());

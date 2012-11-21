@@ -151,7 +151,7 @@ public class AddAssignment extends ListActivity {
 		Assignment newAssignment = new Assignment(temp.get(0), json,
 				currentUser, false, temp.get(2), temp.get(3),
 				AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5));
-		
+
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
@@ -163,5 +163,5 @@ public class AddAssignment extends ListActivity {
 		if(communicationBond)
 		unbindService(communicationServiceConnection);
 	}
-	
+
 }

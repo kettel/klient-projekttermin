@@ -4,15 +4,6 @@
     android:id="@+id/LogInFunction"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
-     <Button
-        android:id="@+id/createUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/userName"
-        android:layout_centerHorizontal="true"
-        android:onClick="createUser"
-        android:text="@string/createUser" />
     
     <EditText
         android:id="@+id/userName"

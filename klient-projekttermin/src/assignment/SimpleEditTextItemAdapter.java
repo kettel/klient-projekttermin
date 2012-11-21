@@ -58,7 +58,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			editText.setId(position);
 			editText.setOnFocusChangeListener(this);
 		}
-		
+
 		return v;
 	}
 
@@ -131,7 +131,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		});
 		dialog.show();
 	}
-	
+
 	private Intent createIntent(int id){
 		Intent intent = new Intent(context, Camera.class);
 		intent.putExtra("calling-activity",id);

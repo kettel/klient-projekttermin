@@ -18,9 +18,9 @@ import android.net.Uri;
 import android.util.Log;
 
 public class AssignmentsContentProvider extends ContentProvider {
-	
+
 	private static final String PASSWORD = Database.PASSWORD;
-	
+
     private static final String TAG = "AssignmentsContentProvider";
 
     private static final String DATABASE_NAME = "assignments.db";
@@ -46,8 +46,8 @@ public class AssignmentsContentProvider extends ContentProvider {
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-        	String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
-        			+ Assignments.TABLE_NAME + "("
+        	String DATABASE_CREATE = "CREATE TABLE " 
+    				+ Assignments.TABLE_NAME + "("
     	            + Assignments.ASSIGNMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "  
     	    		+ Assignments.NAME + " VARCHAR(255), "
     	            + Assignments.LAT + " VARCHAR(255), "

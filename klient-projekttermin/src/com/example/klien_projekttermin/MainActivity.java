@@ -48,6 +48,7 @@ public class MainActivity extends ListActivity{
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
 	private static final String SENDER_ID = "943011390551";
+	private Database database;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -82,6 +83,7 @@ public class MainActivity extends ListActivity{
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				communicationService.setContext(getApplicationContext());
+				database = Database.getInstance(getApplicationContext());
 				//Har man lagt till ett nytt menyval lägger man till en action för dessa här.
 				switch (arg2) {
 				case 0:

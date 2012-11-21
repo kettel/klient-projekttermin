@@ -87,9 +87,6 @@
         </activity>
         <activity android:name="assignment.AssignmentOverview" >
         </activity>
-        <activity android:name="assignment.AddAssignment" 
-            android:windowSoftInputMode="adjustPan">
-        </activity>
         <activity
             android:name="assignment.AddAssignment"
             android:label="@string/addAssignment"
@@ -119,9 +116,6 @@
    		<provider
             android:name="com.example.klien_projekttermin.database.MessagesContentProvider" 
             android:authorities="com.example.klien_projekttermin.database.MessagesContentProvider" />
-   		<provider
-            android:name="com.example.klien_projekttermin.database.AuthenticationContentProvider" 
-            android:authorities="com.example.klien_projekttermin.database.AuthenticationContentProvider" />
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->

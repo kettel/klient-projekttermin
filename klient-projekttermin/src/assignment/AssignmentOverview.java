@@ -35,7 +35,7 @@ public class AssignmentOverview extends ListActivity {
 	private Database db;
 	private List<ModelInterface> assList;
 	private String currentUser;
-	
+
 	//--------ComService
 		private CommunicationService communicationService;
 		private boolean communicationBond = false;
@@ -45,7 +45,7 @@ public class AssignmentOverview extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
-		
+
 		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
 		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
 
@@ -56,7 +56,7 @@ public class AssignmentOverview extends ListActivity {
 		}
 
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -162,7 +162,7 @@ public class AssignmentOverview extends ListActivity {
 			}
 		});
 	}
-	
+
 	/**
 	 * ComService för att skicka till server
 	 */
@@ -221,7 +221,7 @@ public class AssignmentOverview extends ListActivity {
 				db.deleteFromDB(a, getContentResolver());
 				// Sätter status för att uppdraget har avslutats.
 				a.setAssignmentStatus(AssignmentStatus.FINISHED);
-				
+
 				communicationService.sendAssignment(a);
 			}
 
