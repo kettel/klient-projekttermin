@@ -150,7 +150,7 @@ public class AddAssignment extends ListActivity {
 				.getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), json,
 				currentUser, false, temp.get(2), temp.get(3),
-				AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5));
+				AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5), BAJSPRIO);
 		
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);

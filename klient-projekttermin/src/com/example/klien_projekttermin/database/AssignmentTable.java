@@ -34,6 +34,7 @@ public class AssignmentTable {
 		public static final String STREETNAME = "streetname";
 		public static final String SITENAME = "sitename";
 		public static final String TIMESTAMP = "timestamp";
+		public static final String PRIORITY = "assignment_priority";
 		
 	}
 }

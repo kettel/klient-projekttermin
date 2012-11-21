@@ -8,6 +8,7 @@ import java.util.List;
 import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 
 import models.Assignment;
+import models.AssignmentPriority;
 import models.AssignmentStatus;
 import models.Contact;
 import models.ModelInterface;
@@ -36,10 +37,8 @@ public class AssignmentsDB {
 		values.put(Assignments.LON, assignment.getLon());
 		values.put(Assignments.REGION, assignment.getRegion());
 		values.put(Assignments.SENDER, assignment.getSender());
-		values.put(Assignments.AGENTS,
-				listToString(assignment.getAgents()));
-		values.put(Assignments.EXTERNAL_MISSION,
-				assignment.isExternalMission());
+		values.put(Assignments.AGENTS, listToString(assignment.getAgents()));
+		values.put(Assignments.EXTERNAL_MISSION, assignment.isExternalMission());
 		values.put(Assignments.DESCRIPTION,
 				assignment.getAssignmentDescription());
 		values.put(Assignments.TIMESPAN, assignment.getTimeSpan());
@@ -50,6 +49,7 @@ public class AssignmentsDB {
 		values.put(Assignments.STREETNAME, assignment.getStreetName());
 		values.put(Assignments.SITENAME, assignment.getSiteName());
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
+		values.put(Assignments.PRIORITY, assignment.getAsssignmentPriority().toString());
 		contentResolver.insert(Assignments.CONTENT_URI, values);
 	}
 
@@ -67,6 +67,7 @@ public class AssignmentsDB {
 				boolean externalMission = false;
 				Bitmap image = null;
 				AssignmentStatus status = AssignmentStatus.NOT_STARTED;
+				AssignmentPriority priority = AssignmentPriority.PRIO_NORMAL;
 				List<Contact> agents = new ArrayList<Contact>();
 
 				for (int i = 0; i < cursor.getColumnCount(); i++) {
@@ -120,6 +121,10 @@ public class AssignmentsDB {
 							.equalsIgnoreCase(Assignments.TIMESTAMP)) {
 						timestamp = Long.valueOf(cursor.getString(i));
 					}
+					else if (currentCol
+							.equalsIgnoreCase(Assignments.PRIORITY)) {
+						priority = AssignmentPriority.valueOf(cursor.getString(i));
+					}
 				}
 				Assignment assignment = new Assignment(id, // id från DB
 						name, // name
@@ -135,7 +140,8 @@ public class AssignmentsDB {
 						image, // cameraImage
 						streetname, // streetName
 						sitename, // siteName
-						timestamp); // timeStamp
+						timestamp,// timeStamp
+						priority); // priority
 
 				assignmentList.add(assignment);
 
@@ -184,10 +190,8 @@ public class AssignmentsDB {
 		values.put(Assignments.LON, assignment.getLon());
 		values.put(Assignments.REGION, assignment.getRegion());
 		values.put(Assignments.SENDER, assignment.getSender());
-		values.put(Assignments.AGENTS,
-				listToString(assignment.getAgents()));
-		values.put(Assignments.EXTERNAL_MISSION,
-				assignment.isExternalMission());
+		values.put(Assignments.AGENTS, listToString(assignment.getAgents()));
+		values.put(Assignments.EXTERNAL_MISSION, assignment.isExternalMission());
 		values.put(Assignments.DESCRIPTION,
 				assignment.getAssignmentDescription());
 		values.put(Assignments.TIMESPAN, assignment.getTimeSpan());
@@ -198,9 +202,12 @@ public class AssignmentsDB {
 		values.put(Assignments.STREETNAME, assignment.getStreetName());
 		values.put(Assignments.SITENAME, assignment.getSiteName());
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
-		int updated = contentResolver.update(Assignments.CONTENT_URI, values,
-				Assignments.ASSIGNMENT_ID + " = " + Long.toString(assignment.getId()),
-				null);
+		values.put(Assignments.PRIORITY, assignment.getAsssignmentPriority().toString());
+		int updated = contentResolver.update(
+				Assignments.CONTENT_URI,
+				values,
+				Assignments.ASSIGNMENT_ID + " = "
+						+ Long.toString(assignment.getId()), null);
 		Log.d("DB", "Uppdaterade " + updated + " assignments.");
 	}
 
