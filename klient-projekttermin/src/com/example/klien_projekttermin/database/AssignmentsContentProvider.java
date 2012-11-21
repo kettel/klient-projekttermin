@@ -62,7 +62,8 @@ public class AssignmentsContentProvider extends ContentProvider {
     	            + Assignments.CAMERAIMAGE + " BLOB, "
     	            + Assignments.STREETNAME + " VARCHAR(255), "
     	            + Assignments.SITENAME + " VARCHAR(255), " 
-    	            + Assignments.TIMESTAMP + " VARCHAR(255));";
+    	            + Assignments.TIMESTAMP + " VARCHAR(255),"
+    	            + Assignments.PRIORITY + "VARCHAR(255));";
             db.execSQL(DATABASE_CREATE);
         }
 
@@ -90,7 +91,7 @@ public class AssignmentsContentProvider extends ContentProvider {
         }
 
         int count = db.delete(Assignments.TABLE_NAME, where, whereArgs);
-        // Underr�tta lyssnare
+        // Underrätta lyssnare
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
@@ -205,5 +206,6 @@ public class AssignmentsContentProvider extends ContentProvider {
         assignmentsProjectionMap.put(Assignments.STREETNAME, Assignments.STREETNAME);
         assignmentsProjectionMap.put(Assignments.SITENAME, Assignments.SITENAME);
         assignmentsProjectionMap.put(Assignments.TIMESTAMP, Assignments.TIMESTAMP);
+        assignmentsProjectionMap.put(Assignments.PRIORITY, Assignments.PRIORITY);
     }
 }

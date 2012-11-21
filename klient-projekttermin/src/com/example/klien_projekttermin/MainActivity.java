@@ -13,6 +13,7 @@ import camera.Camera;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Assignment;
+import models.AssignmentPriority;
 import models.AssignmentStatus;
 import models.Contact;
 import models.MessageModel;
@@ -46,7 +47,7 @@ public class MainActivity extends ListActivity {
 	private static final String SENDER_ID = "943011390551";
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		testDB(this);
+		//testDB(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 //		GCMRegistrar.checkDevice(this);
@@ -105,7 +106,7 @@ public class MainActivity extends ListActivity {
 	}
 	private void testDB(Context context) {
 		Database db = Database.getInstance(context);
-		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning", "Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED,"Gatunamn", "Platsnamn"),getContentResolver());
+		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning", "Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED,"Gatunamn", "Platsnamn", AssignmentPriority.PRIO_HIGH),getContentResolver());
 		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
 		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera", "Sändare"), getContentResolver());
 		Log.d("DB","** Uppdrag **");
@@ -113,7 +114,7 @@ public class MainActivity extends ListActivity {
 		for (ModelInterface modelInterface : assignments) {
 			Assignment assignment = (Assignment) modelInterface;
 			Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
-			Assignment assignmentUpdate = new Assignment("Uppdaterat namn", "Uppdaterad sändare", false, "Uppdaterad beskrivning", "Uppdaterat tidsspann", AssignmentStatus.NEED_HELP, "Uppdaterad gatunamn", "Uppdaterad plats");
+			Assignment assignmentUpdate = new Assignment("Uppdaterat namn", "Uppdaterad sändare", false, "Uppdaterad beskrivning", "Uppdaterat tidsspann", AssignmentStatus.NEED_HELP, "Uppdaterad gatunamn", "Uppdaterad plats", AssignmentPriority.PRIO_HIGH);
 			assignmentUpdate.setId(assignment.getId());
 			db.updateModel(assignmentUpdate, getContentResolver());
 		}

@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import map.MapActivity;
 import models.Assignment;
+import models.AssignmentPriority;
 import models.AssignmentStatus;
 import android.app.ListActivity;
 import android.content.ComponentName;
@@ -40,8 +41,8 @@ public class AddAssignment extends ListActivity {
 	double lon = 0;
 	private String json;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-	private String[] dataString = { "Name", "coord", "Uppdragsbeskrivning",
-			"uppskattadtid", "gatuadress", "uppdragsplats", "bild" };
+	private String[] dataString = { "Uppdragsnamn", "Koordinater", "Uppdragsbeskrivning",
+			"Uppskattad tid", "Gatuadress", "Uppdragsplats", "Bild", "Prioritet" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.text_item };
@@ -80,6 +81,7 @@ public class AddAssignment extends ListActivity {
 			break;
 		}
 	}
+	
 	private void loadContent() {
 		data.clear();
 		for (String s : dataString) {
@@ -150,7 +152,7 @@ public class AddAssignment extends ListActivity {
 				.getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), json,
 				currentUser, false, temp.get(2), temp.get(3),
-				AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5), BAJSPRIO);
+				AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5), AssignmentPriority.PRIO_HIGH);
 		
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);

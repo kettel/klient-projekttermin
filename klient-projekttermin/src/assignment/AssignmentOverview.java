@@ -103,6 +103,7 @@ public class AssignmentOverview extends ListActivity {
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
 				getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
 		this.setListAdapter(adapter);
+		
 	}
 
 	/**

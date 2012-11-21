@@ -49,7 +49,8 @@ public class AssignmentsDB {
 		values.put(Assignments.STREETNAME, assignment.getStreetName());
 		values.put(Assignments.SITENAME, assignment.getSiteName());
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
-		values.put(Assignments.PRIORITY, assignment.getAsssignmentPriority().toString());
+		values.put(Assignments.PRIORITY, assignment.getAssignmentPriority()
+				.toString());
 		contentResolver.insert(Assignments.CONTENT_URI, values);
 	}
 
@@ -87,10 +88,10 @@ public class AssignmentsDB {
 					} else if (currentCol.equalsIgnoreCase(Assignments.AGENTS)) {
 						String[] agentArray = cursor.getString(i).split("/");
 						for (String agent : agentArray) {
-//							agents.add(new Contact(agent));
-							if(!agent.equals("")){
+							// agents.add(new Contact(agent));
+							if (!agent.equals("")) {
 								agents.add(new Contact(agent));
-								}
+							}
 						}
 					} else if (currentCol
 							.equalsIgnoreCase(Assignments.EXTERNAL_MISSION)) {
@@ -120,10 +121,10 @@ public class AssignmentsDB {
 					} else if (currentCol
 							.equalsIgnoreCase(Assignments.TIMESTAMP)) {
 						timestamp = Long.valueOf(cursor.getString(i));
-					}
-					else if (currentCol
+					} else if (currentCol
 							.equalsIgnoreCase(Assignments.PRIORITY)) {
-						priority = AssignmentPriority.valueOf(cursor.getString(i));
+						priority = AssignmentPriority.valueOf(cursor
+								.getString(i));
 					}
 				}
 				Assignment assignment = new Assignment(id, // id från DB
@@ -202,7 +203,8 @@ public class AssignmentsDB {
 		values.put(Assignments.STREETNAME, assignment.getStreetName());
 		values.put(Assignments.SITENAME, assignment.getSiteName());
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
-		values.put(Assignments.PRIORITY, assignment.getAsssignmentPriority().toString());
+		values.put(Assignments.PRIORITY, assignment.getAssignmentPriority()
+				.toString());
 		int updated = contentResolver.update(
 				Assignments.CONTENT_URI,
 				values,

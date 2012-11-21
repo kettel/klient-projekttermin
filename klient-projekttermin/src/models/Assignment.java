@@ -382,7 +382,7 @@ public class Assignment implements ModelInterface {
 		return assignmentTimeStamp;
 	}
 	
-	public AssignmentPriority getAsssignmentPriority(){
+	public AssignmentPriority getAssignmentPriority(){
 		return assignmentPrio;
 	}
 	
