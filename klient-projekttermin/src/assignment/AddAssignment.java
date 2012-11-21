@@ -1,5 +1,6 @@
 package assignment;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
+import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,7 +19,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 import camera.PhotoGallery;
 
 import com.example.klien_projekttermin.ActivityConstants;
@@ -29,8 +30,12 @@ import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class AddAssignment extends ListActivity {
+public class AddAssignment extends ListActivity implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// --------ComService
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
@@ -48,6 +53,8 @@ public class AddAssignment extends ListActivity {
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
 	private String currentUser;
+	private Bitmap bm;
+	@SuppressLint("UseSparseArrays")
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,27 +66,33 @@ public class AddAssignment extends ListActivity {
 		bindService(intent, communicationServiceConnection,
 				Context.BIND_AUTO_CREATE);
 		// ---End
-
 		setContentView(R.layout.activity_add_assignment);
 		loadContent();
+
 		adapter = new SimpleEditTextItemAdapter(this, data,
 				R.layout.textfield_item, from, to);
 		setListAdapter(adapter);
 
-		int callingActivity = getIntent().getIntExtra("calling-activity", 0);
-		currentUser = getIntent().getExtras().getString("currentUser");
+	}
+	
 
-		switch (callingActivity) {
-		case ActivityConstants.MAP_ACTIVITY:
-			adapter.textToItem(1, fromMap());
-			break;
-		case ActivityConstants.MAIN_ACTIVITY:
-			break;
-		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
-			adapter.textToItem(6, fromCamera());
-			break;
+	@Override
+	protected void onNewIntent(Intent intent) {
+		setIntent(intent);
+		super.onNewIntent(intent);
+	}
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == ActivityConstants.RESULT_FROM_MAP) {
+			fromMap(data);
+		} else if (resultCode == ActivityConstants.RESULT_FROM_CAMERA) {
+			fromCamera(data);
 		}
 	}
+
 	private void loadContent() {
 		data.clear();
 		for (String s : dataString) {
@@ -89,28 +102,35 @@ public class AddAssignment extends ListActivity {
 		}
 	}
 
-	private String fromCamera() {
-		Intent intent = getIntent();
+	private void fromCamera(Intent intent) {
 		json = intent.getStringExtra(PhotoGallery.picture);
 		Gson gson = new Gson();
 		Type type = new TypeToken<Bitmap>() {
 		}.getType();
-		Bitmap bm = gson.fromJson(json, type);
-		return json;
+		bm = gson.fromJson(json, type);
+		adapter.textToItem(6, "Bifogad bild");
+		runOnUiThread(new Runnable() {
+			
+			public void run() {
+				adapter.notifyDataSetChanged();
+//				getListView().invalidateViews();
+			}
+		});
 	}
 
-	private String fromMap() {
-		Intent intent = getIntent();
+	private void fromMap(Intent intent) {
 		json = intent.getStringExtra(MapActivity.coordinates);
 		Gson gson = new Gson();
 		Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
+
 		WgsPoint[] co = gson.fromJson(json, type);
 		StringBuilder sb = new StringBuilder();
-		for (WgsPoint wgsPoint : co) {
-			sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
-		}
-		return sb.toString();
+			for (WgsPoint wgsPoint : co) {
+				sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
+			}
+		adapter.textToItem(1, sb.toString());
+		adapter.notifyDataSetChanged();
 	}
 
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
@@ -145,13 +165,13 @@ public class AddAssignment extends ListActivity {
 	}
 
 	private void saveToDB() {
-		 db = Database.getInstance(getApplicationContext());
+		db = Database.getInstance(getApplicationContext());
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) getListAdapter())
 				.getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), json,
 				currentUser, false, temp.get(2), temp.get(3),
-				AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5));
-		
+				AssignmentStatus.NOT_STARTED, bm, temp.get(4), temp.get(5));
+
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
@@ -160,8 +180,8 @@ public class AddAssignment extends ListActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if(communicationBond)
-		unbindService(communicationServiceConnection);
+		if (communicationBond)
+			unbindService(communicationServiceConnection);
 	}
-	
+
 }
