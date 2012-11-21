@@ -18,7 +18,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.klient_projekttermin.R;
 
-import database.AssignmentTable.Assignments;
+import database.AssignmentTable;
 import database.Database;
 
 public class AssignmentOverview extends ListActivity {
@@ -60,9 +60,14 @@ public class AssignmentOverview extends ListActivity {
 
 	public void loadAssignmentList() {
 		getAssHeadsFromDatabase();
+		/**
+		 * SE FAN TILL ATT ÄNDRA DEN HÅRDKODADE CURSORN
+		 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		 */
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				getContentResolver().query(Assignments.CONTENT_URI, null,
-						"_id is not null", null, null), false);
+				getContentResolver().query(
+						AssignmentTable.Assignments.CONTENT_URI, null, null,
+						null, null), false);
 		this.setListAdapter(adapter);
 	}
 
@@ -76,7 +81,6 @@ public class AssignmentOverview extends ListActivity {
 		assList = db.getAllFromDB(new Assignment(), getContentResolver());
 		int i = 0;
 		String[] tempHeadArr = new String[assList.size()];
-		System.out.println("SIZE : " + assList.size());
 		idInAdapter = new long[assList.size()];
 
 		for (ModelInterface a : assList) {
@@ -99,7 +103,7 @@ public class AssignmentOverview extends ListActivity {
 
 				Intent myIntent = new Intent(AssignmentOverview.this,
 						AssignmentDetails.class);
-				
+
 				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
 				AssignmentOverview.this.startActivity(myIntent);
 			}
@@ -113,17 +117,16 @@ public class AssignmentOverview extends ListActivity {
 	public void setLongItemClickListener() {
 		// Skapar en lyssnare som lyssnar efter l�nga intryckningar
 		this.getListView().setOnItemLongClickListener(
-				
-				new OnItemLongClickListener() {
 
-					
-					public boolean onItemLongClick(AdapterView<?> arg0,
-							View arg1, int eraseAtPos, long arg3) {
-						showEraseOption(idInAdapter[eraseAtPos]);
-						
-						return true;
-					}
-				});
+		new OnItemLongClickListener() {
+
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int eraseAtPos, long arg3) {
+				showEraseOption(idInAdapter[eraseAtPos]);
+
+				return true;
+			}
+		});
 	}
 
 	/*

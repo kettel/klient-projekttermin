@@ -23,7 +23,7 @@ import database.Database;
 
 public class AssignmentDetails extends Activity {
 
-	Database db = Database.getInstance(getApplicationContext());
+	
 	private long assignmentID;
 	private TextView textViewAssName;
 	private TextView textViewDescription;
@@ -34,11 +34,13 @@ public class AssignmentDetails extends Activity {
 	private CheckBox checkboxAssign;
 	private ImageView image;
 	List<ModelInterface> listAssignments;
+	private Database db;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_uppdrag);
+		db = Database.getInstance(getApplicationContext());
 
 		// H�mtar intent f�r att n� extras s� som ID:t som clickades p� i
 		// assignmentoverview.

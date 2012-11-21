@@ -95,29 +95,29 @@ public class GCMIntentService extends GCMBaseIntentService {
 	 */
 	private static void generateNotification(Context context, String message) {
 		int icon = R.drawable.ic_launcher;
-        long when = System.currentTimeMillis(); // can change this to a future time if desired
-        String title = context.getString(R.string.app_name);
-        NotificationManager notificationManager = 
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		long when = System.currentTimeMillis(); // can change this to a future
+												// time if desired
+		String title = context.getString(R.string.app_name);
+		NotificationManager notificationManager = (NotificationManager) context
+				.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent notificationIntent = new Intent(context, MainActivity.class);
+		Intent notificationIntent = new Intent(context, MainActivity.class);
 
-        // set intent so it does not start a new activity
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent intent = PendingIntent.getActivity(context, 0, notificationIntent, 0);        
-        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);            
+		// set intent so it does not start a new activity
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent intent = PendingIntent.getActivity(context, 0,
+				notificationIntent, 0);
+		Uri defaultSound = RingtoneManager
+				.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-         Notification notification = new NotificationCompat.Builder(context)
-         .setContentTitle(title)
-         .setContentText(message)
-         .setContentIntent(intent)
-         .setSmallIcon(icon)
-         .setLights(Color.YELLOW, 1, 2)
-         .setAutoCancel(true)
-         .setSound(defaultSound)
-         .build();
+		Notification notification = new NotificationCompat.Builder(context)
+				.setContentTitle(title).setContentText(message)
+				.setContentIntent(intent).setSmallIcon(icon)
+				.setLights(Color.YELLOW, 1, 2).setAutoCancel(true)
+				.setSound(defaultSound).build();
 
-        notificationManager.notify(0, notification);
+		notificationManager.notify(0, notification);
 	}
 
 }

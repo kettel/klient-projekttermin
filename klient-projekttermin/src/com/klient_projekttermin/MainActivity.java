@@ -264,8 +264,8 @@ public class MainActivity extends ListActivity {
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			 String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
-			 System.out.println(newMessage);
+			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
+			System.out.println(newMessage);
 			// mDisplay.append(newMessage + "\n");
 		}
 	};

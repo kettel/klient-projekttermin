@@ -3,6 +3,7 @@ package communicationModule;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
 
@@ -80,5 +81,6 @@ public class CommunicationService extends Service{
 			return CommunicationService.this;
 		}
 	}
+
 }
 

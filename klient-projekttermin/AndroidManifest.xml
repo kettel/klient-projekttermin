@@ -40,14 +40,15 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-				<category android:name="com.klient_projekttermin" />
+
+                <category android:name="com.klient_projekttermin" />
             </intent-filter>
         </receiver>
 
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -90,6 +91,11 @@
             android:label="display" >
         </activity>
         <activity android:name="assignment.AssignmentOverview" >
+        </activity>
+        <activity
+            android:name="assignment.AddAssignment"
+            android:label="@string/addAssignment"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="assignment.AssignmentDetails"

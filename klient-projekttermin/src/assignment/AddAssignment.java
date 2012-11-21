@@ -41,9 +41,10 @@ public class AddAssignment extends ListActivity{
 			"uppskattadtid", "gatuadress", "uppdragsplats", "bild" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
-	private int[] to = { R.id.editText1 };
+	private int[] to = { R.id.text_item };
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
+	private boolean communicationBond=false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -107,12 +108,13 @@ public class AddAssignment extends ListActivity{
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
 
 		public void onServiceDisconnected(ComponentName arg0) {
+			communicationBond = false;
 		}
 
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			CommunicationBinder binder = (CommunicationBinder) service;
 			communicationService = binder.getService();
-
+			communicationBond = true;
 		}
 
 	};
@@ -144,7 +146,8 @@ public class AddAssignment extends ListActivity{
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-//		communicationService.unbindService(communicationServiceConnection);
+		if(communicationBond)
+		unbindService(communicationServiceConnection);
 	}
 	
 }
