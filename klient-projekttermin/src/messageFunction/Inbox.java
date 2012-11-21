@@ -38,12 +38,12 @@ public class Inbox extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
-		
+
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			userName = extras.getString("USER");
 		}
-		
+
 		//Ropar p� en metod som skapar en lista �ver alla kontakter som anv�ndaren har haft en konversation med.
 		loadListOfSenders();
 	}
@@ -190,22 +190,22 @@ public class Inbox extends Activity {
 
 		listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
 
-
 		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
 			messageModel = (MessageModel) peopleEngagedInConversation.get(i);
 
-			if(messageModel.getReciever().toString().equals(userName)){
+			if(messageModel.getReciever().toString().toLowerCase().equals(userName.toLowerCase())){
 				if(!setOfPeople.contains(messageModel.getSender().toString())){
-				setOfPeople.add(messageModel.getSender().toString());
-				contactAndIdMap.put(messageModel.getSender().toString(), messageModel.getId());
+					setOfPeople.add(messageModel.getSender().toString());
+					contactAndIdMap.put(messageModel.getSender().toString(), messageModel.getId());
 				}
 			}
-			
-			else if (!setOfPeople.contains(messageModel.getReciever().toString())) {
 
+			if(messageModel.getSender().toString().toLowerCase().equals(userName.toLowerCase())){
+
+				if (!setOfPeople.contains(messageModel.getReciever().toString())){
 					setOfPeople.add(messageModel.getReciever().toString());
 					contactAndIdMap.put(messageModel.getReciever().toString(), messageModel.getId());
-				
+				}
 			}	
 		}
 		//Skapar en string[] som är lika lång som listan som hämtades.
