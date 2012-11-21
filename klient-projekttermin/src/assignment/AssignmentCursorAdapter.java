@@ -1,7 +1,7 @@
 package assignment;
 
-import com.example.klien_projekttermin.database.AssignmentTable;
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
+import database.AssignmentTable;
+import database.AssignmentTable.Assignments;
 
 import android.content.ContentResolver;
 import android.content.Context;

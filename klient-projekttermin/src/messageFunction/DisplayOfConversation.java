@@ -28,11 +28,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
-
+import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+
+import database.Database;
 
 
 public class DisplayOfConversation extends Activity {

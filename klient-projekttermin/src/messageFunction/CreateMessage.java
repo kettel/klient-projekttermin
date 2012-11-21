@@ -16,13 +16,12 @@ import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
-
+import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
 import contacts.ContactsCursorAdapter;
+import database.Database;
 
 public class CreateMessage extends Activity {
 	private AutoCompleteTextView reciever;

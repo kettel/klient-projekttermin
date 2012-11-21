@@ -1,6 +1,6 @@
 package contacts;
 
-import com.example.klien_projekttermin.database.ContactTable;
+import database.ContactTable;
 
 import android.content.ContentResolver;
 import android.content.Context;

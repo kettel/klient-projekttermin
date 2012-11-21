@@ -6,15 +6,11 @@ import java.util.List;
 
 import models.MessageModel;
 import models.ModelInterface;
-
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +20,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.klient_projekttermin.R;
+
+import database.Database;
 
 public class Inbox extends Activity {
 

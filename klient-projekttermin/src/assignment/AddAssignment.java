@@ -17,19 +17,17 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import camera.PhotoGallery;
 
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.AssignmentTable;
-import com.example.klien_projekttermin.database.Database;
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+
+import database.Database;
 
 public class AddAssignment extends ListActivity{
 

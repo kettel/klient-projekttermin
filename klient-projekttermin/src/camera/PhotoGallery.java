@@ -2,7 +2,6 @@ package camera;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import map.CustomAdapter;
@@ -34,9 +33,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import assignment.AddAssignment;
 
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
 import com.google.gson.Gson;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 
 public class PhotoGallery extends Activity {
 

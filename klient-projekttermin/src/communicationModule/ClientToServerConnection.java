@@ -5,9 +5,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.nutiteq.wrappers.List;
+
+import database.Database;
 
 import models.Assignment;
 import models.Contact;
