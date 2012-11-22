@@ -104,15 +104,22 @@ public class PhotoGallery extends Activity implements Serializable{
 			break;
 		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
 			Intent intent = new Intent(PhotoGallery.this, AddAssignment.class);
-			String encodedImage = getStringFromBitmap(images.get(currentPictureId));
+			String bifogad_bild = getStringFromBitmap(images.get(currentPictureId));
 			JSONObject jsonObj = null;
 			try {
-				jsonObj = new JSONObject("{\"image\":\" + encodedImage + \"}");
+				jsonObj = new JSONObject("{\"image\":\" + bifogad_bild + \"}");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			
+			String jsonString = "";
+			try {
+				jsonString = jsonObj.getString("image");
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 			intent.putExtra("calling-activity", ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-			intent.putExtra(picture, jsonObj.toString());
+			intent.putExtra(picture, jsonString);
 			setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
 			finish();
 		default:
