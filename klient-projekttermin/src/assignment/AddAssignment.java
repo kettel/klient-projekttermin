@@ -173,12 +173,6 @@ public class AddAssignment extends ListActivity implements Serializable{
 				AssignmentStatus.NOT_STARTED, bm, temp.get(4), temp.get(5));
 
 		db.addToDB(newAssignment, getContentResolver());
-		// testing
-//		Gson testGson = new Gson();
-//		String test =  testGson.toJson(newAssignment);
-//		System.out.println(test);
-//		Assignment testAss = testGson.fromJson(test, Assignment.class);
-//		db.addToDB(testAss, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
 	}
