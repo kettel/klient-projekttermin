@@ -1,12 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.klien_projekttermin"
+    package="com.klient_projekttermin"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="com.example.klien_projekttermin.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.klient_projekttermin.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- App receives GCM messages. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -19,14 +19,14 @@
 
     <!-- Permissions -->
     <permission
-        android:name="com.example.klien_projekttermin.permission.C2D_MESSAGE"
+        android:name="com.klient_projekttermin.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
     <!-- Features -->
     <uses-feature android:name="android.hardware.camera" />
 
     <uses-sdk
         android:minSdkVersion="15"
-        android:targetSdkVersion="15" />
+        android:targetSdkVersion="16" />
 
     <application
         android:icon="@drawable/loggakrona"
@@ -40,14 +40,13 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <category android:name="com.example.klien_projekttermin" />
+                <category android:name="com.klient_projekttermin" />
             </intent-filter>
         </receiver>
 
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-           
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -79,13 +78,15 @@
             android:label="@string/title_activity_log_viewer" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.klien_projekttermin.MainActivity" />
+                android:value="com.klient_projekttermin.MainActivity" />
         </activity>
         <activity
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-        <activity android:name="assignment.AssignmentOverview" >
+        <activity
+            android:name="assignment.AssignmentOverview"
+            android:label="@string/assignmentOverview" >
         </activity>
         <activity
             android:name="assignment.AddAssignment"
@@ -98,25 +99,23 @@
         </activity>
         <activity
             android:name="loginFunction.LogInFunction"
-            android:label="title_activity_log_in_function" >
-             <intent-filter>
+            android:label="@string/title_activity_login_function" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <!-- Database Content Providers -->
-   		<provider
-            android:name="com.example.klien_projekttermin.database.ContactsContentProvider" 
-            android:authorities="com.example.klien_projekttermin.database.ContactsContentProvider" />
-   		<provider
-            android:name="com.example.klien_projekttermin.database.AssignmentsContentProvider" 
-            android:authorities="com.example.klien_projekttermin.database.AssignmentsContentProvider" />
-   		<provider
-            android:name="com.example.klien_projekttermin.database.MessagesContentProvider" 
-            android:authorities="com.example.klien_projekttermin.database.MessagesContentProvider" />
-        
-
+        <provider
+            android:name="database.ContactsContentProvider"
+            android:authorities="database.ContactsContentProvider" />
+        <provider
+            android:name="database.AssignmentsContentProvider"
+            android:authorities="database.AssignmentsContentProvider" />
+        <provider
+            android:name="database.MessagesContentProvider"
+            android:authorities="database.MessagesContentProvider" />
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->

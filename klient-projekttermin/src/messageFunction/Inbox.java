@@ -4,17 +4,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import loginFunction.InactivityListener;
 import models.MessageModel;
 import models.ModelInterface;
-
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,7 +22,11 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class Inbox extends Activity {
+import com.klient_projekttermin.R;
+
+import database.Database;
+
+public class Inbox extends InactivityListener {
 
 	private ListView listOfPeopleEngagedInConversation;
 	private String[] peopleIveBeenTalkingTo;
@@ -38,12 +39,12 @@ public class Inbox extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
-		
+
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			userName = extras.getString("USER");
 		}
-		
+
 		//Ropar p� en metod som skapar en lista �ver alla kontakter som anv�ndaren har haft en konversation med.
 		loadListOfSenders();
 	}
@@ -190,22 +191,22 @@ public class Inbox extends Activity {
 
 		listOfPeopleEngagedInConversation = (ListView) findViewById(R.id.conversationContactsList);
 
-
 		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
 			messageModel = (MessageModel) peopleEngagedInConversation.get(i);
 
-			if(messageModel.getReciever().toString().equals(userName)){
+			if(messageModel.getReciever().toString().toLowerCase().equals(userName.toLowerCase())){
 				if(!setOfPeople.contains(messageModel.getSender().toString())){
-				setOfPeople.add(messageModel.getSender().toString());
-				contactAndIdMap.put(messageModel.getSender().toString(), messageModel.getId());
+					setOfPeople.add(messageModel.getSender().toString());
+					contactAndIdMap.put(messageModel.getSender().toString(), messageModel.getId());
 				}
 			}
-			
-			else if (!setOfPeople.contains(messageModel.getReciever().toString())) {
 
+			if(messageModel.getSender().toString().toLowerCase().equals(userName.toLowerCase())){
+
+				if (!setOfPeople.contains(messageModel.getReciever().toString())){
 					setOfPeople.add(messageModel.getReciever().toString());
 					contactAndIdMap.put(messageModel.getReciever().toString(), messageModel.getId());
-				
+				}
 			}	
 		}
 		//Skapar en string[] som är lika lång som listan som hämtades.

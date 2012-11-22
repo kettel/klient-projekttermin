@@ -11,17 +11,17 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/password"
-        android:hint="userName"
+        android:hint="@string/userName"
         android:ems="10"
         android:inputType="textPersonName" />
 
-    <EditText
+    <EditText 
         android:id="@+id/password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:hint="password"
+        android:hint="@string/password"
         android:ems="10"
         android:inputType="textPassword" >
 
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/password"
         android:layout_centerHorizontal="true"
-        android:text="logIn"
+        android:text="@string/login"
         android:onClick="logIn" />
     
 </RelativeLayout>

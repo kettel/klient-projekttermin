@@ -9,8 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.example.klien_projekttermin.database.AssignmentTable;
+import database.AssignmentTable;
 
 public class AssignmentCursorAdapter extends CursorAdapter {
 
