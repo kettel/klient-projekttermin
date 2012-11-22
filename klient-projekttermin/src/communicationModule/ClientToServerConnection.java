@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.example.klien_projekttermin.database.Database;
+import database.Database;
 import com.google.gson.Gson;
 import com.nutiteq.wrappers.List;
 
