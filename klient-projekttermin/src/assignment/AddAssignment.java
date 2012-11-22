@@ -1,5 +1,6 @@
 package assignment;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class AddAssignment extends InactivityListener implements Serializable{
+public class AddAssignment extends InactivityListener implements Serializable {
 
 	/**
 	 * 
@@ -51,8 +52,9 @@ public class AddAssignment extends InactivityListener implements Serializable{
 	private SimpleEditTextItemAdapter adapter;
 	private String currentUser;
 	private ListView lv;
-	@SuppressLint("UseSparseArrays")
+	private Bitmap bitmap;
 
+	@SuppressLint("UseSparseArrays")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -71,7 +73,7 @@ public class AddAssignment extends InactivityListener implements Serializable{
 		this.lv.setAdapter(adapter);
 
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		setIntent(intent);
@@ -98,7 +100,9 @@ public class AddAssignment extends InactivityListener implements Serializable{
 	}
 
 	private void fromCamera(Intent intent) {
-		jsonPict = intent.getStringExtra(PhotoGallery.picture);
+		bitmap = (Bitmap) intent.getExtras()
+				.getParcelable(PhotoGallery.picture);
+		jsonPict = "Bifogad bild";
 		adapter.textToItem(6, jsonPict);
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -109,6 +113,7 @@ public class AddAssignment extends InactivityListener implements Serializable{
 
 	private void fromMap(Intent intent) {
 		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
+		System.out.println(jsonCoord);
 		adapter.textToItem(1, jsonCoord);
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -148,30 +153,29 @@ public class AddAssignment extends InactivityListener implements Serializable{
 
 	private void saveToDB() {
 		db = Database.getInstance(getApplicationContext());
-		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv.getAdapter())
-				.getItemStrings();
+		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv
+				.getAdapter()).getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 				currentUser, false, temp.get(2), temp.get(3),
-				AssignmentStatus.NOT_STARTED, getBitmapFromString(temp.get(6)), temp.get(4), temp.get(5));
+				AssignmentStatus.NOT_STARTED, getByteArray(),
+				temp.get(4), temp.get(5));
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
 	}
 
-	private Bitmap getBitmapFromString(String jsonString) {
-		/**
-		* This Function converts the String back to Bitmap
-		* */
-		// om jsonStringen är null så lägger vi in en tomm bitmap bild
-		if (jsonString == null){
-			Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-			return Bitmap.createBitmap(100, 100, conf);
+	private byte[] getByteArray() {
+		if (bitmap != null) {
+			 ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+			 bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+			 byteArrayBitmapStream);
+			 byte[] b = byteArrayBitmapStream.toByteArray();
+			return b;
+		} else {
+			return new byte[2];
 		}
-		byte[] decodedString = Base64.decode(jsonString, Base64.DEFAULT);
-		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-		return decodedByte;
-		}
-	
+	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

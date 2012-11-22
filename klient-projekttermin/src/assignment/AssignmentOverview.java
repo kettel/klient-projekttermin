@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.database.Cursor;
 import android.widget.ListView;
 
 import com.example.klien_projekttermin.R;

@@ -1,5 +1,6 @@
 package camera;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -107,22 +109,9 @@ public class PhotoGallery extends InactivityListener implements Serializable{
 			break;
 		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
 			Intent intent = new Intent(PhotoGallery.this, AddAssignment.class);
-//			String bifogad_bild = getStringFromBitmap(images.get(currentPictureId));
-			JSONObject jsonObj = null;
-			try {
-				jsonObj = new JSONObject("{\"image\":\" Bifogad bild \"}");
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			
-			String jsonString = "";
-			try {
-				jsonString = jsonObj.getString("image");
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
 			intent.putExtra("calling-activity", ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-			intent.putExtra(picture, jsonString);
+			System.out.println(images.get(currentPictureId));
+			intent.putExtra(picture, images.get(currentPictureId));
 			setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
 			finish();
 		default:
@@ -142,6 +131,7 @@ public class PhotoGallery extends InactivityListener implements Serializable{
 //		 bitmapPicture.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY,
 //		 byteArrayBitmapStream);
 //		 byte[] b = byteArrayBitmapStream.toByteArray();
+//		 System.out.println(b);
 //		 encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
 //		 return encodedImage;
 //		 }

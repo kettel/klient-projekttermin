@@ -4,13 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.klien_projekttermin.database.Database;
-import communicationModule.CommunicationService;
-import communicationModule.IncomeingDataListners;
-import communicationModule.CommunicationService.CommunicationBinder;
-
-import camera.Camera;
-
 import loginFunction.InactivityListener;
 import map.MapActivity;
 import messageFunction.Inbox;
@@ -19,7 +12,6 @@ import models.AssignmentStatus;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
-import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +27,11 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
 import camera.Camera;
+
+import com.example.klien_projekttermin.database.Database;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.IncomeingDataListners;
 
 
 //import com.google.android.gcm.GCMRegistrar;

@@ -591,31 +591,10 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 						AddAssignment.class);
 				WgsPoint[] coords = { searchSuggestions.getList().get(choice)
 						.getPlace().getWgs() };
-				
-//				ParcebleHashMap ph = new ParcebleHashMap();
-//				ph.setItems(content);
-//				
-//				ParcebleId pi = new ParcebleId();
-//				pi.setId(ActivityConstants.MAP_ACTIVITY);
-//				
-//				ParcebleJson pj = new ParcebleJson();
-//				pj.setJson(gson.toJson(coords, type));
-//				
-//				Bundle b = new Bundle();
-//				b.putParcelable("HEJ", ph);
-//				b.putParcelable("COR", pj);
-//				b.putParcelable("ID", pi);
-//				
-//				intent.putExtras(b);
-				
 				intent.putExtra("calling-activity",
 						ActivityConstants.MAP_ACTIVITY);
 				intent.putExtra(contents, content);
 				intent.putExtra(coordinates, gson.toJson(coords, type));
-				System.out.println("SYSOSO " + intent.getStringExtra(coordinates));
-				System.out.println("CONTENTE" + intent.getSerializableExtra(contents));
-				
-				System.out.println("extras in map " + intent.getExtras().size());
 				setResult(ActivityConstants.RESULT_FROM_MAP, intent);
 				finish();
 			}
