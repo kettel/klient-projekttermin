@@ -160,6 +160,11 @@ public class AddAssignment extends ListActivity implements Serializable{
 		/**
 		* This Function converts the String back to Bitmap
 		* */
+		// om jsonStringen är null så lägger vi in en tomm bitmap bild
+		if (jsonString == null){
+			Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+			return Bitmap.createBitmap(100, 100, conf);
+		}
 		byte[] decodedString = Base64.decode(jsonString, Base64.DEFAULT);
 		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
 		return decodedByte;
