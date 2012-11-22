@@ -12,6 +12,7 @@ import android.os.IBinder;
 import com.google.gson.Gson;
 
 import models.Assignment;
+import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 
@@ -59,6 +60,11 @@ public class CommunicationService extends Service implements IncomeingDataListne
 	 */
 	public void sendContact (Contact contact){
 		transmisson = gson.toJson(contact);
+		ClientToServer.sendTransmisson(transmisson);
+	}
+	
+	public void sendAuthentication (AuthenticationModel authentication){
+		transmisson = gson.toJson(authentication);
 		ClientToServer.sendTransmisson(transmisson);
 	}
 	/**
