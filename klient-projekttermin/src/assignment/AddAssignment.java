@@ -26,7 +26,6 @@ import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -40,10 +39,8 @@ public class AddAssignment extends ListActivity implements Serializable{
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
 	// ----End
-
-	double lat = 0;
-	double lon = 0;
-	private String json;
+	private String jsonCoord = null;
+	private String jsonPict = null;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Name", "coord", "Uppdragsbeskrivning",
 			"uppskattadtid", "gatuadress", "uppdragsplats", "bild" };
@@ -53,7 +50,6 @@ public class AddAssignment extends ListActivity implements Serializable{
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
 	private String currentUser;
-	private Bitmap bm;
 	@SuppressLint("UseSparseArrays")
 
 	@Override
@@ -75,13 +71,11 @@ public class AddAssignment extends ListActivity implements Serializable{
 
 	}
 	
-
 	@Override
 	protected void onNewIntent(Intent intent) {
 		setIntent(intent);
 		super.onNewIntent(intent);
 	}
-
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -103,34 +97,23 @@ public class AddAssignment extends ListActivity implements Serializable{
 	}
 
 	private void fromCamera(Intent intent) {
-		json = intent.getStringExtra(PhotoGallery.picture);
-		Gson gson = new Gson();
-		Type type = new TypeToken<Bitmap>() {
-		}.getType();
-		bm = gson.fromJson(json, type);
-		adapter.textToItem(6, "Bifogad bild");
+		jsonPict = intent.getStringExtra(PhotoGallery.picture);
+		adapter.textToItem(6, jsonPict);
 		runOnUiThread(new Runnable() {
-			
 			public void run() {
 				adapter.notifyDataSetChanged();
-//				getListView().invalidateViews();
 			}
 		});
 	}
 
 	private void fromMap(Intent intent) {
-		json = intent.getStringExtra(MapActivity.coordinates);
-		Gson gson = new Gson();
-		Type type = new TypeToken<WgsPoint[]>() {
-		}.getType();
-
-		WgsPoint[] co = gson.fromJson(json, type);
-		StringBuilder sb = new StringBuilder();
-			for (WgsPoint wgsPoint : co) {
-				sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
+		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
+		adapter.textToItem(1, jsonCoord);
+		runOnUiThread(new Runnable() {
+			public void run() {
+				adapter.notifyDataSetChanged();
 			}
-		adapter.textToItem(1, sb.toString());
-		adapter.notifyDataSetChanged();
+		});
 	}
 
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
@@ -143,9 +126,7 @@ public class AddAssignment extends ListActivity implements Serializable{
 
 		public void onServiceDisconnected(ComponentName arg0) {
 			communicationBond = false;
-
 		}
-
 	};
 
 	@Override
@@ -168,10 +149,12 @@ public class AddAssignment extends ListActivity implements Serializable{
 		db = Database.getInstance(getApplicationContext());
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) getListAdapter())
 				.getItemStrings();
-		Assignment newAssignment = new Assignment(temp.get(0), json,
+		Gson gson = new Gson();
+		Type type = new TypeToken<Bitmap>() {
+		}.getType();
+		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 				currentUser, false, temp.get(2), temp.get(3),
-				AssignmentStatus.NOT_STARTED, bm, temp.get(4), temp.get(5));
-
+				AssignmentStatus.NOT_STARTED, (Bitmap)gson.fromJson(temp.get(6), type), temp.get(4), temp.get(5));
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
