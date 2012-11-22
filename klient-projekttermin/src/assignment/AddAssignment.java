@@ -1,7 +1,6 @@
 package assignment;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,8 +14,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import camera.PhotoGallery;
@@ -24,8 +25,6 @@ import camera.PhotoGallery;
 import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -149,17 +148,23 @@ public class AddAssignment extends ListActivity implements Serializable{
 		db = Database.getInstance(getApplicationContext());
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) getListAdapter())
 				.getItemStrings();
-		Gson gson = new Gson();
-		Type type = new TypeToken<Bitmap>() {
-		}.getType();
 		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 				currentUser, false, temp.get(2), temp.get(3),
-				AssignmentStatus.NOT_STARTED, (Bitmap)gson.fromJson(temp.get(6), type), temp.get(4), temp.get(5));
+				AssignmentStatus.NOT_STARTED, getBitmapFromString(temp.get(6)), temp.get(4), temp.get(5));
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
 	}
 
+	private Bitmap getBitmapFromString(String jsonString) {
+		/**
+		* This Function converts the String back to Bitmap
+		* */
+		byte[] decodedString = Base64.decode(jsonString, Base64.DEFAULT);
+		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+		return decodedByte;
+		}
+	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
