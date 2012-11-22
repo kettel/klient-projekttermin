@@ -104,10 +104,10 @@ public class PhotoGallery extends Activity implements Serializable{
 			break;
 		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
 			Intent intent = new Intent(PhotoGallery.this, AddAssignment.class);
-			String bifogad_bild = getStringFromBitmap(images.get(currentPictureId));
+//			String bifogad_bild = getStringFromBitmap(images.get(currentPictureId));
 			JSONObject jsonObj = null;
 			try {
-				jsonObj = new JSONObject("{\"image\":\" + bifogad_bild + \"}");
+				jsonObj = new JSONObject("{\"image\":\" Bifogad bild \"}");
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
