@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
+import communicationModule.IncomeingDataListners;
 import communicationModule.CommunicationService.CommunicationBinder;
 
 import camera.Camera;
@@ -36,7 +37,7 @@ import camera.Camera;
 
 //import com.google.android.gcm.GCMRegistrar;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends ListActivity implements IncomeingDataListners{
 	
 	private String userName;
 
@@ -44,6 +45,7 @@ public class MainActivity extends ListActivity {
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
 	private static final String SENDER_ID = "943011390551";
+	IncomeingDataListners test = this;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		testDB(this);
@@ -81,9 +83,9 @@ public class MainActivity extends ListActivity {
 				case 0:
 					myIntent = new Intent(MainActivity.this,MapActivity.class);
 					myIntent.putExtra("USER", userName);
-
 					break;
 				case 1:
+					communicationService.registerIncomeingMessagelistener(test);
 					myIntent = new Intent(MainActivity.this,Inbox.class);
 					myIntent.putExtra("USER", userName);
 					break;
@@ -207,6 +209,13 @@ public class MainActivity extends ListActivity {
 		}
 
 	   };
+	public void handelIncomeingMessage() {
+		// här ska man göra grejer
+	}
+	public void handelIncomeingAssignment() {
+		// här ska man göra grejer
+		
+	}
 	
 
 

@@ -43,11 +43,15 @@ public class ClientToServerConnection extends Thread  {
 	private Context context = null;
 	private int waitTime = 1;
 	private long heartbeatTime = 0;
+	private IncomeingDataListners CommunicationService = null;
 	/**
 	 * en tom konstruktor
 	 */
 	public ClientToServerConnection(){
 		
+	}
+	public void RegisterCommunicationService(IncomeingDataListners listner){
+		CommunicationService = listner;
 	}
 	/**
 	 * Används för att förhindra att data sickas 
@@ -92,7 +96,7 @@ public class ClientToServerConnection extends Thread  {
 	 */
 	private synchronized void timeToWait(){
 		if(waitTime < 60000){
-			waitTime = waitTime+30;
+			waitTime = waitTime+50;
 		}
 		try {
 			this.wait(waitTime);	
@@ -150,10 +154,11 @@ public class ClientToServerConnection extends Thread  {
 //							}
 						}else if (inputString.contains("\"databaseRepresentation\":\"assignment\"")) {
 							System.out.println(inputString);
-//							Assignment assignment = gson.fromJson(inputString, Assignment.class);
-//							System.out.println("geson here: " + assignment.getName() );
-//							database.addToDB(assignment, this.context.getContentResolver());
-//							System.out.println("After database add");
+							Assignment assignment = gson.fromJson(inputString, Assignment.class);
+							System.out.println("geson here: " + assignment.getName() );
+							assignment.getCameraImage();
+							database.addToDB(assignment, this.context.getContentResolver());
+							System.out.println("After database add");
 //							if(CommunicationService != null){
 //								CommunicationService.handelIncomeingAssignment();
 //							}
