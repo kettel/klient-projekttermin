@@ -36,6 +36,8 @@ public class AssignmentsContentProvider extends ContentProvider {
     private static final int ASSIGNMENTS_ID = 2;
 
     private static HashMap<String, String> assignmentsProjectionMap;
+    
+    private static int counterC = 0;
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -46,6 +48,9 @@ public class AssignmentsContentProvider extends ContentProvider {
        
         @Override
         public void onCreate(SQLiteDatabase db) {
+        	counterC+=1;
+        	
+        	Log.e("DB", "Nu skapar jag ASSES" + "  count:  " + counterC);
         	String DATABASE_CREATE = "CREATE TABLE " 
     				+ Assignments.TABLE_NAME + "("
     	            + Assignments.ASSIGNMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "  
@@ -62,8 +67,7 @@ public class AssignmentsContentProvider extends ContentProvider {
     	            + Assignments.CAMERAIMAGE + " BLOB, "
     	            + Assignments.STREETNAME + " VARCHAR(255), "
     	            + Assignments.SITENAME + " VARCHAR(255), " 
-    	            + Assignments.TIMESTAMP + " VARCHAR(255),"
-    	            + Assignments.PRIORITY + "VARCHAR(255));";
+    	            + Assignments.TIMESTAMP + " VARCHAR(255));";// , " + Assignments.PRIORITY + " VARCHAR(255)
             db.execSQL(DATABASE_CREATE);
         }
 
@@ -206,6 +210,6 @@ public class AssignmentsContentProvider extends ContentProvider {
         assignmentsProjectionMap.put(Assignments.STREETNAME, Assignments.STREETNAME);
         assignmentsProjectionMap.put(Assignments.SITENAME, Assignments.SITENAME);
         assignmentsProjectionMap.put(Assignments.TIMESTAMP, Assignments.TIMESTAMP);
-        assignmentsProjectionMap.put(Assignments.PRIORITY, Assignments.PRIORITY);
+       // assignmentsProjectionMap.put(Assignments.PRIORITY, Assignments.PRIORITY);
     }
 }

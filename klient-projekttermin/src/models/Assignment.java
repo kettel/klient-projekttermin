@@ -288,13 +288,14 @@ public class Assignment implements ModelInterface {
 	 * @param cameraImage
 	 * @param streetName
 	 * @param siteName
+	 * @param timeStamp 
 	 */
 	public Assignment(long id, String name, double lat, double lon, String region,
 			List<Contact> agents,
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
 			AssignmentStatus assignmentStatus, Bitmap cameraImage,
-			String streetName, String siteName, Long timeStamp, AssignmentPriority assignmentPrio) {
+			String streetName, String siteName, Long timeStamp) {/*, AssignmentPriority assignmentPrio*/
 		this.id = id;
 		this.name = name;
 		this.lat = lat;
