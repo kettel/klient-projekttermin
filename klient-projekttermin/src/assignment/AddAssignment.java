@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import loginFunction.InactivityListener;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
 import android.annotation.SuppressLint;
-import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,7 @@ import android.os.IBinder;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import camera.PhotoGallery;
 
 import com.example.klien_projekttermin.ActivityConstants;
@@ -28,7 +29,7 @@ import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class AddAssignment extends ListActivity implements Serializable{
+public class AddAssignment extends InactivityListener implements Serializable{
 
 	/**
 	 * 
@@ -49,9 +50,9 @@ public class AddAssignment extends ListActivity implements Serializable{
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
 	private String currentUser;
+	private ListView lv;
 	@SuppressLint("UseSparseArrays")
 
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -62,11 +63,12 @@ public class AddAssignment extends ListActivity implements Serializable{
 				Context.BIND_AUTO_CREATE);
 		// ---End
 		setContentView(R.layout.activity_add_assignment);
+		lv = (ListView) findViewById(android.R.id.list);
 		loadContent();
 
 		adapter = new SimpleEditTextItemAdapter(this, data,
 				R.layout.textfield_item, from, to);
-		setListAdapter(adapter);
+		this.lv.setAdapter(adapter);
 
 	}
 	
@@ -146,7 +148,7 @@ public class AddAssignment extends ListActivity implements Serializable{
 
 	private void saveToDB() {
 		db = Database.getInstance(getApplicationContext());
-		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) getListAdapter())
+		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv.getAdapter())
 				.getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 				currentUser, false, temp.get(2), temp.get(3),

@@ -1,5 +1,6 @@
 package messageFunction;
 
+import loginFunction.InactivityListener;
 import models.MessageModel;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,7 +25,7 @@ import communicationModule.CommunicationService.CommunicationBinder;
 
 import contacts.ContactsCursorAdapter;
 
-public class CreateMessage extends Activity {
+public class CreateMessage extends InactivityListener {
 	private AutoCompleteTextView reciever;
 	private EditText message;
 	private MessageModel messageObject;

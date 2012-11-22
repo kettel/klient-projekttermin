@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import loginFunction.InactivityListener;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 
@@ -40,7 +41,7 @@ import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import com.google.gson.Gson;
 
-public class PhotoGallery extends Activity implements Serializable{
+public class PhotoGallery extends InactivityListener implements Serializable{
 
 	private ImageView image;
 	private ArrayList<Bitmap> images;

@@ -2,6 +2,7 @@ package assignment;
 
 import java.util.List;
 
+import loginFunction.InactivityListener;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;
@@ -26,7 +27,7 @@ import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class AssignmentDetails extends Activity {
+public class AssignmentDetails extends InactivityListener {
 
 
 	private Database db;/* = Database.getInstance(getApplicationContext()); */

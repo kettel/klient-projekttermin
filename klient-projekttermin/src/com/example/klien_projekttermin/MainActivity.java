@@ -11,6 +11,7 @@ import communicationModule.CommunicationService.CommunicationBinder;
 
 import camera.Camera;
 
+import loginFunction.InactivityListener;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Assignment;
@@ -30,6 +31,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
 import camera.Camera;
@@ -37,7 +39,7 @@ import camera.Camera;
 
 //import com.google.android.gcm.GCMRegistrar;
 
-public class MainActivity extends ListActivity implements IncomeingDataListners{
+public class MainActivity extends InactivityListener implements IncomeingDataListners{
 	
 	private String userName;
 
@@ -51,6 +53,8 @@ public class MainActivity extends ListActivity implements IncomeingDataListners{
 		testDB(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		ListView lv = (ListView) findViewById(android.R.id.list);
 //		GCMRegistrar.checkDevice(this);
 //		GCMRegistrar.checkManifest(this);
 //		final String regId = GCMRegistrar.getRegistrationId(this);
@@ -70,9 +74,9 @@ public class MainActivity extends ListActivity implements IncomeingDataListners{
 		
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
+		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
-		getListView().setOnItemClickListener(new OnItemClickListener() {
+		lv.setOnItemClickListener(new OnItemClickListener() {
 			Intent myIntent = null;
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {

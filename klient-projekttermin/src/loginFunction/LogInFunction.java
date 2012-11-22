@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class LogInFunction extends Activity {
+public class LogInFunction extends InactivityListener{
 	private TextView userNameView;
 	private TextView passwordView;
 	private String userName;

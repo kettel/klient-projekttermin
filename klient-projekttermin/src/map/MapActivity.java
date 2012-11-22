@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import loginFunction.InactivityListener;
 import models.Assignment;
 import models.ModelInterface;
 import routing.MapManager;
@@ -73,7 +74,7 @@ import com.nutiteq.wrappers.Image;
  * @author nicklas
  * 
  */
-public class MapActivity extends Activity implements Observer, MapListener,
+public class MapActivity extends InactivityListener implements Observer, MapListener,
 		Runnable, OnItemClickListener, OnMapElementListener{
 
 	private BasicMapComponent mapComponent;
