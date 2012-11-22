@@ -1,36 +1,24 @@
 package loginFunction;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.KeyStore.PasswordProtection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import messageFunction.DisplayOfConversation;
 import models.AuthenticationModel;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.klien_projekttermin.MainActivity;
 import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.R.layout;
-import com.example.klien_projekttermin.R.menu;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
-
-import android.R.id;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class LogInFunction extends InactivityListener{
 	private TextView userNameView;

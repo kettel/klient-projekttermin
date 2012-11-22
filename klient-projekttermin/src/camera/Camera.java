@@ -1,10 +1,5 @@
 package camera;
 
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
-import android.os.Bundle;
-import android.app.Activity;
-import android.view.Menu;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -12,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import loginFunction.InactivityListener;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,13 +15,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.VideoView;
+
+import com.example.klien_projekttermin.ActivityConstants;
+import com.example.klien_projekttermin.R;
 
 public class Camera extends InactivityListener {
 	private static final int ACTION_TAKE_PHOTO_B = 1;

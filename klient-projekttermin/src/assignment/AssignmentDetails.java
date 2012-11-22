@@ -7,7 +7,6 @@ import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;
 import models.ModelInterface;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,9 +16,8 @@ import android.os.IBinder;
 import android.view.Menu;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;

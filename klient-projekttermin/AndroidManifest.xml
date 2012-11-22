@@ -101,7 +101,7 @@
         </activity>
         <activity
             android:name="loginFunction.LogInFunction"
-            android:label="title_activity_log_in_function" >
+            android:label="@string/title_activity_login_function" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
