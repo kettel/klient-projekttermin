@@ -1,18 +1,17 @@
 package camera;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import loginFunction.InactivityListener;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -22,7 +21,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,8 +38,12 @@ import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import com.google.gson.Gson;
 
-public class PhotoGallery extends Activity implements Serializable{
+public class PhotoGallery extends InactivityListener implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2109014410227191853L;
 	private ImageView image;
 	private ArrayList<Bitmap> images;
 	private Gallery ga;
@@ -49,6 +51,7 @@ public class PhotoGallery extends Activity implements Serializable{
 	private int callingActivity;
 	private String[] pictureAlts = { "Skicka meddelande med foto", "Skapa uppdrag med foto" };
 	public static String picture;
+	@SuppressWarnings("unused")
 	private HashMap<Integer, String> content;
 	public static String contents;
 
@@ -128,20 +131,20 @@ public class PhotoGallery extends Activity implements Serializable{
 		return true;
 	}
 	
-	private String getStringFromBitmap(Bitmap bitmapPicture) {
-		 /*
-		 * This functions converts Bitmap picture to a string which can be
-		 * JSONified.
-		 * */
-		 final int COMPRESSION_QUALITY = 100;
-		 String encodedImage;
-		 ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
-		 bitmapPicture.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY,
-		 byteArrayBitmapStream);
-		 byte[] b = byteArrayBitmapStream.toByteArray();
-		 encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-		 return encodedImage;
-		 }
+//	private String getStringFromBitmap(Bitmap bitmapPicture) {
+//		 /*
+//		 * This functions converts Bitmap picture to a string which can be
+//		 * JSONified.
+//		 * */
+//		 final int COMPRESSION_QUALITY = 100;
+//		 String encodedImage;
+//		 ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+//		 bitmapPicture.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY,
+//		 byteArrayBitmapStream);
+//		 byte[] b = byteArrayBitmapStream.toByteArray();
+//		 encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+//		 return encodedImage;
+//		 }
 
 	private void showPictureAlts(MenuItem item){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
