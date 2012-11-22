@@ -47,7 +47,8 @@ public class MainActivity extends ListActivity {
 	private static final String SENDER_ID = "943011390551";
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Database db = Database.getInstance(this);
+		//Database db = Database.getInstance(this);
+		testDB(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -97,6 +98,65 @@ public class MainActivity extends ListActivity {
 
 		});
 	}
+	
+	private void testDB(Context context) {
+		Database db = Database.getInstance(context);
+		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning", "Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED,"Gatunamn", "Platsnamn",AssignmentPriority.PRIO_NORMAL),getContentResolver());
+		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
+		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera", "Sändare"), getContentResolver());
+		Log.d("DB","** Uppdrag **");
+		List <ModelInterface> assignments = db.getAllFromDB(new Assignment(), getContentResolver());
+		for (ModelInterface modelInterface : assignments) {
+		Assignment assignment = (Assignment) modelInterface;
+		Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
+		Assignment assignmentUpdate = new Assignment("Uppdaterat namn", "Uppdaterad sändare", false, "Uppdaterad beskrivning", "Uppdaterat tidsspann", AssignmentStatus.NEED_HELP, "Uppdaterad gatunamn", "Uppdaterad plats", AssignmentPriority.PRIO_NORMAL);
+		assignmentUpdate.setId(assignment.getId());
+		db.updateModel(assignmentUpdate, getContentResolver());
+		}
+		Log.d("DB", "** Uppdaterade uppdrag **");
+		assignments = db.getAllFromDB(new Assignment(), getContentResolver());
+		for (ModelInterface modelInterface : assignments) {
+		Assignment assignment = (Assignment) modelInterface;
+		Log.d("DB", "Id: " + assignment.getId() + " Namn: " + assignment.getName());
+		db.deleteFromDB(assignment, getContentResolver());
+		}
+		Log.d("DB","** Kontakter **");
+		List <ModelInterface> contacts = db.getAllFromDB(new Contact(), getContentResolver());
+		for (ModelInterface modelInterface : contacts) {
+		Contact contact = (Contact) modelInterface;
+		Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
+		Contact updatedContact = new Contact(contact.getId(),"Uppdaterat kontaktnamn..");
+		db.updateModel(updatedContact, getContentResolver());
+		}
+		Log.d("DB","** Uppdaterade kontakter **");
+		contacts = db.getAllFromDB(new Contact(), getContentResolver());
+		for (ModelInterface modelInterface : contacts) {
+		Contact contact = (Contact) modelInterface;
+		Log.d("DB","Id: " + contact.getId() + " -> Namn: " + contact.getContactName());
+		db.deleteFromDB(contact, getContentResolver());
+		}
+		Log.d("DB","** Meddelanden **");
+		List <ModelInterface> messages = db.getAllFromDB(new MessageModel(), getContentResolver());
+		for (ModelInterface modelInterface : messages) {
+		MessageModel mess = (MessageModel) modelInterface;
+		Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
+		MessageModel updatedMess = new MessageModel(mess.getId(),"Updated content", "Updated receiver", "Updated sender", mess.getMessageTimeStamp(), true);
+		db.updateModel(updatedMess, getContentResolver());
+		}
+		Log.d("DB","** Uppdaterade meddelanden **");
+		messages = db.getAllFromDB(new MessageModel(), getContentResolver());
+		for (ModelInterface modelInterface : messages) {
+		MessageModel mess = (MessageModel) modelInterface;
+		Log.d("DB", "Id: " + mess.getId() + " -> Sändare: " + mess.getSender() + " Innehåll: " + mess.getMessageContent().toString() + " Mottagare: " + mess.getReciever());
+		db.deleteFromDB(mess, getContentResolver());
+		}
+		assignments = db.getAllFromDB(new Assignment(), getContentResolver());
+		contacts = db.getAllFromDB(new Contact(), getContentResolver());
+		messages = db.getAllFromDB(new MessageModel(), getContentResolver());
+		Log.d("DB","Antal uppdrag: " + assignments.size());
+		Log.d("DB","Antal kontakter: " + contacts.size());
+		Log.d("DB","Antal meddelanden: " + messages.size());
+		}
 	
 	/**
 	 * Genererar de menyval som ska gå att göra.

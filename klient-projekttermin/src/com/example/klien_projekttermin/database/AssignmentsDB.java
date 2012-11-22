@@ -31,7 +31,6 @@ public class AssignmentsDB {
 
 	public void addAssignment(ContentResolver contentResolver,
 			Assignment assignment) {
-		Log.d("DB"," Vad hernder bre: "+ assignment.getAssignmentPriority().toString());
 		
 		ContentValues values = new ContentValues();
 		values.put(Assignments.NAME, assignment.getName());
