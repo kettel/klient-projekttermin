@@ -22,6 +22,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.AssignmentTable;
 import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
@@ -81,6 +82,12 @@ public class AssignmentOverview extends ListActivity {
 
 		Intent intent = new Intent(AssignmentOverview.this, AddAssignment.class);
 		intent.putExtra("currentUser", currentUser);
+//		MyParceble mp = new MyParceble();
+//		mp.setIntValue(ActivityConstants.MAIN_ACTIVITY);
+//		mp.setStrValue(currentUser);
+//		Bundle b = new Bundle();
+//		b.putParcelable("ao", mp);
+//		intent.putExtras(b);
 		AssignmentOverview.this.startActivity(intent);
 
 		return true;

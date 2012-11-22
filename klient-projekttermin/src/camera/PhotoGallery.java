@@ -2,8 +2,9 @@ package camera;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.lang.reflect.Type;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
@@ -33,12 +34,13 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
 import assignment.AddAssignment;
+import assignment.SimpleEditTextItemAdapter;
 
 import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import com.google.gson.Gson;
 
-public class PhotoGallery extends Activity {
+public class PhotoGallery extends Activity implements Serializable{
 
 	private ImageView image;
 	private ArrayList<Bitmap> images;
@@ -47,6 +49,8 @@ public class PhotoGallery extends Activity {
 	private int callingActivity;
 	private String[] pictureAlts = { "Skicka meddelande med foto", "Skapa uppdrag med foto" };
 	public static String picture;
+	private HashMap<Integer, String> content;
+	public static String contents;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -89,10 +93,11 @@ public class PhotoGallery extends Activity {
 		return true;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
-		Gson gson = new Gson();
+		content = (HashMap<Integer, String>) getIntent().getSerializableExtra(SimpleEditTextItemAdapter.items);
 		switch (callingActivity) {
 		case ActivityConstants.CAMERA:
 			showPictureAlts(item);
@@ -104,12 +109,12 @@ public class PhotoGallery extends Activity {
 			try {
 				jsonObj = new JSONObject("{\"image\":\" + encodedImage + \"}");
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			intent.putExtra("calling-activity", ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 			intent.putExtra(picture, jsonObj.toString());
-			this.startActivity(intent);
+			setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
+			finish();
 		default:
 			break;
 		}
@@ -151,6 +156,7 @@ public class PhotoGallery extends Activity {
 					break;
 				case 1:
 					createAssignmentFromPicture();
+					finish();
 					break;
 				default:
 					break;
@@ -174,7 +180,6 @@ public class PhotoGallery extends Activity {
 		i.putExtra(picture, gson.toJson(images.get(currentPictureId)));
 		i.putExtra("calling-activity", ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 		PhotoGallery.this.startActivity(i);
-		finish();
 	}
 	
 	public class ImageAdapter extends BaseAdapter {

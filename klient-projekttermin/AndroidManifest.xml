@@ -47,6 +47,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
+            
            
         </activity>
         <activity
@@ -86,9 +87,11 @@
             android:label="display" >
         </activity>
         <activity android:name="assignment.AssignmentOverview" >
-        </activity>
-        <activity android:name="assignment.AddAssignment" 
-            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
         </activity>
         <activity
             android:name="assignment.AddAssignment"
@@ -102,10 +105,7 @@
         <activity
             android:name="loginFunction.LogInFunction"
             android:label="title_activity_log_in_function" >
-             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+             
         </activity>
 
 
