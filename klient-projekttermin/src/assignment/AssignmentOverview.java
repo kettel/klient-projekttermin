@@ -20,9 +20,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.database.Cursor;
 import android.widget.ListView;
 
 import com.example.klien_projekttermin.R;
+import com.example.klien_projekttermin.database.AssignmentTable;
 import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
@@ -97,11 +99,12 @@ public class AssignmentOverview extends InactivityListener {
 	public void loadAssignmentList() {
 		getAssHeadsFromDatabase();
 		/**
-		 * SE FAN TILL ATT ÄNDRA DEN HÅRDKODADE CURSORN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
-		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				null, false);
+//		getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null)
+		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
 		this.lv.setAdapter(adapter);
+
 	}
 
 	/**
