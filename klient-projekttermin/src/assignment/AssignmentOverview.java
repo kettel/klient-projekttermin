@@ -18,14 +18,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
-import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.AssignmentTable;
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
@@ -82,12 +79,6 @@ public class AssignmentOverview extends ListActivity {
 
 		Intent intent = new Intent(AssignmentOverview.this, AddAssignment.class);
 		intent.putExtra("currentUser", currentUser);
-//		MyParceble mp = new MyParceble();
-//		mp.setIntValue(ActivityConstants.MAIN_ACTIVITY);
-//		mp.setStrValue(currentUser);
-//		Bundle b = new Bundle();
-//		b.putParcelable("ao", mp);
-//		intent.putExtras(b);
 		AssignmentOverview.this.startActivity(intent);
 
 		return true;
@@ -108,7 +99,7 @@ public class AssignmentOverview extends ListActivity {
 		 * SE FAN TILL ATT ÄNDRA DEN HÅRDKODADE CURSORN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		 */
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
+				null, false);
 		this.setListAdapter(adapter);
 	}
 
@@ -152,7 +143,7 @@ public class AssignmentOverview extends ListActivity {
 		});
 	}
 
-	/*
+	/**
 	 * Tillsatt lyssnare i meddelandelistan som lyssnar efterz tryckningar p�
 	 * listobjekt
 	 */
@@ -187,7 +178,7 @@ public class AssignmentOverview extends ListActivity {
 
 	};
 
-	/*
+	/**
 	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort
 	 * en konversation Metoden ger också användaren två valmöjligheter, JA eller
 	 * Avbryt
