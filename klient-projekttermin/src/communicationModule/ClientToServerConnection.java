@@ -145,16 +145,18 @@ public class ClientToServerConnection extends Thread  {
 				try {
 					if(input.ready() && ContextIsReady){
 						inputString = input.readLine();
-						Log.i("incomeing", inputString);
+						Log.e("incomeing", "icomeing data");
 						if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
 							MessageModel message = gson.fromJson(inputString, MessageModel.class);
 							database.addToDB(message, this.context.getContentResolver());
-							if(CommunicationService != null){
-								CommunicationService.handelIncomeingMessage();
-							}
+//							if(CommunicationService != null){
+//								CommunicationService.handelIncomeingMessage();
+//							}
 						}else if (inputString.contains("\"databaseRepresentation\":\"assignment\"")) {
+							System.out.println(inputString);
 							Assignment assignment = gson.fromJson(inputString, Assignment.class);
 							System.out.println("geson here: " + assignment.getName() );
+							assignment.getCameraImage();
 							database.addToDB(assignment, this.context.getContentResolver());
 							System.out.println("After database add");
 //							if(CommunicationService != null){

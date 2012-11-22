@@ -45,6 +45,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = super.getView(position, convertView, parent);
+
 		EditText editText = (EditText) v.findViewById(R.id.text_item);
 		if (editText!=null) {
 			if (itemStrings.get(position) != null) {

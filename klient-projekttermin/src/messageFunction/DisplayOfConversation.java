@@ -26,14 +26,11 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
-
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
-
 
 public class DisplayOfConversation extends Activity {
 
@@ -55,7 +52,7 @@ public class DisplayOfConversation extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_of_conversation);
-		
+
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
@@ -65,7 +62,7 @@ public class DisplayOfConversation extends Activity {
 
 		//Metoden testar om någonting skickades med från Inbox och skriver i så fall ut det till strängen chosenContact
 		Bundle extras = getIntent().getExtras();
-		
+
 		if (extras != null) {
 			chosenContact = extras.getString("ChosenContact");
 			user = extras.getString("USER");
@@ -85,7 +82,7 @@ public class DisplayOfConversation extends Activity {
 		super.onStart();
 		addOnLongClickListener();
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		unbindService(serviceConnection);
@@ -112,7 +109,6 @@ public class DisplayOfConversation extends Activity {
 	 */
 	public void loadConversation(String contact){
 
-		Toast.makeText(getApplicationContext(), "HIT", Toast.LENGTH_SHORT).show();
 		conversationContentArray = getInformationFromDatabase(contact);
 
 		// First paramenter - Context
@@ -169,6 +165,7 @@ public class DisplayOfConversation extends Activity {
 	public void forwardMessage(String messageContent){
 		Intent intent = new Intent(this, CreateMessage.class);
 		intent.putExtra("MESSAGE",messageContent);
+		intent.putExtra("USER",user);
 		startActivity(intent);
 	}
 
@@ -222,7 +219,7 @@ public class DisplayOfConversation extends Activity {
 
 		//Hämtar en lista med alla messagemodels som finns i databasen.
 		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getContentResolver());
-		
+
 		MessageModel a = (MessageModel) listOfMassageModels.get(0);
 
 		//		Den listview som kontakterna kommerpresenteras i
@@ -231,7 +228,7 @@ public class DisplayOfConversation extends Activity {
 		// Sorterar ut meddelanden kopplade till den person man tryckt på.
 		for (int i = 0; i < listOfMassageModels.size(); i++) {
 			messageModel = (MessageModel) listOfMassageModels.get(i);
-			
+
 			if(messageModel.getReciever().toString().equals(Contact)||messageModel.getSender().toString().equals(Contact)){
 				listOfConversations.add(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getMessageTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString());
 				messageAndIdMap.put(messageModel.getSender().toString()+" ["+understandableTimeStamp(messageModel.getMessageTimeStamp())+"] "+"\n"+messageModel.getMessageContent().toString(), messageModel.getId());
@@ -249,8 +246,6 @@ public class DisplayOfConversation extends Activity {
 	}
 
 	public void sendMessage(View v){
-		
-		Toast.makeText(getApplicationContext(), "HIT KOM DU", Toast.LENGTH_SHORT).show();
 
 		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 

@@ -355,6 +355,7 @@ public class Assignment implements ModelInterface {
 	public Bitmap getCameraImage() {
 		// Om bilden är null och den ska hämtas...
 		if (cameraImage == null){
+			System.out.println("I am createing an image LOL");
 			Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
 			cameraImage = Bitmap.createBitmap(100, 100, conf);
 		}
@@ -371,6 +372,9 @@ public class Assignment implements ModelInterface {
 
 	public AssignmentStatus getAssignmentStatus() {
 		return assignmentStatus;
+	}
+	public void setAssignmentStatus(AssignmentStatus newStatus){
+		assignmentStatus = newStatus;
 	}
 	
 	public Long getTimeStamp(){

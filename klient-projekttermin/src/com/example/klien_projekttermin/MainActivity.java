@@ -34,6 +34,7 @@ import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
 import camera.Camera;
 
+
 //import com.google.android.gcm.GCMRegistrar;
 
 public class MainActivity extends ListActivity implements IncomeingDataListners{

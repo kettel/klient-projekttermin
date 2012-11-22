@@ -87,6 +87,9 @@
         </activity>
         <activity android:name="assignment.AssignmentOverview" >
         </activity>
+        <activity android:name="assignment.AddAssignment" 
+            android:windowSoftInputMode="adjustPan">
+        </activity>
         <activity
             android:name="assignment.AddAssignment"
             android:label="@string/addAssignment"
@@ -105,15 +108,16 @@
             </intent-filter>
         </activity>
 
+
         <!-- Database Content Providers -->
    		<provider
             android:name="com.example.klien_projekttermin.database.ContactsContentProvider" 
             android:authorities="com.example.klien_projekttermin.database.ContactsContentProvider" />
-   		<provider
-            android:name="com.example.klien_projekttermin.database.AssignmentsContentProvider" 
+    <provider
+            android:name="com.example.klien_projekttermin.database.AssignmentsContentProvider"
             android:authorities="com.example.klien_projekttermin.database.AssignmentsContentProvider" />
-   		<provider
-            android:name="com.example.klien_projekttermin.database.MessagesContentProvider" 
+    <provider
+            android:name="com.example.klien_projekttermin.database.MessagesContentProvider"
             android:authorities="com.example.klien_projekttermin.database.MessagesContentProvider" />
         
 

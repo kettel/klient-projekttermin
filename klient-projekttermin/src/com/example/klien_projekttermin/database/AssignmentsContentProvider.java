@@ -46,7 +46,7 @@ public class AssignmentsContentProvider extends ContentProvider {
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-        	String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " 
+        	String DATABASE_CREATE = "create table " 
     				+ Assignments.TABLE_NAME + "("
     	            + Assignments.ASSIGNMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "  
     	    		+ Assignments.NAME + " VARCHAR(255), "
