@@ -31,6 +31,8 @@ public class AssignmentsDB {
 
 	public void addAssignment(ContentResolver contentResolver,
 			Assignment assignment) {
+		Log.d("DB"," Vad hernder bre: "+ assignment.getAssignmentPriority().toString());
+		
 		ContentValues values = new ContentValues();
 		values.put(Assignments.NAME, assignment.getName());
 		values.put(Assignments.LAT, assignment.getLat());
@@ -49,8 +51,8 @@ public class AssignmentsDB {
 		values.put(Assignments.STREETNAME, assignment.getStreetName());
 		values.put(Assignments.SITENAME, assignment.getSiteName());
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
-		/*values.put(Assignments.PRIORITY, assignment.getAssignmentPriority()
-				.toString());*/
+		values.put(Assignments.PRIORITY, assignment.getAssignmentPriority()
+				.toString());
 		contentResolver.insert(Assignments.CONTENT_URI, values);
 	}
 
@@ -68,7 +70,7 @@ public class AssignmentsDB {
 				boolean externalMission = false;
 				Bitmap image = null;
 				AssignmentStatus status = AssignmentStatus.NOT_STARTED;
-				//AssignmentPriority priority = AssignmentPriority.PRIO_NORMAL;
+				AssignmentPriority priority = AssignmentPriority.PRIO_NORMAL;
 				List<Contact> agents = new ArrayList<Contact>();
 
 				for (int i = 0; i < cursor.getColumnCount(); i++) {
@@ -120,11 +122,11 @@ public class AssignmentsDB {
 					} else if (currentCol
 							.equalsIgnoreCase(Assignments.TIMESTAMP)) {
 						timestamp = Long.valueOf(cursor.getString(i));
-					} /*else if (currentCol
+					} else if (currentCol
 							.equalsIgnoreCase(Assignments.PRIORITY)) {
 						priority = AssignmentPriority.valueOf(cursor
 								.getString(i));
-					}*/
+					}
 				}
 				Assignment assignment = new Assignment(id, // id från DB
 						name, // name
@@ -140,8 +142,8 @@ public class AssignmentsDB {
 						image, // cameraImage
 						streetname, // streetName
 						sitename, // siteName
-						timestamp); /* priority,// timeStamp
-						priority*/
+						timestamp,// timeStamp
+						priority); // priority
 
 				assignmentList.add(assignment);
 
@@ -202,8 +204,8 @@ public class AssignmentsDB {
 		values.put(Assignments.STREETNAME, assignment.getStreetName());
 		values.put(Assignments.SITENAME, assignment.getSiteName());
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
-		/*values.put(Assignments.PRIORITY, assignment.getAssignmentPriority()
-				.toString());*/
+		values.put(Assignments.PRIORITY, assignment.getAssignmentPriority()
+				.toString());
 		int updated = contentResolver.update(
 				Assignments.CONTENT_URI,
 				values,

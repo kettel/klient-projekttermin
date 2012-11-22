@@ -41,8 +41,9 @@ public class AddAssignment extends ListActivity {
 	double lon = 0;
 	private String json;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-	private String[] dataString = { "Uppdragsnamn", "Koordinater", "Uppdragsbeskrivning",
-			"Uppskattad tid", "Gatuadress", "Uppdragsplats", "Bild", "Prioritet" };
+	private String[] dataString = { "Uppdragsnamn", "Koordinater",
+			"Uppdragsbeskrivning", "Uppskattad tid", "Gatuadress",
+			"Uppdragsplats", "Bild", "Prioritet" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.text_item };
@@ -81,7 +82,7 @@ public class AddAssignment extends ListActivity {
 			break;
 		}
 	}
-	
+
 	private void loadContent() {
 		data.clear();
 		for (String s : dataString) {
@@ -147,23 +148,37 @@ public class AddAssignment extends ListActivity {
 	}
 
 	private void saveToDB() {
-		 db = Database.getInstance(getApplicationContext());
+		db = Database.getInstance(getApplicationContext());
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) getListAdapter())
 				.getItemStrings();
-		Assignment newAssignment = new Assignment(temp.get(0), json,
-				currentUser, false, temp.get(2), temp.get(3),
-				AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5), AssignmentPriority.PRIO_HIGH);
+
+		Assignment newAssignment = new Assignment(temp.get(0), json, currentUser, false,
+				temp.get(2), temp.get(3), AssignmentStatus.NOT_STARTED,
+				null, temp.get(4), temp.get(5),
+				checkPrioString(temp.get(7)));
 		
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
 	}
 
+	private AssignmentPriority checkPrioString(String prioString) {
+
+		if (prioString.equals("Hög prioritet")) {
+			return AssignmentPriority.PRIO_HIGH;
+		} else if (prioString.equals("Normal prioritet")) {
+			return AssignmentPriority.PRIO_NORMAL;
+		} else if (prioString.equals("Låg prioritet")) {
+			return AssignmentPriority.PRIO_LOW;
+		} else
+			return AssignmentPriority.PRIO_NORMAL;
+	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if(communicationBond)
-		unbindService(communicationServiceConnection);
+		if (communicationBond)
+			unbindService(communicationServiceConnection);
 	}
-	
+
 }

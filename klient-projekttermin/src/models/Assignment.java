@@ -82,6 +82,7 @@ public class Assignment implements ModelInterface {
 		this.assignmentStatus = assignmentStatus;
 		this.streetName = streetName;
 		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
+		this.assignmentPrio = assignmentPrio;
 	}
 	
 	/**
@@ -111,6 +112,7 @@ public class Assignment implements ModelInterface {
 		this.streetName = streetName;
 		this.siteName = siteName;
 		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
+		this.assignmentPrio = assignmentPrio;
 	}
 
 	/**
@@ -140,6 +142,7 @@ public class Assignment implements ModelInterface {
 		this.streetName = streetName;
 		this.siteName = siteName;
 		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
+		this.assignmentPrio = assignmentPrio;
 	}
 
 	/**
@@ -173,6 +176,7 @@ public class Assignment implements ModelInterface {
 		this.streetName = streetName;
 		this.siteName = siteName;
 		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
+		this.assignmentPrio = assignmentPrio;
 	}
 
 	/**
@@ -207,6 +211,7 @@ public class Assignment implements ModelInterface {
 		this.streetName = streetName;
 		this.siteName = siteName;
 		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
+		this.assignmentPrio = assignmentPrio;
 	}
 
 	/**
@@ -237,10 +242,12 @@ public class Assignment implements ModelInterface {
 		this.streetName = streetName;
 		this.siteName = siteName;
 		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
+		this.assignmentPrio = assignmentPrio;
 	}
 
 	/**
-	 * Konstruktor för att skapa ett uppdrag utifrån en region med kamerabild
+	 * Konstruktor för att skapa ett uppdrag utifrån en region med kamerabild.
+	 * Använd den här.
 	 * 
 	 * @param name
 	 * @param region
@@ -269,6 +276,7 @@ public class Assignment implements ModelInterface {
 		this.streetName = streetName;
 		this.siteName = siteName;
 		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
+		this.assignmentPrio = assignmentPrio;
 	}
 
 	/**
@@ -295,7 +303,7 @@ public class Assignment implements ModelInterface {
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
 			AssignmentStatus assignmentStatus, Bitmap cameraImage,
-			String streetName, String siteName, Long timeStamp) {/*, AssignmentPriority assignmentPrio*/
+			String streetName, String siteName, Long timeStamp, AssignmentPriority assignmentPrio) {
 		this.id = id;
 		this.name = name;
 		this.lat = lat;
@@ -311,6 +319,7 @@ public class Assignment implements ModelInterface {
 		this.streetName = streetName;
 		this.siteName = siteName;
 		this.assignmentTimeStamp = timeStamp;
+		this.assignmentPrio = assignmentPrio;
 	}
 
 	public String getRegion() {
