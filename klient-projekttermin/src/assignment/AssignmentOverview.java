@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.database.Cursor;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.AssignmentTable;
@@ -96,10 +97,11 @@ public class AssignmentOverview extends ListActivity {
 	public void loadAssignmentList() {
 		getAssHeadsFromDatabase();
 		/**
-		 * SE FAN TILL ATT ÄNDRA DEN HÅRDKODADE CURSORN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
+//		getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null)
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				null, false);
+				getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
 		this.setListAdapter(adapter);
 	}
 
