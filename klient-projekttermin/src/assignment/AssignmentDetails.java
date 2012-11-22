@@ -146,44 +146,15 @@ public class AssignmentDetails extends InactivityListener {
 	public void setCurrentAssignmentToReach() {
 
 		for (ModelInterface m : listAssignments) {
-
 			// Konverterar Modelinterfacet till ett Assignment.
 			Assignment a = (Assignment) m;
 
 			// Jämför ID:T som clickats på med befintliga Assignments från
 			// databasen och sätter den texten.
 			if (a.getId() == assignmentID) {
-				textViewAssName.setText(a.getName());
-				textViewDescription.setText(a.getAssignmentDescription());
-				textViewTime.setText(a.getTimeSpan());
-				textViewSpot.setText(a.getSiteName());
-				textViewStreetname.setText(a.getStreetName());
-				Gson gson = new Gson();
-				Type type = new TypeToken<WgsPoint[]>() {
-				}.getType();
-				WgsPoint[] co = gson.fromJson(a.getRegion(), type);
-				for (WgsPoint wgsPoint : co) {
-					textViewCoord.setText("Latitud: " + wgsPoint.getLat() + "  Longitud: "
-							+ wgsPoint.getLon());
-				}
-				
-
-				// Skapar en tom bitmap som jämförs med den tomma i assignment.
-				// Är den tom så har ingen bild bifogast och då sätts bilden.
-				Bitmap cameraImage;
-				Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf
-																// types
-				cameraImage = Bitmap.createBitmap(100, 100, conf);
-
-				if (a.getCameraImage() != cameraImage) {
-					image.setImageBitmap(a.getCameraImage());
-				}
-
 				currentAssignment = a;
 			}
-
 		}
-
 	}
 
 	/**
@@ -209,7 +180,9 @@ public class AssignmentDetails extends InactivityListener {
 		textViewStreetname.setText(currentAssignment.getStreetName());
 		currentAssignment.getRegion();
 		textViewCoord.setText(sb.toString());
-		Bitmap bitmap = BitmapFactory.decodeByteArray(currentAssignment.getCameraImage() , 0, currentAssignment.getCameraImage().length);
+		Bitmap bitmap = BitmapFactory.decodeByteArray(
+				currentAssignment.getCameraImage(), 0,
+				currentAssignment.getCameraImage().length);
 		image.setImageBitmap(bitmap);
 
 		// Fyller en sträng med aktuella agenter.
