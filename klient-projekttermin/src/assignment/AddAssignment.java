@@ -1,14 +1,15 @@
 package assignment;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import loginFunction.InactivityListener;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
 import android.annotation.SuppressLint;
-import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,16 +21,15 @@ import android.os.IBinder;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import camera.PhotoGallery;
-
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+import database.Database;
 
-public class AddAssignment extends ListActivity implements Serializable{
-
+public class AddAssignment extends InactivityListener implements Serializable{
 	/**
 	 * 
 	 */
@@ -49,9 +49,10 @@ public class AddAssignment extends ListActivity implements Serializable{
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
 	private String currentUser;
-	@SuppressLint("UseSparseArrays")
+	private ListView lv;
+	private Bitmap bitmap;
 
-	@Override
+	@SuppressLint("UseSparseArrays")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -62,14 +63,15 @@ public class AddAssignment extends ListActivity implements Serializable{
 				Context.BIND_AUTO_CREATE);
 		// ---End
 		setContentView(R.layout.activity_add_assignment);
+		lv = (ListView) findViewById(android.R.id.list);
 		loadContent();
 
 		adapter = new SimpleEditTextItemAdapter(this, data,
 				R.layout.textfield_item, from, to);
-		setListAdapter(adapter);
+		this.lv.setAdapter(adapter);
 
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		setIntent(intent);
@@ -96,7 +98,9 @@ public class AddAssignment extends ListActivity implements Serializable{
 	}
 
 	private void fromCamera(Intent intent) {
-		jsonPict = intent.getStringExtra(PhotoGallery.picture);
+		bitmap = (Bitmap) intent.getExtras()
+				.getParcelable(PhotoGallery.picture);
+		jsonPict = "Bifogad bild";
 		adapter.textToItem(6, jsonPict);
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -107,6 +111,7 @@ public class AddAssignment extends ListActivity implements Serializable{
 
 	private void fromMap(Intent intent) {
 		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
+		System.out.println(jsonCoord);
 		adapter.textToItem(1, jsonCoord);
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -146,25 +151,29 @@ public class AddAssignment extends ListActivity implements Serializable{
 
 	private void saveToDB() {
 		db = Database.getInstance(getApplicationContext());
-		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) getListAdapter())
-				.getItemStrings();
+		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv
+				.getAdapter()).getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 				currentUser, false, temp.get(2), temp.get(3),
-				AssignmentStatus.NOT_STARTED, getBitmapFromString(temp.get(6)), temp.get(4), temp.get(5));
+				AssignmentStatus.NOT_STARTED, getByteArray(),
+				temp.get(4), temp.get(5));
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
 	}
 
-	private Bitmap getBitmapFromString(String jsonString) {
-		/**
-		* This Function converts the String back to Bitmap
-		* */
-		byte[] decodedString = Base64.decode(jsonString, Base64.DEFAULT);
-		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-		return decodedByte;
+	private byte[] getByteArray() {
+		if (bitmap != null) {
+			 ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+			 bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+			 byteArrayBitmapStream);
+			 byte[] b = byteArrayBitmapStream.toByteArray();
+			return b;
+		} else {
+			return new byte[2];
 		}
-	
+	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

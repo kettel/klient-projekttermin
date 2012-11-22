@@ -22,8 +22,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import camera.PhotoGallery;
 
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {

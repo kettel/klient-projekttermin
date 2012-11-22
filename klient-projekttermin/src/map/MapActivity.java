@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import loginFunction.InactivityListener;
 import models.Assignment;
 import models.ModelInterface;
 import routing.MapManager;
 import routing.NutiteqRouteWaiter;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -41,11 +41,10 @@ import android.widget.ZoomControls;
 import assignment.AddAssignment;
 import assignment.SimpleEditTextItemAdapter;
 
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
 import com.nutiteq.components.KmlPlace;
@@ -66,6 +65,8 @@ import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
 
+import database.Database;
+
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för
  * kartan finns
@@ -73,7 +74,7 @@ import com.nutiteq.wrappers.Image;
  * @author nicklas
  * 
  */
-public class MapActivity extends Activity implements Observer, MapListener,
+public class MapActivity extends InactivityListener implements Observer, MapListener,
 		Runnable, OnItemClickListener, OnMapElementListener{
 
 	private BasicMapComponent mapComponent;
@@ -591,31 +592,10 @@ public class MapActivity extends Activity implements Observer, MapListener,
 						AddAssignment.class);
 				WgsPoint[] coords = { searchSuggestions.getList().get(choice)
 						.getPlace().getWgs() };
-				
-//				ParcebleHashMap ph = new ParcebleHashMap();
-//				ph.setItems(content);
-//				
-//				ParcebleId pi = new ParcebleId();
-//				pi.setId(ActivityConstants.MAP_ACTIVITY);
-//				
-//				ParcebleJson pj = new ParcebleJson();
-//				pj.setJson(gson.toJson(coords, type));
-//				
-//				Bundle b = new Bundle();
-//				b.putParcelable("HEJ", ph);
-//				b.putParcelable("COR", pj);
-//				b.putParcelable("ID", pi);
-//				
-//				intent.putExtras(b);
-				
 				intent.putExtra("calling-activity",
 						ActivityConstants.MAP_ACTIVITY);
 				intent.putExtra(contents, content);
 				intent.putExtra(coordinates, gson.toJson(coords, type));
-				System.out.println("SYSOSO " + intent.getStringExtra(coordinates));
-				System.out.println("CONTENTE" + intent.getSerializableExtra(contents));
-				
-				System.out.println("extras in map " + intent.getExtras().size());
 				setResult(ActivityConstants.RESULT_FROM_MAP, intent);
 				finish();
 			}

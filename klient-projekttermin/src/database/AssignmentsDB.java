@@ -1,11 +1,9 @@
-package com.example.klien_projekttermin.database;
+package database;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
+import database.AssignmentTable.Assignments;
 
 import models.Assignment;
 import models.AssignmentStatus;
@@ -14,8 +12,6 @@ import models.ModelInterface;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 public class AssignmentsDB {
@@ -46,7 +42,7 @@ public class AssignmentsDB {
 		values.put(Assignments.STATUS, assignment.getAssignmentStatus()
 				.toString());
 		values.put(Assignments.CAMERAIMAGE,
-				bitmapToByteArray(assignment.getCameraImage()));
+				assignment.getCameraImage());
 		values.put(Assignments.STREETNAME, assignment.getStreetName());
 		values.put(Assignments.SITENAME, assignment.getSiteName());
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
@@ -65,7 +61,7 @@ public class AssignmentsDB {
 				Long timestamp = Long.valueOf("0");
 				double lon = 0, lat = 0;
 				boolean externalMission = false;
-				Bitmap image = null;
+				byte[] image = null;
 				AssignmentStatus status = AssignmentStatus.NOT_STARTED;
 				List<Contact> agents = new ArrayList<Contact>();
 
@@ -106,10 +102,7 @@ public class AssignmentsDB {
 					} else if (currentCol
 							.equalsIgnoreCase(Assignments.CAMERAIMAGE)) {
 						// Konvertera BLOB -> Bitmap
-						byte[] byteImage = cursor.getBlob(i);
-						ByteArrayInputStream imageStream = new ByteArrayInputStream(
-								byteImage);
-						image = BitmapFactory.decodeStream(imageStream);
+						image = cursor.getBlob(i);
 					} else if (currentCol
 							.equalsIgnoreCase(Assignments.STREETNAME)) {
 						streetname = cursor.getString(i);
@@ -145,20 +138,6 @@ public class AssignmentsDB {
 		return assignmentList;
 	}
 
-	/**
-	 * Konverterar en Android bitmap till en ByteArray
-	 * 
-	 * @param cameraImage
-	 *            Bitmap
-	 * @return byte[] BLOB
-	 */
-	private byte[] bitmapToByteArray(Bitmap cameraImage) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Bitmap bmp = cameraImage;
-		bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
-		byte[] photo = baos.toByteArray();
-		return photo;
-	}
 
 	private String listToString(List<Contact> list) {
 		String ret = new String();
@@ -194,7 +173,7 @@ public class AssignmentsDB {
 		values.put(Assignments.STATUS, assignment.getAssignmentStatus()
 				.toString());
 		values.put(Assignments.CAMERAIMAGE,
-				bitmapToByteArray(assignment.getCameraImage()));
+				assignment.getCameraImage());
 		values.put(Assignments.STREETNAME, assignment.getStreetName());
 		values.put(Assignments.SITENAME, assignment.getSiteName());
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());

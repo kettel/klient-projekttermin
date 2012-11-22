@@ -1,9 +1,9 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.klien_projekttermin.database.MessageTable.Messages;
+import database.MessageTable.Messages;
 
 import models.MessageModel;
 import models.ModelInterface;

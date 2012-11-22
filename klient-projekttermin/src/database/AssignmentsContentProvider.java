@@ -1,8 +1,8 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
+import database.AssignmentTable.Assignments;
 
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+
 public class AssignmentsContentProvider extends ContentProvider {
 	
 	private static final String PASSWORD = Database.PASSWORD;
@@ -27,7 +28,7 @@ public class AssignmentsContentProvider extends ContentProvider {
 
     private static final int DATABASE_VERSION = 1;
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.database.AssignmentsContentProvider";
+    public static final String AUTHORITY = "database.AssignmentsContentProvider";
 
     private static final UriMatcher sUriMatcher;
 

@@ -5,6 +5,7 @@ public class AuthenticationModel {
 	private String userName;
 	private String passwordHash;
 	private Boolean isAccessGranted = false;
+	private String databaseRepresentation = "authentication";
 	
 	
 	public AuthenticationModel(String userName, String passwordHash){
@@ -30,5 +31,9 @@ public class AuthenticationModel {
 	 */
 	public Boolean isAccessGranted(){
 		return isAccessGranted;
+	}
+	
+	public String getDatabaseRepresentation() {
+		return databaseRepresentation;
 	}
 }

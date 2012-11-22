@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import loginFunction.InactivityListener;
 import models.MessageModel;
 import models.ModelInterface;
 import android.app.Activity;
@@ -27,12 +28,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
+import com.klient_projekttermin.R;
+import database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class DisplayOfConversation extends Activity {
+public class DisplayOfConversation extends InactivityListener {
 
 	private ListView listViewOfConversationInputs;
 	private TextView message;
