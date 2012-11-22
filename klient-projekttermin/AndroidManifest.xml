@@ -40,6 +40,7 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="com.example.klien_projekttermin" />
             </intent-filter>
         </receiver>
@@ -47,8 +48,9 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-           <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -88,9 +90,9 @@
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-        <activity android:name="assignment.AssignmentOverview" >
-            
-            
+        <activity
+            android:name="assignment.AssignmentOverview"
+            android:label="@string/assignmentOverview" >
         </activity>
         <activity
             android:name="assignment.AddAssignment"
@@ -104,21 +106,18 @@
         <activity
             android:name="loginFunction.LogInFunction"
             android:label="title_activity_log_in_function" >
-             
         </activity>
 
-
         <!-- Database Content Providers -->
-   		<provider
-            android:name="com.example.klien_projekttermin.database.ContactsContentProvider" 
+        <provider
+            android:name="com.example.klien_projekttermin.database.ContactsContentProvider"
             android:authorities="com.example.klien_projekttermin.database.ContactsContentProvider" />
-    <provider
+        <provider
             android:name="com.example.klien_projekttermin.database.AssignmentsContentProvider"
             android:authorities="com.example.klien_projekttermin.database.AssignmentsContentProvider" />
-    <provider
+        <provider
             android:name="com.example.klien_projekttermin.database.MessagesContentProvider"
             android:authorities="com.example.klien_projekttermin.database.MessagesContentProvider" />
-        
 
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" />
