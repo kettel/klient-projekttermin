@@ -1,4 +1,5 @@
-package com.example.klien_projekttermin;
+package com.klient_projekttermin;
+
 
 public interface ActivityConstants {
 	public static final int MAP_ACTIVITY = 1001;

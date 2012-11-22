@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import models.Contact;
 import models.ModelInterface;
 
-import com.example.klien_projekttermin.database.ContactTable.Contacts;
+import database.ContactTable.Contacts;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;

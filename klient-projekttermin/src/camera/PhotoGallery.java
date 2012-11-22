@@ -36,9 +36,9 @@ import android.widget.ListView;
 import assignment.AddAssignment;
 import assignment.SimpleEditTextItemAdapter;
 
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
 import com.google.gson.Gson;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 
 public class PhotoGallery extends InactivityListener implements Serializable{
 
@@ -56,6 +56,7 @@ public class PhotoGallery extends InactivityListener implements Serializable{
 	@SuppressWarnings("unused")
 	private HashMap<Integer, String> content;
 	public static String contents;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

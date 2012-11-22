@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import android.net.Uri;
 import android.provider.BaseColumns;

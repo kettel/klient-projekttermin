@@ -1,15 +1,13 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.database.ContactTable.Contacts;
+import database.MessageTable.Messages;
 
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 import net.sqlcipher.database.SQLiteQueryBuilder;
-
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -19,31 +17,24 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-/**
- * @author Jason Wei
- * 
- */
-public class ContactsContentProvider extends ContentProvider {
+public class MessagesContentProvider extends ContentProvider{
+private static final String PASSWORD = Database.PASSWORD;
 	
-	private static final String PASSWORD = Database.PASSWORD;
-	
-    private static final String TAG = "ContactsContentProvider";
+    private static final String TAG = "MessagesContentProvider";
 
-    private static final String DATABASE_NAME = "contacts.db";
+    private static final String DATABASE_NAME = "messages.db";
 
     private static final int DATABASE_VERSION = 1;
 
-    private static final String CONTACTS_TABLE_NAME = "contacts";
-
-    public static final String AUTHORITY = "com.example.klien_projekttermin.database.ContactsContentProvider";
+    public static final String AUTHORITY = "database.MessagesContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
-    private static final int CONTACTS = 1;
+    private static final int MESSAGES = 1;
 
-    private static final int CONTACTS_ID = 2;
+    private static final int MESSAGES_ID = 2;
 
-    private static HashMap<String, String> contactsProjectionMap;
+    private static HashMap<String, String> messagesProjectionMap;
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -54,14 +45,21 @@ public class ContactsContentProvider extends ContentProvider {
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("create table " + CONTACTS_TABLE_NAME + " (" + Contacts.CONTACT_ID
-                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Contacts.NAME + " VARCHAR(255));");
+        	String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
+        			+ Messages.TABLE_NAME+ "(" 
+        			+ Messages.MESSAGE_ID + " integer primary key autoincrement, " 
+        			+ Messages.CONTENT + " text, " 
+        			+ Messages.RECEIVER + " text, " 
+        			+ Messages.SENDER + " text, "
+        			+ Messages.TIMESTAMP + " text, "
+        			+ Messages.ISREAD + " text);";
+            db.execSQL(DATABASE_CREATE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + CONTACTS_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + Messages.TABLE_NAME);
             onCreate(db);
         }
     }
@@ -72,16 +70,16 @@ public class ContactsContentProvider extends ContentProvider {
     public int delete(Uri uri, String where, String[] whereArgs) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
         switch (sUriMatcher.match(uri)) {
-            case CONTACTS:
+            case MESSAGES:
                 break;
-            case CONTACTS_ID:
+            case MESSAGES_ID:
                 where = where + "_id = " + uri.getLastPathSegment();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
-        int count = db.delete(CONTACTS_TABLE_NAME, where, whereArgs);
+        int count = db.delete(Messages.TABLE_NAME, where, whereArgs);
         // Underr�tta lyssnare
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
@@ -90,8 +88,8 @@ public class ContactsContentProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         switch (sUriMatcher.match(uri)) {
-            case CONTACTS:
-                return Contacts.CONTENT_TYPE;
+            case MESSAGES:
+                return Messages.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -99,7 +97,7 @@ public class ContactsContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues initialValues) {
-        if (sUriMatcher.match(uri) != CONTACTS) {
+        if (sUriMatcher.match(uri) != MESSAGES) {
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
@@ -111,9 +109,9 @@ public class ContactsContentProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
-        long rowId = db.insert(CONTACTS_TABLE_NAME, Contacts.NAME, values);
+        long rowId = db.insert(Messages.TABLE_NAME, Messages.CONTENT, values);
         if (rowId > 0) {
-            Uri noteUri = ContentUris.withAppendedId(Contacts.CONTENT_URI, rowId);
+            Uri noteUri = ContentUris.withAppendedId(Messages.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(noteUri, null);
             return noteUri;
         }
@@ -124,7 +122,6 @@ public class ContactsContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         dbHelper = new DatabaseHelper(getContext());
-        
         // Om Assignments inte är skapad än samt om SQLite-biblioteken 
         // inte är laddade
         if(!Database.isLibraryLoaded){
@@ -140,13 +137,13 @@ public class ContactsContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(CONTACTS_TABLE_NAME);
-        qb.setProjectionMap(contactsProjectionMap);
+        qb.setTables(Messages.TABLE_NAME);
+        qb.setProjectionMap(messagesProjectionMap);
 
         switch (sUriMatcher.match(uri)) {    
-            case CONTACTS:
+            case MESSAGES:
                 break;
-            case CONTACTS_ID:
+            case MESSAGES_ID:
                 selection = selection + "_id = " + uri.getLastPathSegment();
                 break;
             default:
@@ -165,8 +162,8 @@ public class ContactsContentProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
         int count;
         switch (sUriMatcher.match(uri)) {
-            case CONTACTS:
-                count = db.update(CONTACTS_TABLE_NAME, values, where, whereArgs);
+            case MESSAGES:
+                count = db.update(Messages.TABLE_NAME, values, where, whereArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -178,12 +175,15 @@ public class ContactsContentProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, CONTACTS_TABLE_NAME, CONTACTS);
-        sUriMatcher.addURI(AUTHORITY, CONTACTS_TABLE_NAME + "/#", CONTACTS_ID);
+        sUriMatcher.addURI(AUTHORITY, Messages.TABLE_NAME, MESSAGES);
+        sUriMatcher.addURI(AUTHORITY, Messages.TABLE_NAME + "/#", MESSAGES_ID);
 
-        contactsProjectionMap = new HashMap<String, String>();
-        contactsProjectionMap.put(Contacts.CONTACT_ID, Contacts.CONTACT_ID);
-        contactsProjectionMap.put(Contacts.NAME, Contacts.NAME);
+        messagesProjectionMap = new HashMap<String, String>();
+        messagesProjectionMap.put(Messages.MESSAGE_ID, Messages.MESSAGE_ID);
+        messagesProjectionMap.put(Messages.CONTENT, Messages.CONTENT);
+        messagesProjectionMap.put(Messages.RECEIVER, Messages.RECEIVER);
+        messagesProjectionMap.put(Messages.SENDER, Messages.SENDER);
+        messagesProjectionMap.put(Messages.TIMESTAMP, Messages.TIMESTAMP);
+        messagesProjectionMap.put(Messages.ISREAD, Messages.ISREAD);
     }
 }
-

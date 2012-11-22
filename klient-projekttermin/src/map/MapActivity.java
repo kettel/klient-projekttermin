@@ -41,11 +41,10 @@ import android.widget.ZoomControls;
 import assignment.AddAssignment;
 import assignment.SimpleEditTextItemAdapter;
 
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
 import com.nutiteq.components.KmlPlace;
@@ -65,6 +64,8 @@ import com.nutiteq.ui.ThreadDrivenPanning;
 import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
 import com.nutiteq.wrappers.Image;
+
+import database.Database;
 
 /**
  * En aktivitet som skapar en karta med en meny där de olika alternativen för

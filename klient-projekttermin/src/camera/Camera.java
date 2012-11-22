@@ -25,8 +25,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
+
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 
 public class Camera extends InactivityListener {
 	private static final int ACTION_TAKE_PHOTO_B = 1;

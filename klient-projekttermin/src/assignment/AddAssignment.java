@@ -23,15 +23,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import camera.PhotoGallery;
-
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+import database.Database;
 
-public class AddAssignment extends InactivityListener implements Serializable {
-
+public class AddAssignment extends InactivityListener implements Serializable{
 	/**
 	 * 
 	 */
