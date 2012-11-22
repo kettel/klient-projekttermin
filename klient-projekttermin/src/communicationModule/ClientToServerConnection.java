@@ -43,11 +43,15 @@ public class ClientToServerConnection extends Thread  {
 	private Context context = null;
 	private int waitTime = 1;
 	private long heartbeatTime = 0;
+	private IncomeingDataListners CommunicationService = null;
 	/**
 	 * en tom konstruktor
 	 */
 	public ClientToServerConnection(){
 		
+	}
+	public void RegisterCommunicationService(IncomeingDataListners listner){
+		CommunicationService = listner;
 	}
 	/**
 	 * Används för att förhindra att data sickas 
@@ -92,7 +96,7 @@ public class ClientToServerConnection extends Thread  {
 	 */
 	private synchronized void timeToWait(){
 		if(waitTime < 60000){
-			waitTime = waitTime+30;
+			waitTime = waitTime+50;
 		}
 		try {
 			this.wait(waitTime);	
@@ -141,14 +145,24 @@ public class ClientToServerConnection extends Thread  {
 				try {
 					if(input.ready() && ContextIsReady){
 						inputString = input.readLine();
-						Log.i("incomeing", inputString);
+						Log.e("incomeing", "icomeing data");
 						if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
 							MessageModel message = gson.fromJson(inputString, MessageModel.class);
 							database.addToDB(message, this.context.getContentResolver());
-						}else if (inputString.contains("\"databasetRepresentation\":\"assignment\"")) {
+//							if(CommunicationService != null){
+//								CommunicationService.handelIncomeingMessage();
+//							}
+						}else if (inputString.contains("\"databaseRepresentation\":\"assignment\"")) {
+							System.out.println(inputString);
 							Assignment assignment = gson.fromJson(inputString, Assignment.class);
+							System.out.println("geson here: " + assignment.getName() );
+							assignment.getCameraImage();
 							database.addToDB(assignment, this.context.getContentResolver());
-						}else if (inputString.contains("\"databasetRepresentation\":\"contact\"")) {
+							System.out.println("After database add");
+//							if(CommunicationService != null){
+//								CommunicationService.handelIncomeingAssignment();
+//							}
+						}else if (inputString.contains("\"databaseRepresentation\":\"contact\"")) {
 							Contact contact = gson.fromJson(inputString, Contact.class);
 							database.addToDB(contact, context.getContentResolver());
 						}else {

@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+
 public class AssignmentsContentProvider extends ContentProvider {
 	
 	private static final String PASSWORD = Database.PASSWORD;
@@ -27,7 +28,7 @@ public class AssignmentsContentProvider extends ContentProvider {
 
     private static final int DATABASE_VERSION = 1;
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.database.AssignmentsContentProvider";
+    public static final String AUTHORITY = "database.AssignmentsContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
@@ -46,7 +47,7 @@ public class AssignmentsContentProvider extends ContentProvider {
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-        	String DATABASE_CREATE = "CREATE TABLE " 
+        	String DATABASE_CREATE = "create table " 
     				+ Assignments.TABLE_NAME + "("
     	            + Assignments.ASSIGNMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "  
     	    		+ Assignments.NAME + " VARCHAR(255), "

@@ -26,7 +26,7 @@ private static final String PASSWORD = Database.PASSWORD;
 
     private static final int DATABASE_VERSION = 1;
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.database.MessagesContentProvider";
+    public static final String AUTHORITY = "database.MessagesContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
@@ -45,7 +45,7 @@ private static final String PASSWORD = Database.PASSWORD;
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-        	String DATABASE_CREATE = "create table "
+        	String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
         			+ Messages.TABLE_NAME+ "(" 
         			+ Messages.MESSAGE_ID + " integer primary key autoincrement, " 
         			+ Messages.CONTENT + " text, " 

@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
+import loginFunction.InactivityListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,10 +25,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
+
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 
-public class Camera extends Activity {
+public class Camera extends InactivityListener {
 	private static final int ACTION_TAKE_PHOTO_B = 1;
 	private static final int ACTION_PHOTO_ALBUM = 2;
 	private static final int ACTION_TAKE_VIDEO = 3;

@@ -2,15 +2,16 @@ package map;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import loginFunction.InactivityListener;
 import models.Assignment;
 import models.ModelInterface;
 import routing.MapManager;
 import routing.NutiteqRouteWaiter;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -38,6 +39,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ZoomControls;
 import assignment.AddAssignment;
+import assignment.SimpleEditTextItemAdapter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -72,8 +74,8 @@ import database.Database;
  * @author nicklas
  * 
  */
-public class MapActivity extends Activity implements Observer, MapListener,
-		Runnable, OnItemClickListener, OnMapElementListener {
+public class MapActivity extends InactivityListener implements Observer, MapListener,
+		Runnable, OnItemClickListener, OnMapElementListener{
 
 	private BasicMapComponent mapComponent;
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
@@ -106,6 +108,9 @@ public class MapActivity extends Activity implements Observer, MapListener,
 			"Skapa uppdrag med region" };
 	private boolean onRetainCalled;
 	private int callingActivity;
+	private HashMap<Integer, String> content;
+	public static String contents;
+	public static String activityId;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -246,7 +251,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		Assignment a = new Assignment();
 		Database db = Database.getInstance(getApplicationContext());
 		List<ModelInterface> list = db.getAllFromDB(a, getContentResolver());
-		System.out.println("database " + db.getDBCount(a, getContentResolver()));
+		System.out
+				.println("database " + db.getDBCount(a, getContentResolver()));
 		for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
 			a = (Assignment) list.get(i);
 			// addInterestPoint(a.getRegion());
@@ -374,19 +380,20 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		// TODO Auto-generated method stub
 		super.onResume();
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
+		content = (HashMap<Integer, String>) getIntent().getSerializableExtra(
+				SimpleEditTextItemAdapter.items);
 		createMap();
 		switch (callingActivity) {
 		case ActivityConstants.ADD_ASSIGNMENT_ACTIVITY:
 
-		break;
+			break;
 		case ActivityConstants.MAIN_ACTIVITY:
 			getDatabaseRegionInformation();
-		break;
+			break;
 		default:
 			getDatabaseRegionInformation();
 			break;
 		}
-		
 
 		if (gpsFollowItem != null) {
 			runOnUiThread(new Runnable() {
@@ -568,6 +575,8 @@ public class MapActivity extends Activity implements Observer, MapListener,
 
 	public void displayAddCoordinatesToAssignment(int ch) {
 		final int choice = ch;
+		final Context context = getApplicationContext();
+		
 		final Gson gson = new Gson();
 		final Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
@@ -575,16 +584,40 @@ public class MapActivity extends Activity implements Observer, MapListener,
 		builder.setTitle("Koordinater");
 		builder.setMessage("Använd koordinater ?");
 		builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+			
+
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				Intent intent = new Intent(MapActivity.this,
 						AddAssignment.class);
-				intent.putExtra("calling-activity",
-						ActivityConstants.MAP_ACTIVITY);
 				WgsPoint[] coords = { searchSuggestions.getList().get(choice)
 						.getPlace().getWgs() };
+				
+//				ParcebleHashMap ph = new ParcebleHashMap();
+//				ph.setItems(content);
+//				
+//				ParcebleId pi = new ParcebleId();
+//				pi.setId(ActivityConstants.MAP_ACTIVITY);
+//				
+//				ParcebleJson pj = new ParcebleJson();
+//				pj.setJson(gson.toJson(coords, type));
+//				
+//				Bundle b = new Bundle();
+//				b.putParcelable("HEJ", ph);
+//				b.putParcelable("COR", pj);
+//				b.putParcelable("ID", pi);
+//				
+//				intent.putExtras(b);
+				
+				intent.putExtra("calling-activity",
+						ActivityConstants.MAP_ACTIVITY);
+				intent.putExtra(contents, content);
 				intent.putExtra(coordinates, gson.toJson(coords, type));
-				MapActivity.this.startActivity(intent);
+				System.out.println("SYSOSO " + intent.getStringExtra(coordinates));
+				System.out.println("CONTENTE" + intent.getSerializableExtra(contents));
+				
+				System.out.println("extras in map " + intent.getExtras().size());
+				setResult(ActivityConstants.RESULT_FROM_MAP, intent);
 				finish();
 			}
 		});

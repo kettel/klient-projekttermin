@@ -35,7 +35,7 @@ public class ContactsContentProvider extends ContentProvider {
 
     private static final String CONTACTS_TABLE_NAME = "contacts";
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.database.ContactsContentProvider";
+    public static final String AUTHORITY = "database.ContactsContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
@@ -54,7 +54,7 @@ public class ContactsContentProvider extends ContentProvider {
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + CONTACTS_TABLE_NAME + " (" + Contacts.CONTACT_ID
+            db.execSQL("create table " + CONTACTS_TABLE_NAME + " (" + Contacts.CONTACT_ID
                     + " INTEGER PRIMARY KEY AUTOINCREMENT," + Contacts.NAME + " VARCHAR(255));");
         }
 

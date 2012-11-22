@@ -1,5 +1,6 @@
 package messageFunction;
 
+import loginFunction.InactivityListener;
 import models.MessageModel;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,7 +24,7 @@ import communicationModule.CommunicationService.CommunicationBinder;
 import contacts.ContactsCursorAdapter;
 import database.Database;
 
-public class CreateMessage extends Activity {
+public class CreateMessage extends InactivityListener {
 	private AutoCompleteTextView reciever;
 	private EditText message;
 	private MessageModel messageObject;
@@ -38,7 +39,9 @@ public class CreateMessage extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = Database.getInstance(getApplicationContext());
+
 		Bundle extras = getIntent().getExtras();
+
 		if (extras != null) {
 			user = extras.getString("USER");
 			messageContent = extras.getString("MESSAGE");
@@ -76,7 +79,7 @@ public class CreateMessage extends Activity {
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 
 	@Override
 	protected void onDestroy() {
@@ -92,12 +95,13 @@ public class CreateMessage extends Activity {
 	 */
 	public boolean sendMessage(MenuItem v){
 		String recievingContact = reciever.getText().toString();
-		messageObject = new MessageModel(message.getText().toString(),
-				recievingContact, user);
+		messageObject = new MessageModel(message.getText().toString(), recievingContact, user);
 
-		//Sparar messageObject i databasen
-		dataBase.addToDB(messageObject,getContentResolver());
-		//Skicka till kommunikationsmodulen
+
+		// Sparar messageObject i databasen
+		dataBase.addToDB(messageObject, getContentResolver());
+		// Skicka till kommunikationsmodulen
+
 
 		if (communicationBond) {
 			communicationService.sendMessage(messageObject);

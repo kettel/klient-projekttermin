@@ -1,16 +1,17 @@
 package camera;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import loginFunction.InactivityListener;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -20,7 +21,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,13 +32,18 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
 import assignment.AddAssignment;
+import assignment.SimpleEditTextItemAdapter;
 
 import com.google.gson.Gson;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 
-public class PhotoGallery extends Activity {
+public class PhotoGallery extends InactivityListener implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2109014410227191853L;
 	private ImageView image;
 	private ArrayList<Bitmap> images;
 	private Gallery ga;
@@ -46,6 +51,10 @@ public class PhotoGallery extends Activity {
 	private int callingActivity;
 	private String[] pictureAlts = { "Skicka meddelande med foto", "Skapa uppdrag med foto" };
 	public static String picture;
+	@SuppressWarnings("unused")
+	private HashMap<Integer, String> content;
+	public static String contents;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -88,47 +97,55 @@ public class PhotoGallery extends Activity {
 		return true;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
-		Gson gson = new Gson();
+		content = (HashMap<Integer, String>) getIntent().getSerializableExtra(SimpleEditTextItemAdapter.items);
 		switch (callingActivity) {
 		case ActivityConstants.CAMERA:
 			showPictureAlts(item);
 			break;
 		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
 			Intent intent = new Intent(PhotoGallery.this, AddAssignment.class);
-			String encodedImage = getStringFromBitmap(images.get(currentPictureId));
+//			String bifogad_bild = getStringFromBitmap(images.get(currentPictureId));
 			JSONObject jsonObj = null;
 			try {
-				jsonObj = new JSONObject("{\"image\":\" + encodedImage + \"}");
+				jsonObj = new JSONObject("{\"image\":\" Bifogad bild \"}");
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			String jsonString = "";
+			try {
+				jsonString = jsonObj.getString("image");
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 			intent.putExtra("calling-activity", ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-			intent.putExtra(picture, jsonObj.toString());
-			this.startActivity(intent);
+			intent.putExtra(picture, jsonString);
+			setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
+			finish();
 		default:
 			break;
 		}
 		return true;
 	}
 	
-	private String getStringFromBitmap(Bitmap bitmapPicture) {
-		 /*
-		 * This functions converts Bitmap picture to a string which can be
-		 * JSONified.
-		 * */
-		 final int COMPRESSION_QUALITY = 100;
-		 String encodedImage;
-		 ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
-		 bitmapPicture.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY,
-		 byteArrayBitmapStream);
-		 byte[] b = byteArrayBitmapStream.toByteArray();
-		 encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-		 return encodedImage;
-		 }
+//	private String getStringFromBitmap(Bitmap bitmapPicture) {
+//		 /*
+//		 * This functions converts Bitmap picture to a string which can be
+//		 * JSONified.
+//		 * */
+//		 final int COMPRESSION_QUALITY = 100;
+//		 String encodedImage;
+//		 ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+//		 bitmapPicture.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY,
+//		 byteArrayBitmapStream);
+//		 byte[] b = byteArrayBitmapStream.toByteArray();
+//		 encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+//		 return encodedImage;
+//		 }
 
 	private void showPictureAlts(MenuItem item){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -150,6 +167,7 @@ public class PhotoGallery extends Activity {
 					break;
 				case 1:
 					createAssignmentFromPicture();
+					finish();
 					break;
 				default:
 					break;
@@ -173,7 +191,6 @@ public class PhotoGallery extends Activity {
 		i.putExtra(picture, gson.toJson(images.get(currentPictureId)));
 		i.putExtra("calling-activity", ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 		PhotoGallery.this.startActivity(i);
-		finish();
 	}
 	
 	public class ImageAdapter extends BaseAdapter {

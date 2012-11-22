@@ -240,6 +240,8 @@ public class Assignment implements ModelInterface {
 	/**
 	 * Konstruktor för att skapa ett uppdrag utifrån en region med kamerabild
 	 * 
+	 * Det är denna som används just nu
+	 * 
 	 * @param name
 	 * @param region
 	 * @param sender
@@ -371,6 +373,9 @@ public class Assignment implements ModelInterface {
 
 	public AssignmentStatus getAssignmentStatus() {
 		return assignmentStatus;
+	}
+	public void setAssignmentStatus(AssignmentStatus newStatus){
+		assignmentStatus = newStatus;
 	}
 	
 	public Long getTimeStamp(){

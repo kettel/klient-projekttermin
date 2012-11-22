@@ -40,7 +40,6 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-
                 <category android:name="com.klient_projekttermin" />
             </intent-filter>
         </receiver>
@@ -48,11 +47,6 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -90,7 +84,9 @@
             android:name="messageFunction.DisplayMessage"
             android:label="display" >
         </activity>
-        <activity android:name="assignment.AssignmentOverview" >
+        <activity
+            android:name="assignment.AssignmentOverview"
+            android:label="@string/assignmentOverview" >
         </activity>
         <activity
             android:name="assignment.AddAssignment"
@@ -103,7 +99,11 @@
         </activity>
         <activity
             android:name="loginFunction.LogInFunction"
-            android:label="title_activity_log_in_function" >
+            android:label="@string/title_activity_login_function" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!-- Database Content Providers -->
@@ -112,11 +112,10 @@
             android:authorities="database.ContactsContentProvider" />
         <provider
             android:name="database.AssignmentsContentProvider"
-            android:authorities="com.klient_projekttermin.database.AssignmentsContentProvider" />
+            android:authorities="database.AssignmentsContentProvider" />
         <provider
             android:name="database.MessagesContentProvider"
             android:authorities="database.MessagesContentProvider" />
-
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->

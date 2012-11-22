@@ -16,12 +16,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class LogInFunction extends Activity {
+public class LogInFunction extends InactivityListener{
 	private TextView userNameView;
 	private TextView passwordView;
 	private String userName;
