@@ -48,7 +48,7 @@ public class MainActivity extends ListActivity implements IncomeingDataListners{
 	IncomeingDataListners test = this;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		testDB(this);
+		//testDB(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 //		GCMRegistrar.checkDevice(this);
