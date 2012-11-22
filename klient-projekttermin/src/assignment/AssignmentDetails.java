@@ -26,10 +26,11 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.R;
-
-import database.Database;
+import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+
+import database.Database;
 
 public class AssignmentDetails extends InactivityListener {
 
