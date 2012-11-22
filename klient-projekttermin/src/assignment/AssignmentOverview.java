@@ -2,11 +2,11 @@ package assignment;
 
 import java.util.List;
 
+import loginFunction.InactivityListener;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.ModelInterface;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,24 +18,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ListView;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.AssignmentTable;
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class AssignmentOverview extends ListActivity {
+public class AssignmentOverview extends InactivityListener {
 
 	private long[] idInAdapter;
 	private Database db;
 	private List<ModelInterface> assList;
 	private String currentUser;
-	
+	private ListView lv;
 	//--------ComService
 		private CommunicationService communicationService;
 		private boolean communicationBond = false;
@@ -45,6 +44,7 @@ public class AssignmentOverview extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
+		lv = (ListView)findViewById(android.R.id.list);
 		
 		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
 		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
@@ -98,12 +98,12 @@ public class AssignmentOverview extends ListActivity {
 	public void loadAssignmentList() {
 		getAssHeadsFromDatabase();
 		/**
-		 * SE FAN TILL ATT ÄNDRA DEN HÅRDKODADE CURSORN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
-		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
-		this.setListAdapter(adapter);
-		
+
+//		getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null)
+		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
+		this.lv.setAdapter(adapter);
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class AssignmentOverview extends ListActivity {
 	 * Sätter en klicklyssnare på listvyn.
 	 */
 	public void setItemClickListner() {
-		this.getListView().setOnItemClickListener(new OnItemClickListener() {
+		this.lv.setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int itemClicked, long arg3) {
@@ -146,13 +146,13 @@ public class AssignmentOverview extends ListActivity {
 		});
 	}
 
-	/*
+	/**
 	 * Tillsatt lyssnare i meddelandelistan som lyssnar efterz tryckningar p�
 	 * listobjekt
 	 */
 	public void setLongItemClickListener() {
 		// Skapar en lyssnare som lyssnar efter l�nga intryckningar
-		this.getListView().setOnItemLongClickListener(
+		this.lv.setOnItemLongClickListener(
 
 		new OnItemLongClickListener() {
 
@@ -181,7 +181,7 @@ public class AssignmentOverview extends ListActivity {
 
 	};
 
-	/*
+	/**
 	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort
 	 * en konversation Metoden ger också användaren två valmöjligheter, JA eller
 	 * Avbryt

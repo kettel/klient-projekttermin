@@ -1,15 +1,18 @@
 package communicationModule;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
 
 import com.google.gson.Gson;
 
 import models.Assignment;
+import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 
@@ -37,7 +40,6 @@ public class CommunicationService extends Service{
 	 * @param message medelandet som ska skickas.
 	 */
 	public void sendMessage(MessageModel message){
-		System.out.println("sendMessage");
 		transmisson = gson.toJson(message);
 		ClientToServer.sendTransmisson(transmisson);
 	}
@@ -55,6 +57,11 @@ public class CommunicationService extends Service{
 	 */
 	public void sendContact (Contact contact){
 		transmisson = gson.toJson(contact);
+		ClientToServer.sendTransmisson(transmisson);
+	}
+	
+	public void sendAuthentication (AuthenticationModel authentication){
+		transmisson = gson.toJson(authentication);
 		ClientToServer.sendTransmisson(transmisson);
 	}
 	/**
@@ -81,6 +88,5 @@ public class CommunicationService extends Service{
 			return CommunicationService.this;
 		}
 	}
-
 }
 

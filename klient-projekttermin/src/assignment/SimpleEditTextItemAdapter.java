@@ -20,7 +20,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import camera.Camera;
+import camera.PhotoGallery;
 
 import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
@@ -28,12 +28,14 @@ import com.example.klien_projekttermin.R;
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
 
-	@SuppressLint("UseSparseArrays")
+	@SuppressLint({ "UseSparseArrays", "UseSparseArrays" })
 	private HashMap<Integer, String> itemStrings = new HashMap<Integer, String>();
 	private Context context;
-	private String items;
+	private boolean isCreatingDialog = false;
+	private boolean isCreatingCoordDialog = false;
+	public static String items;
 	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" };
-	private static String[] priorityAlts = { "Hög", "Normal", "Låg"};
+	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
 	private EditText editText;
 
 	public SimpleEditTextItemAdapter(Context context,
@@ -46,10 +48,12 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		convertView = null;
 		View v = super.getView(position, convertView, parent);
 
 		editText = (EditText) v.findViewById(R.id.text_item);
-		if (editText!=null) {
+
+		if (editText != null) {
 			if (itemStrings.get(position) != null) {
 				editText.setText(itemStrings.get(position));
 			} else {
@@ -60,16 +64,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			editText.setId(position);
 			editText.setOnFocusChangeListener(this);
 		}
-		
+
 		return v;
-	}
-
-	public HashMap<Integer, String> getItemStrings() {
-		return itemStrings;
-	}
-
-	public void setItemStrings(HashMap<Integer, String> itemStrings) {
-		this.itemStrings = itemStrings;
 	}
 
 	public void textToItem(int position, String s) {
@@ -89,14 +85,20 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			final EditText Caption = (EditText) v;
 			String s = Caption.getText().toString();
 			if (s.isEmpty()) {
-				coordinateField();
+				if (!isCreatingCoordDialog) {
+					isCreatingCoordDialog = true;
+					coordinateField();
+				}
 			}
 		}
 		if (hasFocus && v.getId() == 6) {
 			final EditText Caption = (EditText) v;
 			String s = Caption.getText().toString();
 			if (s.isEmpty()) {
-				pictureAlternatives();
+				if (!isCreatingDialog) {
+					isCreatingDialog = true;
+					pictureAlternatives();
+				}
 			}
 		}
 		if (hasFocus && v.getId() == 7) {
@@ -122,16 +124,20 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
+				isCreatingDialog = false;
 				switch (arg2) {
 				case 0:
-					Intent intent = createIntent(ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-					context.startActivity(intent);
-					((AddAssignment) context).finish();
+					Intent intent = new Intent(context, PhotoGallery.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
+					((AddAssignment) context).startActivityForResult(intent, 1);
 					break;
 				case 1:
-					Intent intent2 = createIntent(ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
-					context.startActivity(intent2);
-					((AddAssignment) context).finish();
+					Intent intent2 = new Intent(context, PhotoGallery.class);
+					intent2.putExtra("calling-activity",
+							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
+					((AddAssignment) context)
+							.startActivityForResult(intent2, 2);
 					break;
 				default:
 					break;
@@ -139,13 +145,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			}
 		});
 		dialog.show();
-	}
-	
-	private Intent createIntent(int id){
-		Intent intent = new Intent(context, Camera.class);
-		intent.putExtra("calling-activity",id);
-		intent.putExtra(items, itemStrings);
-		return intent;
 	}
 
 	private void coordinateField() {
@@ -155,12 +154,11 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		builder.setPositiveButton("ok", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int arg1) {
 				dialog.dismiss();
-
+				isCreatingCoordDialog = false;
 				Intent intent = new Intent(context, MapActivity.class);
 				intent.putExtra("calling-activity",
 						ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
-				context.startActivity(intent);
-				((AddAssignment) context).finish();
+				((AddAssignment) context).startActivityForResult(intent, 0);
 			}
 		});
 		builder.setNegativeButton("cancel",
@@ -172,6 +170,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		builder.setCancelable(false);
 		builder.create().show();
 	}
+
 	private void priorityAlternatives(final EditText v) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Välj uppdragets prioritet");
@@ -201,5 +200,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			}
 		});
 		dialog.show();
+	}
+
+	public HashMap<Integer, String> getItemStrings() {
+		return itemStrings;
+	}
+
+	public void setItemStrings(HashMap<Integer, String> itemStrings) {
+		this.itemStrings = itemStrings;
 	}
 }

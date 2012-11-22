@@ -1,45 +1,48 @@
 package assignment;
 
-import java.lang.reflect.Type;
+import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import loginFunction.InactivityListener;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
 import models.AssignmentStatus;
-import android.app.ListActivity;
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.widget.ListView;
 import camera.PhotoGallery;
 
 import com.example.klien_projekttermin.ActivityConstants;
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class AddAssignment extends ListActivity {
+public class AddAssignment extends InactivityListener implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// --------ComService
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
 	// ----End
-
-	double lat = 0;
-	double lon = 0;
-	private String json;
+	private String jsonCoord = null;
+	private String jsonPict = null;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Uppdragsnamn", "Koordinater",
 			"Uppdragsbeskrivning", "Uppskattad tid", "Gatuadress",
@@ -50,8 +53,10 @@ public class AddAssignment extends ListActivity {
 	private Database db;
 	private SimpleEditTextItemAdapter adapter;
 	private String currentUser;
+	private ListView lv;
+	private Bitmap bitmap;
 
-	@Override
+	@SuppressLint("UseSparseArrays")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -61,25 +66,29 @@ public class AddAssignment extends ListActivity {
 		bindService(intent, communicationServiceConnection,
 				Context.BIND_AUTO_CREATE);
 		// ---End
-
 		setContentView(R.layout.activity_add_assignment);
+		lv = (ListView) findViewById(android.R.id.list);
 		loadContent();
+
 		adapter = new SimpleEditTextItemAdapter(this, data,
 				R.layout.textfield_item, from, to);
-		setListAdapter(adapter);
+		this.lv.setAdapter(adapter);
 
-		int callingActivity = getIntent().getIntExtra("calling-activity", 0);
-		currentUser = getIntent().getExtras().getString("currentUser");
+	}
 
-		switch (callingActivity) {
-		case ActivityConstants.MAP_ACTIVITY:
-			adapter.textToItem(1, fromMap());
-			break;
-		case ActivityConstants.MAIN_ACTIVITY:
-			break;
-		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
-			adapter.textToItem(6, fromCamera());
-			break;
+	@Override
+	protected void onNewIntent(Intent intent) {
+		setIntent(intent);
+		super.onNewIntent(intent);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == ActivityConstants.RESULT_FROM_MAP) {
+			fromMap(data);
+		} else if (resultCode == ActivityConstants.RESULT_FROM_CAMERA) {
+			fromCamera(data);
 		}
 	}
 
@@ -92,28 +101,27 @@ public class AddAssignment extends ListActivity {
 		}
 	}
 
-	private String fromCamera() {
-		Intent intent = getIntent();
-		json = intent.getStringExtra(PhotoGallery.picture);
-		Gson gson = new Gson();
-		Type type = new TypeToken<Bitmap>() {
-		}.getType();
-		Bitmap bm = gson.fromJson(json, type);
-		return json;
+	private void fromCamera(Intent intent) {
+		bitmap = (Bitmap) intent.getExtras()
+				.getParcelable(PhotoGallery.picture);
+		jsonPict = "Bifogad bild";
+		adapter.textToItem(6, jsonPict);
+		runOnUiThread(new Runnable() {
+			public void run() {
+				adapter.notifyDataSetChanged();
+			}
+		});
 	}
 
-	private String fromMap() {
-		Intent intent = getIntent();
-		json = intent.getStringExtra(MapActivity.coordinates);
-		Gson gson = new Gson();
-		Type type = new TypeToken<WgsPoint[]>() {
-		}.getType();
-		WgsPoint[] co = gson.fromJson(json, type);
-		StringBuilder sb = new StringBuilder();
-		for (WgsPoint wgsPoint : co) {
-			sb.append(wgsPoint.getLat() + " , " + wgsPoint.getLon());
-		}
-		return sb.toString();
+	private void fromMap(Intent intent) {
+		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
+		System.out.println(jsonCoord);
+		adapter.textToItem(1, jsonCoord);
+		runOnUiThread(new Runnable() {
+			public void run() {
+				adapter.notifyDataSetChanged();
+			}
+		});
 	}
 
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
@@ -126,9 +134,7 @@ public class AddAssignment extends ListActivity {
 
 		public void onServiceDisconnected(ComponentName arg0) {
 			communicationBond = false;
-
 		}
-
 	};
 
 	@Override
@@ -149,19 +155,20 @@ public class AddAssignment extends ListActivity {
 
 	private void saveToDB() {
 		db = Database.getInstance(getApplicationContext());
-		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) getListAdapter())
-				.getItemStrings();
-
-		Assignment newAssignment = new Assignment(temp.get(0), json, currentUser, false,
-				temp.get(2), temp.get(3), AssignmentStatus.NOT_STARTED,
-				null, temp.get(4), temp.get(5),
-				checkPrioString(temp.get(7)));
+		
+		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv
+				.getAdapter()).getItemStrings();
+		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
+				currentUser, false, temp.get(2), temp.get(3),
+				AssignmentStatus.NOT_STARTED, getByteArray(),
+				temp.get(4), temp.get(5), checkPrioString(temp.get(7)));
 		
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
 	}
 
+	
 	private AssignmentPriority checkPrioString(String prioString) {
 
 		if (prioString.equals("Hög prioritet")) {
@@ -172,6 +179,18 @@ public class AddAssignment extends ListActivity {
 			return AssignmentPriority.PRIO_LOW;
 		} else
 			return AssignmentPriority.PRIO_NORMAL;
+
+	}
+	private byte[] getByteArray() {
+		if (bitmap != null) {
+			 ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+			 bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+			 byteArrayBitmapStream);
+			 byte[] b = byteArrayBitmapStream.toByteArray();
+			return b;
+		} else {
+			return new byte[2];
+		}
 	}
 
 	@Override

@@ -5,7 +5,7 @@
     <string name="Meddelande"></string>
     <string name="SkapaMeddelande"></string>
     <string name="Cancel"></string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Hello world!</string> 
     <string name="title_activity_startsida_meddelanden">StartsidaMeddelanden</string>
     <string name="CreateNewMessage">Skapa Nytt Meddelande</string>
     <string name="Inbox">Inkorg</string>
@@ -62,6 +62,9 @@
     <string name="displayConversation">Konversation</string>
     <string name="uppdrag">Uppdrag</string>
     <string name="assignmentOverview">Uppdrags översikt</string>
+    <string name="password">Lösenord</string>
+    <string name="userName">Användarnamn</string>
     <string name="title_activity_photo_gallery">PhotoGallery</string>
-
+    <string name="title_activity_login_function">Login</string>
+	<string name="login">Login</string>
 </resources>

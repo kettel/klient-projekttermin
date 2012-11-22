@@ -1,33 +1,37 @@
 package assignment;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
+import loginFunction.InactivityListener;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;
 import models.ModelInterface;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.klien_projekttermin.R;
 import com.example.klien_projekttermin.database.Database;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
-public class AssignmentDetails extends Activity {
-
+public class AssignmentDetails extends InactivityListener {
 
 	private Database db;/* = Database.getInstance(getApplicationContext()); */
 	private long assignmentID;
@@ -49,7 +53,6 @@ public class AssignmentDetails extends Activity {
 	private boolean communicationBond = false;
 
 	// -------End
-
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -160,28 +163,42 @@ public class AssignmentDetails extends Activity {
 	 * Sätter texten som ska visas i uppdragsvyn.
 	 */
 	public void setAssignmentToView() {
-
+		Gson gson = new Gson();
+		Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		StringBuilder sb = new StringBuilder();
+		System.out.println(currentAssignment.getRegion());
+		WgsPoint[] cords = gson.fromJson(currentAssignment.getRegion(), type);
+		if (cords != null) {
+			for (WgsPoint wgsPoint : cords) {
+				sb.append(wgsPoint.getLat() + "," + wgsPoint.getLon());
+			}
+		}
 		textViewAssName.setText(currentAssignment.getName());
 		textViewDescription.setText(currentAssignment
 				.getAssignmentDescription());
 		textViewTime.setText(currentAssignment.getTimeSpan());
 		textViewSpot.setText(currentAssignment.getSiteName());
 		textViewStreetname.setText(currentAssignment.getStreetName());
-		textViewCoord.setText("Latitud: " + currentAssignment.getLat()
-				+ "  Longitud: " + currentAssignment.getLon());
-		
-		//Fyller en sträng med aktuella agenter.
+		currentAssignment.getRegion();
+		textViewCoord.setText(sb.toString());
+		Bitmap bitmap = BitmapFactory.decodeByteArray(currentAssignment.getCameraImage() , 0, currentAssignment.getCameraImage().length);
+		image.setImageBitmap(bitmap);
+
+		// Fyller en sträng med aktuella agenter.
 		String temp = "";
 		for (int i = 0; i < currentAssignment.getAgents().size(); i++) {
-			temp = temp + currentAssignment.getAgents().get(i).getContactName() + ", ";
+			temp = temp + currentAssignment.getAgents().get(i).getContactName()
+					+ ", ";
 		}
-		agentCount.setText(" Antal: " + currentAssignment.getAgents().size() + "(" + temp + ")");
-		
+		agentCount.setText(" Antal: " + currentAssignment.getAgents().size()
+				+ "(" + temp + ")");
+
 	}
 
 	/**
-	 * Lyssnar på om checkboen checkas i gö den därefter ocheckbar och
-	 * agenten läggs till till det uppdraget.
+	 * Lyssnar på om checkboen checkas i gö den därefter ocheckbar och agenten
+	 * läggs till till det uppdraget.
 	 */
 	public void setCheckboxCheckedListener() {
 
@@ -197,11 +214,11 @@ public class AssignmentDetails extends Activity {
 						checkboxAssign.setEnabled(false); // disable checkbox
 
 						currentAssignment.addAgents(new Contact(currentUser));
-						
+
 						// Sätter status för att uppdraget är påbörjat.
 						currentAssignment
 								.setAssignmentStatus(AssignmentStatus.STARTED);
-						
+
 						// Uppdaterar Uppdraget med den nya kontakten.
 						db.updateModel((ModelInterface) currentAssignment,
 								getContentResolver());

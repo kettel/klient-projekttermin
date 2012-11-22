@@ -4,12 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.klien_projekttermin.database.Database;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
-
-import camera.Camera;
-
+import loginFunction.InactivityListener;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Assignment;
@@ -18,7 +13,6 @@ import models.AssignmentStatus;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
-import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -30,14 +24,19 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
 import camera.Camera;
 
+import com.example.klien_projekttermin.database.Database;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
+
 
 //import com.google.android.gcm.GCMRegistrar;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends InactivityListener{
 	
 	private String userName;
 
@@ -52,6 +51,16 @@ public class MainActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		ListView lv = (ListView) findViewById(android.R.id.list);
+//		GCMRegistrar.checkDevice(this);
+//		GCMRegistrar.checkManifest(this);
+//		final String regId = GCMRegistrar.getRegistrationId(this);
+//		if (regId.equals("")) {
+//		  GCMRegistrar.register(this, SENDER_ID);
+//		} else {
+//		  System.out.println("Already registerd");
+//		}
+
 		
 		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
 		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
@@ -63,9 +72,9 @@ public class MainActivity extends ListActivity {
 		
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
-		setListAdapter(new SimpleAdapter(this, generateMenuContent(),
+		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
-		getListView().setOnItemClickListener(new OnItemClickListener() {
+		lv.setOnItemClickListener(new OnItemClickListener() {
 			Intent myIntent = null;
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
@@ -76,7 +85,6 @@ public class MainActivity extends ListActivity {
 				case 0:
 					myIntent = new Intent(MainActivity.this,MapActivity.class);
 					myIntent.putExtra("USER", userName);
-
 					break;
 				case 1:
 					myIntent = new Intent(MainActivity.this,Inbox.class);
@@ -204,6 +212,13 @@ public class MainActivity extends ListActivity {
 		}
 
 	   };
+	public void handelIncomeingMessage() {
+		// här ska man göra grejer
+	}
+	public void handelIncomeingAssignment() {
+		// här ska man göra grejer
+		
+	}
 	
 
 
