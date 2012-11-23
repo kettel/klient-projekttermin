@@ -229,4 +229,4 @@ public class AssignmentOverview extends InactivityListener {
 
 		loadAssignmentList();
 	}
-
+}

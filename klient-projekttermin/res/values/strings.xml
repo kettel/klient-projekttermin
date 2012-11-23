@@ -1,4 +1,4 @@
-
+<resources>
     <string name="title_activity_create_new_message">CreateNewMessage</string>
     <string name="hello_world">Hello world!</string>
     <string name="Mottagare"></string>

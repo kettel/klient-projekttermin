@@ -6,14 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import models.AuthenticationModel;
-import models.MessageModel;
 import models.ModelInterface;
-
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
-
-import android.R.id;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,13 +15,15 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.klient_projekttermin.MainActivity;
+import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+
+import database.Database;
 
 public class LogInFunction extends InactivityListener {
 	private TextView userNameView;
@@ -86,14 +81,15 @@ public class LogInFunction extends InactivityListener {
 	/*
 	 * Metoden skapar ett användar inlogg
 	 */
-	public void createUser(View v) throws NoSuchAlgorithmException{
+	public void createUser(View v) throws NoSuchAlgorithmException {
 		dataBase = Database.getInstance(getApplicationContext());
 		userNameView = (TextView) this.findViewById(R.id.userName);
 		passwordView = (TextView) this.findViewById(R.id.password);
 		userName = userNameView.getText().toString();
 		password = passwordView.getText().toString();
 
-		AuthenticationModel authenticationModel = new AuthenticationModel(userName, hashPassword(password));
+		AuthenticationModel authenticationModel = new AuthenticationModel(
+				userName, hashPassword(password));
 
 		dataBase.addToDB(authenticationModel, getContentResolver());
 	}
@@ -101,18 +97,20 @@ public class LogInFunction extends InactivityListener {
 	/*
 	 * Metoden hämtar authenticeringsinformationen från databasen
 	 */
-	public void authenticate(AuthenticationModel authenticationModel){
+	public void authenticate(AuthenticationModel authenticationModel) {
 
 		dataBase = Database.getInstance(getApplicationContext());
 
-		listOfAuthenticationModels = dataBase.getAllFromDB(new AuthenticationModel(), getContentResolver());
+		listOfAuthenticationModels = dataBase.getAllFromDB(
+				new AuthenticationModel(), getContentResolver());
 		AuthenticationModel authenticatioReference;
 	}
+
 	/*
 	 * Metoden skapar en hashrepresentation av de inmatade lösenordet med hjälp
 	 * av SHA-2
 	 */
-	public String hashPassword(String password) throws NoSuchAlgorithmException{
+	public String hashPassword(String password) throws NoSuchAlgorithmException {
 
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.update(password.toString().getBytes());
@@ -140,13 +138,21 @@ public class LogInFunction extends InactivityListener {
 			System.out.println("TO SERVER");
 			communicationService.sendAuthentication(authenticationModel);
 		}
+		sendAuthenticationRequestToLocalDatabase(v, authenticationModel);
+	}
 
 	/*
 	 * Metoden authenticerar användaren mot den lokala databasen
 	 */
-	private void sendAuthenticationRequestToLocalDatabase(View v, AuthenticationModel authenticationModel){
+	private void sendAuthenticationRequestToLocalDatabase(View v,
+			AuthenticationModel authenticationModel) {
 
-		if (authenticationModel.getUserName().toString().equals(userNameReference)&&authenticationModel.getPasswordHash().equals(passwordHashReference)) {
+		System.out.println(authenticationModel.getUserName().toString());
+		System.out.println(authenticationModel.getPasswordHash());
+		if (authenticationModel.getUserName().toString()
+				.equals(userNameReference)
+				&& authenticationModel.getPasswordHash().equals(
+						passwordHashReference)) {
 			accessGranted();
 		}
 
@@ -168,7 +174,7 @@ public class LogInFunction extends InactivityListener {
 		}
 	}
 
-	public void accessGranted(){
+	public void accessGranted() {
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.putExtra("USER", userName);
 		startActivity(intent);
@@ -178,7 +184,8 @@ public class LogInFunction extends InactivityListener {
 	/*
 	 * Metoden skapar en hashrepresentation av ett hårdkodat lösenord
 	 */
-	public void createPassWordHashRepresentation() throws NoSuchAlgorithmException{
+	public void createPassWordHashRepresentation()
+			throws NoSuchAlgorithmException {
 		String password = "a";
 		userNameReference = "fredde";
 

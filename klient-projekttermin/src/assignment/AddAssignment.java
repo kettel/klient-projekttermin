@@ -174,7 +174,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				currentUser, false, temp.get(2), temp.get(3),
 				AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
 				temp.get(5));
-				AssignmentStatus.NOT_STARTED, temp.get(4), temp.get(5));
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();

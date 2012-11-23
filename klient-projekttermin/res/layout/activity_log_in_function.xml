@@ -13,11 +13,8 @@
         android:hint="@string/userName"
         android:layout_centerHorizontal="true"
         android:ems="10"
-        android:hint="@string/userName"
-        android:inputType="textPersonName" />
-
-    <EditText 
-    <requestFocus />
+        android:inputType="textPersonName" >
+</EditText>
 
     <EditText
         android:id="@+id/password"
