@@ -157,6 +157,7 @@ public class MainActivity extends InactivityListener {
 		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
 		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera",
 				"Sändare"), getContentResolver());
+		
 	}
 
 	/**
