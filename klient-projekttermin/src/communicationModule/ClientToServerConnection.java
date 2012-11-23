@@ -40,15 +40,11 @@ public class ClientToServerConnection extends Thread  {
 	private Context context = null;
 	private int waitTime = 1;
 	private long heartbeatTime = 0;
-	private IncomeingDataListners CommunicationService = null;
 	/**
 	 * en tom konstruktor
 	 */
 	public ClientToServerConnection(){
 		
-	}
-	public void RegisterCommunicationService(IncomeingDataListners listner){
-		CommunicationService = listner;
 	}
 	/**
 	 * Används för att förhindra att data sickas 

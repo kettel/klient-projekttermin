@@ -13,6 +13,7 @@ import loginFunction.InactivityListener;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Assignment;
+import models.AssignmentPriority;
 import models.AssignmentStatus;
 import models.Contact;
 import models.MessageModel;
@@ -149,6 +150,7 @@ public class MainActivity extends InactivityListener {
 	}
 
 	private void initiateDB(Context context) {
+		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
 		Database db = Database.getInstance(context);
 	}
 
