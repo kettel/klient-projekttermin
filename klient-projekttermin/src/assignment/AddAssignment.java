@@ -71,7 +71,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		adapter = new SimpleEditTextItemAdapter(this, data,
 				R.layout.textfield_item, from, to);
 		this.lv.setAdapter(adapter);
-		
+
 		Intent i = getIntent();
 		callingActivity = i.getIntExtra("calling-activity", 0);
 
@@ -85,7 +85,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		default:
 			break;
 		}
-		
 
 	}
 
@@ -167,14 +166,13 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 	private void saveToDB() {
 		db = Database.getInstance(getApplicationContext());
-		
+
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv
 				.getAdapter()).getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 				currentUser, false, temp.get(2), temp.get(3),
-
-				AssignmentStatus.NOT_STARTED, getByteArray(),
-				temp.get(4), temp.get(5), checkPrioString(temp.get(7)));
+				AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
+				temp.get(5), checkPrioString(temp.get(7)));
 
 		Log.d("Assignment", "Ska nu lägga till ett uppdrag " + temp.get(0)
 				+ temp.get(1) + currentUser + false + temp.get(2) + temp.get(3)
@@ -186,10 +184,11 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		finish();
 	}
 
-	
 	private AssignmentPriority checkPrioString(String prioString) {
 
-		if (prioString.equals("Hög prioritet")) {
+		if (prioString == null) {
+			return AssignmentPriority.PRIO_NORMAL;
+		} else if (prioString.equals("Hög prioritet")) {
 			return AssignmentPriority.PRIO_HIGH;
 		} else if (prioString.equals("Normal prioritet")) {
 			return AssignmentPriority.PRIO_NORMAL;
@@ -199,6 +198,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 			return AssignmentPriority.PRIO_NORMAL;
 
 	}
+
 	private byte[] getByteArray() {
 		if (bitmap != null) {
 			ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
