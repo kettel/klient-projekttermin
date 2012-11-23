@@ -36,7 +36,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private boolean isCreatingDialog = false;
 	private boolean isCreatingCoordDialog = false;
 	public static String items;
-	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" };
+	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" , "Ingen bild"};
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -115,6 +115,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		builder.setView(modeList);
 		
 		final Dialog dialog = builder.create();
+		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
