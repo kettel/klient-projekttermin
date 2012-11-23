@@ -44,6 +44,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
 	private EditText editText;
+	private boolean isCreatingPrioDialog = false;
 	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" , "Ingen bild"};
 	private static String[] coordsAlts = { "Bifoga koordinater från karta" , "Använd GPS position" , "Inga koordinater" };
 
@@ -113,8 +114,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			}
 		}
 		if (hasFocus && v.getId() == 7) {
-			if (!isCreatingDialog) {
-				isCreatingDialog = true;
+			if (!isCreatingPrioDialog ) {
+				isCreatingPrioDialog = true;
 				priorityAlternatives((EditText)v);
 			}
 			
@@ -165,15 +166,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		String provider = manager.getBestProvider(new Criteria(), true);
 		Location location = manager.getLastKnownLocation(provider);
-		System.out.println(location + " LOCATION");
 		Gson gson = new Gson();
 		final Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
 		WgsPoint[] wgs = new WgsPoint[1];
 		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
-		System.out.println(new WgsPoint(location.getLatitude(), location.getLongitude()));
+		
 		final String pos = gson.toJson(wgs, type);
-		System.out.println("POS " + pos);
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
 		ListView modeList = new ListView(context);
@@ -189,8 +188,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
-
-				isCreatingDialog = false;
 				switch (arg2) {
 				case 0:
 					isCreatingCoordDialog = false;
@@ -199,6 +196,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
 					((AddAssignment) context).startActivityForResult(intent, 0);
+					break;
 				case 1:
 					isCreatingCoordDialog = false;
 					itemStrings.put(v.getId(), pos);
@@ -227,6 +225,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
+				isCreatingPrioDialog = false;
 				switch (arg2) {
 				case 0:
 					v.setText("Hög prioritet");
