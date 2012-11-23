@@ -9,15 +9,12 @@ import java.util.Queue;
 
 import database.Database;
 import com.google.gson.Gson;
-import com.nutiteq.wrappers.List;
 
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
-import models.ModelInterface;
 
 import android.content.Context;
-import android.text.format.Time;
 import android.util.Log;
 
 /**
@@ -43,15 +40,11 @@ public class ClientToServerConnection extends Thread  {
 	private Context context = null;
 	private int waitTime = 1;
 	private long heartbeatTime = 0;
-	private IncomeingDataListners CommunicationService = null;
 	/**
 	 * en tom konstruktor
 	 */
 	public ClientToServerConnection(){
 		
-	}
-	public void RegisterCommunicationService(IncomeingDataListners listner){
-		CommunicationService = listner;
 	}
 	/**
 	 * Används för att förhindra att data sickas 

@@ -13,11 +13,10 @@ import loginFunction.InactivityListener;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Assignment;
+import models.AssignmentPriority;
 import models.AssignmentStatus;
 import models.Contact;
 import models.MessageModel;
-import models.ModelInterface;
-import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,7 +26,6 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -152,13 +150,16 @@ public class MainActivity extends InactivityListener {
 	}
 
 	private void initiateDB(Context context) {
+		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
 		Database db = Database.getInstance(context);
-		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning",
-				"Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED, "Gatunamn",
-				"Platsnamn"), getContentResolver());
-		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
-		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera",
-				"Sändare"), getContentResolver());
+
+//		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning",
+//				"Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED, "Gatunamn",
+//				"Platsnamn", AssignmentPriority.PRIO_NORMAL), getContentResolver());
+//		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
+//		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera",
+//				"Sändare"), getContentResolver());
+//		
 	}
 
 	/**

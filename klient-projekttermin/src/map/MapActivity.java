@@ -375,9 +375,9 @@ public class MapActivity extends InactivityListener implements Observer,
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		content = (HashMap<Integer, String>) getIntent().getSerializableExtra(
@@ -399,7 +399,6 @@ public class MapActivity extends InactivityListener implements Observer,
 			runOnUiThread(new Runnable() {
 
 				public void run() {
-					// TODO Auto-generated method stu
 					gpsFollowItem.setEnabled(manager
 							.isProviderEnabled(LocationManager.GPS_PROVIDER));
 				}
@@ -449,7 +448,6 @@ public class MapActivity extends InactivityListener implements Observer,
 	 *            Namn som syns om man klickar på punkten
 	 */
 	public void addInterestPoint(WgsPoint region) {
-		System.out.println("REGIONEN " + region);
 		Place p = new Place(1, " ", icons[2], region);
 		mapComponent.addPlace(p);
 	}
@@ -595,6 +593,7 @@ public class MapActivity extends InactivityListener implements Observer,
 						ActivityConstants.MAP_ACTIVITY);
 				intent.putExtra(contents, content);
 				intent.putExtra(coordinates, gson.toJson(coords, type));
+				System.out.println("JSON I MAP " + gson.toJson(coords, type));
 				setResult(ActivityConstants.RESULT_FROM_MAP, intent);
 				finish();
 			}
