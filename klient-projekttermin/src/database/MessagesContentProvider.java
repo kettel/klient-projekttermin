@@ -133,16 +133,15 @@ private static final String PASSWORD = Database.PASSWORD;
 
     @Override
     public boolean onCreate() {
-        dbHelper = new DatabaseHelper(getContext());
-        // Om Assignments inte är skapad än samt om SQLite-biblioteken 
+        // Om Message inte är skapad än samt om SQLite-biblioteken 
         // inte är laddade
         if(!Database.isLibraryLoaded){
         	SQLiteDatabase.loadLibs(getContext());
-        	SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
-        	db.close();
         	Database.isLibraryLoaded = true;
         }
-        
+        dbHelper = new DatabaseHelper(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
+    	db.close();
         return true;
     }
 
