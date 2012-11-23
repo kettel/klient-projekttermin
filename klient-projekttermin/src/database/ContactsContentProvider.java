@@ -66,7 +66,9 @@ public class ContactsContentProvider extends ContentProvider {
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("create table " + CONTACTS_TABLE_NAME + " (" + Contacts.CONTACT_ID
+            db.execSQL("CREATE TABLE IF NOT EXISTS "
+            		+ CONTACTS_TABLE_NAME
+            		+ " (" + Contacts.CONTACT_ID
                     + " INTEGER PRIMARY KEY AUTOINCREMENT," + Contacts.NAME + " VARCHAR(255));");
         }
 

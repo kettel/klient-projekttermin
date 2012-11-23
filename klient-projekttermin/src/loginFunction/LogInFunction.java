@@ -3,9 +3,10 @@ package loginFunction;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import models.AuthenticationModel;
-import android.app.Activity;
+import models.ModelInterface;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,11 +18,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+
+import database.Database;
 
 public class LogInFunction extends InactivityListener {
 	private TextView userNameView;
@@ -31,8 +33,10 @@ public class LogInFunction extends InactivityListener {
 	private String passwordHashReference;
 	private String userNameReference;
 	private CommunicationService communicationService;
-	// private AuthenticationModel AM;
+	private AuthenticationModel AM;
+	private Database dataBase;
 	private boolean communicationBond = false;
+	private List<ModelInterface> listOfAuthenticationModels;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +53,6 @@ public class LogInFunction extends InactivityListener {
 				CommunicationService.class);
 		bindService(intent, communicationServiceConnection,
 				Context.BIND_AUTO_CREATE);
-
 	}
 
 	@Override
@@ -73,6 +76,34 @@ public class LogInFunction extends InactivityListener {
 
 		sendAuthenticationRequestToServer(v, authenticationModel);
 		passwordView.getEditableText().clear();
+	}
+
+	/*
+	 * Metoden skapar ett användar inlogg
+	 */
+	public void createUser(View v) throws NoSuchAlgorithmException {
+		dataBase = Database.getInstance(getApplicationContext());
+		userNameView = (TextView) this.findViewById(R.id.userName);
+		passwordView = (TextView) this.findViewById(R.id.password);
+		userName = userNameView.getText().toString();
+		password = passwordView.getText().toString();
+
+		AuthenticationModel authenticationModel = new AuthenticationModel(
+				userName, hashPassword(password));
+
+		dataBase.addToDB(authenticationModel, getContentResolver());
+	}
+
+	/*
+	 * Metoden hämtar authenticeringsinformationen från databasen
+	 */
+	public void authenticate(AuthenticationModel authenticationModel) {
+
+		dataBase = Database.getInstance(getApplicationContext());
+
+		listOfAuthenticationModels = dataBase.getAllFromDB(
+				new AuthenticationModel(), getContentResolver());
+		AuthenticationModel authenticatioReference;
 	}
 
 	/*
@@ -116,8 +147,12 @@ public class LogInFunction extends InactivityListener {
 	private void sendAuthenticationRequestToLocalDatabase(View v,
 			AuthenticationModel authenticationModel) {
 
-		if (authenticationModel.getPasswordHash().equals(passwordHashReference)
-				&& authenticationModel.getUserName().equals(userNameReference)) {
+		System.out.println(authenticationModel.getUserName().toString());
+		System.out.println(authenticationModel.getPasswordHash());
+		if (authenticationModel.getUserName().toString()
+				.equals(userNameReference)
+				&& authenticationModel.getPasswordHash().equals(
+						passwordHashReference)) {
 			accessGranted();
 		}
 
@@ -143,6 +178,7 @@ public class LogInFunction extends InactivityListener {
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.putExtra("USER", userName);
 		startActivity(intent);
+		finish();
 	}
 
 	/*
@@ -150,10 +186,10 @@ public class LogInFunction extends InactivityListener {
 	 */
 	public void createPassWordHashRepresentation()
 			throws NoSuchAlgorithmException {
-		String password = "fredrik";
-		userNameReference = "A";
+		String password = "a";
+		userNameReference = "fredde";
 
-		// AM = new AuthenticationModel(password, userNameReference);
+		AM = new AuthenticationModel(password, userNameReference);
 
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.update(password.getBytes());

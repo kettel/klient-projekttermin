@@ -193,7 +193,6 @@ public class AssignmentDetails extends InactivityListener {
 		}
 		agentCount.setText(" Antal: " + currentAssignment.getAgents().size()
 				+ "(" + temp + ")");
-
 	}
 
 	/**
