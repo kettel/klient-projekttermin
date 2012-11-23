@@ -12,4 +12,5 @@ public interface ActivityConstants {
 	public static final int ADD_PICTURE_TO_MESSAGE = 1007;
 	public static final int RESULT_FROM_MAP = 1008;
 	public static final int RESULT_FROM_CAMERA = 1009;
+	public static final int GET_GPS_LOCATION = 1010;
 	}

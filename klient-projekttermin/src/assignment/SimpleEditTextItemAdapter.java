@@ -1,5 +1,6 @@
 package assignment;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -24,8 +28,13 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import camera.PhotoGallery;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
+import com.nutiteq.components.WgsPoint;
+import com.nutiteq.location.LocationSource;
+import com.nutiteq.location.providers.AndroidGPSProvider;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
@@ -37,6 +46,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private boolean isCreatingCoordDialog = false;
 	public static String items;
 	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" , "Ingen bild"};
+	private static String[] coordsAlts = { "Bifoga koordinater från karta" , "Använd GPS position" , "Inga koordinater" };
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -76,7 +86,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-				System.out.println("Ontextchanged " + v.getId());
 				if (v.getId() != 1 && v.getId() != 6) {
 					itemStrings.put(v.getId(), s.toString());
 				}
@@ -93,7 +102,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		if (hasFocus && v.getId() == 1) {
 			if (!isCreatingCoordDialog) {
 				isCreatingCoordDialog = true;
-				coordinateField();
+				coordinateField(v);
 			}
 		}
 		if (hasFocus && v.getId() == 6) {
@@ -143,29 +152,56 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		dialog.show();
 	}
 
-	private void coordinateField() {
+	private void coordinateField(final View v) {
+		final EditText ed1 = (EditText) v;
+		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		String provider = manager.getBestProvider(new Criteria(), true);
+		Location location = manager.getLastKnownLocation(provider);
+		System.out.println(location + " LOCATION");
+		Gson gson = new Gson();
+		final Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		WgsPoint[] wgs = new WgsPoint[1];
+		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
+		System.out.println(new WgsPoint(location.getLatitude(), location.getLongitude()));
+		final String pos = gson.toJson(wgs, type);
+		System.out.println("POS " + pos);
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
-		builder.setMessage("Vill du hämta koordinater från kartan?");
-		builder.setPositiveButton("ok", new OnClickListener() {
-			public void onClick(DialogInterface dialog, int arg1) {
-				isCreatingCoordDialog = false;
+		ListView modeList = new ListView(context);
+		CustomAdapter modeAdapter = new CustomAdapter(context,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				coordsAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		
+		final Dialog dialog = builder.create();
+		dialog.setCancelable(false);
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
 				dialog.dismiss();
-				Intent intent = new Intent(context, MapActivity.class);
-				intent.putExtra("calling-activity",
-						ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
-				((AddAssignment) context).startActivityForResult(intent, 0);
+				isCreatingDialog = false;
+				switch (arg2) {
+				case 0:
+					isCreatingCoordDialog = false;
+					dialog.dismiss();
+					Intent intent = new Intent(context, MapActivity.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
+					((AddAssignment) context).startActivityForResult(intent, 0);
+				case 1:
+					isCreatingCoordDialog = false;
+					itemStrings.put(v.getId(), pos);
+					ed1.setText(pos);
+					break;
+				default:
+					isCreatingCoordDialog = false;
+					break;
+				}
 			}
 		});
-		builder.setNegativeButton("cancel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						isCreatingCoordDialog = false;
-						dialog.dismiss();
-					}
-				});
-		builder.setCancelable(false);
-		builder.create().show();
+		dialog.show();
 	}
 
 	public HashMap<Integer, String> getItemStrings() {
