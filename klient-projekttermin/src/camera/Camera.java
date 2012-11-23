@@ -87,19 +87,23 @@ public class Camera extends InactivityListener {
 
 	private File createImageFile() throws IOException {
 		// Gör ett filnamn till bilden
+		System.out.println("1");
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 				.format(new Date());
 		String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
 		File albumF = getAlbumDir();
-		dirChecker();
+		System.out.println("2");
 		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX,
 				albumF);
+		System.out.println("3");
 		dirChecker();
 		return imageF;
 	}
 	private void dirChecker() {
+		System.out.println("DIR CHECK");
         File FiledirChecker = new File("/storage/sdcard0/Pictures/Album/");
         if (!FiledirChecker.isDirectory()){
+        	System.out.println("NOT A DIR");
             FiledirChecker.mkdirs();
         }
     }
