@@ -11,7 +11,6 @@ import java.util.TimeZone;
 
 import com.nutiteq.components.WgsPoint;
 
-
 public class Assignment implements ModelInterface {
 	// Typen av model
 	private String databaseRepresentation = "assignment";
@@ -57,8 +56,8 @@ public class Assignment implements ModelInterface {
 	}
 
 	/**
-	 * Konstruktor för att skapa ett uppdrag utan kartmarkering utan bild
-	 * med bara en adress (ej siteName)
+	 * Konstruktor för att skapa ett uppdrag utan kartmarkering utan bild med
+	 * bara en adress (ej siteName)
 	 * 
 	 * @param name
 	 * @param sender
@@ -70,10 +69,10 @@ public class Assignment implements ModelInterface {
 	 * @param cameraImage
 	 * @param streetName
 	 */
-	public Assignment(String name, String sender,
-			boolean externalMission, String assignmentDescription,
-			String timeSpan, AssignmentStatus assignmentStatus,
-			String streetName, AssignmentPriority assignmentPrio) {
+	public Assignment(String name, String sender, boolean externalMission,
+			String assignmentDescription, String timeSpan,
+			AssignmentStatus assignmentStatus, String streetName,
+			AssignmentPriority assignmentPrio) {
 		this.name = name;
 		this.sender = sender;
 		this.externalMission = externalMission;
@@ -84,7 +83,7 @@ public class Assignment implements ModelInterface {
 		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
 		this.assignmentPrio = assignmentPrio;
 	}
-	
+
 	/**
 	 * Konstruktor för att skapa ett uppdrag utan kartmarkering utan bild
 	 * 
@@ -99,10 +98,10 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, String sender,
-			boolean externalMission, String assignmentDescription,
-			String timeSpan, AssignmentStatus assignmentStatus,
-			String streetName, String siteName, AssignmentPriority assignmentPrio) {
+	public Assignment(String name, String sender, boolean externalMission,
+			String assignmentDescription, String timeSpan,
+			AssignmentStatus assignmentStatus, String streetName,
+			String siteName, AssignmentPriority assignmentPrio) {
 		this.name = name;
 		this.sender = sender;
 		this.externalMission = externalMission;
@@ -128,10 +127,11 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, String sender,
-			boolean externalMission, String assignmentDescription,
-			String timeSpan, AssignmentStatus assignmentStatus,
-			byte[] cameraImage, String streetName, String siteName, AssignmentPriority assignmentPrio) {
+	public Assignment(String name, String sender, boolean externalMission,
+			String assignmentDescription, String timeSpan,
+			AssignmentStatus assignmentStatus, byte[] cameraImage,
+			String streetName, String siteName,
+			AssignmentPriority assignmentPrio) {
 
 		this.name = name;
 		this.sender = sender;
@@ -161,11 +161,11 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, double lat, double lon, 
-			String sender, boolean externalMission,
-			String assignmentDescription, String timeSpan,
-			AssignmentStatus assignmentStatus, String streetName,
-			String siteName, AssignmentPriority assignmentPrio) {
+	public Assignment(String name, double lat, double lon, String sender,
+			boolean externalMission, String assignmentDescription,
+			String timeSpan, AssignmentStatus assignmentStatus,
+			String streetName, String siteName,
+			AssignmentPriority assignmentPrio) {
 		this.name = name;
 		this.lat = lat;
 		this.lon = lon;
@@ -195,11 +195,11 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, double lat, double lon, 
-			String sender, boolean externalMission,
-			String assignmentDescription, String timeSpan,
-			AssignmentStatus assignmentStatus, byte[] cameraImage,
-			String streetName, String siteName, AssignmentPriority assignmentPrio) {
+	public Assignment(String name, double lat, double lon, String sender,
+			boolean externalMission, String assignmentDescription,
+			String timeSpan, AssignmentStatus assignmentStatus,
+			byte[] cameraImage, String streetName, String siteName,
+			AssignmentPriority assignmentPrio) {
 		this.name = name;
 		this.lat = lat;
 		this.lon = lon;
@@ -228,11 +228,11 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, String region, 
-			String sender, boolean externalMission,
-			String assignmentDescription, String timeSpan,
-			AssignmentStatus assignmentStatus, String streetName,
-			String siteName, AssignmentPriority assignmentPrio) {
+	public Assignment(String name, String region, String sender,
+			boolean externalMission, String assignmentDescription,
+			String timeSpan, AssignmentStatus assignmentStatus,
+			String streetName, String siteName,
+			AssignmentPriority assignmentPrio) {
 		this.name = name;
 		this.region = region;
 		this.sender = sender;
@@ -263,11 +263,11 @@ public class Assignment implements ModelInterface {
 	 * @param streetName
 	 * @param siteName
 	 */
-	public Assignment(String name, String region, 
-			String sender, boolean externalMission,
-			String assignmentDescription, String timeSpan,
-			AssignmentStatus assignmentStatus, byte[] cameraImage,
-			String streetName, String siteName, AssignmentPriority assignmentPrio) {
+	public Assignment(String name, String region, String sender,
+			boolean externalMission, String assignmentDescription,
+			String timeSpan, AssignmentStatus assignmentStatus,
+			byte[] cameraImage, String streetName, String siteName,
+			AssignmentPriority assignmentPrio) {
 		this.name = name;
 		this.region = region;
 		this.sender = sender;
@@ -299,14 +299,14 @@ public class Assignment implements ModelInterface {
 	 * @param cameraImage
 	 * @param streetName
 	 * @param siteName
-	 * @param timeStamp 
+	 * @param timeStamp
 	 */
-	public Assignment(long id, String name, double lat, double lon, String region,
-			List<Contact> agents,
-			String sender, boolean externalMission,
-			String assignmentDescription, String timeSpan,
-			AssignmentStatus assignmentStatus, byte[] cameraImage,
-			String streetName, String siteName, Long timeStamp, AssignmentPriority assignmentPrio) {
+	public Assignment(long id, String name, double lat, double lon,
+			String region, List<Contact> agents, String sender,
+			boolean externalMission, String assignmentDescription,
+			String timeSpan, AssignmentStatus assignmentStatus,
+			byte[] cameraImage, String streetName, String siteName,
+			Long timeStamp, AssignmentPriority assignmentPrio) {
 		this.id = id;
 		this.name = name;
 		this.lat = lat;
@@ -326,7 +326,7 @@ public class Assignment implements ModelInterface {
 	}
 
 	public String getRegion() {
-		if(region == null){
+		if (region == null) {
 			region = "[{\"Lat\":0,\"Lon\":0}]";
 		}
 		return region;
@@ -339,7 +339,8 @@ public class Assignment implements ModelInterface {
 	public List<Contact> getAgents() {
 		return agents;
 	}
-	public void addAgents(Contact self){
+
+	public void addAgents(Contact self) {
 		agents.add(self);
 	}
 
@@ -369,7 +370,7 @@ public class Assignment implements ModelInterface {
 
 	public byte[] getCameraImage() {
 		// Om bilden är null och den ska hämtas...
-		if (cameraImage == null){
+		if (cameraImage == null) {
 			cameraImage = new byte[2];
 		}
 		return cameraImage;
@@ -386,30 +387,54 @@ public class Assignment implements ModelInterface {
 	public AssignmentStatus getAssignmentStatus() {
 		return assignmentStatus;
 	}
-	public void setAssignmentStatus(AssignmentStatus newStatus){
+
+	public void setAssignmentStatus(AssignmentStatus newStatus) {
 		assignmentStatus = newStatus;
 	}
-	
-	public Long getTimeStamp(){
+
+	public Long getTimeStamp() {
 		return assignmentTimeStamp;
 	}
-	
-	public AssignmentPriority getAssignmentPriority(){
+
+	public AssignmentPriority getAssignmentPriority() {
 		return assignmentPrio;
 	}
-	
+
+	public String getAssignmentPriorityToString() {
+
+		final String PRIO_HIGH = "Hög prioritering";
+		final String PRIO_NORMAL = "Normal prioritering";
+		final String PRIO_LOW = "Låg prioritering";
+		final String PRIO_NONEEXISTANT = "Prioritering ej satt";
+		
+		if (assignmentPrio == null) {
+			return PRIO_NONEEXISTANT;
+		} else if (assignmentPrio == AssignmentPriority.PRIO_HIGH) {
+			return PRIO_HIGH;
+		} else if (assignmentPrio == AssignmentPriority.PRIO_NORMAL) {
+			return PRIO_NORMAL;
+		} else if (assignmentPrio == AssignmentPriority.PRIO_LOW) {
+			return PRIO_LOW;
+		} else {
+			return PRIO_NONEEXISTANT;
+		}
+
+	}
+
 	/**
 	 * Hämta datum i format yyyy-MM-dd HH:mm:ss för tidszon CET
+	 * 
 	 * @return String
 	 */
 	public String getMessageTimeStampSmart() {
 		Date date = new Date(assignmentTimeStamp);
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+				Locale.US);
 		format.setTimeZone(TimeZone.getTimeZone("CET"));
 		String smartTime = format.format(date).toString();
 		return smartTime;
 	}
-	
+
 	public String getDatabaseRepresentation() {
 		return databaseRepresentation;
 	}
