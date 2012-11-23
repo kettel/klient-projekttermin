@@ -48,7 +48,6 @@ public class DataReceiver extends Thread{
 			Log.e("DataReciver", "Error in setting streams due to " + e.toString());
 		}
 		while(connecton){
-			System.out.println("connection");
 			try {
 				if(input.ready()){
 					inputString = input.readLine();
