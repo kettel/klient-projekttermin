@@ -1,8 +1,8 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.database.MessageTable.Messages;
+import database.MessageTable.Messages;
 
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -26,7 +26,7 @@ private static final String PASSWORD = Database.PASSWORD;
 
     private static final int DATABASE_VERSION = 1;
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.database.MessagesContentProvider";
+    public static final String AUTHORITY = "database.MessagesContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
@@ -45,7 +45,7 @@ private static final String PASSWORD = Database.PASSWORD;
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-        	String DATABASE_CREATE = "create table "
+        	String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
         			+ Messages.TABLE_NAME+ "(" 
         			+ Messages.MESSAGE_ID + " integer primary key autoincrement, " 
         			+ Messages.CONTENT + " text, " 
@@ -122,7 +122,6 @@ private static final String PASSWORD = Database.PASSWORD;
     @Override
     public boolean onCreate() {
         dbHelper = new DatabaseHelper(getContext());
-        
         // Om Assignments inte är skapad än samt om SQLite-biblioteken 
         // inte är laddade
         if(!Database.isLibraryLoaded){

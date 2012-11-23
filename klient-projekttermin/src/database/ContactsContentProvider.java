@@ -1,13 +1,15 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
+import database.ContactTable.Contacts;
 
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 import net.sqlcipher.database.SQLiteQueryBuilder;
+
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -17,25 +19,31 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-public class AssignmentsContentProvider extends ContentProvider {
+/**
+ * @author Jason Wei
+ * 
+ */
+public class ContactsContentProvider extends ContentProvider {
 	
 	private static final String PASSWORD = Database.PASSWORD;
 	
-    private static final String TAG = "AssignmentsContentProvider";
+    private static final String TAG = "ContactsContentProvider";
 
-    private static final String DATABASE_NAME = "assignments.db";
+    private static final String DATABASE_NAME = "contacts.db";
 
     private static final int DATABASE_VERSION = 1;
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.database.AssignmentsContentProvider";
+    private static final String CONTACTS_TABLE_NAME = "contacts";
+
+    public static final String AUTHORITY = "database.ContactsContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
-    private static final int ASSIGNMENTS = 1;
+    private static final int CONTACTS = 1;
 
-    private static final int ASSIGNMENTS_ID = 2;
+    private static final int CONTACTS_ID = 2;
 
-    private static HashMap<String, String> assignmentsProjectionMap;
+    private static HashMap<String, String> contactsProjectionMap;
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -46,30 +54,14 @@ public class AssignmentsContentProvider extends ContentProvider {
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-        	String DATABASE_CREATE = "CREATE TABLE " 
-    				+ Assignments.TABLE_NAME + "("
-    	            + Assignments.ASSIGNMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "  
-    	    		+ Assignments.NAME + " VARCHAR(255), "
-    	            + Assignments.LAT + " VARCHAR(255), "
-    	    		+ Assignments.LON + " VARCHAR(255), "
-    	    		+ Assignments.REGION + " LONGTEXT, "
-    	            + Assignments.AGENTS + " LONGTEXT, "
-    	            + Assignments.SENDER + " VARCHAR(255), "
-    	            + Assignments.EXTERNAL_MISSION + " VARCHAR(255), "
-    	            + Assignments.DESCRIPTION + " TEXT, "
-    	            + Assignments.TIMESPAN + " VARCHAR(255), "
-    	            + Assignments.STATUS + " VARCHAR(255), "
-    	            + Assignments.CAMERAIMAGE + " BLOB, "
-    	            + Assignments.STREETNAME + " VARCHAR(255), "
-    	            + Assignments.SITENAME + " VARCHAR(255), " 
-    	            + Assignments.TIMESTAMP + " VARCHAR(255));";
-            db.execSQL(DATABASE_CREATE);
+            db.execSQL("create table " + CONTACTS_TABLE_NAME + " (" + Contacts.CONTACT_ID
+                    + " INTEGER PRIMARY KEY AUTOINCREMENT," + Contacts.NAME + " VARCHAR(255));");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + Assignments.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + CONTACTS_TABLE_NAME);
             onCreate(db);
         }
     }
@@ -80,16 +72,16 @@ public class AssignmentsContentProvider extends ContentProvider {
     public int delete(Uri uri, String where, String[] whereArgs) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
         switch (sUriMatcher.match(uri)) {
-            case ASSIGNMENTS:
+            case CONTACTS:
                 break;
-            case ASSIGNMENTS_ID:
+            case CONTACTS_ID:
                 where = where + "_id = " + uri.getLastPathSegment();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
-        int count = db.delete(Assignments.TABLE_NAME, where, whereArgs);
+        int count = db.delete(CONTACTS_TABLE_NAME, where, whereArgs);
         // Underr�tta lyssnare
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
@@ -98,8 +90,8 @@ public class AssignmentsContentProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         switch (sUriMatcher.match(uri)) {
-            case ASSIGNMENTS:
-                return Assignments.CONTENT_TYPE;
+            case CONTACTS:
+                return Contacts.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -107,7 +99,7 @@ public class AssignmentsContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues initialValues) {
-        if (sUriMatcher.match(uri) != ASSIGNMENTS) {
+        if (sUriMatcher.match(uri) != CONTACTS) {
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
 
@@ -119,9 +111,9 @@ public class AssignmentsContentProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
-        long rowId = db.insert(Assignments.TABLE_NAME, Assignments.NAME, values);
+        long rowId = db.insert(CONTACTS_TABLE_NAME, Contacts.NAME, values);
         if (rowId > 0) {
-            Uri noteUri = ContentUris.withAppendedId(Assignments.CONTENT_URI, rowId);
+            Uri noteUri = ContentUris.withAppendedId(Contacts.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(noteUri, null);
             return noteUri;
         }
@@ -148,13 +140,13 @@ public class AssignmentsContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(Assignments.TABLE_NAME);
-        qb.setProjectionMap(assignmentsProjectionMap);
+        qb.setTables(CONTACTS_TABLE_NAME);
+        qb.setProjectionMap(contactsProjectionMap);
 
         switch (sUriMatcher.match(uri)) {    
-            case ASSIGNMENTS:
+            case CONTACTS:
                 break;
-            case ASSIGNMENTS_ID:
+            case CONTACTS_ID:
                 selection = selection + "_id = " + uri.getLastPathSegment();
                 break;
             default:
@@ -173,8 +165,8 @@ public class AssignmentsContentProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
         int count;
         switch (sUriMatcher.match(uri)) {
-            case ASSIGNMENTS:
-                count = db.update(Assignments.TABLE_NAME, values, where, whereArgs);
+            case CONTACTS:
+                count = db.update(CONTACTS_TABLE_NAME, values, where, whereArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -186,24 +178,12 @@ public class AssignmentsContentProvider extends ContentProvider {
 
     static {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, Assignments.TABLE_NAME, ASSIGNMENTS);
-        sUriMatcher.addURI(AUTHORITY, Assignments.TABLE_NAME + "/#", ASSIGNMENTS_ID);
+        sUriMatcher.addURI(AUTHORITY, CONTACTS_TABLE_NAME, CONTACTS);
+        sUriMatcher.addURI(AUTHORITY, CONTACTS_TABLE_NAME + "/#", CONTACTS_ID);
 
-        assignmentsProjectionMap = new HashMap<String, String>();
-        assignmentsProjectionMap.put(Assignments.ASSIGNMENT_ID, Assignments.ASSIGNMENT_ID);
-        assignmentsProjectionMap.put(Assignments.NAME, Assignments.NAME);
-        assignmentsProjectionMap.put(Assignments.LAT, Assignments.LAT);
-        assignmentsProjectionMap.put(Assignments.LON, Assignments.LON);
-        assignmentsProjectionMap.put(Assignments.REGION, Assignments.REGION);
-        assignmentsProjectionMap.put(Assignments.AGENTS, Assignments.AGENTS);
-        assignmentsProjectionMap.put(Assignments.SENDER, Assignments.SENDER);
-        assignmentsProjectionMap.put(Assignments.EXTERNAL_MISSION, Assignments.EXTERNAL_MISSION);
-        assignmentsProjectionMap.put(Assignments.DESCRIPTION, Assignments.DESCRIPTION);
-        assignmentsProjectionMap.put(Assignments.TIMESPAN, Assignments.TIMESPAN);
-        assignmentsProjectionMap.put(Assignments.STATUS, Assignments.STATUS);
-        assignmentsProjectionMap.put(Assignments.CAMERAIMAGE, Assignments.CAMERAIMAGE);
-        assignmentsProjectionMap.put(Assignments.STREETNAME, Assignments.STREETNAME);
-        assignmentsProjectionMap.put(Assignments.SITENAME, Assignments.SITENAME);
-        assignmentsProjectionMap.put(Assignments.TIMESTAMP, Assignments.TIMESTAMP);
+        contactsProjectionMap = new HashMap<String, String>();
+        contactsProjectionMap.put(Contacts.CONTACT_ID, Contacts.CONTACT_ID);
+        contactsProjectionMap.put(Contacts.NAME, Contacts.NAME);
     }
 }
+

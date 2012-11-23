@@ -1,5 +1,6 @@
 package models;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,7 +11,6 @@ import java.util.TimeZone;
 
 import com.nutiteq.components.WgsPoint;
 
-import android.graphics.Bitmap;
 
 public class Assignment implements ModelInterface {
 	// Typen av model
@@ -24,7 +24,7 @@ public class Assignment implements ModelInterface {
 	// Longitud för uppdragspositionen
 	private double lon;
 	// JSON-sträng med WSG-punkter för polygonmarkering av region på kartan
-	private String region = "";
+	private String region;
 	// Användarnamnet på den person som skapade uppdraget.
 	private String sender;
 	// Om uppdraget ska skickas till externa aktörer
@@ -42,7 +42,7 @@ public class Assignment implements ModelInterface {
 	// Behöver hjälp)
 	private AssignmentStatus assignmentStatus;
 	// Bild kopplat till uppdraget
-	private Bitmap cameraImage;
+	private byte[] cameraImage;
 	// Gatunamn för platsen där uppdraget utspelas
 	private String streetName;
 	// Platsnamn där uppdraget utspelas
@@ -127,7 +127,7 @@ public class Assignment implements ModelInterface {
 	public Assignment(String name, String sender,
 			boolean externalMission, String assignmentDescription,
 			String timeSpan, AssignmentStatus assignmentStatus,
-			Bitmap cameraImage, String streetName, String siteName) {
+			byte[] cameraImage, String streetName, String siteName) {
 		this.name = name;
 		this.sender = sender;
 		this.externalMission = externalMission;
@@ -191,7 +191,7 @@ public class Assignment implements ModelInterface {
 	public Assignment(String name, double lat, double lon, 
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
-			AssignmentStatus assignmentStatus, Bitmap cameraImage,
+			AssignmentStatus assignmentStatus, byte[] cameraImage,
 			String streetName, String siteName) {
 		this.name = name;
 		this.lat = lat;
@@ -240,6 +240,8 @@ public class Assignment implements ModelInterface {
 	/**
 	 * Konstruktor för att skapa ett uppdrag utifrån en region med kamerabild
 	 * 
+	 * Det är denna som används just nu
+	 * 
 	 * @param name
 	 * @param region
 	 * @param sender
@@ -254,7 +256,7 @@ public class Assignment implements ModelInterface {
 	public Assignment(String name, String region, 
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
-			AssignmentStatus assignmentStatus, Bitmap cameraImage,
+			AssignmentStatus assignmentStatus, byte[] cameraImage,
 			String streetName, String siteName) {
 		this.name = name;
 		this.region = region;
@@ -291,7 +293,7 @@ public class Assignment implements ModelInterface {
 			List<Contact> agents,
 			String sender, boolean externalMission,
 			String assignmentDescription, String timeSpan,
-			AssignmentStatus assignmentStatus, Bitmap cameraImage,
+			AssignmentStatus assignmentStatus, byte[] cameraImage,
 			String streetName, String siteName, Long timeStamp) {
 		this.id = id;
 		this.name = name;
@@ -312,7 +314,7 @@ public class Assignment implements ModelInterface {
 
 	public String getRegion() {
 		if(region == null){
-			region = new WgsPoint((double) 0,(double) 0).toString();
+			region = "[{\"Lat\":0,\"Lon\":0}]";
 		}
 		return region;
 	}
@@ -352,11 +354,10 @@ public class Assignment implements ModelInterface {
 		return sender;
 	}
 
-	public Bitmap getCameraImage() {
+	public byte[] getCameraImage() {
 		// Om bilden är null och den ska hämtas...
 		if (cameraImage == null){
-			Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
-			cameraImage = Bitmap.createBitmap(100, 100, conf);
+			cameraImage = new byte[2];
 		}
 		return cameraImage;
 	}
@@ -371,6 +372,9 @@ public class Assignment implements ModelInterface {
 
 	public AssignmentStatus getAssignmentStatus() {
 		return assignmentStatus;
+	}
+	public void setAssignmentStatus(AssignmentStatus newStatus){
+		assignmentStatus = newStatus;
 	}
 	
 	public Long getTimeStamp(){

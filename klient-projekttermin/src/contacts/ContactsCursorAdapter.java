@@ -1,6 +1,6 @@
 package contacts;
 
-import com.example.klien_projekttermin.database.ContactTable;
+import database.ContactTable;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -54,7 +54,6 @@ public class ContactsCursorAdapter extends CursorAdapter {
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		final View view = inflater.inflate(
 				android.R.layout.simple_dropdown_item_1line, parent, false);
-
 		return view;
 	}
 

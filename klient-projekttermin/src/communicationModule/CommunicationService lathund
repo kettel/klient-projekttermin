@@ -25,7 +25,12 @@ Detta behöver initieras i onCreate
 Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
 bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
 
+
 Så tidigt som möjligt måste denna rad köras (endast en gång)
 communicationService.setContext(getApplicationContext());
 
+Detta ska vara med i onDestroy() i din aktivitet
+if(communicationBond){
+unbindService(communicationServiceConnection);
+}
 Sedan kan man skicka data med alla ”send” metoderna.

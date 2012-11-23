@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.ContentResolver;
 import android.content.Context;
 import models.Assignment;
+import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
@@ -20,6 +21,7 @@ public class Database {
 	private static AssignmentsDB assignmentsDB;
 	private static ContactsDB contactsDB;
 	private static MessagesDB messagesDB;
+	private static AuthenticationDB authenticationDB;
 	
 	private Database(){}
 	
@@ -35,6 +37,7 @@ public class Database {
     	assignmentsDB = AssignmentsDB.getInstance();
     	contactsDB = ContactsDB.getInstance();
     	messagesDB = MessagesDB.getInstance();
+    	authenticationDB = AuthenticationDB.getInstance();
         return instance;
 	}
 	
@@ -48,6 +51,9 @@ public class Database {
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			messagesDB.addMessage(contentResolver, (MessageModel) m);
+		}
+		else if(dbRep.equalsIgnoreCase("authentication")){
+			authenticationDB.addAuthenticationContent(contentResolver, (AuthenticationModel) m);
 		}
 	}
 	
@@ -63,6 +69,9 @@ public class Database {
 		else if(dbRep.equalsIgnoreCase("message")){
 			returnCount = messagesDB.getCount(contentResolver);
 		}
+		else if(dbRep.equalsIgnoreCase("authentication")){
+			returnCount = authenticationDB.getCount(contentResolver);
+		}
 		return returnCount;
 	}
 	
@@ -76,6 +85,9 @@ public class Database {
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			messagesDB.delete(contentResolver, (MessageModel)m);
+		}
+		else if(dbRep.equalsIgnoreCase("authentication")){
+			authenticationDB.delete(contentResolver, (AuthenticationModel)m);
 		}
 	}
 	
@@ -91,6 +103,9 @@ public class Database {
 		else if(dbRep.equalsIgnoreCase("message")){
 			returnList = messagesDB.getAllMessages(contentResolver);
 		}
+		else if(dbRep.equalsIgnoreCase("authentication")){
+			returnList = authenticationDB.getAllAuthenticationModels(contentResolver);
+		}
 		return returnList;
 	}
 	
@@ -104,6 +119,9 @@ public class Database {
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			messagesDB.updateMessage(contentResolver, (MessageModel)m);
+		}
+		else if(dbRep.equalsIgnoreCase("authentication")){
+			authenticationDB.updateAuthentication(contentResolver, (AuthenticationModel) m);
 		}
 	}
 }

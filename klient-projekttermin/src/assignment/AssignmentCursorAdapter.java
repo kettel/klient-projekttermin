@@ -1,8 +1,5 @@
 package assignment;
 
-import com.example.klien_projekttermin.database.AssignmentTable;
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import database.AssignmentTable;
 
 public class AssignmentCursorAdapter extends CursorAdapter {
 
@@ -25,7 +23,6 @@ public class AssignmentCursorAdapter extends CursorAdapter {
 	public AssignmentCursorAdapter(Context context, Cursor c, int flags) {
 		super(context, c, flags);
 		contentResolver = context.getContentResolver();
-		
 	}
 
 	@Override
@@ -52,10 +49,12 @@ public class AssignmentCursorAdapter extends CursorAdapter {
 
 	@Override
 	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-		if(getFilterQueryProvider() != null) {
-			return getFilterQueryProvider().runQuery(constraint);
-		}
-		return contentResolver.query(Assignments.CONTENT_URI, null, "_id is not null", null, null);
+		System.out.println("DETTA KOMMER ALDRIG ATT SYNAS");
+		if (getFilterQueryProvider() != null) { return getFilterQueryProvider().runQuery(constraint); }
+
+	    return contentResolver.query(
+				AssignmentTable.Assignments.CONTENT_URI, null, AssignmentTable.Assignments.NAME+" like '%"+constraint.toString()+"%'",
+				null, AssignmentTable.Assignments.NAME);
 	}
 
 }

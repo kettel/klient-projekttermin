@@ -24,11 +24,10 @@
                 android:textSize="18dp" />
 
             <TextView
-                android:id="@+id/textView_antal_set"
+                android:id="@+id/textView_agentCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="(500)"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
 
@@ -173,6 +172,7 @@
                     android:id="@+id/imageView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:src="@drawable/nopic" />
             </LinearLayout>
         </ScrollView>
