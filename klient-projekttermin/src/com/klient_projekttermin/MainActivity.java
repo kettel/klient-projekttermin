@@ -55,9 +55,7 @@ public class MainActivity extends InactivityListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//Preparing database
-//		Database db = Database.getInstance(this);
-		this.testDB(this);
+		initiateDB(this);
 		//Communication model
 		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
 		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
@@ -153,7 +151,7 @@ public class MainActivity extends InactivityListener {
 		});
 	}
 
-	private void testDB(Context context) {
+	private void initiateDB(Context context) {
 		Database db = Database.getInstance(context);
 		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning",
 				"Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED, "Gatunamn",
