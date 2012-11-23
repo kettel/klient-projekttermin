@@ -9,15 +9,12 @@ import java.util.Queue;
 
 import database.Database;
 import com.google.gson.Gson;
-import com.nutiteq.wrappers.List;
 
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
-import models.ModelInterface;
 
 import android.content.Context;
-import android.text.format.Time;
 import android.util.Log;
 
 /**

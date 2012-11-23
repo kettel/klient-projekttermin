@@ -1,5 +1,6 @@
 package assignment;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,12 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,8 +26,11 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import camera.PhotoGallery;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
+import com.nutiteq.components.WgsPoint;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
@@ -31,10 +38,11 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	@SuppressLint({ "UseSparseArrays", "UseSparseArrays" })
 	private HashMap<Integer, String> itemStrings = new HashMap<Integer, String>();
 	private Context context;
-	private boolean isCreatingDialog=false;
+	private boolean isCreatingDialog = false;
 	private boolean isCreatingCoordDialog = false;
 	public static String items;
-	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" };
+	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" , "Ingen bild"};
+	private static String[] coordsAlts = { "Bifoga koordinater från karta" , "Använd GPS position" , "Inga koordinater" };
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -47,9 +55,10 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		convertView = null;
-		View v = super.getView(position, convertView, parent);
+		final View v = super.getView(position, convertView, parent);
 		EditText editText = (EditText) v.findViewById(R.id.text_item);
-		if (editText!=null) {
+
+		if (editText != null) {
 			if (itemStrings.get(position) != null) {
 				editText.setText(itemStrings.get(position));
 			} else {
@@ -60,7 +69,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			editText.setId(position);
 			editText.setOnFocusChangeListener(this);
 		}
-		
+
 		return v;
 	}
 
@@ -68,33 +77,34 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		itemStrings.put(position, s);
 	}
 
-	public void onFocusChange(View v, boolean hasFocus) {
-		if (!hasFocus) {
-			final int position = v.getId();
-			final EditText Caption = (EditText) v;
-			String s = Caption.getText().toString();
-			if (!s.isEmpty()) {
-				itemStrings.put(position, s);
-			}
-		}
-		if (hasFocus && v.getId() == 1) {
-			final EditText Caption = (EditText) v;
-			String s = Caption.getText().toString();
-			if (s.isEmpty()) {
-				if (!isCreatingCoordDialog ) {
-					isCreatingCoordDialog=true;
-				coordinateField();
+	public void onFocusChange(final View v, boolean hasFocus) {
+		((EditText) v).addTextChangedListener(new TextWatcher() {
+
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				if (v.getId() != 1 && v.getId() != 6) {
+					itemStrings.put(v.getId(), s.toString());
 				}
+
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+
+			public void afterTextChanged(Editable s) {
+			}
+		});
+		if (hasFocus && v.getId() == 1) {
+			if (!isCreatingCoordDialog) {
+				isCreatingCoordDialog = true;
+				coordinateField(v);
 			}
 		}
 		if (hasFocus && v.getId() == 6) {
-			final EditText Caption = (EditText) v;
-			String s = Caption.getText().toString();
-			if (s.isEmpty()) {
-				if (!isCreatingDialog) {
-					isCreatingDialog=true;
-					pictureAlternatives();
-				}
+			if (!isCreatingDialog) {
+				isCreatingDialog = true;
+				pictureAlternatives();
 			}
 		}
 	}
@@ -108,22 +118,27 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				pictureAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
+		
 		final Dialog dialog = builder.create();
+		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
-				isCreatingDialog=false;
+				isCreatingDialog = false;
 				switch (arg2) {
 				case 0:
 					Intent intent = new Intent(context, PhotoGallery.class);
-					intent.putExtra("calling-activity",ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
+					intent.putExtra("calling-activity",
+							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 					((AddAssignment) context).startActivityForResult(intent, 1);
 					break;
 				case 1:
 					Intent intent2 = new Intent(context, PhotoGallery.class);
-					intent2.putExtra("calling-activity",ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
-					((AddAssignment) context).startActivityForResult(intent2, 2);
+					intent2.putExtra("calling-activity",
+							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
+					((AddAssignment) context)
+							.startActivityForResult(intent2, 2);
 					break;
 				default:
 					break;
@@ -133,27 +148,56 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		dialog.show();
 	}
 
-	private void coordinateField() {
+	private void coordinateField(final View v) {
+		final EditText ed1 = (EditText) v;
+		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		String provider = manager.getBestProvider(new Criteria(), true);
+		Location location = manager.getLastKnownLocation(provider);
+		System.out.println(location + " LOCATION");
+		Gson gson = new Gson();
+		final Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		WgsPoint[] wgs = new WgsPoint[1];
+		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
+		System.out.println(new WgsPoint(location.getLatitude(), location.getLongitude()));
+		final String pos = gson.toJson(wgs, type);
+		System.out.println("POS " + pos);
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
-		builder.setMessage("Vill du hämta koordinater från kartan?");
-		builder.setPositiveButton("ok", new OnClickListener() {
-			public void onClick(DialogInterface dialog, int arg1) {
+		ListView modeList = new ListView(context);
+		CustomAdapter modeAdapter = new CustomAdapter(context,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				coordsAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		
+		final Dialog dialog = builder.create();
+		dialog.setCancelable(false);
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
 				dialog.dismiss();
-				isCreatingCoordDialog=false;
-				Intent intent = new Intent(context, MapActivity.class);
-				intent.putExtra("calling-activity",ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
-				((AddAssignment) context).startActivityForResult(intent, 0);
+				isCreatingDialog = false;
+				switch (arg2) {
+				case 0:
+					isCreatingCoordDialog = false;
+					dialog.dismiss();
+					Intent intent = new Intent(context, MapActivity.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
+					((AddAssignment) context).startActivityForResult(intent, 0);
+				case 1:
+					isCreatingCoordDialog = false;
+					itemStrings.put(v.getId(), pos);
+					ed1.setText(pos);
+					break;
+				default:
+					isCreatingCoordDialog = false;
+					break;
+				}
 			}
 		});
-		builder.setNegativeButton("cancel",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				});
-		builder.setCancelable(false);
-		builder.create().show();
+		dialog.show();
 	}
 
 	public HashMap<Integer, String> getItemStrings() {

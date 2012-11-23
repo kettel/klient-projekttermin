@@ -74,8 +74,8 @@ import database.Database;
  * @author nicklas
  * 
  */
-public class MapActivity extends InactivityListener implements Observer, MapListener,
-		Runnable, OnItemClickListener, OnMapElementListener{
+public class MapActivity extends InactivityListener implements Observer,
+		MapListener, Runnable, OnItemClickListener, OnMapElementListener {
 
 	private BasicMapComponent mapComponent;
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
@@ -375,9 +375,9 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		content = (HashMap<Integer, String>) getIntent().getSerializableExtra(
@@ -399,7 +399,6 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 			runOnUiThread(new Runnable() {
 
 				public void run() {
-					// TODO Auto-generated method stu
 					gpsFollowItem.setEnabled(manager
 							.isProviderEnabled(LocationManager.GPS_PROVIDER));
 				}
@@ -449,7 +448,6 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 	 *            Namn som syns om man klickar på punkten
 	 */
 	public void addInterestPoint(WgsPoint region) {
-		System.out.println("REGIONEN " + region);
 		Place p = new Place(1, " ", icons[2], region);
 		mapComponent.addPlace(p);
 	}
@@ -576,7 +574,7 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 	public void displayAddCoordinatesToAssignment(int ch) {
 		final int choice = ch;
 		final Context context = getApplicationContext();
-		
+
 		final Gson gson = new Gson();
 		final Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
@@ -584,7 +582,6 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 		builder.setTitle("Koordinater");
 		builder.setMessage("Använd koordinater ?");
 		builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-			
 
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
@@ -596,6 +593,7 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 						ActivityConstants.MAP_ACTIVITY);
 				intent.putExtra(contents, content);
 				intent.putExtra(coordinates, gson.toJson(coords, type));
+				System.out.println("JSON I MAP " + gson.toJson(coords, type));
 				setResult(ActivityConstants.RESULT_FROM_MAP, intent);
 				finish();
 			}
@@ -680,7 +678,11 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 					mapComponent.removePolygon(((Polygon) argument));
 					break;
 				case 1:
+					if(callingActivity == ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT){
+						addRegionToAssignment(argument);
+					} else {
 					createAssignmentFromRegion(argument);
+					}
 					break;
 				default:
 					break;
@@ -690,6 +692,18 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 		dialog.show();
 	}
 
+	public void addRegionToAssignment(OnMapElement arg) {
+		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
+		Gson gson = new Gson();
+		WgsPoint[] ar = arg.getPoints();
+		Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		intent.putExtra(coordinates, gson.toJson(ar, type));
+		intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
+		setResult(ActivityConstants.RESULT_FROM_MAP, intent);
+		finish();
+	}
+	
 	public void createAssignmentFromRegion(OnMapElement arg) {
 		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
 		Gson gson = new Gson();
@@ -700,6 +714,7 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 		intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
 		MapActivity.this.startActivity(intent);
 	}
+	
 
 	public void elementClicked(OnMapElement arg0) {
 	}
@@ -711,7 +726,6 @@ public class MapActivity extends InactivityListener implements Observer, MapList
 		if (arg0 instanceof Polygon) {
 			regionChoice(arg0);
 		}
-
 	}
 
 	public void elementLeft(OnMapElement arg0) {
