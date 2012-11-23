@@ -247,7 +247,6 @@ public class DisplayOfConversation extends InactivityListener {
 	}
 
 	public void sendMessage(View v){
-
 		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 
 		messageObject = new MessageModel(message.getText().toString(), chosenContact, user); 

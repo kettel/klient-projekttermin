@@ -19,9 +19,9 @@ import android.util.Log;
 
 
 public class AssignmentsContentProvider extends ContentProvider {
-	
+
 	private static final String PASSWORD = Database.PASSWORD;
-	
+
     private static final String TAG = "AssignmentsContentProvider";
 
     private static final String DATABASE_NAME = "assignments.db";

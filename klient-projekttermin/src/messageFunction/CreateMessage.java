@@ -41,12 +41,11 @@ public class CreateMessage extends InactivityListener {
 		dataBase = Database.getInstance(getApplicationContext());
 
 		Bundle extras = getIntent().getExtras();
-
 		if (extras != null) {
 			user = extras.getString("USER");
 			messageContent = extras.getString("MESSAGE");
 		}
-
+		
 		Intent intent = new Intent(this, CommunicationService.class);
 		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 

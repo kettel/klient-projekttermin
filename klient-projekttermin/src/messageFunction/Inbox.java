@@ -193,7 +193,6 @@ public class Inbox extends InactivityListener {
 
 		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
 			messageModel = (MessageModel) peopleEngagedInConversation.get(i);
-
 			if(messageModel.getReciever().toString().toLowerCase().equals(userName.toLowerCase())){
 				if(!setOfPeople.contains(messageModel.getSender().toString())){
 					setOfPeople.add(messageModel.getSender().toString());

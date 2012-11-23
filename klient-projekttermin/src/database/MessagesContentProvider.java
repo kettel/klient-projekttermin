@@ -42,7 +42,6 @@ private static final String PASSWORD = Database.PASSWORD;
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
-       
         @Override
         public void onCreate(SQLiteDatabase db) {
         	String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "

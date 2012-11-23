@@ -73,7 +73,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			editText.setId(position);
 			editText.setOnFocusChangeListener(this);
 		}
-
 		return v;
 	}
 

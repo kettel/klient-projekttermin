@@ -3,8 +3,16 @@ package loginFunction;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import models.AuthenticationModel;
+import models.MessageModel;
+import models.ModelInterface;
+
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
+
+import android.R.id;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,12 +22,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.klient_projekttermin.MainActivity;
-import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -31,8 +38,10 @@ public class LogInFunction extends InactivityListener {
 	private String passwordHashReference;
 	private String userNameReference;
 	private CommunicationService communicationService;
-	// private AuthenticationModel AM;
+	private AuthenticationModel AM;
+	private Database dataBase;
 	private boolean communicationBond = false;
+	private List<ModelInterface> listOfAuthenticationModels;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +58,6 @@ public class LogInFunction extends InactivityListener {
 				CommunicationService.class);
 		bindService(intent, communicationServiceConnection,
 				Context.BIND_AUTO_CREATE);
-
 	}
 
 	@Override
@@ -76,10 +84,35 @@ public class LogInFunction extends InactivityListener {
 	}
 
 	/*
+	 * Metoden skapar ett användar inlogg
+	 */
+	public void createUser(View v) throws NoSuchAlgorithmException{
+		dataBase = Database.getInstance(getApplicationContext());
+		userNameView = (TextView) this.findViewById(R.id.userName);
+		passwordView = (TextView) this.findViewById(R.id.password);
+		userName = userNameView.getText().toString();
+		password = passwordView.getText().toString();
+
+		AuthenticationModel authenticationModel = new AuthenticationModel(userName, hashPassword(password));
+
+		dataBase.addToDB(authenticationModel, getContentResolver());
+	}
+
+	/*
+	 * Metoden hämtar authenticeringsinformationen från databasen
+	 */
+	public void authenticate(AuthenticationModel authenticationModel){
+
+		dataBase = Database.getInstance(getApplicationContext());
+
+		listOfAuthenticationModels = dataBase.getAllFromDB(new AuthenticationModel(), getContentResolver());
+		AuthenticationModel authenticatioReference;
+	}
+	/*
 	 * Metoden skapar en hashrepresentation av de inmatade lösenordet med hjälp
 	 * av SHA-2
 	 */
-	public String hashPassword(String password) throws NoSuchAlgorithmException {
+	public String hashPassword(String password) throws NoSuchAlgorithmException{
 
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.update(password.toString().getBytes());
@@ -107,17 +140,13 @@ public class LogInFunction extends InactivityListener {
 			System.out.println("TO SERVER");
 			communicationService.sendAuthentication(authenticationModel);
 		}
-		sendAuthenticationRequestToLocalDatabase(v, authenticationModel);
-	}
 
 	/*
 	 * Metoden authenticerar användaren mot den lokala databasen
 	 */
-	private void sendAuthenticationRequestToLocalDatabase(View v,
-			AuthenticationModel authenticationModel) {
+	private void sendAuthenticationRequestToLocalDatabase(View v, AuthenticationModel authenticationModel){
 
-		if (authenticationModel.getPasswordHash().equals(passwordHashReference)
-				&& authenticationModel.getUserName().equals(userNameReference)) {
+		if (authenticationModel.getUserName().toString().equals(userNameReference)&&authenticationModel.getPasswordHash().equals(passwordHashReference)) {
 			accessGranted();
 		}
 
@@ -139,21 +168,21 @@ public class LogInFunction extends InactivityListener {
 		}
 	}
 
-	public void accessGranted() {
+	public void accessGranted(){
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.putExtra("USER", userName);
 		startActivity(intent);
+		finish();
 	}
 
 	/*
 	 * Metoden skapar en hashrepresentation av ett hårdkodat lösenord
 	 */
-	public void createPassWordHashRepresentation()
-			throws NoSuchAlgorithmException {
-		String password = "fredrik";
-		userNameReference = "A";
+	public void createPassWordHashRepresentation() throws NoSuchAlgorithmException{
+		String password = "a";
+		userNameReference = "fredde";
 
-		// AM = new AuthenticationModel(password, userNameReference);
+		AM = new AuthenticationModel(password, userNameReference);
 
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		md.update(password.getBytes());
