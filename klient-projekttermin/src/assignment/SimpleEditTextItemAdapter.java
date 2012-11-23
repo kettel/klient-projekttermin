@@ -44,6 +44,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
 	private EditText editText;
+	private boolean isCreatingPrioDialog = false;
 	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" , "Ingen bild"};
 	private static String[] coordsAlts = { "Bifoga koordinater från karta" , "Använd GPS position" , "Inga koordinater" };
 
@@ -113,8 +114,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			}
 		}
 		if (hasFocus && v.getId() == 7) {
-			if (!isCreatingDialog) {
-				isCreatingDialog = true;
+			if (!isCreatingPrioDialog ) {
+				isCreatingPrioDialog = true;
 				priorityAlternatives((EditText)v);
 			}
 			
@@ -227,6 +228,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
+				isCreatingPrioDialog = false;
 				switch (arg2) {
 				case 0:
 					v.setText("Hög prioritet");

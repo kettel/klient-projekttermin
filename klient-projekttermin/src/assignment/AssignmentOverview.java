@@ -102,10 +102,6 @@ public class AssignmentOverview extends InactivityListener {
 		/**
 		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
-
-
-//		getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null)
-
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
 		this.lv.setAdapter(adapter);
 	}
