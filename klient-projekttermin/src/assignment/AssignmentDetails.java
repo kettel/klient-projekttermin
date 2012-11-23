@@ -34,7 +34,7 @@ import database.Database;
 
 public class AssignmentDetails extends InactivityListener {
 
-	private Database db;/* = Database.getInstance(getApplicationContext()); */
+	private Database db;
 	private long assignmentID;
 	private TextView textViewAssName;
 	private TextView textViewDescription;
