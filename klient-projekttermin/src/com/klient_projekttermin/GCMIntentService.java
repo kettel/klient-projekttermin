@@ -62,6 +62,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.i(TAG, "Received message");
 		String message = getString(R.string.gcm_message);
 		displayMessage(context, message);
+		// Handling incoming data //
+		DataReceiver data = new DataReceiver(context);
+		data.start();
+		// done handling incoming data//
 		// notifies user
 		generateNotification(context, message);
 	}
