@@ -1,5 +1,6 @@
 package database;
 
+import java.io.File;
 import java.util.HashMap;
 
 import database.ContactTable.Contacts;
@@ -49,6 +50,15 @@ public class ContactsContentProvider extends ContentProvider {
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            
+            // FIX FÖR GALAXY-TABBEN!
+    		File dbFile = context.getDatabasePath(DATABASE_NAME);
+
+    		// Om databasfilen inte existerar, skapa den
+    		if (!dbFile.exists()) {
+    			dbFile.mkdirs();
+    			dbFile.delete();
+    		}
         }
 
        
