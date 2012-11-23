@@ -28,8 +28,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
+import com.klient_projekttermin.R;
+import database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 

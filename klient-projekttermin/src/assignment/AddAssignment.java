@@ -16,23 +16,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import camera.PhotoGallery;
-
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+import database.Database;
 
 public class AddAssignment extends InactivityListener implements Serializable {
-
 	/**
 	 * 
 	 */
@@ -55,6 +52,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	private String currentUser;
 	private ListView lv;
 	private Bitmap bitmap;
+	private int callingActivity;
 
 	@SuppressLint("UseSparseArrays")
 	public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +71,21 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		adapter = new SimpleEditTextItemAdapter(this, data,
 				R.layout.textfield_item, from, to);
 		this.lv.setAdapter(adapter);
+		
+		Intent i = getIntent();
+		callingActivity = i.getIntExtra("calling-activity", 0);
+
+		switch (callingActivity) {
+		case ActivityConstants.MAP_ACTIVITY:
+			fromMap(i);
+			break;
+		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
+			fromCamera(i);
+			break;
+		default:
+			break;
+		}
+		
 
 	}
 
@@ -115,7 +128,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 	private void fromMap(Intent intent) {
 		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
-		System.out.println(jsonCoord);
 		adapter.textToItem(1, jsonCoord);
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -160,9 +172,15 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				.getAdapter()).getItemStrings();
 		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 				currentUser, false, temp.get(2), temp.get(3),
+
 				AssignmentStatus.NOT_STARTED, getByteArray(),
 				temp.get(4), temp.get(5), checkPrioString(temp.get(7)));
-		
+
+		Log.d("Assignment", "Ska nu lägga till ett uppdrag " + temp.get(0)
+				+ temp.get(1) + currentUser + false + temp.get(2) + temp.get(3)
+				+ AssignmentStatus.NOT_STARTED + "byteArray" + temp.get(4)
+				+ temp.get(5));
+
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
@@ -183,10 +201,10 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	}
 	private byte[] getByteArray() {
 		if (bitmap != null) {
-			 ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
-			 bitmap.compress(Bitmap.CompressFormat.PNG, 100,
-			 byteArrayBitmapStream);
-			 byte[] b = byteArrayBitmapStream.toByteArray();
+			ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+					byteArrayBitmapStream);
+			byte[] b = byteArrayBitmapStream.toByteArray();
 			return b;
 		} else {
 			return new byte[2];

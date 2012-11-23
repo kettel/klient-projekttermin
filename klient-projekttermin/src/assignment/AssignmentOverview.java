@@ -22,9 +22,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.AssignmentTable;
-import com.example.klien_projekttermin.database.Database;
+import com.klient_projekttermin.R;
+
+import database.AssignmentTable;
+import database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -101,7 +102,9 @@ public class AssignmentOverview extends InactivityListener {
 		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
 
+
 //		getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null)
+
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
 		this.lv.setAdapter(adapter);
 	}
@@ -153,7 +156,6 @@ public class AssignmentOverview extends InactivityListener {
 	public void setLongItemClickListener() {
 		// Skapar en lyssnare som lyssnar efter l�nga intryckningar
 		this.lv.setOnItemLongClickListener(
-
 		new OnItemLongClickListener() {
 
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,

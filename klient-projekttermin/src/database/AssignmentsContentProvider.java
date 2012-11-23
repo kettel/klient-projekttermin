@@ -1,8 +1,9 @@
-package com.example.klien_projekttermin.database;
+package database;
 
+import java.io.File;
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
+import database.AssignmentTable.Assignments;
 
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -17,6 +18,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+
 public class AssignmentsContentProvider extends ContentProvider {
 	
 	private static final String PASSWORD = Database.PASSWORD;
@@ -27,7 +29,7 @@ public class AssignmentsContentProvider extends ContentProvider {
 
     private static final int DATABASE_VERSION = 1;
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.database.AssignmentsContentProvider";
+    public static final String AUTHORITY = "database.AssignmentsContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
@@ -41,6 +43,15 @@ public class AssignmentsContentProvider extends ContentProvider {
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            
+            // FIX FÖR GALAXY-TABBEN!
+    		File dbFile = context.getDatabasePath(DATABASE_NAME);
+
+    		// Om databasfilen inte existerar, skapa den
+    		if (!dbFile.exists()) {
+    			dbFile.mkdirs();
+    			dbFile.delete();
+    		}
         }
 
        
@@ -66,6 +77,7 @@ public class AssignmentsContentProvider extends ContentProvider {
     	            + Assignments.SITENAME + " VARCHAR(255), " 
     	            + Assignments.TIMESTAMP + " VARCHAR(255), "
     	            + Assignments.PRIORITY + " VARCHAR(255));";
+
             db.execSQL(DATABASE_CREATE);
         }
 

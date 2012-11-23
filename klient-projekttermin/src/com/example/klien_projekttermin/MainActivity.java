@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.klient_projekttermin.R;
+
 import loginFunction.InactivityListener;
 import map.MapActivity;
 import messageFunction.Inbox;
@@ -29,9 +31,9 @@ import android.widget.SimpleAdapter;
 import assignment.AssignmentOverview;
 import camera.Camera;
 
-import com.example.klien_projekttermin.database.Database;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+import database.Database;
 
 
 //import com.google.android.gcm.GCMRegistrar;

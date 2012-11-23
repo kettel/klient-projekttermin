@@ -1,4 +1,4 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import java.util.ArrayList;
 import java.util.List;

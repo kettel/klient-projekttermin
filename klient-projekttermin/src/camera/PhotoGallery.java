@@ -1,6 +1,5 @@
 package camera;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,9 +8,6 @@ import java.util.HashMap;
 import loginFunction.InactivityListener;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -22,7 +18,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,9 +31,9 @@ import android.widget.ListView;
 import assignment.AddAssignment;
 import assignment.SimpleEditTextItemAdapter;
 
-import com.example.klien_projekttermin.ActivityConstants;
-import com.example.klien_projekttermin.R;
 import com.google.gson.Gson;
+import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.R;
 
 public class PhotoGallery extends InactivityListener implements Serializable{
 
@@ -56,6 +51,7 @@ public class PhotoGallery extends InactivityListener implements Serializable{
 	@SuppressWarnings("unused")
 	private HashMap<Integer, String> content;
 	public static String contents;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

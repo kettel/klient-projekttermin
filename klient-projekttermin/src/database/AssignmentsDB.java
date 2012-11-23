@@ -1,7 +1,9 @@
-package com.example.klien_projekttermin.database;
+package database;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import database.AssignmentTable.Assignments;
 
 import models.Assignment;
 import models.AssignmentPriority;
@@ -12,8 +14,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
-
-import com.example.klien_projekttermin.database.AssignmentTable.Assignments;
 
 public class AssignmentsDB {
 	private AssignmentsDB() {

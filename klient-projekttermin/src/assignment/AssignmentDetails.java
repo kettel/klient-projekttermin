@@ -23,13 +23,14 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.klien_projekttermin.R;
-import com.example.klien_projekttermin.database.Database;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+
+import database.Database;
 
 public class AssignmentDetails extends InactivityListener {
 
@@ -145,7 +146,6 @@ public class AssignmentDetails extends InactivityListener {
 	public void setCurrentAssignmentToReach() {
 
 		for (ModelInterface m : listAssignments) {
-
 			// Konverterar Modelinterfacet till ett Assignment.
 			Assignment a = (Assignment) m;
 
@@ -154,9 +154,7 @@ public class AssignmentDetails extends InactivityListener {
 			if (a.getId() == assignmentID) {
 				currentAssignment = a;
 			}
-
 		}
-
 	}
 
 	/**
@@ -182,7 +180,9 @@ public class AssignmentDetails extends InactivityListener {
 		textViewStreetname.setText(currentAssignment.getStreetName());
 		currentAssignment.getRegion();
 		textViewCoord.setText(sb.toString());
-		Bitmap bitmap = BitmapFactory.decodeByteArray(currentAssignment.getCameraImage() , 0, currentAssignment.getCameraImage().length);
+		Bitmap bitmap = BitmapFactory.decodeByteArray(
+				currentAssignment.getCameraImage(), 0,
+				currentAssignment.getCameraImage().length);
 		image.setImageBitmap(bitmap);
 
 		// Fyller en sträng med aktuella agenter.

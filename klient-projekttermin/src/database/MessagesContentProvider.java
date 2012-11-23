@@ -1,8 +1,9 @@
-package com.example.klien_projekttermin.database;
+package database;
 
+import java.io.File;
 import java.util.HashMap;
 
-import com.example.klien_projekttermin.database.MessageTable.Messages;
+import database.MessageTable.Messages;
 
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -26,7 +27,7 @@ private static final String PASSWORD = Database.PASSWORD;
 
     private static final int DATABASE_VERSION = 1;
 
-    public static final String AUTHORITY = "com.example.klien_projekttermin.database.MessagesContentProvider";
+    public static final String AUTHORITY = "database.MessagesContentProvider";
 
     private static final UriMatcher sUriMatcher;
 
@@ -40,6 +41,15 @@ private static final String PASSWORD = Database.PASSWORD;
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            
+            // FIX FÖR GALAXY-TABBEN!
+    		File dbFile = context.getDatabasePath(DATABASE_NAME);
+
+    		// Om databasfilen inte existerar, skapa den
+    		if (!dbFile.exists()) {
+    			dbFile.mkdirs();
+    			dbFile.delete();
+    		}
         }
 
        
