@@ -19,6 +19,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -29,7 +30,7 @@ import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 import database.Database;
 
-public class AddAssignment extends InactivityListener implements Serializable{
+public class AddAssignment extends InactivityListener implements Serializable {
 	/**
 	 * 
 	 */
@@ -157,6 +158,9 @@ public class AddAssignment extends InactivityListener implements Serializable{
 				currentUser, false, temp.get(2), temp.get(3),
 				AssignmentStatus.NOT_STARTED, getByteArray(),
 				temp.get(4), temp.get(5));
+		Log.d("Assignment","Ska nu lägga till ett uppdrag " + temp.get(0) + 
+				temp.get(1) + currentUser + false + temp.get(2) +  temp.get(3) 
+				+ AssignmentStatus.NOT_STARTED + "byteArray" + temp.get(4) + temp.get(5));
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
@@ -164,10 +168,10 @@ public class AddAssignment extends InactivityListener implements Serializable{
 
 	private byte[] getByteArray() {
 		if (bitmap != null) {
-			 ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
-			 bitmap.compress(Bitmap.CompressFormat.PNG, 100,
-			 byteArrayBitmapStream);
-			 byte[] b = byteArrayBitmapStream.toByteArray();
+			ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+					byteArrayBitmapStream);
+			byte[] b = byteArrayBitmapStream.toByteArray();
 			return b;
 		} else {
 			return new byte[2];
