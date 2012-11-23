@@ -23,11 +23,11 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.klient_projekttermin.R;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 import database.AssignmentTable;
 import database.Database;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
 
 public class AssignmentOverview extends InactivityListener {
 

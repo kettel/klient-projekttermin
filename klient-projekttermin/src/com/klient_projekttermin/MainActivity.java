@@ -10,14 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import loginFunction.LogInFunction;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;
 import models.MessageModel;
-import models.ModelInterface;
-import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,8 +26,8 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -38,7 +37,6 @@ import assignment.AssignmentOverview;
 import camera.Camera;
 
 import com.google.android.gcm.GCMRegistrar;
-import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
@@ -48,28 +46,29 @@ public class MainActivity extends InactivityListener {
 
 	private String userName;
 	AsyncTask<Void, Void, Void> mRegisterTask;
-	
+
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
-		//Communication model
-		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
-		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
-		
+		// Communication model
+		Intent intent = new Intent(this.getApplicationContext(),
+				CommunicationService.class);
+		bindService(intent, communicationServiceConnection,
+				Context.BIND_AUTO_CREATE);
+
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			userName = extras.getString("USER");
 		}
 		setContentView(R.layout.activity_main);
-		
-		//used to replace listview functionality
-		ListView lv = (ListView)findViewById(android.R.id.list);
-				
-		
+
+		// used to replace listview functionality
+		ListView lv = (ListView) findViewById(android.R.id.list);
+
 		checkNotNull(SERVER_URL, "SERVER_URL");
 		checkNotNull(SENDER_ID, "SENDER_ID");
 		// Make sure the device has the proper dependencies.
@@ -119,7 +118,7 @@ public class MainActivity extends InactivityListener {
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				//for communicationService 
+				// for communicationService
 				communicationService.setContext(getApplicationContext());
 				// Har man lagt till ett nytt menyval lägger man till en action
 				// för dessa här.
@@ -198,8 +197,8 @@ public class MainActivity extends InactivityListener {
 		}
 		unregisterReceiver(mHandleMessageReceiver);
 		GCMRegistrar.onDestroy(this);
-		//communication
-		if(communicationBond){
+		// communication
+		if (communicationBond) {
 			unbindService(communicationServiceConnection);
 		}
 		super.onDestroy();
@@ -220,20 +219,26 @@ public class MainActivity extends InactivityListener {
 			// mDisplay.append(newMessage + "\n");
 		}
 	};
-	
+
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
 
-		public void onServiceConnected(ComponentName className,IBinder service) {
-		        CommunicationBinder binder = (CommunicationBinder) service;
-	            communicationService = binder.getService();
-	            communicationBond = true;
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			CommunicationBinder binder = (CommunicationBinder) service;
+			communicationService = binder.getService();
+			communicationBond = true;
 		}
 
 		public void onServiceDisconnected(ComponentName arg0) {
-		      	communicationBond = false;
+			communicationBond = false;
 		}
 
+	};
 
-	   };
-	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		finish();
+		Intent intent = new Intent(MainActivity.this, LogInFunction.class);
+		this.startActivity(intent);
+		return false;
+	}
 }

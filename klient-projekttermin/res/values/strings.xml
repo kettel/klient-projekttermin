@@ -84,5 +84,6 @@
     <string name="options_exit">Exit</string>
     <string name="title_activity_login_function">Login</string>
 	<string name="login">Login</string>
+	<string name="logout">Logout</string>
 </resources>
 
