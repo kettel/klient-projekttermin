@@ -52,6 +52,8 @@ public class AssignmentsContentProvider extends ContentProvider {
     			dbFile.mkdirs();
     			dbFile.delete();
     		}
+    		// Initiera en skrivbar databas (FIX för testDB)
+    		SQLiteDatabase db = this.getWritableDatabase(PASSWORD);
         }
 
        
@@ -146,17 +148,15 @@ public class AssignmentsContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        dbHelper = new DatabaseHelper(getContext());
-        
         // Om Assignments inte är skapad än samt om SQLite-biblioteken 
         // inte är laddade
         if(!Database.isLibraryLoaded){
         	SQLiteDatabase.loadLibs(getContext());
-        	SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
-        	db.close();
         	Database.isLibraryLoaded = true;
         }
-        
+        dbHelper = new DatabaseHelper(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
+    	db.close();
         return true;
     }
 
