@@ -14,6 +14,7 @@ import loginFunction.LogInFunction;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Assignment;
+import models.AssignmentPriority;
 import models.AssignmentStatus;
 import models.Contact;
 import models.MessageModel;
@@ -151,13 +152,16 @@ public class MainActivity extends InactivityListener {
 	}
 
 	private void initiateDB(Context context) {
+		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
 		Database db = Database.getInstance(context);
-		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning",
-				"Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED, "Gatunamn",
-				"Platsnamn"), getContentResolver());
-		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
-		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera",
-				"Sändare"), getContentResolver());
+
+//		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning",
+//				"Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED, "Gatunamn",
+//				"Platsnamn", AssignmentPriority.PRIO_NORMAL), getContentResolver());
+//		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
+//		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera",
+//				"Sändare"), getContentResolver());
+//		
 	}
 
 	/**

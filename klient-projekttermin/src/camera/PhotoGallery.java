@@ -1,6 +1,5 @@
 package camera;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,9 +8,6 @@ import java.util.HashMap;
 import loginFunction.InactivityListener;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -22,7 +18,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;

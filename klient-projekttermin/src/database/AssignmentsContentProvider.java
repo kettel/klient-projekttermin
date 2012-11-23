@@ -1,5 +1,6 @@
 package database;
 
+import java.io.File;
 import java.util.HashMap;
 
 import database.AssignmentTable.Assignments;
@@ -42,12 +43,25 @@ public class AssignmentsContentProvider extends ContentProvider {
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            
+            // FIX FÖR GALAXY-TABBEN!
+    		File dbFile = context.getDatabasePath(DATABASE_NAME);
+
+    		// Om databasfilen inte existerar, skapa den
+    		if (!dbFile.exists()) {
+    			dbFile.mkdirs();
+    			dbFile.delete();
+    		}
+    		// Initiera en skrivbar databas (FIX för testDB)
+    		SQLiteDatabase db = this.getWritableDatabase(PASSWORD);
         }
 
        
         @Override
         public void onCreate(SQLiteDatabase db) {
-        	String DATABASE_CREATE = "create table " 
+
+        	String DATABASE_CREATE = "CREATE TABLE " 
+
     				+ Assignments.TABLE_NAME + "("
     	            + Assignments.ASSIGNMENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "  
     	    		+ Assignments.NAME + " VARCHAR(255), "
@@ -63,7 +77,9 @@ public class AssignmentsContentProvider extends ContentProvider {
     	            + Assignments.CAMERAIMAGE + " BLOB, "
     	            + Assignments.STREETNAME + " VARCHAR(255), "
     	            + Assignments.SITENAME + " VARCHAR(255), " 
-    	            + Assignments.TIMESTAMP + " VARCHAR(255));";
+    	            + Assignments.TIMESTAMP + " VARCHAR(255), "
+    	            + Assignments.PRIORITY + " VARCHAR(255));";
+
             db.execSQL(DATABASE_CREATE);
         }
 
@@ -91,7 +107,7 @@ public class AssignmentsContentProvider extends ContentProvider {
         }
 
         int count = db.delete(Assignments.TABLE_NAME, where, whereArgs);
-        // Underr�tta lyssnare
+        // Underrätta lyssnare
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
@@ -132,17 +148,15 @@ public class AssignmentsContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        dbHelper = new DatabaseHelper(getContext());
-        
         // Om Assignments inte är skapad än samt om SQLite-biblioteken 
         // inte är laddade
         if(!Database.isLibraryLoaded){
         	SQLiteDatabase.loadLibs(getContext());
-        	SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
-        	db.close();
         	Database.isLibraryLoaded = true;
         }
-        
+        dbHelper = new DatabaseHelper(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
+    	db.close();
         return true;
     }
 
@@ -206,5 +220,6 @@ public class AssignmentsContentProvider extends ContentProvider {
         assignmentsProjectionMap.put(Assignments.STREETNAME, Assignments.STREETNAME);
         assignmentsProjectionMap.put(Assignments.SITENAME, Assignments.SITENAME);
         assignmentsProjectionMap.put(Assignments.TIMESTAMP, Assignments.TIMESTAMP);
+        assignmentsProjectionMap.put(Assignments.PRIORITY, Assignments.PRIORITY);
     }
 }
