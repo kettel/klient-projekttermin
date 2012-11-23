@@ -59,6 +59,8 @@ public class ContactsContentProvider extends ContentProvider {
     			dbFile.mkdirs();
     			dbFile.delete();
     		}
+    		// Initiera en skrivbar databas (FIX för testDB)
+    		SQLiteDatabase db = this.getWritableDatabase(PASSWORD);
         }
 
        

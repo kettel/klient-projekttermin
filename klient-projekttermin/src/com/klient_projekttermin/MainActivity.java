@@ -150,12 +150,6 @@ public class MainActivity extends InactivityListener {
 
 	private void initiateDB(Context context) {
 		Database db = Database.getInstance(context);
-		db.addToDB(new Assignment("Namn", "Sändare", false, "Beskrivning",
-				"Tidsspann 2 veckor", AssignmentStatus.NOT_STARTED, "Gatunamn",
-				"Platsnamn"), getContentResolver());
-		db.addToDB(new Contact("Kontaktnamn"), getContentResolver());
-		db.addToDB(new MessageModel("Meddelandeinnehåll", "Mottagera",
-				"Sändare"), getContentResolver());
 	}
 
 	/**
