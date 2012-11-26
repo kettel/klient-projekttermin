@@ -65,13 +65,14 @@ public class DataReceiver extends Thread{
 						database.addToDB(contact, context.getContentResolver());
 					}else {
 						Log.e("Database input problem","Did not recognise inputtype.");
+						connecton = false;
 					}
 				}
 			} catch (Exception e) {
 				Log.e("Crash in DataReciver", "inputString: " + e.toString());
 			}
 			if(output.checkError()){
-				Log.i("output", "Stream is down");
+				Log.i("DataReceiver", "Stream is down, closeing connection");
 				connecton = false; 
 			}
 		}
