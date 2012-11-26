@@ -79,8 +79,10 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				System.out.println("8");
 				AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
 						.findViewById(R.id.autoText_item);
+				
 				autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
 						context, null, true));
+				
 			} else {
 				System.out.println("else");
 				editText = (EditText) convertView.findViewById(R.id.text_item);
@@ -105,6 +107,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	public void textToItem(int position, String s) {
 		itemStrings.put(position, s);
 	}
+	
 
 	public void onFocusChange(final View v, boolean hasFocus) {
 		((EditText) v).addTextChangedListener(new TextWatcher() {
@@ -145,12 +148,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				priorityAlternatives((EditText) v);
 			}
 		}
-//		if (hasFocus && v.getId() == 8) {
-//			if (!isCreatingAgentDialog) {
-//				isCreatingAgentDialog = true;
-//				// TODO:agentAlternatives((EditText)v);
-//			}
-//		}
 	}
 
 	private void pictureAlternatives() {

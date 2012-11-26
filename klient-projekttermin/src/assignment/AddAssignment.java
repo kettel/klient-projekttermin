@@ -3,13 +3,17 @@ package assignment;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import loginFunction.InactivityListener;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
 import models.AssignmentStatus;
+import models.Contact;
+import models.ModelInterface;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -43,7 +47,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Uppdragsnamn", "Koordinater",
 			"Uppdragsbeskrivning", "Uppskattad tid", "Gatuadress",
-			"Uppdragsplats", "Bild", "Prioritet" };
+			"Uppdragsplats", "Bild", "Prioritet", "Lägg till agenter" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.text_item };
@@ -173,6 +177,9 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				currentUser, false, temp.get(2), temp.get(3),
 				AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
 				temp.get(5), checkPrioString(temp.get(7)));
+		addAgentsFromList(temp.get(8), newAssignment); // temp(8) är en sträng
+														// med agenter som ska
+														// separeras med ",".
 
 		Log.d("Assignment", "Ska nu lägga till ett uppdrag " + temp.get(0)
 				+ temp.get(1) + currentUser + false + temp.get(2) + temp.get(3)
@@ -182,6 +189,22 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		db.addToDB(newAssignment, getContentResolver());
 		communicationService.sendAssignment(newAssignment);
 		finish();
+	}
+
+	private void addAgentsFromList(String agents, Assignment newAssignment) {
+
+		List<String> items = Arrays.asList(agents.split("\\s*,\\s*"));
+		List<ModelInterface> list = db.getAllFromDB(new Contact(),
+				getContentResolver());
+
+		for (String agent : items) {
+			for (ModelInterface modelInterface : list) {
+				Contact contact = (Contact) modelInterface;
+				if (contact.getContactName().equals(agent)) {
+					newAssignment.addAgents(new Contact(agent));
+				}
+			}
+		}
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {
