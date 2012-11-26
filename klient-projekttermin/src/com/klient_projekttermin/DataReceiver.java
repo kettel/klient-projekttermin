@@ -46,6 +46,7 @@ public class DataReceiver extends Thread{
 			connecton = true;
 		} catch (Exception e) {
 			Log.e("DataReciver", "Error in setting streams due to " + e.toString());
+			connecton = false;
 		}
 		while(connecton){
 			try {
@@ -67,10 +68,11 @@ public class DataReceiver extends Thread{
 					}
 				}
 			} catch (Exception e) {
-				Log.e("Crash in input", "inputString: " + e.toString());
+				Log.e("Crash in DataReciver", "inputString: " + e.toString());
 			}
 			if(output.checkError()){
 				Log.i("output", "Stream is down");
+				connecton = false;
 			}
 		}
 	}
