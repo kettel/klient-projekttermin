@@ -90,7 +90,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				if (v.getId() != 1 && v.getId() != 6) {
 					itemStrings.put(v.getId(), s.toString());
 				}
-
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -100,20 +99,19 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void afterTextChanged(Editable s) {
 			}
 		});
-		if (hasFocus && v.getId() == 1) {
-
+		if (hasFocus && v.getId() == 1 && itemStrings.get(v.getId()) == null) {
 			if (!isCreatingCoordDialog) {
 				isCreatingCoordDialog = true;
 				coordinateField(v);
 			}
 		}
-		if (hasFocus && v.getId() == 6) {
+		if (hasFocus && v.getId() == 6 && itemStrings.get(v.getId()) == null) {
 			if (!isCreatingDialog) {
 				isCreatingDialog = true;
 				pictureAlternatives();
 			}
 		}
-		if (hasFocus && v.getId() == 7) {
+		if (hasFocus && v.getId() == 7 && itemStrings.get(v.getId()) == null) {
 			if (!isCreatingPrioDialog ) {
 				isCreatingPrioDialog = true;
 				priorityAlternatives((EditText)v);
