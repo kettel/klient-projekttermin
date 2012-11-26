@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -94,8 +95,11 @@ public class CreateMessage extends InactivityListener {
 	 */
 	public boolean sendMessage(MenuItem v){
 		String recievingContact = reciever.getText().toString();
+		// OBS! FULING FÖR ATT SLIPPA NULL-POINTEREXCEPTION FÖR USER!
+		if(user==null){
+			user = new String();
+		}
 		messageObject = new MessageModel(message.getText().toString(), recievingContact, user);
-
 
 		// Sparar messageObject i databasen
 		dataBase.addToDB(messageObject, getContentResolver());

@@ -120,7 +120,7 @@ public class AssignmentOverview extends InactivityListener {
 
 		for (ModelInterface a : assList) {
 			Assignment b = (Assignment) a;
-			tempHeadArr[i] = b.getName();
+			tempHeadArr[i] = b.getName() + "   Prio: " + b.getAssignmentPriorityToString();
 			idInAdapter[i] = b.getId();
 			i++;
 		}

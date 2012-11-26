@@ -1,5 +1,6 @@
 package assignment;
 
+import models.AssignmentPriority;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -27,34 +28,62 @@ public class AssignmentCursorAdapter extends CursorAdapter {
 
 	@Override
 	public String convertToString(Cursor cursor) {
-		final int columnIndex=cursor.getColumnIndexOrThrow(AssignmentTable.Assignments.NAME);
-		final String str=cursor.getString(columnIndex);
+		final int columnIndexName = cursor
+				.getColumnIndexOrThrow(AssignmentTable.Assignments.NAME);
+		final int columnIndexPrio = cursor
+				.getColumnIndexOrThrow(AssignmentTable.Assignments.PRIORITY);
+		final String str = cursor.getString(columnIndexName) + "  "
+				+ getPriorityToString(cursor.getString(columnIndexPrio));
 		return str;
+	}
+
+	public String getPriorityToString(String assignmentPrio) {
+
+		final String PRIO_HIGH = "PRIO_HIGH";
+		final String PRIO_NORMAL = "PRIO_NORMAL";
+		final String PRIO_LOW = "PRIO_LOW";
+		final String PRIO_NONEEXISTANT = "Ej satt";
+
+		if (assignmentPrio == null) {
+			return PRIO_NONEEXISTANT;
+		} else if (assignmentPrio.equals(PRIO_HIGH)) {
+			return "Hög prioritering";
+		} else if (assignmentPrio.equals(PRIO_NORMAL)) {
+			return "Normal prioritering";
+		} else if (assignmentPrio.equals(PRIO_LOW)) {
+			return "Låg prioritering";
+		} else {
+			return PRIO_NONEEXISTANT;
+		}
+
 	}
 
 	@Override
 	public void bindView(View arg0, Context arg1, Cursor arg2) {
-		final String text=convertToString(arg2);
-		((TextView)arg0).setText(text);
-		((TextView)arg0).setTextColor(Color.BLACK);
+		final String text = convertToString(arg2);
+		((TextView) arg0).setText(text);
+		((TextView) arg0).setTextColor(Color.BLACK);
 	}
 
 	@Override
 	public View newView(Context arg0, Cursor arg1, ViewGroup arg2) {
 		final LayoutInflater inflater = LayoutInflater.from(arg0);
 		final View view = inflater.inflate(
-		android.R.layout.simple_dropdown_item_1line, arg2, false);
+				android.R.layout.simple_dropdown_item_1line, arg2, false);
 		return view;
 	}
 
 	@Override
 	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
 		System.out.println("DETTA KOMMER ALDRIG ATT SYNAS");
-		if (getFilterQueryProvider() != null) { return getFilterQueryProvider().runQuery(constraint); }
+		if (getFilterQueryProvider() != null) {
+			return getFilterQueryProvider().runQuery(constraint);
+		}
 
-	    return contentResolver.query(
-				AssignmentTable.Assignments.CONTENT_URI, null, AssignmentTable.Assignments.NAME+" like '%"+constraint.toString()+"%'",
-				null, AssignmentTable.Assignments.NAME);
+		return contentResolver.query(AssignmentTable.Assignments.CONTENT_URI,
+				null, AssignmentTable.Assignments.NAME + " like '%"
+						+ constraint.toString() + "%'", null,
+				AssignmentTable.Assignments.NAME);
 	}
 
 }
