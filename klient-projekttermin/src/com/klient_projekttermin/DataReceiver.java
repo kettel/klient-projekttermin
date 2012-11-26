@@ -72,7 +72,7 @@ public class DataReceiver extends Thread{
 			}
 			if(output.checkError()){
 				Log.i("output", "Stream is down");
-				connecton = false;
+				connecton = false; 
 			}
 		}
 	}
