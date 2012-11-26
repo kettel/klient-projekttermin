@@ -55,6 +55,9 @@ public class MainActivity extends InactivityListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
+		Database database=Database.getInstance(getApplicationContext());
+		database.addToDB(new Contact("eric"), getContentResolver());
+		database.addToDB(new Contact("erica"), getContentResolver());
 		// Communication model
 		Intent intent = new Intent(this.getApplicationContext(),
 				CommunicationService.class);

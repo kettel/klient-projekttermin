@@ -17,10 +17,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -31,6 +33,9 @@ import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
+import com.nutiteq.location.providers.AndroidGPSProvider;
+
+import contacts.ContactsCursorAdapter;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
@@ -45,9 +50,11 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
 	private EditText editText;
 	private boolean isCreatingPrioDialog = false;
-	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" , "Ingen bild"};
-	private static String[] coordsAlts = { "Bifoga koordinater från karta" , "Använd GPS position" , "Inga koordinater" };
-
+	private boolean isCreatingAgentDialog = false;
+	private static String[] pictureAlts = { "Bifoga bild", "Ta bild",
+			"Ingen bild" };
+	private static String[] coordsAlts = { "Bifoga koordinater från karta",
+			"Använd GPS position", "Inga koordinater" };
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -56,26 +63,43 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		this.context = context;
 	}
 
+	@Override
+	public int getItemViewType(int position) {
+		// TODO Auto-generated method stub
+		return position == 8 ? R.layout.autocomp_item : R.layout.textfield_item;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		convertView = null;
-
-		final View v = super.getView(position, convertView, parent);
-		editText = (EditText) v.findViewById(R.id.text_item);
-
-		if (editText != null) {
-			if (itemStrings.get(position) != null) {
-				editText.setText(itemStrings.get(position));
+		LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		if (convertView == null) {
+			convertView=inflater.inflate(getItemViewType(position), null);
+			if (position == 8) {
+				System.out.println("8");
+				AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
+						.findViewById(R.id.autoText_item);
+				autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
+						context, null, true));
 			} else {
-				editText.setText(null);
+				System.out.println("else");
+				editText = (EditText) convertView.findViewById(R.id.text_item);
+
+				if (editText != null) {
+					if (itemStrings.get(position) != null) {
+						editText.setText(itemStrings.get(position));
+					} else {
+						editText.setText(null);
+					}
+					editText.setHint(((HashMap<String, String>) this
+							.getItem(position)).get("line1"));
+					editText.setId(position);
+					editText.setOnFocusChangeListener(this);
+				}
 			}
-			editText.setHint(((HashMap<String, String>) this.getItem(position))
-					.get("line1"));
-			editText.setId(position);
-			editText.setOnFocusChangeListener(this);
 		}
-		return v;
+		return convertView;
+
 	}
 
 	public void textToItem(int position, String s) {
@@ -87,6 +111,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
+				System.out.println("TECTWAFS");
 				if (v.getId() != 1 && v.getId() != 6) {
 					itemStrings.put(v.getId(), s.toString());
 				}
@@ -100,8 +125,9 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void afterTextChanged(Editable s) {
 			}
 		});
+		System.out.println("BNFJKD");
 		if (hasFocus && v.getId() == 1) {
-
+			System.out.println("VNVVNVN");
 			if (!isCreatingCoordDialog) {
 				isCreatingCoordDialog = true;
 				coordinateField(v);
@@ -114,12 +140,17 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			}
 		}
 		if (hasFocus && v.getId() == 7) {
-			if (!isCreatingPrioDialog ) {
+			if (!isCreatingPrioDialog) {
 				isCreatingPrioDialog = true;
-				priorityAlternatives((EditText)v);
+				priorityAlternatives((EditText) v);
 			}
-			
 		}
+//		if (hasFocus && v.getId() == 8) {
+//			if (!isCreatingAgentDialog) {
+//				isCreatingAgentDialog = true;
+//				// TODO:agentAlternatives((EditText)v);
+//			}
+//		}
 	}
 
 	private void pictureAlternatives() {
@@ -131,7 +162,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				pictureAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
-		
+
 		final Dialog dialog = builder.create();
 		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
@@ -163,18 +194,24 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 	private void coordinateField(final View v) {
 		final EditText ed1 = (EditText) v;
-		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-		String provider = manager.getBestProvider(new Criteria(), true);
-		Location location = manager.getLastKnownLocation(provider);
-		System.out.println(location + " LOCATION");
-		Gson gson = new Gson();
-		final Type type = new TypeToken<WgsPoint[]>() {
-		}.getType();
-		WgsPoint[] wgs = new WgsPoint[1];
-		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
-		System.out.println(new WgsPoint(location.getLatitude(), location.getLongitude()));
-		final String pos = gson.toJson(wgs, type);
-		System.out.println("POS " + pos);
+//		LocationManager manager = (LocationManager) context
+//				.getSystemService(Context.LOCATION_SERVICE);
+//		String provider = manager.getBestProvider(new Criteria(), true);
+//		Location location = manager.getLastKnownLocation(provider);
+//		System.out.println(location + " LOCATION");
+//		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+//		AndroidGPSProvider locationSource = new AndroidGPSProvider(manager, 1000L);
+//		WgsPoint location = locationSource.getLocation();
+//		Gson gson = new Gson();
+//		final Type type = new TypeToken<WgsPoint[]>() {
+//		}.getType();
+//		WgsPoint[] wgs = new WgsPoint[1];
+//		wgs[0] = location;
+////		System.out.println(new WgsPoint(location.getLatitude(), location
+////				.getLongitude()));
+//		final String pos = gson.toJson(wgs, type); 
+		
+//		System.out.println("POS: " + pos);
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
 		ListView modeList = new ListView(context);
@@ -183,7 +220,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				coordsAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
-		
+System.out.println("KKK");
 		final Dialog dialog = builder.create();
 		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
@@ -201,9 +238,14 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 							ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
 					((AddAssignment) context).startActivityForResult(intent, 0);
 				case 1:
+					System.out.println("KOmmer vi hit");
+					Intent intent2 = new Intent(context, MapActivity.class);
+					intent2.putExtra("calling-activity",
+							ActivityConstants.GET_GPS_LOCATION);
+					((AddAssignment) context).startActivityForResult(intent2, 0);
 					isCreatingCoordDialog = false;
-					itemStrings.put(v.getId(), pos);
-					ed1.setText(pos);
+//					itemStrings.put(v.getId(), pos);
+//					ed1.setText(pos);
 					break;
 				default:
 					isCreatingCoordDialog = false;
@@ -244,6 +286,10 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			}
 		});
 		dialog.show();
+	}
+
+	public void agentAlternatives() {
+
 	}
 
 	public HashMap<Integer, String> getItemStrings() {
