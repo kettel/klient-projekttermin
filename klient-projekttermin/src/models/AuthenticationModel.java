@@ -7,13 +7,9 @@ public class AuthenticationModel implements ModelInterface {
 	private Boolean isAccessGranted = false;
 	private String databaseRepresentation = "authentication";
 	private long id = -1;
-
 	
-	
-	public AuthenticationModel(long id, String userName, String passwordHash){
-		this.userName = userName;
-		this.passwordHash = passwordHash;
-		this.id = id;
+	public AuthenticationModel(){
+		
 	}
 	
 	public AuthenticationModel(String userName, String passwordHash){
@@ -21,8 +17,17 @@ public class AuthenticationModel implements ModelInterface {
 		this.passwordHash = passwordHash;
 	}
 	
-	public AuthenticationModel(){
-		
+	public AuthenticationModel(long id, String userName, String passwordHash){
+		this.userName = userName;
+		this.passwordHash = passwordHash;
+		this.id = id;
+	}
+	
+	public AuthenticationModel(long id, String userName, String passwordHash, Boolean isAccessGranted){
+		this.userName = userName;
+		this.passwordHash = passwordHash;
+		this.id = id;
+		this.isAccessGranted = isAccessGranted;
 	}
 	
 	public AuthenticationModel(Boolean accessDecision){
@@ -38,7 +43,7 @@ public class AuthenticationModel implements ModelInterface {
 		return passwordHash;
 	}
 	
-	/*
+	/**
 	 * Metoden returnerar true om användaren får access, annars false;
 	 */
 	public Boolean isAccessGranted(){

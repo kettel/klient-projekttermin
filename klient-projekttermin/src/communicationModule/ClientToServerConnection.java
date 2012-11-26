@@ -11,6 +11,7 @@ import database.Database;
 import com.google.gson.Gson;
 
 import models.Assignment;
+import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 
@@ -158,6 +159,9 @@ public class ClientToServerConnection extends Thread  {
 						}else if (inputString.contains("\"databaseRepresentation\":\"contact\"")) {
 							Contact contact = gson.fromJson(inputString, Contact.class);
 							database.addToDB(contact, context.getContentResolver());
+						}else if(inputString.contains("\"databaseRepresentation\":\"authentication\"")) {
+							AuthenticationModel authenticationModel = gson.fromJson(inputString, AuthenticationModel.class);
+							database.addToDB(authenticationModel, context.getContentResolver());
 						}else {
 							Log.e("Database input problem","Did not recognise inputtype.");
 						}

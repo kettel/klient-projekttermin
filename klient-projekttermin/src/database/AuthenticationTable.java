@@ -23,6 +23,7 @@ public class AuthenticationTable {
 		// Kolumner
 		public static final String USERNAME = "userName";
 		public static final String PASSWORD = "password";
+		public static final Boolean ISACCESSGRANTED = false; 
 
 	}
 }

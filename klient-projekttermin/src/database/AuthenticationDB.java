@@ -24,10 +24,11 @@ public class AuthenticationDB {
 	}
 
 	public void addAuthenticationContent(ContentResolver contentResolver, AuthenticationModel authentication) {
+		System.out.println("LÄGGER TILL EN MODELL I DATABASEN");
 		ContentValues values = new ContentValues();
 		values.put(Authentications.USERNAME, authentication.getUserName());
 		values.put(Authentications.PASSWORD, authentication.getPasswordHash());
-		values.put(Authentications.AUTHENTICATION_ID, authentication.getId());
+		values.put(Authentications.ISACCESSGRANTED.toString(), authentication.isAccessGranted());
 
 		contentResolver.insert(Authentications.CONTENT_URI, values);
 	}
@@ -49,9 +50,10 @@ public class AuthenticationDB {
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
 		Cursor cursor = contentResolver.query(Authentications.CONTENT_URI, null,
 				Authentications.AUTHENTICATION_ID + " IS NOT null", null, null);
+		System.out.println("CURSOR COUNT: "+cursor.getCount());
 		if (cursor.moveToFirst()) {
 			do {
-				String userName = new String(), Password = new String(); long authenticationId = 0;
+				String userName = new String(), password = new String(); Boolean isAccessGranted = false; long authenticationId = 0;
 
 				for (int i = 0; i < cursor.getColumnCount(); i++) {
 					String currentCol = cursor.getColumnName(i);
@@ -60,10 +62,15 @@ public class AuthenticationDB {
 					} else if (currentCol.equalsIgnoreCase(Authentications.AUTHENTICATION_ID)) {
 						authenticationId = cursor.getInt(i);
 					} else if (currentCol.equalsIgnoreCase(Authentications.PASSWORD)) {
-						Password = cursor.getString(i);
+						password = cursor.getString(i);
+					}else if (currentCol.equalsIgnoreCase(Authentications.ISACCESSGRANTED.toString())) {
+						if(cursor.getString(i).equals("true")){
+						isAccessGranted = true;
+						}
 					}
+					
 				}
-				AuthenticationModel authenticationModel = new AuthenticationModel(authenticationId, userName, Password);
+				AuthenticationModel authenticationModel = new AuthenticationModel(authenticationId, userName, password, isAccessGranted);
 				returnList.add((ModelInterface) authenticationModel);
 			} while (cursor.moveToNext());
 		}
@@ -74,9 +81,8 @@ public class AuthenticationDB {
 		ContentValues values = new ContentValues();
 		values.put(Authentications.USERNAME, authenticationModel.getUserName());
 		values.put(Authentications.PASSWORD, authenticationModel.getPasswordHash());
-		int updated = contentResolver.update(Authentications.CONTENT_URI, values,
-				Authentications.AUTHENTICATION_ID + " = " + Long.toString(authenticationModel.getId()),
-				null);
+		values.put(Authentications.ISACCESSGRANTED.toString(), authenticationModel.isAccessGranted());
+		int updated = contentResolver.update(Authentications.CONTENT_URI, values, Authentications.AUTHENTICATION_ID + " = " + Long.toString(authenticationModel.getId()),null);
 		Log.d("DB", "Uppdaterade " + updated + " messages.");
 	}
 

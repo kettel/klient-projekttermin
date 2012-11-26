@@ -117,6 +117,9 @@
         <provider
             android:name="database.MessagesContentProvider"
             android:authorities="database.MessagesContentProvider" />
+         <provider
+            android:name="database.AuthenticationContentProvider"
+            android:authorities="database.AuthenticationContentProvider" />
         
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" />

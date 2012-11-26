@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -33,18 +34,18 @@ public class LogInFunction extends InactivityListener {
 	private String passwordHashReference;
 	private String userNameReference;
 	private CommunicationService communicationService;
-	// private AuthenticationModel AM;
 	private boolean communicationBond = false;
 	private List<ModelInterface> acceptedAuthenticationModels;
 	private Database database; 
-
+	private int numberOfLoginTries = 3;
+	private int waitTime = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
-		
-		database.getInstance(getApplicationContext());
+
+		database=Database.getInstance(getApplicationContext());
 
 		try {
 			createPassWordHashRepresentation();
@@ -58,6 +59,12 @@ public class LogInFunction extends InactivityListener {
 				Context.BIND_AUTO_CREATE);
 
 	}
+	
+	@Override
+	protected void onDestroy() {
+		unbindService(communicationServiceConnection);
+		super.onDestroy();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -69,33 +76,54 @@ public class LogInFunction extends InactivityListener {
 	 * Metoden hämtar data från textfälten i inloggningsfönstret
 	 */
 	public void logIn(View v) throws NoSuchAlgorithmException,
-			UnsupportedEncodingException {
+	UnsupportedEncodingException {
 		userNameView = (TextView) this.findViewById(R.id.userName);
 		passwordView = (TextView) this.findViewById(R.id.password);
 		userName = userNameView.getText().toString();
 		password = passwordView.getText().toString();
 
-		AuthenticationModel authenticationModel = new AuthenticationModel(
-				userName, hashPassword(password));
+		AuthenticationModel authenticationModel = new AuthenticationModel(userName, hashPassword(password));
 
 		sendAuthenticationRequestToServer(v, authenticationModel);
-		passwordView.getEditableText().clear();
+		checkAuthenticity(authenticationModel);
+
 	}
-	
+
 	/*
-	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som finns i databasen
+	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som finns i databasen först och om så inte
+	 * är fallet försöker den hämta informationen från servern.
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel){
-		
+
 		AuthenticationModel authenticationReference;
 		acceptedAuthenticationModels = database.getAllFromDB(new AuthenticationModel(), getContentResolver());
-		
-		for (int i = 0; i < acceptedAuthenticationModels.size(); i++) {
-			authenticationReference = (AuthenticationModel) acceptedAuthenticationModels.get(i);
-			
-//			if(authenticationModel.getUserName().equals(authenticationReference.getUserName()){
-//				
-//			}
+
+		if(acceptedAuthenticationModels.size()!=0){
+			for (int i = 0; i < acceptedAuthenticationModels.size(); i++) {
+				authenticationReference = (AuthenticationModel) acceptedAuthenticationModels.get(i);
+
+				if(authenticationModel.getUserName().equals(authenticationReference.getUserName())&&authenticationModel.isAccessGranted()){
+					accessGranted();
+				}
+				else if(authenticationModel.getUserName().equals(authenticationReference.getUserName())&&!authenticationModel.isAccessGranted()){
+					incorrectLogIn();
+					break;
+				}
+			}
+		}
+	}
+	
+	public void loginFailure(){
+		Toast.makeText(getApplicationContext(), "Get gick inte att hämta inloggningsuppgifter från servern", Toast.LENGTH_SHORT).show();
+	}
+
+	public void incorrectLogIn(){
+		numberOfLoginTries--;
+		if(numberOfLoginTries == 0){
+			finish();
+		}
+		else{
+			Toast.makeText(getApplicationContext(),"Felaktigt användarnamn eller lösenord! " + numberOfLoginTries + " försök kvar!" ,Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -124,42 +152,11 @@ public class LogInFunction extends InactivityListener {
 	/*
 	 * Metoden skickar iväg autenticeringsförfrågan till servern
 	 */
-	public void sendAuthenticationRequestToServer(View v,
-			AuthenticationModel authenticationModel) {
+	public void sendAuthenticationRequestToServer(View v, AuthenticationModel authenticationModel) {
 
 		if (communicationBond) {
 			System.out.println("TO SERVER");
 			communicationService.sendAuthentication(authenticationModel);
-		}
-		sendAuthenticationRequestToLocalDatabase(v, authenticationModel);
-	}
-
-	/*
-	 * Metoden authenticerar användaren mot den lokala databasen
-	 */
-	private void sendAuthenticationRequestToLocalDatabase(View v,
-			AuthenticationModel authenticationModel) {
-
-		if (authenticationModel.getPasswordHash().equals(passwordHashReference)
-				&& authenticationModel.getUserName().equals(userNameReference)) {
-			accessGranted();
-		}
-
-		else {
-			// get your custom_toast.xml layout
-			// LayoutInflater inflater = getLayoutInflater();
-			//
-			// View layout =
-			// inflater.inflate(R.layout.activity_log_in_function,(ViewGroup)
-			// findViewById(R.id.LogInFunction));
-			//
-			// Toast toast = new Toast(getApplicationContext());
-			Toast.makeText(getApplicationContext(),
-					"Användarnamn eller lösenord är felaktigt, försök igen!",
-					Toast.LENGTH_SHORT).show();
-			// toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-			// toast.setView(layout);
-			// toast.show();
 		}
 	}
 
