@@ -8,9 +8,7 @@ import java.util.Observer;
 
 import models.AuthenticationModel;
 import models.ModelInterface;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,6 +18,7 @@ import android.widget.Toast;
 
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
+import communicationModule.SocketConnection;
 
 import database.Database;
 
@@ -28,10 +27,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 	private TextView passwordView;
 	private String userName;
 	private String password;
-	private String passwordHashReference;
-	private String userNameReference;
-	private Database dataBase;
-	private boolean communicationBond = false;
+
 	private List<ModelInterface> acceptedAuthenticationModels;
 	private Database database;
 	private int numberOfLoginTries = 3;

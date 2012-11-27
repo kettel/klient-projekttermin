@@ -31,9 +31,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	// --------ComService
-	private boolean communicationBond = false;
-	// ----End
 	private String jsonCoord = null;
 	private String jsonPict = null;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
