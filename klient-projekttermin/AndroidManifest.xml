@@ -37,12 +37,7 @@
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-
-                <category android:name="com.klient_projekttermin" />
-            </intent-filter>
+         
         </receiver>
 
         <activity
@@ -101,11 +96,6 @@
         <activity
             android:name="loginFunction.LogInFunction"
             android:label="@string/title_activity_login_function" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!-- Database Content Providers -->
         <provider
@@ -117,14 +107,24 @@
         <provider
             android:name="database.MessagesContentProvider"
             android:authorities="database.MessagesContentProvider" />
-         <provider
+        <provider
             android:name="database.AuthenticationContentProvider"
             android:authorities="database.AuthenticationContentProvider" />
-        
+
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
+
+        <activity
+            android:name="qosManager.BatteryChecker"
+            android:label="@string/title_activity_battery_checker" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
