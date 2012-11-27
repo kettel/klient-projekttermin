@@ -48,6 +48,11 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -101,11 +106,6 @@
         <activity
             android:name="loginFunction.LogInFunction"
             android:label="@string/title_activity_login_function" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!-- Database Content Providers -->
         <provider
@@ -117,8 +117,6 @@
         <provider
             android:name="database.MessagesContentProvider"
             android:authorities="database.MessagesContentProvider" />
-        <!-- Communication Module Service -->
-        <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
     </application>

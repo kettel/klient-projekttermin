@@ -11,22 +11,19 @@ import models.Assignment;
 import models.AssignmentPriority;
 import models.AssignmentStatus;
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import camera.PhotoGallery;
+
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
+
 import database.Database;
 
 public class AddAssignment extends InactivityListener implements Serializable {
@@ -35,7 +32,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	// --------ComService
-	private CommunicationService communicationService;
 	private boolean communicationBond = false;
 	// ----End
 	private String jsonCoord = null;
@@ -57,13 +53,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	@SuppressLint("UseSparseArrays")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// ----ComService
-		Intent intent = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intent, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
-		// ---End
 		setContentView(R.layout.activity_add_assignment);
 		lv = (ListView) findViewById(android.R.id.list);
 		loadContent();
@@ -135,24 +124,10 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		});
 	}
 
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-	};
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_add_assignment, menu);
 		this.saveItem = menu.findItem(R.id.save);
-		communicationService.setContext(getApplicationContext()); // --ComService
 		return true;
 	}
 
@@ -180,7 +155,8 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				+ temp.get(5));
 
 		db.addToDB(newAssignment, getContentResolver());
-		communicationService.sendAssignment(newAssignment);
+		SocketConnection connection=new SocketConnection();
+		connection.sendModel(newAssignment);
 		finish();
 	}
 
@@ -209,13 +185,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		} else {
 			return new byte[2];
 		}
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (communicationBond)
-			unbindService(communicationServiceConnection);
 	}
 
 }

@@ -2,16 +2,13 @@ package messageFunction;
 
 import loginFunction.InactivityListener;
 import models.MessageModel;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,8 +16,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.klient_projekttermin.R;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
 
 import contacts.ContactsCursorAdapter;
 import database.Database;
@@ -32,7 +28,6 @@ public class CreateMessage extends InactivityListener {
 	private String messageContent;
 	private Database dataBase;
 	private String user;
-	private CommunicationService communicationService;
 	private boolean communicationBond = false;
 
 	@Override
@@ -47,8 +42,6 @@ public class CreateMessage extends InactivityListener {
 			messageContent = extras.getString("MESSAGE");
 		}
 		
-		Intent intent = new Intent(this, CommunicationService.class);
-		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 		message = (EditText) this.findViewById(R.id.message);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
@@ -79,14 +72,6 @@ public class CreateMessage extends InactivityListener {
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-
-
-	@Override
-	protected void onDestroy() {
-		unbindService(serviceConnection);
-		super.onDestroy();
-	}
-
 	/*
 	 * Metoden skapar ett meddelande objekt och skickar det vidare till
 	 * komunikationsmodulen. Metoden sparar ocks� de skapade meddelandena i
@@ -106,9 +91,8 @@ public class CreateMessage extends InactivityListener {
 		// Skicka till kommunikationsmodulen
 
 
-		if (communicationBond) {
-			communicationService.sendMessage(messageObject);
-		}
+		SocketConnection connection=new SocketConnection();
+		connection.sendModel(messageObject);
 
 		finish();
 
@@ -142,18 +126,4 @@ public class CreateMessage extends InactivityListener {
 		});
 		alertDialog.show();
 	}
-
-	private ServiceConnection serviceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			System.out.println("OnServiceConnection");
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-	};
 }

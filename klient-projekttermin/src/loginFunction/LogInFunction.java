@@ -4,15 +4,13 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import models.AuthenticationModel;
 import models.ModelInterface;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -20,19 +18,17 @@ import android.widget.Toast;
 
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class LogInFunction extends InactivityListener {
+public class LogInFunction extends InactivityListener implements Observer {
 	private TextView userNameView;
 	private TextView passwordView;
 	private String userName;
 	private String password;
 	private String passwordHashReference;
 	private String userNameReference;
-	private CommunicationService communicationService;
 	private AuthenticationModel AM;
 	private Database dataBase;
 	private boolean communicationBond = false;
@@ -49,10 +45,6 @@ public class LogInFunction extends InactivityListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Intent intent = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intent, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
@@ -134,44 +126,9 @@ public class LogInFunction extends InactivityListener {
 	public void sendAuthenticationRequestToServer(View v,
 			AuthenticationModel authenticationModel) {
 
-		if (communicationBond) {
-			System.out.println("TO SERVER");
-			communicationService.sendAuthentication(authenticationModel);
-		}
-		sendAuthenticationRequestToLocalDatabase(v, authenticationModel);
-	}
-
-	/*
-	 * Metoden authenticerar användaren mot den lokala databasen
-	 */
-	private void sendAuthenticationRequestToLocalDatabase(View v,
-			AuthenticationModel authenticationModel) {
-
-		System.out.println(authenticationModel.getUserName().toString());
-		System.out.println(authenticationModel.getPasswordHash());
-		if (authenticationModel.getUserName().toString()
-				.equals(userNameReference)
-				&& authenticationModel.getPasswordHash().equals(
-						passwordHashReference)) {
-			accessGranted();
-		}
-
-		else {
-			// get your custom_toast.xml ayout
-			// LayoutInflater inflater = getLayoutInflater();
-			//
-			// View layout =
-			// inflater.inflate(R.layout.activity_log_in_function,(ViewGroup)
-			// findViewById(R.id.LogInFunction));
-			//
-			// Toast toast = new Toast(getApplicationContext());
-			Toast.makeText(getApplicationContext(),
-					"Användarnamn eller lösenord är felaktigt, försök igen!",
-					Toast.LENGTH_SHORT).show();
-			// toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-			// toast.setView(layout);
-			// toast.show();
-		}
+		SocketConnection connection=new SocketConnection();
+		connection.addObserver(this);
+		connection.authenticate(authenticationModel);
 	}
 
 	public void accessGranted() {
@@ -207,16 +164,7 @@ public class LogInFunction extends InactivityListener {
 		passwordHashReference = hexString.toString();
 	}
 
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-	};
+	public void update(Observable observable, Object data) {
+		
+	}
 }
