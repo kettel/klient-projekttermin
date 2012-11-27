@@ -28,8 +28,9 @@ public class AuthenticationDB {
 		ContentValues values = new ContentValues();
 		values.put(Authentications.USERNAME, authentication.getUserName());
 		values.put(Authentications.PASSWORD, authentication.getPasswordHash());
-		values.put(Authentications.ISACCESSGRANTED.toString(), authentication.isAccessGranted());
+		values.put(Authentications.ISACCESSGRANTED, authentication.isAccessGranted());
 
+		System.out.println("Values: "+values.toString());
 		contentResolver.insert(Authentications.CONTENT_URI, values);
 	}
 
@@ -53,7 +54,7 @@ public class AuthenticationDB {
 		System.out.println("CURSOR COUNT: "+cursor.getCount());
 		if (cursor.moveToFirst()) {
 			do {
-				String userName = new String(), password = new String(); Boolean isAccessGranted = false; long authenticationId = 0;
+				String userName = new String(), password = new String(), isAccessGranted = new String(); long authenticationId = 0;
 
 				for (int i = 0; i < cursor.getColumnCount(); i++) {
 					String currentCol = cursor.getColumnName(i);
@@ -63,10 +64,8 @@ public class AuthenticationDB {
 						authenticationId = cursor.getInt(i);
 					} else if (currentCol.equalsIgnoreCase(Authentications.PASSWORD)) {
 						password = cursor.getString(i);
-					}else if (currentCol.equalsIgnoreCase(Authentications.ISACCESSGRANTED.toString())) {
-						if(cursor.getString(i).equals("true")){
-						isAccessGranted = true;
-						}
+					}else if (currentCol.equalsIgnoreCase(Authentications.ISACCESSGRANTED)) {
+						isAccessGranted = cursor.getString(i);
 					}
 					
 				}
@@ -81,7 +80,7 @@ public class AuthenticationDB {
 		ContentValues values = new ContentValues();
 		values.put(Authentications.USERNAME, authenticationModel.getUserName());
 		values.put(Authentications.PASSWORD, authenticationModel.getPasswordHash());
-		values.put(Authentications.ISACCESSGRANTED.toString(), authenticationModel.isAccessGranted());
+		values.put(Authentications.ISACCESSGRANTED, authenticationModel.isAccessGranted());
 		int updated = contentResolver.update(Authentications.CONTENT_URI, values, Authentications.AUTHENTICATION_ID + " = " + Long.toString(authenticationModel.getId()),null);
 		Log.d("DB", "Uppdaterade " + updated + " messages.");
 	}

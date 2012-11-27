@@ -53,11 +53,9 @@ public class LogInFunction extends InactivityListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Intent intent = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intent, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
-
+		System.out.println("Application Context: "+this.getApplicationContext());
+		Intent intent = new Intent(this.getApplicationContext(),CommunicationService.class);
+		bindService(intent, communicationServiceConnection,Context.BIND_AUTO_CREATE);
 	}
 	
 	@Override
@@ -75,8 +73,9 @@ public class LogInFunction extends InactivityListener {
 	/*
 	 * Metoden hämtar data från textfälten i inloggningsfönstret
 	 */
-	public void logIn(View v) throws NoSuchAlgorithmException,
-	UnsupportedEncodingException {
+	public void logIn(View v) throws NoSuchAlgorithmException{
+		communicationService.setContext(getApplicationContext());
+
 		userNameView = (TextView) this.findViewById(R.id.userName);
 		passwordView = (TextView) this.findViewById(R.id.password);
 		userName = userNameView.getText().toString();
@@ -84,7 +83,8 @@ public class LogInFunction extends InactivityListener {
 
 		AuthenticationModel authenticationModel = new AuthenticationModel(userName, hashPassword(password));
 
-		sendAuthenticationRequestToServer(v, authenticationModel);
+		sendAuthenticationRequestToServer(authenticationModel);
+		
 		checkAuthenticity(authenticationModel);
 
 	}
@@ -94,23 +94,41 @@ public class LogInFunction extends InactivityListener {
 	 * är fallet försöker den hämta informationen från servern.
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel){
+		timeToWait();
+		System.out.println("NU TESTAR VI DET SOM KOMMIT!");
 
 		AuthenticationModel authenticationReference;
 		acceptedAuthenticationModels = database.getAllFromDB(new AuthenticationModel(), getContentResolver());
 
 		if(acceptedAuthenticationModels.size()!=0){
+			System.out.println("Databasen är inte tom!");
 			for (int i = 0; i < acceptedAuthenticationModels.size(); i++) {
 				authenticationReference = (AuthenticationModel) acceptedAuthenticationModels.get(i);
+				System.out.println("USERNAME: "+authenticationReference.getUserName()+", BOOLEANVÄRDE: "+authenticationReference.isAccessGranted() );
 
-				if(authenticationModel.getUserName().equals(authenticationReference.getUserName())&&authenticationModel.isAccessGranted()){
+				if(authenticationModel.getUserName().equals(authenticationReference.getUserName())&&authenticationReference.isAccessGranted().equals("true")){
+					System.out.println("Nu accepterar vi!");
 					accessGranted();
 				}
-				else if(authenticationModel.getUserName().equals(authenticationReference.getUserName())&&!authenticationModel.isAccessGranted()){
+				else if(authenticationModel.getUserName().equals(authenticationReference.getUserName())&&authenticationReference.isAccessGranted().equals("false")){
 					incorrectLogIn();
 					break;
 				}
 			}
 		}
+	}
+	
+	/**
+	 * väntar till reconnect, samt ökar väntetiden kontiueligt upp till en minut. 
+	 */
+	private synchronized void timeToWait(){
+			waitTime = 5000;
+		try {
+			this.wait(waitTime);	
+		} catch (Exception e) {
+			Log.e("Thread", "Nu har du väntat fel: " + e.toString());
+		}
+		
 	}
 	
 	public void loginFailure(){
@@ -152,7 +170,7 @@ public class LogInFunction extends InactivityListener {
 	/*
 	 * Metoden skickar iväg autenticeringsförfrågan till servern
 	 */
-	public void sendAuthenticationRequestToServer(View v, AuthenticationModel authenticationModel) {
+	public void sendAuthenticationRequestToServer(AuthenticationModel authenticationModel) {
 
 		if (communicationBond) {
 			System.out.println("TO SERVER");
