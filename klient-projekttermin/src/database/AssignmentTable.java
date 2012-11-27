@@ -4,10 +4,10 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 public class AssignmentTable {
-	
+
 	public AssignmentTable(){
 	}
-	
+
 	public static final class Assignments implements BaseColumns{
 		// Default-innehåll för URI, typ och ID
 		public static final Uri CONTENT_URI = Uri.parse("content://"
@@ -16,9 +16,9 @@ public class AssignmentTable {
 		public static final String CONTENT_TYPE = "vnd.android.cursor.dir/";
 
 		public static final String ASSIGNMENT_ID = "_id";
-		
+
 		public static final String TABLE_NAME = "assignments";
-		
+
 		// Kolumnnamn i databasen
 		public static final String NAME = "name";
 		public static final String LAT = "lat";

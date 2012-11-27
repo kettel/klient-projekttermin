@@ -34,10 +34,11 @@ import database.Database;
 
 public class AssignmentDetails extends InactivityListener {
 
-	private Database db;/* = Database.getInstance(getApplicationContext()); */
+	private Database db;
 	private long assignmentID;
 	private TextView textViewAssName;
 	private TextView textViewDescription;
+	private TextView textViewPriority;
 	private TextView textViewTime;
 	private TextView textViewSpot;
 	private TextView textViewStreetname;
@@ -87,6 +88,7 @@ public class AssignmentDetails extends InactivityListener {
 		// Hämtar textvyerna som ska sättas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
 		textViewDescription = (TextView) findViewById(R.id.assignment_description_set);
+		textViewPriority = (TextView) findViewById(R.id.assignment_prio_set);
 		textViewTime = (TextView) findViewById(R.id.assignment_time_set);
 		textViewSpot = (TextView) findViewById(R.id.assignment_spot_set);
 		textViewStreetname = (TextView) findViewById(R.id.assignment_streetname_set);
@@ -175,6 +177,7 @@ public class AssignmentDetails extends InactivityListener {
 		textViewAssName.setText(currentAssignment.getName());
 		textViewDescription.setText(currentAssignment
 				.getAssignmentDescription());
+		textViewPriority.setText(currentAssignment.getAssignmentPriorityToString());
 		textViewTime.setText(currentAssignment.getTimeSpan());
 		textViewSpot.setText(currentAssignment.getSiteName());
 		textViewStreetname.setText(currentAssignment.getStreetName());
@@ -193,7 +196,6 @@ public class AssignmentDetails extends InactivityListener {
 		}
 		agentCount.setText(" Antal: " + currentAssignment.getAgents().size()
 				+ "(" + temp + ")");
-
 	}
 
 	/**

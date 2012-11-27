@@ -15,18 +15,17 @@ import net.sqlcipher.database.SQLiteDatabase;
 public class Database {
 	// SQLCipher-lösen
 	public static final String PASSWORD = "password";
-	
+
 	public static boolean isLibraryLoaded = false;
-	
+
 	private static AssignmentsDB assignmentsDB;
 	private static ContactsDB contactsDB;
 	private static MessagesDB messagesDB;
 	private static AuthenticationDB authenticationDB;
-	
 	private Database(){}
-	
+
 	private static Database instance = new Database();
-	
+
 	public static Database getInstance(Context context){
 		// Ladda vid behov in SQLCipher-bibliotek filer
     	if (!isLibraryLoaded) {
@@ -40,7 +39,7 @@ public class Database {
     	authenticationDB = AuthenticationDB.getInstance();
         return instance;
 	}
-	
+
 	public void addToDB(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
@@ -56,7 +55,7 @@ public class Database {
 			authenticationDB.addAuthenticationContent(contentResolver, (AuthenticationModel) m);
 		}
 	}
-	
+
 	public int getDBCount(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		int returnCount = 0;
@@ -74,7 +73,7 @@ public class Database {
 		}
 		return returnCount;
 	}
-	
+
 	public void deleteFromDB(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
@@ -90,7 +89,7 @@ public class Database {
 			authenticationDB.delete(contentResolver, (AuthenticationModel)m);
 		}
 	}
-	
+
 	public List<ModelInterface> getAllFromDB(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
@@ -108,7 +107,7 @@ public class Database {
 		}
 		return returnList;
 	}
-	
+
 	public void updateModel(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {

@@ -7,11 +7,11 @@ import java.util.List;
 import loginFunction.InactivityListener;
 import models.MessageModel;
 import models.ModelInterface;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,7 +33,8 @@ public class Inbox extends InactivityListener {
 	private HashMap<String, Long> contactAndIdMap = new HashMap<String, Long>();
 	private List<ModelInterface> peopleEngagedInConversation;
 	private Database dataBase; 
-	private String userName;
+	// Sätter den som tom sträng för att undvika NULLPOINTER!
+	private String userName = "";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -193,7 +194,10 @@ public class Inbox extends InactivityListener {
 
 		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
 			messageModel = (MessageModel) peopleEngagedInConversation.get(i);
-
+			// Fulhack för att lösa NullpointerException!
+			if(userName == null){
+				userName = new String();
+			}
 			if(messageModel.getReciever().toString().toLowerCase().equals(userName.toLowerCase())){
 				if(!setOfPeople.contains(messageModel.getSender().toString())){
 					setOfPeople.add(messageModel.getSender().toString());

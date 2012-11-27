@@ -19,11 +19,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+import database.Database;
+
 import database.Database;
 
 public class LogInFunction extends InactivityListener {
@@ -47,12 +48,6 @@ public class LogInFunction extends InactivityListener {
 
 		database=Database.getInstance(getApplicationContext());
 
-		try {
-			createPassWordHashRepresentation();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		System.out.println("Application Context: "+this.getApplicationContext());
 		Intent intent = new Intent(this.getApplicationContext(),CommunicationService.class);
 		bindService(intent, communicationServiceConnection,Context.BIND_AUTO_CREATE);
@@ -145,6 +140,8 @@ public class LogInFunction extends InactivityListener {
 		}
 	}
 
+
+
 	/*
 	 * Metoden skapar en hashrepresentation av de inmatade lösenordet med hjälp
 	 * av SHA-2
@@ -183,32 +180,6 @@ public class LogInFunction extends InactivityListener {
 		intent.putExtra("USER", userName);
 		startActivity(intent);
 		finish();
-	}
-
-	/*
-	 * Metoden skapar en hashrepresentation av ett hårdkodat lösenord
-	 */
-	public void createPassWordHashRepresentation()
-			throws NoSuchAlgorithmException {
-		String password = "fredrik";
-		userNameReference = "A";
-
-		// AM = new AuthenticationModel(password, userNameReference);
-
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		md.update(password.getBytes());
-
-		byte byteData[] = md.digest();
-
-		// convert the byte to hex format
-		StringBuffer hexString = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++) {
-			String hex = Integer.toHexString(0xff & byteData[i]);
-			if (hex.length() == 1)
-				hexString.append('0');
-			hexString.append(hex);
-		}
-		passwordHashReference = hexString.toString();
 	}
 
 	private ServiceConnection communicationServiceConnection = new ServiceConnection() {

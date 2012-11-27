@@ -54,7 +54,6 @@ private static final String PASSWORD = Database.PASSWORD;
     		SQLiteDatabase db = this.getWritableDatabase(PASSWORD);
         }
 
-       
         @Override
         public void onCreate(SQLiteDatabase db) {
         	String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "

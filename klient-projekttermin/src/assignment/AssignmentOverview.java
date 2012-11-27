@@ -23,11 +23,11 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.klient_projekttermin.R;
+import communicationModule.CommunicationService;
+import communicationModule.CommunicationService.CommunicationBinder;
 
 import database.AssignmentTable;
 import database.Database;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
 
 public class AssignmentOverview extends InactivityListener {
 
@@ -36,6 +36,7 @@ public class AssignmentOverview extends InactivityListener {
 	private List<ModelInterface> assList;
 	private String currentUser;
 	private ListView lv;
+
 	//--------ComService
 		private CommunicationService communicationService;
 		private boolean communicationBond = false;
@@ -57,7 +58,7 @@ public class AssignmentOverview extends InactivityListener {
 		}
 
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -101,10 +102,6 @@ public class AssignmentOverview extends InactivityListener {
 		/**
 		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
-
-
-//		getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null)
-
 		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
 		this.lv.setAdapter(adapter);
 	}
@@ -123,7 +120,7 @@ public class AssignmentOverview extends InactivityListener {
 
 		for (ModelInterface a : assList) {
 			Assignment b = (Assignment) a;
-			tempHeadArr[i] = b.getName();
+			tempHeadArr[i] = b.getName() + "   Prio: " + b.getAssignmentPriorityToString();
 			idInAdapter[i] = b.getId();
 			i++;
 		}
@@ -165,7 +162,7 @@ public class AssignmentOverview extends InactivityListener {
 			}
 		});
 	}
-	
+
 	/**
 	 * ComService för att skicka till server
 	 */
@@ -224,7 +221,7 @@ public class AssignmentOverview extends InactivityListener {
 				db.deleteFromDB(a, getContentResolver());
 				// Sätter status för att uppdraget har avslutats.
 				a.setAssignmentStatus(AssignmentStatus.FINISHED);
-				
+
 				communicationService.sendAssignment(a);
 			}
 
@@ -232,5 +229,4 @@ public class AssignmentOverview extends InactivityListener {
 
 		loadAssignmentList();
 	}
-
 }

@@ -1,5 +1,4 @@
 <resources>
-
     <string name="title_activity_create_new_message">CreateNewMessage</string>
     <string name="hello_world">Hello world!</string>
     <string name="Mottagare"></string>
@@ -85,4 +84,6 @@
     <string name="options_exit">Exit</string>
     <string name="title_activity_login_function">Login</string>
 	<string name="login">Login</string>
+	<string name="logout">Logout</string>
 </resources>
+
