@@ -17,6 +17,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import camera.PhotoGallery;
 
 import com.google.gson.Gson;
@@ -72,17 +74,33 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		if (convertView == null) {
-			convertView=inflater.inflate(getItemViewType(position), null);
+			convertView = inflater.inflate(getItemViewType(position), null);
 			if (position == 8) {
-				System.out.println("8");
+				
 				AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
 						.findViewById(R.id.autoText_item);
 				
+				
+				
 				autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
 						context, null, true));
-				
+
+					autoCompleteTextView.setHint(((HashMap<String, String>) this
+							.getItem(position)).get("line1"));
+					//Snygghax.. för att få tag i auto-vyns text.
+					autoCompleteTextView.setOnItemClickListener(new OnItemClickListener() {
+
+						public void onItemClick(AdapterView<?> arg0, View arg1,
+								int arg2, long arg3) {
+							TextView e = (TextView)arg1;
+							Log.e("CP", e.getText().toString());
+							itemStrings.put(8, e.getText().toString());
+						}
+					});
+
 			} else {
 				System.out.println("else");
 				editText = (EditText) convertView.findViewById(R.id.text_item);
@@ -107,14 +125,12 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	public void textToItem(int position, String s) {
 		itemStrings.put(position, s);
 	}
-	
 
 	public void onFocusChange(final View v, boolean hasFocus) {
 		((EditText) v).addTextChangedListener(new TextWatcher() {
 
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-				System.out.println("TECTWAFS");
 				if (v.getId() != 1 && v.getId() != 6) {
 					itemStrings.put(v.getId(), s.toString());
 				}
@@ -128,9 +144,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void afterTextChanged(Editable s) {
 			}
 		});
-		System.out.println("BNFJKD");
+		
 		if (hasFocus && v.getId() == 1) {
-			System.out.println("VNVVNVN");
 			if (!isCreatingCoordDialog) {
 				isCreatingCoordDialog = true;
 				coordinateField(v);
@@ -191,24 +206,26 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 	private void coordinateField(final View v) {
 		final EditText ed1 = (EditText) v;
-//		LocationManager manager = (LocationManager) context
-//				.getSystemService(Context.LOCATION_SERVICE);
-//		String provider = manager.getBestProvider(new Criteria(), true);
-//		Location location = manager.getLastKnownLocation(provider);
-//		System.out.println(location + " LOCATION");
-//		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-//		AndroidGPSProvider locationSource = new AndroidGPSProvider(manager, 1000L);
-//		WgsPoint location = locationSource.getLocation();
-//		Gson gson = new Gson();
-//		final Type type = new TypeToken<WgsPoint[]>() {
-//		}.getType();
-//		WgsPoint[] wgs = new WgsPoint[1];
-//		wgs[0] = location;
-////		System.out.println(new WgsPoint(location.getLatitude(), location
-////				.getLongitude()));
-//		final String pos = gson.toJson(wgs, type); 
-		
-//		System.out.println("POS: " + pos);
+		// LocationManager manager = (LocationManager) context
+		// .getSystemService(Context.LOCATION_SERVICE);
+		// String provider = manager.getBestProvider(new Criteria(), true);
+		// Location location = manager.getLastKnownLocation(provider);
+		// System.out.println(location + " LOCATION");
+		// LocationManager manager = (LocationManager)
+		// context.getSystemService(Context.LOCATION_SERVICE);
+		// AndroidGPSProvider locationSource = new AndroidGPSProvider(manager,
+		// 1000L);
+		// WgsPoint location = locationSource.getLocation();
+		// Gson gson = new Gson();
+		// final Type type = new TypeToken<WgsPoint[]>() {
+		// }.getType();
+		// WgsPoint[] wgs = new WgsPoint[1];
+		// wgs[0] = location;
+		// // System.out.println(new WgsPoint(location.getLatitude(), location
+		// // .getLongitude()));
+		// final String pos = gson.toJson(wgs, type);
+
+		// System.out.println("POS: " + pos);
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
 		ListView modeList = new ListView(context);
@@ -217,7 +234,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				coordsAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
-System.out.println("KKK");
+		System.out.println("KKK");
 		final Dialog dialog = builder.create();
 		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
@@ -239,10 +256,11 @@ System.out.println("KKK");
 					Intent intent2 = new Intent(context, MapActivity.class);
 					intent2.putExtra("calling-activity",
 							ActivityConstants.GET_GPS_LOCATION);
-					((AddAssignment) context).startActivityForResult(intent2, 0);
+					((AddAssignment) context)
+							.startActivityForResult(intent2, 0);
 					isCreatingCoordDialog = false;
-//					itemStrings.put(v.getId(), pos);
-//					ed1.setText(pos);
+					// itemStrings.put(v.getId(), pos);
+					// ed1.setText(pos);
 					break;
 				default:
 					isCreatingCoordDialog = false;

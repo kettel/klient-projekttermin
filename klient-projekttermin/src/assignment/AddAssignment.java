@@ -177,9 +177,13 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				currentUser, false, temp.get(2), temp.get(3),
 				AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
 				temp.get(5), checkPrioString(temp.get(7)));
-		addAgentsFromList(temp.get(8), newAssignment); // temp(8) är en sträng
+		System.out.println("temp8: " + temp.get(8));
+		String tempUnseparated = temp.get(8);
+		addAgentsFromList(tempUnseparated, newAssignment); // temp(8) är en sträng
 														// med agenter som ska
 														// separeras med ",".
+		
+		tempUnseparated = "";
 
 		Log.d("Assignment", "Ska nu lägga till ett uppdrag " + temp.get(0)
 				+ temp.get(1) + currentUser + false + temp.get(2) + temp.get(3)
@@ -192,6 +196,8 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	}
 
 	private void addAgentsFromList(String agents, Assignment newAssignment) {
+
+		Log.e("agents", agents);
 
 		List<String> items = Arrays.asList(agents.split("\\s*,\\s*"));
 		List<ModelInterface> list = db.getAllFromDB(new Contact(),

@@ -218,8 +218,11 @@ public class AssignmentDetails extends InactivityListener {
 						currentAssignment.addAgents(new Contact(currentUser));
 
 						// Sätter status för att uppdraget är påbörjat.
-						currentAssignment
+						if (currentAssignment.getAssignmentStatus() == AssignmentStatus.NOT_STARTED) {
+							currentAssignment
 								.setAssignmentStatus(AssignmentStatus.STARTED);
+						}
+						
 
 						// Uppdaterar Uppdraget med den nya kontakten.
 						db.updateModel((ModelInterface) currentAssignment,
