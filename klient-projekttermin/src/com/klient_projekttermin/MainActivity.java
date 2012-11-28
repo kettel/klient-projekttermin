@@ -140,6 +140,7 @@ public class MainActivity extends InactivityListener {
 					break;
 				case 4:
 					myIntent = new Intent(MainActivity.this, ContactsBookActivity.class);
+					myIntent.putExtra("USER", userName);
 				default:
 					break;
 				}

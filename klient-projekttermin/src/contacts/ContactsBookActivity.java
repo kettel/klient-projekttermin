@@ -1,35 +1,56 @@
 package contacts;
 
+import java.util.List;
+
 import loginFunction.InactivityListener;
+import map.CustomAdapter;
+import messageFunction.CreateMessage;
 import models.Contact;
+import models.ModelInterface;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 
+import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
-import com.klient_projekttermin.R.layout;
-import com.klient_projekttermin.R.menu;
 
-import database.AssignmentTable;
-import database.ContactTable;
 import database.Database;
 
-import android.os.Bundle;
-import android.app.Activity;
-import android.app.ListActivity;
-import android.view.Menu;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-
 public class ContactsBookActivity extends InactivityListener {
+
+	private String[] contacts;
+	private Database db;
+	private String[] contactAlts = { "Skicka meddelande till kontakt",
+			"Ring kontakt" };
+	public static String contact;
+	private boolean isCreatingDialog = false;
+	private String currentUser;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Database db = Database.getInstance(this);
 		setContentView(R.layout.activity_contacts_book);
 		ListView lv = (ListView) findViewById(android.R.id.list);
-		lv.setAdapter(new ContactsCursorAdapter(this,
-				getContentResolver().query(
-						ContactTable.Contacts.CONTENT_URI, null, null,
-						null, null), 0));
+		Intent intent = getIntent();
+		currentUser = intent.getStringExtra("USER");
+		db = Database.getInstance(this);
+		List<ModelInterface> lista = db.getAllFromDB(new Contact(),
+				getContentResolver());
+		contacts = new String[lista.size()];
+		int i = 0;
+		for (ModelInterface m : lista) {
+			Contact c = (Contact) m;
+			contacts[i] = c.getContactName();
+			i++;
+		}
+		lv.setAdapter(new ContacsAdapter(this,
+				android.R.layout.simple_list_item_1, contacts));
 	}
 
 	@Override
@@ -37,4 +58,56 @@ public class ContactsBookActivity extends InactivityListener {
 		getMenuInflater().inflate(R.menu.activity_contacts_book, menu);
 		return true;
 	}
+
+	public void contactOptions(View v) {
+		for (ModelInterface temp : db.getAllFromDB(new Contact(),
+				getContentResolver())) {
+			Contact c = (Contact) temp;
+			if (c.getContactName().equals(contacts[v.getId()])) {
+				if (!isCreatingDialog) {
+					isCreatingDialog = true;
+					showAlertDialog(c);
+				}
+			}
+		}
+	}
+
+	private void showAlertDialog(Contact c) {
+		final String name = c.getContactName();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Kontakt alternativ");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				contactAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				isCreatingDialog = false;
+				switch (arg2) {
+				case 0:
+					Intent intent = new Intent(ContactsBookActivity.this,
+							CreateMessage.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.ADD_CONTACT_TO_MESSAGE);
+					intent.putExtra("USER", currentUser);
+					intent.putExtra(contact, name);
+					ContactsBookActivity.this.startActivity(intent);
+					finish();
+					break;
+				case 1:
+
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
+
 }

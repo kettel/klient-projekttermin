@@ -18,6 +18,7 @@ public class ContactsCursorAdapter extends CursorAdapter {
 	public ContactsCursorAdapter(Context context, Cursor c, boolean autoRequery) {
 		super(context, c, autoRequery);
 		contentResolver=context.getContentResolver();
+		runQueryOnBackgroundThread(null);
 	}
 
 	public ContactsCursorAdapter(Context context, Cursor c, int flags) {
