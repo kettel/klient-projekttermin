@@ -7,6 +7,8 @@ import com.klient_projekttermin.R;
 import com.klient_projekttermin.R.layout;
 import com.klient_projekttermin.R.menu;
 
+import database.AssignmentTable;
+import database.ContactTable;
 import database.Database;
 
 import android.os.Bundle;
@@ -18,18 +20,21 @@ import android.widget.SimpleAdapter;
 
 public class ContactsBookActivity extends InactivityListener {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Database db = Database.getInstance(this);
-        setContentView(R.layout.activity_contacts_book);
-        ListView lv = (ListView) findViewById(android.R.id.list);
-//        lv.setAdapter(new SimpleAdapter(this, db.getAllFromDB(new Contact(), getContentResolver()), from, to)
-    }
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Database db = Database.getInstance(this);
+		setContentView(R.layout.activity_contacts_book);
+		ListView lv = (ListView) findViewById(android.R.id.list);
+		lv.setAdapter(new ContactsCursorAdapter(this,
+				getContentResolver().query(
+						ContactTable.Contacts.CONTENT_URI, null, null,
+						null, null), 0));
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_contacts_book, menu);
-        return true;
-    }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_contacts_book, menu);
+		return true;
+	}
 }

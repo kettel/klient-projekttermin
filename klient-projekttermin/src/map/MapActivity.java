@@ -411,15 +411,6 @@ public class MapActivity extends InactivityListener implements Observer,
 			centerMapOnAssignment(extras
 					.getString(AssignmentDetails.assignment));
 			break;
-		case ActivityConstants.GET_GPS_LOCATION:
-			System.out.println("GET GPS LOCAtIONS");
-			Intent i = new Intent(MapActivity.this, AddAssignment.class);
-			Gson gson = new Gson();
-			i.putExtra(coordinates, gson.toJson(locationSource.getLocation()));
-			System.out.println("KOORDS " + locationSource.getLocation());
-			setResult(ActivityConstants.RESULT_FROM_MAP, i);
-			finish();
-			break;
 		default:
 			getDatabaseRegionInformation();
 			break;

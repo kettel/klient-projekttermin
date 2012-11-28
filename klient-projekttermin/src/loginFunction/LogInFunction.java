@@ -90,20 +90,17 @@ public class LogInFunction extends InactivityListener {
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel){
 		timeToWait();
-		System.out.println("NU TESTAR VI DET SOM KOMMIT!");
 
 		AuthenticationModel authenticationReference;
 		acceptedAuthenticationModels = database.getAllFromDB(new AuthenticationModel(), getContentResolver());
 
 		if(acceptedAuthenticationModels.size()!=0){
-			System.out.println("Databasen är inte tom!");
 			for (int i = 0; i < acceptedAuthenticationModels.size(); i++) {
 				authenticationReference = (AuthenticationModel) acceptedAuthenticationModels.get(i);
-				System.out.println("USERNAME: "+authenticationReference.getUserName()+", BOOLEANVÄRDE: "+authenticationReference.isAccessGranted() );
 
 				if(authenticationModel.getUserName().equals(authenticationReference.getUserName())&&authenticationReference.isAccessGranted().equals("true")){
-					System.out.println("Nu accepterar vi!");
 					accessGranted();
+					break;
 				}
 				else if(authenticationModel.getUserName().equals(authenticationReference.getUserName())&&authenticationReference.isAccessGranted().equals("false")){
 					incorrectLogIn();

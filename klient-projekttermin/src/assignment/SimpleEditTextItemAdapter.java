@@ -195,11 +195,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					break;
 				case 1:
 					isCreatingCoordDialog = false;
-					Intent i = new Intent(context, MapActivity.class);
-					i.putExtra("calling-activity", ActivityConstants.GET_GPS_LOCATION);
-					((AddAssignment) context).startActivityForResult(i, 1);
-//					itemStrings.put(v.getId(), pos);
-//					ed1.setText(pos);
+					itemStrings.put(v.getId(), pos);
+					ed1.setText(pos);
 					break;
 				default:
 					isCreatingCoordDialog = false;
