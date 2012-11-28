@@ -179,7 +179,9 @@ public class LogInFunction extends InactivityListener implements Observer {
 	}
 
 	public void update(Observable observable, Object data) {
-
+		if (data instanceof AuthenticationModel) {
+			checkAuthenticity((AuthenticationModel)data);
+		}
 	}
 
 }
