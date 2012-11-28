@@ -15,12 +15,15 @@ public class AuthenticationModel implements ModelInterface {
 	public AuthenticationModel(String userName, String passwordHash){
 		this.userName = userName;
 		this.passwordHash = passwordHash;
+		this.isAccessGranted = "false";
 	}
 	
 	public AuthenticationModel(long id, String userName, String passwordHash){
 		this.userName = userName;
 		this.passwordHash = passwordHash;
 		this.id = id;
+		this.isAccessGranted = "false";
+
 	}
 	
 	public AuthenticationModel(long id, String userName, String passwordHash, String isAccessGranted){
@@ -31,7 +34,6 @@ public class AuthenticationModel implements ModelInterface {
 	}
 	
 	public AuthenticationModel(String accessDecision){
-		
 		this.isAccessGranted = accessDecision;
 	}
 	

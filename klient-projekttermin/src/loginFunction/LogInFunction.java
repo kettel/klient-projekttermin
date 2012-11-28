@@ -76,7 +76,7 @@ public class LogInFunction extends InactivityListener {
 		password = passwordView.getText().toString();
 
 		AuthenticationModel authenticationModel = new AuthenticationModel(userName, hashPassword(password));
-
+		
 		sendAuthenticationRequestToServer(authenticationModel);
 		
 		checkAuthenticity(authenticationModel);
