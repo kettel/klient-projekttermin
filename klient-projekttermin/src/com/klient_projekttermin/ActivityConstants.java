@@ -14,4 +14,7 @@ public interface ActivityConstants {
 	public static final int RESULT_FROM_CAMERA = 1009;
 	public static final int GET_GPS_LOCATION = 1010;
 	public static final int INACTIVITY = 1011;
+	public static final int ASSIGNMENT_NAME = 1012;
+	public static final int ASSIGNMENT_OVERVIEW = 1013;
+	public static final int ASSIGNMENT_DETAILS = 1014;
 	}

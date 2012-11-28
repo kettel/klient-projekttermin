@@ -168,6 +168,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
 		
 		final String pos = gson.toJson(wgs, type);
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
 		ListView modeList = new ListView(context);
@@ -194,8 +195,11 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					break;
 				case 1:
 					isCreatingCoordDialog = false;
-					itemStrings.put(v.getId(), pos);
-					ed1.setText(pos);
+					Intent i = new Intent(context, MapActivity.class);
+					i.putExtra("calling-activity", ActivityConstants.GET_GPS_LOCATION);
+					((AddAssignment) context).startActivityForResult(i, 1);
+//					itemStrings.put(v.getId(), pos);
+//					ed1.setText(pos);
 					break;
 				default:
 					isCreatingCoordDialog = false;
