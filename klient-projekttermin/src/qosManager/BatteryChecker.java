@@ -20,7 +20,6 @@ public class BatteryChecker extends Activity implements Observer {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_battery_checker);
-        
     }
 
     @Override
@@ -35,14 +34,15 @@ public class BatteryChecker extends Activity implements Observer {
     	batteryCheckingFunction.addObserver(this);
     }
 
-	public void update(Observable observable, Object data) {
-		runOnUiThread(new Runnable() {
-			
-			public void run() {
-				System.out.println("INNE I UPDATE");
-				
-			}
-		});
+    public void update(Observable observable, Object data) {
+    	System.out.println("WUUUUT");
+//		runOnUiThread(new Runnable() {
+//			
+//			public void run() {
+//				System.out.println("INNE I UPDATE");
+//				
+//			}
+//		});
 //        Toast.makeText(getApplicationContext(), "Batteri status: "+data+"%", Toast.LENGTH_SHORT).show();
 		
 	}

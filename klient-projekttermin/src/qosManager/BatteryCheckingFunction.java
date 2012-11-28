@@ -25,10 +25,11 @@ public class BatteryCheckingFunction extends Observable {
 
         int batteryPct = (level / scale)*100;
         
-        if(batteryPct >= 90){
-        	System.out.println("HÄÄR");
+//        if(batteryPct >= 90){
+//        	System.out.println("HÄÄR");
         	setChanged();
-        	notifyObservers(batteryPct);
-        }
+        	notifyObservers();
+//        	notifyObservers("HALLÅÅÅÅ");
+//        }
     }
 }

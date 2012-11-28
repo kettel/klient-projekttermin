@@ -96,6 +96,11 @@
         <activity
             android:name="loginFunction.LogInFunction"
             android:label="@string/title_activity_login_function" >
+                <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <!-- Database Content Providers -->
         <provider
@@ -119,11 +124,7 @@
         <activity
             android:name="qosManager.BatteryChecker"
             android:label="@string/title_activity_battery_checker" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        
         </activity>
     </application>
 
