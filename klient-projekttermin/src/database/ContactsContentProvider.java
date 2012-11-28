@@ -1,6 +1,5 @@
 package database;
 
-import java.io.File;
 import java.util.HashMap;
 
 import database.ContactTable.Contacts;
@@ -50,17 +49,6 @@ public class ContactsContentProvider extends ContentProvider {
 
         DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
-            
-            // FIX FÖR GALAXY-TABBEN!
-    		File dbFile = context.getDatabasePath(DATABASE_NAME);
-
-    		// Om databasfilen inte existerar, skapa den
-    		if (!dbFile.exists()) {
-    			dbFile.mkdirs();
-    			dbFile.delete();
-    		}
-    		// Initiera en skrivbar databas (FIX för testDB)
-    		SQLiteDatabase db = this.getWritableDatabase(PASSWORD);
         }
 
        
@@ -137,15 +125,17 @@ public class ContactsContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        // Om Contacts inte är skapad än samt om SQLite-biblioteken 
+        dbHelper = new DatabaseHelper(getContext());
+        
+        // Om Assignments inte är skapad än samt om SQLite-biblioteken 
         // inte är laddade
         if(!Database.isLibraryLoaded){
         	SQLiteDatabase.loadLibs(getContext());
+        	SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
+        	db.close();
         	Database.isLibraryLoaded = true;
         }
-        dbHelper = new DatabaseHelper(getContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
-    	db.close();
+        
         return true;
     }
 
