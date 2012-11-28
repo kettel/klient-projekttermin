@@ -35,6 +35,7 @@ import camera.Camera;
 import com.google.android.gcm.GCMRegistrar;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+import contacts.ContactsBookActivity;
 
 import database.Database;
 
@@ -137,6 +138,8 @@ public class MainActivity extends InactivityListener {
 					myIntent = new Intent(MainActivity.this, Camera.class);
 					myIntent.putExtra("USER", userName);
 					break;
+				case 4:
+					myIntent = new Intent(MainActivity.this, ContactsBookActivity.class);
 				default:
 					break;
 				}
@@ -163,9 +166,9 @@ public class MainActivity extends InactivityListener {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera" };
+				"Kamera", "Kontakter" };
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder" };
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter"};
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();

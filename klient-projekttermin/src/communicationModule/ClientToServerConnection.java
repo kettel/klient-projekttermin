@@ -149,6 +149,7 @@ public class ClientToServerConnection extends Thread  {
 							database.addToDB(assignment, this.context.getContentResolver());
 						}else if (inputString.contains("\"databaseRepresentation\":\"contact\"")) {
 							Contact contact = gson.fromJson(inputString, Contact.class);
+							System.out.println("ADD CONTACT");
 							database.addToDB(contact, context.getContentResolver());
 						}else {
 							Log.e("Database input problem","Did not recognise inputtype.");

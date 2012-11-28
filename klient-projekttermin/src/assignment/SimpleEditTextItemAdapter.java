@@ -40,8 +40,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private Context context;
 	private boolean isCreatingDialog = false;
 	private boolean isCreatingCoordDialog = false;
-	public static String items;
-
 	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
 	private EditText editText;
 	private boolean isCreatingPrioDialog = false;
@@ -116,7 +114,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				isCreatingPrioDialog = true;
 				priorityAlternatives((EditText)v);
 			}
-			
 		}
 	}
 

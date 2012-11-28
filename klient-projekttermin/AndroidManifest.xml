@@ -121,6 +121,11 @@
         <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
+
+        <activity
+            android:name="contacts.ContactsBookActivity"
+            android:label="@string/title_activity_contacts_book" >
+        </activity>
     </application>
 
 </manifest>

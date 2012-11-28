@@ -39,7 +39,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ZoomControls;
 import assignment.AddAssignment;
-import assignment.SimpleEditTextItemAdapter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -195,7 +194,7 @@ public class MapActivity extends InactivityListener implements Observer,
 						})
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
 					public void onClick(final DialogInterface dialog,
-							@SuppressWarnings("unused") final int id) {
+							final int id) {
 						dialog.cancel();
 					}
 				});
@@ -225,8 +224,8 @@ public class MapActivity extends InactivityListener implements Observer,
 					.setPositiveButton("Yes",
 							new DialogInterface.OnClickListener() {
 								public void onClick(
-										@SuppressWarnings("unused") final DialogInterface dialog,
-										@SuppressWarnings("unused") final int id) {
+										final DialogInterface dialog,
+										final int id) {
 									startActivity(new Intent(
 											Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
 								}
@@ -235,7 +234,7 @@ public class MapActivity extends InactivityListener implements Observer,
 							new DialogInterface.OnClickListener() {
 								public void onClick(
 										final DialogInterface dialog,
-										@SuppressWarnings("unused") final int id) {
+										final int id) {
 									dialog.cancel();
 								}
 							});
@@ -375,13 +374,10 @@ public class MapActivity extends InactivityListener implements Observer,
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onResume() {
 		super.onResume();
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
-		content = (HashMap<Integer, String>) getIntent().getSerializableExtra(
-				SimpleEditTextItemAdapter.items);
 		createMap();
 		switch (callingActivity) {
 		case ActivityConstants.ADD_ASSIGNMENT_ACTIVITY:
@@ -573,8 +569,6 @@ public class MapActivity extends InactivityListener implements Observer,
 
 	public void displayAddCoordinatesToAssignment(int ch) {
 		final int choice = ch;
-		final Context context = getApplicationContext();
-
 		final Gson gson = new Gson();
 		final Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();

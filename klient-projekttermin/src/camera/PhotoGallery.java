@@ -29,7 +29,6 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
 import assignment.AddAssignment;
-import assignment.SimpleEditTextItemAdapter;
 
 import com.google.gson.Gson;
 import com.klient_projekttermin.ActivityConstants;
@@ -94,11 +93,9 @@ public class PhotoGallery extends InactivityListener implements Serializable{
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
-		content = (HashMap<Integer, String>) getIntent().getSerializableExtra(SimpleEditTextItemAdapter.items);
 		switch (callingActivity) {
 		case ActivityConstants.CAMERA:
 			showPictureAlts(item);
