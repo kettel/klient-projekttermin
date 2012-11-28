@@ -72,7 +72,6 @@ public class LogInFunction extends InactivityListener implements Observer {
 	 * informationen från servern.
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel) {
-		timeToWait();
 		System.out.println("NU TESTAR VI DET SOM KOMMIT!");
 
 		AuthenticationModel authenticationReference;
@@ -104,20 +103,6 @@ public class LogInFunction extends InactivityListener implements Observer {
 				}
 			}
 		}
-	}
-
-	/**
-	 * väntar till reconnect, samt ökar väntetiden kontiueligt upp till en
-	 * minut.
-	 */
-	private synchronized void timeToWait() {
-		waitTime = 5000;
-		try {
-			this.wait(waitTime);
-		} catch (Exception e) {
-			Log.e("Thread", "Nu har du väntat fel: " + e.toString());
-		}
-
 	}
 
 	public void loginFailure() {
@@ -179,8 +164,10 @@ public class LogInFunction extends InactivityListener implements Observer {
 	}
 
 	public void update(Observable observable, Object data) {
+		System.out.println("update login");
 		if (data instanceof AuthenticationModel) {
-			checkAuthenticity((AuthenticationModel)data);
+			System.out.println("instance");
+			checkAuthenticity((AuthenticationModel) data);
 		}
 	}
 

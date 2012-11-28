@@ -52,7 +52,7 @@ public class SocketConnection extends Observable {
 			Socket socket = new Socket(ip, port);
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
-			bufferedWriter.write(json);
+			bufferedWriter.write(json+"\n");
 			bufferedWriter.flush();
 			socket.close();
 		} catch (IOException e) {
@@ -71,26 +71,26 @@ public class SocketConnection extends Observable {
 	private void sendAuthentication(String json) {
 		ip = getAvailableIP();
 		port = getPortForIP(ip);
-		SocketAddress inetAddress = new InetSocketAddress(ip, port);
-
-		Socket socket = new Socket();
 		try {
-			socket.connect(inetAddress);
-
+			Socket socket = new Socket(ip, port);
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
-			bufferedWriter.write(json);
+			bufferedWriter.write(json+"\n");
 			bufferedWriter.flush();
-
 			BufferedReader bufferedReader = new BufferedReader(
 					new InputStreamReader(socket.getInputStream()));
 			StringBuilder sb = new StringBuilder();
 			String str;
 			while ((str = bufferedReader.readLine()) != null) {
-				sb.append(str + "\n");
+				sb.append(str);
+				System.out.println("while");
 			}
 			bufferedReader.close();
 			socket.close();
+			System.out.println("auth: "+sb.toString());
+			setChanged();
+			System.out.println(hasChanged());
+			notifyObservers(new AuthenticationModel(sb.toString()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -117,18 +117,18 @@ public class SocketConnection extends Observable {
 			if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
 				MessageModel message = gson.fromJson(inputString,
 						MessageModel.class);
-				hasChanged();
+				setChanged();
 				notifyObservers(message);
 			} else if (inputString
 					.contains("\"databasetRepresentation\":\"assignment\"")) {
 				Assignment assignment = gson.fromJson(inputString,
 						Assignment.class);
-				hasChanged();
+				setChanged();
 				notifyObservers(assignment);
 			} else if (inputString
 					.contains("\"databasetRepresentation\":\"contact\"")) {
 				Contact contact = gson.fromJson(inputString, Contact.class);
-				hasChanged();
+				setChanged();
 				notifyObservers(contact);
 			} else {
 				Log.e("Database input problem", "Did not recognise inputtype.");
