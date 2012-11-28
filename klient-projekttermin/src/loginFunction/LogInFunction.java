@@ -10,7 +10,7 @@ import models.AuthenticationModel;
 import models.ModelInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -40,7 +40,6 @@ public class LogInFunction extends InactivityListener implements Observer {
 
 		database = Database.getInstance(getApplicationContext());
 	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_log_in_function, menu);
@@ -74,26 +73,24 @@ public class LogInFunction extends InactivityListener implements Observer {
 	private void checkAuthenticity(AuthenticationModel authenticationModel) {
 		System.out.println("NU TESTAR VI DET SOM KOMMIT!");
 
+
 		AuthenticationModel authenticationReference;
 		acceptedAuthenticationModels = database.getAllFromDB(
 				new AuthenticationModel(), getContentResolver());
 
 		if (acceptedAuthenticationModels.size() != 0) {
-			System.out.println("Databasen är inte tom!");
+
 			for (int i = 0; i < acceptedAuthenticationModels.size(); i++) {
 				authenticationReference = (AuthenticationModel) acceptedAuthenticationModels
 						.get(i);
-				System.out.println("USERNAME: "
-						+ authenticationReference.getUserName()
-						+ ", BOOLEANVÄRDE: "
-						+ authenticationReference.isAccessGranted());
 
 				if (authenticationModel.getUserName().equals(
 						authenticationReference.getUserName())
 						&& authenticationReference.isAccessGranted().equals(
 								"true")) {
-					System.out.println("Nu accepterar vi!");
+
 					accessGranted();
+					break;
 				} else if (authenticationModel.getUserName().equals(
 						authenticationReference.getUserName())
 						&& authenticationReference.isAccessGranted().equals(
@@ -116,11 +113,12 @@ public class LogInFunction extends InactivityListener implements Observer {
 		if (numberOfLoginTries == 0) {
 			finish();
 		} else {
-			Toast.makeText(
-					getApplicationContext(),
+			Toast toast = Toast.makeText(getApplicationContext(),
 					"Felaktigt användarnamn eller lösenord! "
 							+ numberOfLoginTries + " försök kvar!",
-					Toast.LENGTH_SHORT).show();
+					Toast.LENGTH_LONG);
+			toast.setGravity(Gravity.TOP, 0, 50);
+			toast.show();
 		}
 	}
 

@@ -19,6 +19,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
+import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import communicationModule.SocketConnection;
 
@@ -121,6 +122,7 @@ public class AssignmentOverview extends InactivityListener {
 
 				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
 				myIntent.putExtra("currentUser", currentUser);
+				myIntent.putExtra("calling-activity", ActivityConstants.ASSIGNMENT_OVERVIEW);
 				AssignmentOverview.this.startActivity(myIntent);
 			}
 		});

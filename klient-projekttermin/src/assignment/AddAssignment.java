@@ -113,6 +113,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 	private void fromMap(Intent intent) {
 		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
+		System.out.println(jsonCoord);
 		adapter.textToItem(1, jsonCoord);
 		runOnUiThread(new Runnable() {
 			public void run() {
