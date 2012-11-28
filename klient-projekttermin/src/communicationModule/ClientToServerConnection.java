@@ -47,7 +47,6 @@ public class ClientToServerConnection extends Thread  {
 	 * en tom konstruktor
 	 */
 	public ClientToServerConnection(){
-		
 	}
 	/**
 	 * Används för att förhindra att data sickas 
@@ -123,6 +122,7 @@ public class ClientToServerConnection extends Thread  {
 	}
 	
 	public void run() {
+		System.out.println("INNE I RUN");
 		while(true){
 			//etablerar kontakt
 			try {
@@ -135,7 +135,6 @@ public class ClientToServerConnection extends Thread  {
 				Log.e("Connection", ("Connection failed: " + "Time is " + Integer.toString(waitTime)));
 				timeToWait();
 			}
-			
 			while(isConnection()){
 				resetTimeToWait();
 				// inkommande data.
