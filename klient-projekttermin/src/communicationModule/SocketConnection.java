@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Observable;
 
 import models.Assignment;
@@ -20,51 +21,57 @@ import com.google.gson.Gson;
 
 public class SocketConnection extends Observable {
 	private Gson gson = new Gson();
-	private String ip;
-	private int port;
+	private String ip="94.254.72.38";
+	private int port=17234;
 
-	public void sendModel(ModelInterface m) {
-		sendJSON(gson.toJson(m));
+	public void sendModel(ModelInterface modelInterface) {
+		final ModelInterface model = modelInterface;
+		new Thread(new Runnable() {
+
+			public void run() {
+				sendJSON(gson.toJson(model));
+			}
+		}).start();
+
 	}
 
 	public void authenticate(AuthenticationModel authenticationModel) {
-		sendAuthentication(gson.toJson(authenticationModel));
+		final AuthenticationModel model = authenticationModel;
+		new Thread(new Runnable() {
+
+			public void run() {
+				sendAuthentication(gson.toJson(model));
+			}
+		}).start();
 	}
 
 	private void sendJSON(String json) {
 		ip = getAvailableIP();
 		port = getPortForIP(ip);
-		InetSocketAddress inetAddress = new InetSocketAddress(ip, port);
-
-		Socket socket = new Socket();
 		try {
-			socket.connect(inetAddress);
-
+			Socket socket = new Socket(ip, port);
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
 			bufferedWriter.write(json);
 			bufferedWriter.flush();
-			bufferedWriter.close();
+			socket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private int getPortForIP(String ip2) {
-		// TODO Auto-generated method stub
-		return 0;
+	private int getPortForIP(String ip) {
+		return 17234;
 	}
 
 	private String getAvailableIP() {
-		// TODO Auto-generated method stub
-		return null;
+		return "94.254.72.38";
 	}
 
 	private void sendAuthentication(String json) {
 		ip = getAvailableIP();
 		port = getPortForIP(ip);
-		InetSocketAddress inetAddress = new InetSocketAddress(ip, port);
+		SocketAddress inetAddress = new InetSocketAddress(ip, port);
 
 		Socket socket = new Socket();
 		try {
@@ -74,7 +81,6 @@ public class SocketConnection extends Observable {
 					new OutputStreamWriter(socket.getOutputStream()));
 			bufferedWriter.write(json);
 			bufferedWriter.flush();
-			bufferedWriter.close();
 
 			BufferedReader bufferedReader = new BufferedReader(
 					new InputStreamReader(socket.getInputStream()));
@@ -84,8 +90,8 @@ public class SocketConnection extends Observable {
 				sb.append(str + "\n");
 			}
 			bufferedReader.close();
+			socket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -107,7 +113,7 @@ public class SocketConnection extends Observable {
 				sb.append(inputString + "\n");
 			}
 			bufferedReader.close();
-			inputString=sb.toString();
+			inputString = sb.toString();
 			if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
 				MessageModel message = gson.fromJson(inputString,
 						MessageModel.class);
@@ -115,8 +121,8 @@ public class SocketConnection extends Observable {
 				notifyObservers(message);
 			} else if (inputString
 					.contains("\"databasetRepresentation\":\"assignment\"")) {
-				Assignment assignment = gson
-						.fromJson(inputString, Assignment.class);
+				Assignment assignment = gson.fromJson(inputString,
+						Assignment.class);
 				hasChanged();
 				notifyObservers(assignment);
 			} else if (inputString
@@ -127,7 +133,7 @@ public class SocketConnection extends Observable {
 			} else {
 				Log.e("Database input problem", "Did not recognise inputtype.");
 			}
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
