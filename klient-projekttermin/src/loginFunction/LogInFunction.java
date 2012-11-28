@@ -48,7 +48,6 @@ public class LogInFunction extends InactivityListener {
 
 		database=Database.getInstance(getApplicationContext());
 
-		System.out.println("Application Context: "+this.getApplicationContext());
 		Intent intent = new Intent(this.getApplicationContext(),CommunicationService.class);
 		bindService(intent, communicationServiceConnection,Context.BIND_AUTO_CREATE);
 	}
