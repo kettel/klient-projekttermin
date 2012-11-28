@@ -122,7 +122,6 @@ public class ClientToServerConnection extends Thread  {
 	}
 	
 	public void run() {
-		System.out.println("INNE I RUN");
 		while(true){
 			//etablerar kontakt
 			try {
