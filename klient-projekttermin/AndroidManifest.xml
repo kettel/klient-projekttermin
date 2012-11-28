@@ -102,6 +102,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+          <activity
+            android:name="qosManager.QoSManager"
+            android:label="@string/title_activity_battery_checker" >
+        
+        </activity>
         <!-- Database Content Providers -->
         <provider
             android:name="database.ContactsContentProvider"
@@ -120,12 +125,6 @@
         <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
-
-        <activity
-            android:name="qosManager.BatteryChecker"
-            android:label="@string/title_activity_battery_checker" >
-        
-        </activity>
     </application>
 
 </manifest>
