@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Observable;
 
+import loginFunction.User;
 import models.Assignment;
 import models.AuthenticationModel;
 import models.Contact;
@@ -110,7 +111,9 @@ public class SocketConnection extends Observable {
 					System.out.println("Socketen lyckades ansluta");
 					BufferedWriter bufferedWriter = new BufferedWriter(
 							new OutputStreamWriter(socket.getOutputStream()));
-					bufferedWriter.write("pull\n");
+					User user=User.getInstance();
+					String json=gson.toJson(user.getAuthenticationModel());
+					bufferedWriter.write(json+"\n"+"pull\nclose\n");
 					bufferedWriter.flush();
 					System.out.println("Socketen lyckades skriva");
 					BufferedReader bufferedReader = new BufferedReader(
