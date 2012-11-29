@@ -64,7 +64,11 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 		Intent i = getIntent();
 		callingActivity = i.getIntExtra("calling-activity", 0);
-
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			currentUser = extras.getString("USER");
+		}
+		
 		switch (callingActivity) {
 		case ActivityConstants.MAP_ACTIVITY:
 			fromMap(i);

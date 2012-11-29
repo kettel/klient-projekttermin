@@ -61,9 +61,8 @@ public class AssignmentOverview extends InactivityListener {
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-
 		Intent intent = new Intent(AssignmentOverview.this, AddAssignment.class);
-		intent.putExtra("currentUser", currentUser);
+		intent.putExtra("USER", currentUser);
 		AssignmentOverview.this.startActivity(intent);
 
 		return true;
