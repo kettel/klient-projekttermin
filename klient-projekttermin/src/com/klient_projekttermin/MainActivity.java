@@ -74,7 +74,7 @@ public class MainActivity extends InactivityListener {
 		final String regId = GCMRegistrar.getRegistrationId(this);
 		if (regId.equals("")) {
 			// Automatically registers application on startup.
-			GCMRegistrar.register(this, SENDER_ID);
+			GCMRegistrar.register(getApplicationContext(), SENDER_ID);
 		} else {
 			// Device is already registered on GCM, check server.
 			if (GCMRegistrar.isRegisteredOnServer(this)) {
@@ -222,7 +222,7 @@ public class MainActivity extends InactivityListener {
 			mRegisterTask.cancel(true);
 		}
 		unregisterReceiver(mHandleMessageReceiver);
-		GCMRegistrar.onDestroy(this);
+		GCMRegistrar.onDestroy(getApplicationContext());
 		super.onDestroy();
 	}
 
