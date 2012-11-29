@@ -86,6 +86,9 @@
     <string name="title_activity_login_function">Login</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
-    <string name="title_activity_battery_checker">BatteryChecker</string>
+    <string name="title_activity_contacts_book">ContactsBookActivity</string>
+    <string name="title_activity_camera_menu">CameraMenuActivity</string>
+    <string name="title_activity_take_pictures">TakePicturesActivity</string>
+    <string name="title_activity_album">Album</string>
 
 </resources>

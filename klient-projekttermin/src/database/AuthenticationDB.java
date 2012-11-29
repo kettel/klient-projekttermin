@@ -24,7 +24,6 @@ public class AuthenticationDB {
 	}
 
 	public void addAuthenticationContent(ContentResolver contentResolver, AuthenticationModel authentication) {
-		System.out.println("LÄGGER TILL EN MODELL I DATABASEN");
 		ContentValues values = new ContentValues();
 		values.put(Authentications.USERNAME, authentication.getUserName());
 		values.put(Authentications.PASSWORD, authentication.getPasswordHash());
@@ -51,7 +50,6 @@ public class AuthenticationDB {
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
 		Cursor cursor = contentResolver.query(Authentications.CONTENT_URI, null,
 				Authentications.AUTHENTICATION_ID + " IS NOT null", null, null);
-		System.out.println("CURSOR COUNT: "+cursor.getCount());
 		if (cursor.moveToFirst()) {
 			do {
 				String userName = new String(), password = new String(), isAccessGranted = new String(); long authenticationId = 0;

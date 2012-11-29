@@ -122,7 +122,6 @@ public class ClientToServerConnection extends Thread  {
 	}
 	
 	public void run() {
-		System.out.println("INNE I RUN");
 		while(true){
 			//etablerar kontakt
 			try {
@@ -152,6 +151,7 @@ public class ClientToServerConnection extends Thread  {
 							database.addToDB(assignment, this.context.getContentResolver());
 						}else if (inputString.contains("\"databaseRepresentation\":\"contact\"")) {
 							Contact contact = gson.fromJson(inputString, Contact.class);
+							System.out.println("ADD CONTACT");
 							database.addToDB(contact, context.getContentResolver());
 						}else if(inputString.contains("\"databaseRepresentation\":\"authentication\"")) {
 							System.out.println("Nu kom en authenticationModel");

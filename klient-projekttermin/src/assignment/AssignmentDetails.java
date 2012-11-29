@@ -4,31 +4,36 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import map.CustomAdapter;
+import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;
 import models.ModelInterface;
-import android.content.ComponentName;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
 
 import database.Database;
 
@@ -49,12 +54,8 @@ public class AssignmentDetails extends InactivityListener {
 	private List<ModelInterface> listAssignments;
 	private Assignment currentAssignment;
 	private String currentUser;
-
-	// -------ComService
-	private CommunicationService communicationService;
-	private boolean communicationBond = false;
-
-	// -------End
+	public static String assignment;
+	private String[] coordAlts = { "Gå till uppdraget på kartan" };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -62,18 +63,22 @@ public class AssignmentDetails extends InactivityListener {
 		setContentView(R.layout.activity_uppdrag);
 		db = Database.getInstance(getApplicationContext());
 
-		// -------ComService---
-		Intent intentServer = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intentServer, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
-		// ----End----
-
 		// Hämtar intent för att nå extras så som ID:t som clickades på i
 		// assignmentoverview.
 		Intent intent = getIntent();
-		assignmentID = intent.getExtras().getLong("assignmentID");
-		currentUser = intent.getExtras().getString("currentUser");
+		int caller = intent.getIntExtra("calling-activity", 0);
+		switch (caller) {
+		case ActivityConstants.ASSIGNMENT_OVERVIEW:
+			assignmentID = intent.getExtras().getLong("assignmentID");
+			currentUser = intent.getExtras().getString("currentUser");
+			break;
+		case ActivityConstants.ASSIGNMENT_NAME:
+			currentUser = intent.getExtras().getString("currentUser");
+			assignmentID = intent.getExtras().getLong(MapActivity.assignmentName);
+		default:
+			break;
+		}
+		
 
 		// Initierar databasen.
 		db = Database.getInstance(this);
@@ -107,14 +112,6 @@ public class AssignmentDetails extends InactivityListener {
 		// Sätter texten som ska visas i uppdragsvyn.
 		setAssignmentToView();
 
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (communicationBond) {
-			unbindService(communicationServiceConnection);
-		}
 	}
 
 	@Override
@@ -183,6 +180,12 @@ public class AssignmentDetails extends InactivityListener {
 		textViewStreetname.setText(currentAssignment.getStreetName());
 		currentAssignment.getRegion();
 		textViewCoord.setText(sb.toString());
+		textViewCoord.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				centerMapOnLocation();
+			}
+		});
 		Bitmap bitmap = BitmapFactory.decodeByteArray(
 				currentAssignment.getCameraImage(), 0,
 				currentAssignment.getCameraImage().length);
@@ -209,9 +212,6 @@ public class AssignmentDetails extends InactivityListener {
 
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						// ---ComService
-						communicationService
-								.setContext(getApplicationContext());
 
 						checkboxAssign.setEnabled(false); // disable checkbox
 
@@ -224,7 +224,8 @@ public class AssignmentDetails extends InactivityListener {
 						// Uppdaterar Uppdraget med den nya kontakten.
 						db.updateModel((ModelInterface) currentAssignment,
 								getContentResolver());
-						communicationService.sendAssignment(currentAssignment);
+						SocketConnection connection=new SocketConnection();
+						connection.sendModel(currentAssignment);
 
 						// Sätter texten som ska visas i uppdragsvyn.
 						setAssignmentToView();
@@ -232,22 +233,38 @@ public class AssignmentDetails extends InactivityListener {
 				});
 
 	}
-
-	/**
-	 * ComService för att skicka till server
-	 */
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-
-	};
+	
+	private void centerMapOnLocation(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Koordinater för uppdraget");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				coordAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		
+		final Dialog dialog = builder.create();
+		dialog.setCancelable(false);
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					Intent intent = new Intent(AssignmentDetails.this, MapActivity.class);
+					intent.putExtra("USER", currentUser);
+					intent.putExtra("calling-activity", ActivityConstants.ASSIGNMENT_DETAILS);
+					intent.putExtra(assignment, currentAssignment.getRegion());
+					AssignmentDetails.this.startActivity(intent);
+					finish();
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
 
 }

@@ -16,14 +16,11 @@ import loginFunction.LogInFunction;
 import map.MapActivity;
 import messageFunction.Inbox;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,9 +33,9 @@ import assignment.AssignmentOverview;
 import camera.Camera;
 
 import com.google.android.gcm.GCMRegistrar;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
 
+import contacts.ContactsBookActivity;
 import database.Database;
 
 public class MainActivity extends InactivityListener {
@@ -46,20 +43,12 @@ public class MainActivity extends InactivityListener {
 	private String userName;
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
-	private CommunicationService communicationService;
-	private boolean communicationBond = false;
 	private QoSManager qosManager;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
-		// Communication model
-		Intent intent = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intent, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -117,8 +106,6 @@ public class MainActivity extends InactivityListener {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent = null;
-				// for communicationService
-				communicationService.setContext(getApplicationContext());
 				// Har man lagt till ett nytt menyval lägger man till en action
 				// för dessa här.
 				switch (arg2) {
@@ -160,6 +147,9 @@ public class MainActivity extends InactivityListener {
 						unallowedStart.show();
 					}
 					break;
+				case 4:
+					myIntent = new Intent(MainActivity.this, ContactsBookActivity.class);
+					myIntent.putExtra("USER", userName);
 				default:
 					break;
 				}
@@ -168,6 +158,10 @@ public class MainActivity extends InactivityListener {
 				}
 			}
 		});
+		SocketConnection socketConnection=new SocketConnection();
+		socketConnection.addObserver(new PullRequestHandler());
+		socketConnection.pullFromServer();
+		
 	}
 
 	@Override
@@ -177,8 +171,8 @@ public class MainActivity extends InactivityListener {
 
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
-		Database db = Database.getInstance(context);
-
+		Database.getInstance(context);
+	
 	}
 
 	/**
@@ -192,9 +186,9 @@ public class MainActivity extends InactivityListener {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-		"Kamera" };
+				"Kamera", "Kontakter" };
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder" };
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter"};
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -219,10 +213,6 @@ public class MainActivity extends InactivityListener {
 		}
 		unregisterReceiver(mHandleMessageReceiver);
 		GCMRegistrar.onDestroy(this);
-		// communication
-		if (communicationBond) {
-			unbindService(communicationServiceConnection);
-		}
 		super.onDestroy();
 	}
 
@@ -240,20 +230,6 @@ public class MainActivity extends InactivityListener {
 			System.out.println(newMessage);
 			// mDisplay.append(newMessage + "\n");
 		}
-	};
-
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-
 	};
 
 	@Override

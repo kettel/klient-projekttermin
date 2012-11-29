@@ -4,13 +4,11 @@
     android:versionName="1.0" >
 
     <!-- Permissions -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.UPDATE_DEVICE_STATS" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />        
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="com.klient_projekttermin.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- App receives GCM messages. -->
@@ -76,10 +74,6 @@
             android:label="Camera" >
         </activity>
         <activity
-            android:name="camera.PhotoGallery"
-            android:label="@string/title_activity_photo_gallery" >
-        </activity>
-        <activity
             android:name="logger.LogViewer"
             android:label="@string/title_activity_log_viewer" >
             <meta-data
@@ -112,10 +106,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="qosManager.QoSManager"
-            android:label="@string/title_activity_battery_checker" >
-        </activity>
         <!-- Database Content Providers -->
         <provider
             android:name="database.ContactsContentProvider"
@@ -129,11 +119,17 @@
         <provider
             android:name="database.AuthenticationContentProvider"
             android:authorities="database.AuthenticationContentProvider" />
-
-        <!-- Communication Module Service -->
-        <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
+
+        <activity
+            android:name="contacts.ContactsBookActivity"
+            android:label="@string/title_activity_contacts_book" >
+        </activity>
+        <activity
+            android:name="camera.Album"
+            android:label="@string/title_activity_album" >
+        </activity>
     </application>
 
 </manifest>
