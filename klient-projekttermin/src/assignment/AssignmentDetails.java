@@ -12,14 +12,10 @@ import models.Contact;
 import models.ModelInterface;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,8 +33,7 @@ import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
 
 import database.Database;
 
@@ -62,24 +57,11 @@ public class AssignmentDetails extends InactivityListener {
 	public static String assignment;
 	private String[] coordAlts = { "Gå till uppdraget på kartan" };
 
-	// -------ComService
-	private CommunicationService communicationService;
-	private boolean communicationBond = false;
-
-	// -------End
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_uppdrag);
 		db = Database.getInstance(getApplicationContext());
-
-		// -------ComService---
-		Intent intentServer = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intentServer, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
-		// ----End----
 
 		// Hämtar intent för att nå extras så som ID:t som clickades på i
 		// assignmentoverview.
@@ -130,14 +112,6 @@ public class AssignmentDetails extends InactivityListener {
 		// Sätter texten som ska visas i uppdragsvyn.
 		setAssignmentToView();
 
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (communicationBond) {
-			unbindService(communicationServiceConnection);
-		}
 	}
 
 	@Override
@@ -238,9 +212,6 @@ public class AssignmentDetails extends InactivityListener {
 
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						// ---ComService
-						communicationService
-								.setContext(getApplicationContext());
 
 						checkboxAssign.setEnabled(false); // disable checkbox
 
@@ -253,7 +224,8 @@ public class AssignmentDetails extends InactivityListener {
 						// Uppdaterar Uppdraget med den nya kontakten.
 						db.updateModel((ModelInterface) currentAssignment,
 								getContentResolver());
-						communicationService.sendAssignment(currentAssignment);
+						SocketConnection connection=new SocketConnection();
+						connection.sendModel(currentAssignment);
 
 						// Sätter texten som ska visas i uppdragsvyn.
 						setAssignmentToView();
@@ -294,22 +266,5 @@ public class AssignmentDetails extends InactivityListener {
 		});
 		dialog.show();
 	}
-
-	/**
-	 * ComService för att skicka till server
-	 */
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-
-	};
 
 }

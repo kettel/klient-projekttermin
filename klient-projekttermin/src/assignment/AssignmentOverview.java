@@ -7,13 +7,10 @@ import models.Assignment;
 import models.AssignmentStatus;
 import models.ModelInterface;
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,8 +21,7 @@ import android.widget.ListView;
 
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
 
 import database.AssignmentTable;
 import database.Database;
@@ -38,19 +34,11 @@ public class AssignmentOverview extends InactivityListener {
 	private String currentUser;
 	private ListView lv;
 
-	//--------ComService
-		private CommunicationService communicationService;
-		private boolean communicationBond = false;
-		//----End
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
 		lv = (ListView)findViewById(android.R.id.list);
-		
-		Intent intent = new Intent(this.getApplicationContext(), CommunicationService.class);
-		bindService(intent, communicationServiceConnection, Context.BIND_AUTO_CREATE);
 
 		// Hämtar extras
 		Bundle extras = getIntent().getExtras();
@@ -58,14 +46,6 @@ public class AssignmentOverview extends InactivityListener {
 			currentUser = extras.getString("USER");
 		}
 
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (communicationBond) {
-			unbindService(communicationServiceConnection);
-		}
 	}
 
 	// Gör en custom topmeny.
@@ -166,23 +146,6 @@ public class AssignmentOverview extends InactivityListener {
 	}
 
 	/**
-	 * ComService för att skicka till server
-	 */
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-
-	};
-
-	/**
 	 * Metoden skapar en dialogruta som frågar användaren om denne vill ta bort
 	 * en konversation Metoden ger också användaren två valmöjligheter, JA eller
 	 * Avbryt
@@ -219,12 +182,12 @@ public class AssignmentOverview extends InactivityListener {
 		for (ModelInterface m : listAssignments) {
 			Assignment a = (Assignment) m;
 			if (a.getId() == assignmentId) {
-				communicationService.setContext(getApplicationContext());
 				db.deleteFromDB(a, getContentResolver());
 				// Sätter status för att uppdraget har avslutats.
 				a.setAssignmentStatus(AssignmentStatus.FINISHED);
 
-				communicationService.sendAssignment(a);
+				SocketConnection connection=new SocketConnection();
+				connection.sendModel(a);
 			}
 
 		}

@@ -3,13 +3,9 @@ package messageFunction;
 import loginFunction.InactivityListener;
 import models.MessageModel;
 import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,8 +14,7 @@ import android.widget.EditText;
 
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
 
 import contacts.ContactsBookActivity;
 import contacts.ContactsCursorAdapter;
@@ -33,8 +28,6 @@ public class CreateMessage extends InactivityListener {
 	private Database dataBase;
 	private String user;
 	private int caller;
-	private CommunicationService communicationService;
-	private boolean communicationBond = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -48,22 +41,18 @@ public class CreateMessage extends InactivityListener {
 			caller = extras.getInt("calling-activity");
 			messageContent = extras.getString("MESSAGE");
 		}
-		
-		Intent intent = new Intent(this, CommunicationService.class);
-		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 		message = (EditText) this.findViewById(R.id.message);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
-		
+
 		switch (caller) {
 		case ActivityConstants.ADD_CONTACT_TO_MESSAGE:
 			String name = extras.getString(ContactsBookActivity.contact);
-		reciever.setText(name);	
+			reciever.setText(name);
 			break;
 		default:
 			break;
 		}
-		
 
 		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
 				null, 0));
@@ -85,39 +74,30 @@ public class CreateMessage extends InactivityListener {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-			if (message.getText()==null) {
+			if (message.getText() == null) {
 				showAlertMessage();
 			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
-
-	@Override
-	protected void onDestroy() {
-		unbindService(serviceConnection);
-		super.onDestroy();
-	}
-
 	/*
 	 * Metoden skapar ett meddelande objekt och skickar det vidare till
 	 * komunikationsmodulen. Metoden sparar ocks� de skapade meddelandena i
 	 * skickat mappen
-	 *
 	 */
-	public boolean sendMessage(MenuItem v){
+	public boolean sendMessage(MenuItem v) {
 		String recievingContact = reciever.getText().toString();
 		System.out.println("HEJSAN HOPPSAN " + recievingContact);
-		messageObject = new MessageModel(message.getText().toString(), recievingContact, user);
+		messageObject = new MessageModel(message.getText().toString(),
+				recievingContact, user);
 
 		// Sparar messageObject i databasen
 		dataBase.addToDB(messageObject, getContentResolver());
 		// Skicka till kommunikationsmodulen
 
-
-		if (communicationBond) {
-			communicationService.sendMessage(messageObject);
-		}
+		SocketConnection connection = new SocketConnection();
+		connection.sendModel(messageObject);
 
 		finish();
 
@@ -136,33 +116,19 @@ public class CreateMessage extends InactivityListener {
 		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA",
 				new DialogInterface.OnClickListener() {
 
-			// Om användaren trycker på ja så körs metoden
-			// eraseMessage()
-			public void onClick(DialogInterface dialog, int which) {
-				finish();
-			}
-		});
+					// Om användaren trycker på ja så körs metoden
+					// eraseMessage()
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				});
 		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ",
 				new DialogInterface.OnClickListener() {
 
-			public void onClick(DialogInterface dialog, int which) {
-				// Gör inget
-			}
-		});
+					public void onClick(DialogInterface dialog, int which) {
+						// Gör inget
+					}
+				});
 		alertDialog.show();
 	}
-
-	private ServiceConnection serviceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			System.out.println("OnServiceConnection");
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-	};
 }
