@@ -161,7 +161,6 @@ public class MainActivity extends InactivityListener {
 		SocketConnection socketConnection=new SocketConnection();
 		socketConnection.addObserver(new PullRequestHandler(this));
 		socketConnection.pullFromServer();
-		
 	}
 
 	@Override
