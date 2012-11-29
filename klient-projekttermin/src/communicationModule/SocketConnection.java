@@ -129,22 +129,23 @@ public class SocketConnection extends Observable {
 							setChanged();
 							notifyObservers(message);
 						} else if (inputString
-								.contains("\"databasetRepresentation\":\"assignment\"")) {
+								.contains("\"databaseRepresentation\":\"assignment\"")) {
 							System.out.println("assignment");
 							Assignment assignment = gson.fromJson(inputString,
 									Assignment.class);
 							setChanged();
 							notifyObservers(assignment);
 						} else if (inputString
-								.contains("\"databasetRepresentation\":\"contact\"")) {
+								.contains("\"databaseRepresentation\":\"contact\"")) {
 							System.out.println("contact");
 							Contact contact = gson.fromJson(inputString,
 									Contact.class);
 							setChanged();
 							notifyObservers(contact);
+						}else if (inputString
+								.contains("\"databaseRepresentation\":\"authentication\"")) {
 						} else {
-							Log.e("Database input problem",
-									"Did not recognise inputtype.");
+							System.out.println("Did not recognize model: "+inputString);
 						}
 					}
 					bufferedReader.close();
