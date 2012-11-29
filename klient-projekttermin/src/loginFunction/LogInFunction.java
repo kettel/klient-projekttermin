@@ -7,6 +7,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import models.AuthenticationModel;
+import models.ModelInterface;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,9 +29,10 @@ public class LogInFunction extends InactivityListener implements Observer {
 	private String password;
 	private Database database;
 
-	private int numberOfLoginTries = 3;
+	private int numberOfLoginTries = 4;
 
 	private AuthenticationModel originalModel;
+	private AuthenticationModel au;
 	private ProgressDialog pd;
 	private User user;
 
@@ -66,27 +68,34 @@ public class LogInFunction extends InactivityListener implements Observer {
 		tryOfflineLogin(originalModel);
 	}
 
-	public void tryOfflineLogin(AuthenticationModel authenticationModel){
+	public void tryOfflineLogin(AuthenticationModel loginInput) throws NoSuchAlgorithmException{
 
-		System.out.println("Saker i databasen: "+database.getAllFromDB(authenticationModel, getContentResolver()).size());
-		if(database.getAllFromDB(authenticationModel, getContentResolver()).size()!=0){
-			System.out.println("Loggar in offline");
+		System.out.println("Saker i databasen: "+database.getAllFromDB(loginInput, getContentResolver()).size());
 
-			List modelList = database.getAllFromDB(authenticationModel, getContentResolver());
-			AuthenticationModel checkModel = (AuthenticationModel) modelList.get(0);
+		if(database.getDBCount(new AuthenticationModel(), getContentResolver())!=0){
+			System.out.println("Försöker logga in offline");
 
-			if(checkModel.getUserName().equals(authenticationModel.getUserName())&&checkModel.getPasswordHash().equals(authenticationModel.getPasswordHash())){
-				accessGranted();
+			List modelList = database.getAllFromDB(loginInput, getContentResolver());
+			AuthenticationModel loadedModel = (AuthenticationModel) modelList.get(0);
+
+			if(loadedModel.getUserName().equals(loginInput.getUserName())){
+				if(loadedModel.getPasswordHash().equals(loginInput.getPasswordHash())){
+					accessGranted();
+				}
+				else{
+					incorrectLogIn();
+				}
 			}
 			else{
-				incorrectLogIn();
+				removeLastUserFromDB();
+				sendAuthenticationRequestToServer(loginInput);
 			}
 		}
 
 		else{
-			System.out.println("Loggar in online");
-			database.addToDB(authenticationModel, getContentResolver());
-			sendAuthenticationRequestToServer(authenticationModel);
+			System.out.println("Försöker logga in online");
+			database.addToDB(loginInput, getContentResolver());
+			sendAuthenticationRequestToServer(loginInput);
 		}
 	}
 
@@ -97,7 +106,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel) {
 		pd.dismiss();
-		
+
 		if (authenticationModel.getUserName().equals(
 				originalModel.getUserName())
 				&& authenticationModel.isAccessGranted().equals("true")) {
@@ -112,25 +121,24 @@ public class LogInFunction extends InactivityListener implements Observer {
 
 	}
 
-	public void loginFailure() {
-		Toast.makeText(getApplicationContext(),
-				"Get gick inte att hämta inloggningsuppgifter från servern",
-				Toast.LENGTH_SHORT).show();
-	}
-
 	public void incorrectLogIn() {
 		numberOfLoginTries--;
 		if (numberOfLoginTries == 0) {
-			database.deleteFromDB(originalModel, getContentResolver());
+			removeLastUserFromDB();
 			finish();
 		} else {
 			Toast toast = Toast.makeText(getApplicationContext(),
 					"Felaktigt användarnamn eller lösenord! "
 							+ numberOfLoginTries + " försök kvar!",
 							Toast.LENGTH_LONG);
-			toast.setGravity(Gravity.TOP, 0, 50);
+			toast.setGravity(Gravity.TOP, 0, 300);
 			toast.show();
 		}
+	}
+
+	public void removeLastUserFromDB(){
+		List list = database.getAllFromDB(new AuthenticationModel(), getContentResolver());
+		database.deleteFromDB((AuthenticationModel) list.get(0), getContentResolver());
 	}
 
 	/*
@@ -177,6 +185,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 	public void update(Observable observable, Object data) {
 		if (data instanceof AuthenticationModel) {
 			System.out.println((AuthenticationModel) data);
+			database.addToDB((AuthenticationModel) data, getContentResolver());
 			checkAuthenticity((AuthenticationModel) data);
 		}
 	}
