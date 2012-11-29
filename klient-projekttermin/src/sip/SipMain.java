@@ -3,6 +3,7 @@ package sip;
 import java.util.List;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.ListView;
@@ -29,6 +30,11 @@ public class SipMain extends InactivityListener{
 		if (extras != null) {
 			currentUser = extras.getString("USER");
 		}
+		
+		String uri = "tel:" + "1002" ;
+		Intent intent = new Intent(Intent.ACTION_CALL);
+		intent.setData(Uri.parse(uri));
+		startActivity(intent);
 	}
 	
 	@Override

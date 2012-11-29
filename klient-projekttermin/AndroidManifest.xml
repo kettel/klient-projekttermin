@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- SIP permission -->
     <uses-permission android:name="android.permission.USE_SIP" />
-    
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <!-- Permissions -->
     <permission

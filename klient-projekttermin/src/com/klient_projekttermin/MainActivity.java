@@ -51,7 +51,8 @@ public class MainActivity extends InactivityListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		initiateDB(this);
+		// Provar att ta bort DB-init här. Borde funka ändå. Mindre overhead ftw!
+		//initiateDB(this);
 		// Communication model
 		Intent intent = new Intent(this.getApplicationContext(),
 				CommunicationService.class);
@@ -158,7 +159,8 @@ public class MainActivity extends InactivityListener {
 
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
-		Database db = Database.getInstance(context);
+		// Borde dock vara safe att ta bort. Provar att avkommentera!
+		//Database db = Database.getInstance(context);
 	}
 
 	/**
