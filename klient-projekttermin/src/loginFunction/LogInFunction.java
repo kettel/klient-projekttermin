@@ -71,8 +71,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 				hashPassword(password));
 		
 		user = User.getInstance();
-		user.setUserName(userName);
-		user.setPassword(hashPassword(password));
+		user.setAuthenticationModel(originalModel);
 
 		sendAuthenticationRequestToServer(originalModel);
 	}

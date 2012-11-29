@@ -1,11 +1,10 @@
 package loginFunction;
 
+import models.AuthenticationModel;
+
 public class User {
 
-	private String userName;
-	private String password;
-	
-	
+	private AuthenticationModel authenticationModel;
 
 	private User(){}
 
@@ -14,20 +13,12 @@ public class User {
 	public static User getInstance(){
 		return instance;
 	}
-	
-	public void setUserName(String userName){
-		this.userName = userName;
-	}
-	
-	public String getUserName(){
-		return userName;
-	}
-	
-	public String getPassword() {
-		return password;
+
+	public AuthenticationModel getAuthenticationModel() {
+		return authenticationModel;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setAuthenticationModel(AuthenticationModel authenticationModel) {
+		this.authenticationModel = authenticationModel;
 	}
 }
