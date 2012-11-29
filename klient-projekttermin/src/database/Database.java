@@ -14,7 +14,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 public class Database {
 	// SQLCipher-lösen
-	public static final String PASSWORD = "password";
+	public static final String PASSWORD = 	"password";
 
 	public static boolean isLibraryLoaded = false;
 
