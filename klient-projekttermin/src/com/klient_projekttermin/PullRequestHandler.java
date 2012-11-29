@@ -3,6 +3,10 @@ package com.klient_projekttermin;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.google.gson.Gson;
+
+import database.Database;
+
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
@@ -19,9 +23,12 @@ import android.support.v4.app.NotificationCompat;
 public class PullRequestHandler implements Observer {
 	
 	private Context context;
+	private Database db;
+	private Gson gson=new Gson();
 	public PullRequestHandler(Context context) {
 		super();
 		this.context=context;
+		db=Database.getInstance(context);
 	}
 
 	public void update(Observable observable, Object data) {
@@ -29,10 +36,13 @@ public class PullRequestHandler implements Observer {
 		String message="";
 		if (data instanceof Contact) {
 			message="Ny kontakt";
+			db.addToDB((Contact)data,context.getContentResolver());
 		}else if (data instanceof Assignment) {
 			message="Nytt uppdrag";
+			db.addToDB((Assignment)data,context.getContentResolver());
 		}else if (data instanceof MessageModel) {
 			message="Nytt meddelande";
+			db.addToDB((MessageModel)data,context.getContentResolver());
 		}
 		int icon = R.drawable.ic_launcher;
 		long when = System.currentTimeMillis(); // can change this to a future
