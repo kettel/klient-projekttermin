@@ -15,13 +15,17 @@ import android.widget.Toast;
 public class BatteryCheckingFunction extends Observable{
 
 	private int batteryLevel = 0;
-	private int waitTime;
+	
+	public BatteryCheckingFunction(Context context){
+		System.out.println("Tjena");
+		startCheckThread(context);
+	}
 
 	public void startCheckThread(final Context context) {
 		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 		final Intent batteryStatus = context.registerReceiver(null, ifilter);
 		
-		System.out.println("KÖR startCHeckThread");
+		System.out.println("KÖR startCheckThread");
 		new Thread(new Runnable() {
 
 			public void run() {
@@ -29,27 +33,26 @@ public class BatteryCheckingFunction extends Observable{
 				while(true){
 					int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 
+					System.out.println("ÖL!");
 					if(level!=batteryLevel){
 						batteryLevel = level;
 						sendNotification(level);
 					}
-
-					waitTime = 30000;
 					timeToWait();
-
 				}
 			}
 		}).start();
 	}
 
 	private synchronized void timeToWait(){
+		int waitTime = 1800000;
 		try {
-			this.wait(waitTime);	
+			Thread.sleep(waitTime);
 		} catch (Exception e) {
 			Log.e("Thread", "Wating error: " + e.toString());
 		}
-
 	}
+		
 	private void sendNotification(int level){
 		setChanged();
 		notifyObservers(level);

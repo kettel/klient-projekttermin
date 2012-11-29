@@ -5,6 +5,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import qosManager.QoSManager;
+
 import models.AuthenticationModel;
 import models.ModelInterface;
 import android.content.ComponentName;
@@ -40,12 +42,15 @@ public class LogInFunction extends InactivityListener {
 	private Database database; 
 	private int numberOfLoginTries = 3;
 	private int waitTime = 1;
+	private QoSManager qosManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
-
+		qosManager = QoSManager.getInstance();
+		qosManager.startBatteryCheckingThread(getApplicationContext());
+		
 		database=Database.getInstance(getApplicationContext());
 
 		Intent intent = new Intent(this.getApplicationContext(),CommunicationService.class);
@@ -63,7 +68,7 @@ public class LogInFunction extends InactivityListener {
 		getMenuInflater().inflate(R.menu.activity_log_in_function, menu);
 		return true;
 	}
-
+	
 	/*
 	 * Metoden hämtar data från textfälten i inloggningsfönstret
 	 */
@@ -138,8 +143,6 @@ public class LogInFunction extends InactivityListener {
 			Toast.makeText(getApplicationContext(),"Felaktigt användarnamn eller lösenord! " + numberOfLoginTries + " försök kvar!" ,Toast.LENGTH_SHORT).show();
 		}
 	}
-
-
 
 	/*
 	 * Metoden skapar en hashrepresentation av de inmatade lösenordet med hjälp
