@@ -9,14 +9,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import sip.SipMain;
-
 import loginFunction.InactivityListener;
 import loginFunction.LogInFunction;
 import map.MapActivity;
 import messageFunction.Inbox;
-import models.AuthenticationModel;
-import models.ModelInterface;
+import sip.SipMain;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,7 +23,6 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,8 +36,8 @@ import camera.Camera;
 import com.google.android.gcm.GCMRegistrar;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
-import contacts.ContactsBookActivity;
 
+import contacts.ContactsBookActivity;
 import database.Database;
 
 public class MainActivity extends InactivityListener {
@@ -146,9 +142,11 @@ public class MainActivity extends InactivityListener {
 				case 4:
 					myIntent = new Intent(MainActivity.this, ContactsBookActivity.class);
 					myIntent.putExtra("USER", userName);
+					break;
 				case 5:
 					myIntent = new Intent(MainActivity.this, SipMain.class);
 					myIntent.putExtra("USER", userName);
+					break;
 				default:
 					break;
 				}

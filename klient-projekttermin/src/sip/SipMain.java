@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.ListView;
 
 import com.klient_projekttermin.R;
@@ -22,11 +23,17 @@ public class SipMain extends InactivityListener{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_contacts_book);
-		ListView lv = (ListView) findViewById(android.R.id.list);
-		Intent intent = getIntent();
-		currentUser = intent.getStringExtra("USER");
-		db = Database.getInstance(this);
+		setContentView(R.layout.activity_sip_main);
 		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			currentUser = extras.getString("USER");
+		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_sip_main, menu);
+		return true;
 	}
 }
