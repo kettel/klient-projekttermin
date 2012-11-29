@@ -1,6 +1,5 @@
 <resources>
 
-    <string name="title_activity_create_new_message">CreateNewMessage</string>
     <string name="hello_world">Hello world!</string>
     <string name="Mottagare"></string>
     <string name="Meddelande"></string>
@@ -47,6 +46,7 @@
     <string name="title_activity_uppdrag">Uppdrag</string>
     <string name="title_activity_add_assignment">AddAssignment</string>
     <string name="title_activity_assignment_overview">AssignmentOverview</string>
+    <string name="title_activity_create_new_message">Nytt meddelande</string>
     <string name="receiver_hint">Receiver</string>
     <string name="message_hint">Message</string>
     <string name="addAssignment">Skapa uppdrag</string>
