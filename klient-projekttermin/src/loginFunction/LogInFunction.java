@@ -43,7 +43,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
 		qosManager = QoSManager.getInstance();
-		qosManager.startBatteryCheckingThread(getApplicationContext());
+		qosManager.startBatteryCheckingThread(this);
 
 	}
 
