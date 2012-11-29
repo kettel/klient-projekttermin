@@ -24,15 +24,13 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
-
-import camera.PhotoGallery;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

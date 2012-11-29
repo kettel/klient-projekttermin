@@ -35,8 +35,8 @@ import camera.Camera;
 import com.google.android.gcm.GCMRegistrar;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
-import contacts.ContactsBookActivity;
 
+import contacts.ContactsBookActivity;
 import database.Database;
 
 public class MainActivity extends InactivityListener {
@@ -152,7 +152,7 @@ public class MainActivity extends InactivityListener {
 
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
-		Database db = Database.getInstance(context);
+		Database.getInstance(context);
 	
 	}
 

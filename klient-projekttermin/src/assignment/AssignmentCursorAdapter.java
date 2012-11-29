@@ -1,6 +1,5 @@
 package assignment;
 
-import models.AssignmentPriority;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;

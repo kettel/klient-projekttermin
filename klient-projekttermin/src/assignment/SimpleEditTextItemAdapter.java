@@ -24,7 +24,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import camera.PhotoGallery;
+import camera.Album;
+import camera.Camera;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -136,13 +137,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				isCreatingDialog = false;
 				switch (arg2) {
 				case 0:
-					Intent intent = new Intent(context, PhotoGallery.class);
+					Intent intent = new Intent(context, Album.class);
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 					((AddAssignment) context).startActivityForResult(intent, 1);
 					break;
 				case 1:
-					Intent intent2 = new Intent(context, PhotoGallery.class);
+					Intent intent2 = new Intent(context, Camera.class);
 					intent2.putExtra("calling-activity",
 							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
 					((AddAssignment) context)

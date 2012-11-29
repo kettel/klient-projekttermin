@@ -71,10 +71,6 @@
             android:label="Camera" >
         </activity>
         <activity
-            android:name="camera.PhotoGallery"
-            android:label="@string/title_activity_photo_gallery" >
-        </activity>
-        <activity
             android:name="logger.LogViewer"
             android:label="@string/title_activity_log_viewer" >
             <meta-data
@@ -117,10 +113,10 @@
         <provider
             android:name="database.MessagesContentProvider"
             android:authorities="database.MessagesContentProvider" />
-         <provider
+        <provider
             android:name="database.AuthenticationContentProvider"
             android:authorities="database.AuthenticationContentProvider" />
-        
+
         <!-- Communication Module Service -->
         <service android:name="communicationModule.CommunicationService" />
         <!-- GCM service -->
@@ -129,6 +125,10 @@
         <activity
             android:name="contacts.ContactsBookActivity"
             android:label="@string/title_activity_contacts_book" >
+        </activity>
+        <activity
+            android:name="camera.Album"
+            android:label="@string/title_activity_album" >
         </activity>
     </application>
 

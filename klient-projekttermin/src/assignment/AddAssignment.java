@@ -1,6 +1,7 @@
 package assignment;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,17 +17,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-import camera.PhotoGallery;
+import camera.Album;
+
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
+
 import database.Database;
 
 public class AddAssignment extends InactivityListener implements Serializable {
@@ -39,7 +44,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	private boolean communicationBond = false;
 	// ----End
 	private String jsonCoord = null;
-	private String jsonPict = null;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Uppdragsnamn", "Koordinater",
 			"Uppdragsbeskrivning", "Uppskattad tid", "Gatuadress",
@@ -85,7 +89,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		default:
 			break;
 		}
-
 	}
 
 	@Override
@@ -114,10 +117,9 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	}
 
 	private void fromCamera(Intent intent) {
-		bitmap = (Bitmap) intent.getExtras()
-				.getParcelable(PhotoGallery.picture);
-		jsonPict = "Bifogad bild";
-		adapter.textToItem(6, jsonPict);
+		int id = intent.getIntExtra(Album.pic, 0);
+		bitmap = getPic(id);
+		adapter.textToItem(6, "Bifogad bild");
 		runOnUiThread(new Runnable() {
 			public void run() {
 				adapter.notifyDataSetChanged();
@@ -201,11 +203,14 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	}
 
 	private byte[] getByteArray() {
+		System.out.println(bitmap);
 		if (bitmap != null) {
 			ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
 			bitmap.compress(Bitmap.CompressFormat.PNG, 100,
 					byteArrayBitmapStream);
+			System.out.println("BITMAP TO BYTE[]");
 			byte[] b = byteArrayBitmapStream.toByteArray();
+			System.out.println(b);
 			return b;
 		} else {
 			return new byte[2];
@@ -218,5 +223,20 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		if (communicationBond)
 			unbindService(communicationServiceConnection);
 	}
-
+	
+	private Bitmap getPic(int id){
+		File file = new File(Environment.getExternalStorageDirectory()
+				.getAbsolutePath() + "/Pictures/Album/");
+		File imageList[] = file.listFiles();
+		ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+		BitmapFactory.Options bitop = new BitmapFactory.Options();
+		bitop.inSampleSize = 16;
+		for (int i = 0; i < imageList.length; i++) {
+			Bitmap b = BitmapFactory.decodeFile(imageList[i].getAbsolutePath(),
+					bitop);
+			images.add(b);
+		}
+		return images.get(id);
+	}
+	
 }
