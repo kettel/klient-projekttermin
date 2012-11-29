@@ -30,6 +30,7 @@ import assignment.AssignmentOverview;
 import camera.Camera;
 
 import com.google.android.gcm.GCMRegistrar;
+import communicationModule.SocketConnection;
 
 import contacts.ContactsBookActivity;
 import database.Database;
@@ -133,6 +134,10 @@ public class MainActivity extends InactivityListener {
 			}
 
 		});
+		SocketConnection socketConnection=new SocketConnection();
+		socketConnection.addObserver(new PullRequestHandler());
+		socketConnection.pullFromServer();
+		
 	}
 
 	private void initiateDB(Context context) {

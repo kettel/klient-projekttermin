@@ -21,8 +21,8 @@ import com.google.gson.Gson;
 
 public class SocketConnection extends Observable {
 	private Gson gson = new Gson();
-	private String ip="94.254.72.38";
-	private int port=17234;
+	private String ip = "94.254.72.38";
+	private int port = 17234;
 
 	public void sendModel(ModelInterface modelInterface) {
 		final ModelInterface model = modelInterface;
@@ -52,7 +52,7 @@ public class SocketConnection extends Observable {
 			Socket socket = new Socket(ip, port);
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
-			bufferedWriter.write(json+"\n");
+			bufferedWriter.write(json + "\n");
 			bufferedWriter.flush();
 			socket.close();
 		} catch (IOException e) {
@@ -73,71 +73,86 @@ public class SocketConnection extends Observable {
 		port = getPortForIP(ip);
 		try {
 			Socket socket = new Socket(ip, port);
+			System.out.println("Socketen lyckades ansluta");
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
-			bufferedWriter.write(json+"\n");
+			bufferedWriter.write(json + "\n");
 			bufferedWriter.flush();
+			System.out.println("Socketen lyckades skriva");
 			BufferedReader bufferedReader = new BufferedReader(
 					new InputStreamReader(socket.getInputStream()));
 			StringBuilder sb = new StringBuilder();
 			String str;
 			while ((str = bufferedReader.readLine()) != null) {
 				sb.append(str);
-				System.out.println("while");
 			}
 			bufferedReader.close();
 			socket.close();
-			System.out.println("auth: "+sb.toString());
+			System.out.println("Socketen tog emot: " + sb.toString());
 			setChanged();
 			System.out.println(hasChanged());
-			notifyObservers(new AuthenticationModel(sb.toString()));
+			AuthenticationModel authenticationModel = gson.fromJson(
+					sb.toString(), AuthenticationModel.class);
+			notifyObservers(authenticationModel);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void pullFromServer() {
-		ip = getAvailableIP();
-		port = getPortForIP(ip);
-		InetSocketAddress inetAddress = new InetSocketAddress(ip, port);
+		new Thread(new Runnable() {
 
-		Socket socket = new Socket();
-		try {
-			socket.connect(inetAddress);
+			public void run() {
+				ip = getAvailableIP();
+				port = getPortForIP(ip);
+				try {
+					Socket socket = new Socket(ip, port);
+					System.out.println("Socketen lyckades ansluta");
+					BufferedWriter bufferedWriter = new BufferedWriter(
+							new OutputStreamWriter(socket.getOutputStream()));
+					bufferedWriter.write("pull\n");
+					bufferedWriter.flush();
+					System.out.println("Socketen lyckades skriva");
+					BufferedReader bufferedReader = new BufferedReader(
+							new InputStreamReader(socket.getInputStream()));
+					StringBuilder sb = new StringBuilder();
+					String inputString;
+					while ((inputString = bufferedReader.readLine()) != null) {
+						if (inputString
+								.contains("\"databaseRepresentation\":\"message\"")) {
+							System.out.println("message");
+							MessageModel message = gson.fromJson(inputString,
+									MessageModel.class);
+							setChanged();
+							notifyObservers(message);
+						} else if (inputString
+								.contains("\"databasetRepresentation\":\"assignment\"")) {
+							System.out.println("assignment");
+							Assignment assignment = gson.fromJson(inputString,
+									Assignment.class);
+							setChanged();
+							notifyObservers(assignment);
+						} else if (inputString
+								.contains("\"databasetRepresentation\":\"contact\"")) {
+							System.out.println("contact");
+							Contact contact = gson.fromJson(inputString,
+									Contact.class);
+							setChanged();
+							notifyObservers(contact);
+						} else {
+							Log.e("Database input problem",
+									"Did not recognise inputtype.");
+						}
+					}
+					bufferedReader.close();
+					inputString = sb.toString();
 
-			BufferedReader bufferedReader = new BufferedReader(
-					new InputStreamReader(socket.getInputStream()));
-			StringBuilder sb = new StringBuilder();
-			String inputString;
-			while ((inputString = bufferedReader.readLine()) != null) {
-				sb.append(inputString + "\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			bufferedReader.close();
-			inputString = sb.toString();
-			if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
-				MessageModel message = gson.fromJson(inputString,
-						MessageModel.class);
-				setChanged();
-				notifyObservers(message);
-			} else if (inputString
-					.contains("\"databasetRepresentation\":\"assignment\"")) {
-				Assignment assignment = gson.fromJson(inputString,
-						Assignment.class);
-				setChanged();
-				notifyObservers(assignment);
-			} else if (inputString
-					.contains("\"databasetRepresentation\":\"contact\"")) {
-				Contact contact = gson.fromJson(inputString, Contact.class);
-				setChanged();
-				notifyObservers(contact);
-			} else {
-				Log.e("Database input problem", "Did not recognise inputtype.");
-			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		}).start();
 	}
 
 }

@@ -8,11 +8,13 @@ import java.util.Observer;
 
 import models.AuthenticationModel;
 import models.ModelInterface;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,8 @@ public class LogInFunction extends InactivityListener implements Observer {
 	private Database database;
 	private int numberOfLoginTries = 3;
 	private int waitTime = 1;
+	private AuthenticationModel originalModel;
+	private ProgressDialog pd;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 
 		database = Database.getInstance(getApplicationContext());
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_log_in_function, menu);
@@ -56,13 +61,10 @@ public class LogInFunction extends InactivityListener implements Observer {
 		userName = userNameView.getText().toString();
 		password = passwordView.getText().toString();
 
-		AuthenticationModel authenticationModel = new AuthenticationModel(
-				userName, hashPassword(password));
+		originalModel = new AuthenticationModel(userName,
+				hashPassword(password));
 
-		sendAuthenticationRequestToServer(authenticationModel);
-
-		checkAuthenticity(authenticationModel);
-
+		sendAuthenticationRequestToServer(originalModel);
 	}
 
 	/*
@@ -71,35 +73,19 @@ public class LogInFunction extends InactivityListener implements Observer {
 	 * informationen från servern.
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel) {
-		System.out.println("NU TESTAR VI DET SOM KOMMIT!");
+		pd.dismiss();
+		if (authenticationModel.getUserName().equals(
+				originalModel.getUserName())
+				&& authenticationModel.isAccessGranted().equals("true")) {
 
+			accessGranted();
 
-		AuthenticationModel authenticationReference;
-		acceptedAuthenticationModels = database.getAllFromDB(
-				new AuthenticationModel(), getContentResolver());
-
-		if (acceptedAuthenticationModels.size() != 0) {
-
-			for (int i = 0; i < acceptedAuthenticationModels.size(); i++) {
-				authenticationReference = (AuthenticationModel) acceptedAuthenticationModels
-						.get(i);
-
-				if (authenticationModel.getUserName().equals(
-						authenticationReference.getUserName())
-						&& authenticationReference.isAccessGranted().equals(
-								"true")) {
-
-					accessGranted();
-					break;
-				} else if (authenticationModel.getUserName().equals(
-						authenticationReference.getUserName())
-						&& authenticationReference.isAccessGranted().equals(
-								"false")) {
-					incorrectLogIn();
-					break;
-				}
-			}
+		} else if (authenticationModel.getUserName().equals(
+				originalModel.getUserName())
+				&& authenticationModel.isAccessGranted().equals("false")) {
+			incorrectLogIn();
 		}
+
 	}
 
 	public void loginFailure() {
@@ -152,6 +138,8 @@ public class LogInFunction extends InactivityListener implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
+		pd = ProgressDialog.show(LogInFunction.this, "", "Loggar in...", true,
+	                false);
 	}
 
 	public void accessGranted() {
@@ -162,9 +150,8 @@ public class LogInFunction extends InactivityListener implements Observer {
 	}
 
 	public void update(Observable observable, Object data) {
-		System.out.println("update login");
 		if (data instanceof AuthenticationModel) {
-			System.out.println("instance");
+			System.out.println((AuthenticationModel) data);
 			checkAuthenticity((AuthenticationModel) data);
 		}
 	}
