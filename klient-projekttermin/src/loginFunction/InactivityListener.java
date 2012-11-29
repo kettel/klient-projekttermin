@@ -1,8 +1,10 @@
 package loginFunction;
 
+import qosManager.QoSManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
@@ -14,6 +16,13 @@ import android.os.Message;
  */
 @SuppressLint("HandlerLeak")
 public class InactivityListener extends Activity {
+	private QoSManager qosManager;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		qosManager = QoSManager.getInstance();
+		qosManager.startBatteryCheckingThread(this);
+	}
 
 	/**
 	 * Sätter hur lång tid timeouten är på 
