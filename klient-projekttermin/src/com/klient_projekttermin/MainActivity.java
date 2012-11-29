@@ -9,10 +9,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sip.SipMain;
+
 import loginFunction.InactivityListener;
 import loginFunction.LogInFunction;
 import map.MapActivity;
 import messageFunction.Inbox;
+import models.AuthenticationModel;
+import models.ModelInterface;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,6 +26,7 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -141,6 +146,9 @@ public class MainActivity extends InactivityListener {
 				case 4:
 					myIntent = new Intent(MainActivity.this, ContactsBookActivity.class);
 					myIntent.putExtra("USER", userName);
+				case 5:
+					myIntent = new Intent(MainActivity.this, SipMain.class);
+					myIntent.putExtra("USER", userName);
 				default:
 					break;
 				}
@@ -153,7 +161,6 @@ public class MainActivity extends InactivityListener {
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
 		Database db = Database.getInstance(context);
-	
 	}
 
 	/**
@@ -167,9 +174,9 @@ public class MainActivity extends InactivityListener {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera", "Kontakter" };
+				"Kamera", "Kontakter", "Samtal"};
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter"};
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter", "Ring ett röstsamtal"};
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();

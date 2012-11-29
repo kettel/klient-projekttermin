@@ -87,5 +87,6 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="title_activity_contacts_book">ContactsBookActivity</string>
+    <string name="samtal">Samtal</string>
 
 </resources>

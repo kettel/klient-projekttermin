@@ -46,7 +46,17 @@ public class LogInFunction extends InactivityListener {
 		setContentView(R.layout.activity_log_in_function);
 
 		database = Database.getInstance(getApplicationContext());
-
+		
+		// Töm autentiseringsdatabasen
+		List<ModelInterface> allAut = database.getAllFromDB(new AuthenticationModel(), getContentResolver());
+		Log.d("LOGIN","Antal element i aut: " + allAut.size());
+		for (ModelInterface modelInterface : allAut) {
+			AuthenticationModel aut = (AuthenticationModel) modelInterface;
+			database.deleteFromDB(aut, getContentResolver());
+		}
+		allAut = database.getAllFromDB(new AuthenticationModel(), getContentResolver());
+		Log.d("LOGIN","Antal element i aut: " + allAut.size());
+		
 		Intent intent = new Intent(this.getApplicationContext(),
 				CommunicationService.class);
 		bindService(intent, communicationServiceConnection,
@@ -80,7 +90,7 @@ public class LogInFunction extends InactivityListener {
 				userName, hashPassword(password));
 
 		sendAuthenticationRequestToServer(authenticationModel);
-
+		
 		checkAuthenticity(authenticationModel);
 
 	}
@@ -96,7 +106,9 @@ public class LogInFunction extends InactivityListener {
 		AuthenticationModel authenticationReference;
 		acceptedAuthenticationModels = database.getAllFromDB(
 				new AuthenticationModel(), getContentResolver());
-
+		
+		Log.d("LOGIN","Antal i check: " + acceptedAuthenticationModels.size());
+		
 		if (acceptedAuthenticationModels.size() != 0) {
 			for (int i = 0; i < acceptedAuthenticationModels.size(); i++) {
 				authenticationReference = (AuthenticationModel) acceptedAuthenticationModels

@@ -141,6 +141,7 @@ public class ClientToServerConnection extends Thread  {
 					if(input.ready() && ContextIsReady){
 						inputString = input.readLine();
 						Log.e("incoming", "incoming data");
+						Log.d("incoming", "received: "+inputString);
 						if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
 							MessageModel message = gson.fromJson(inputString, MessageModel.class);
 							database.addToDB(message, this.context.getContentResolver());
