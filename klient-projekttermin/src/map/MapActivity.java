@@ -63,6 +63,7 @@ import com.nutiteq.location.LocationSource;
 import com.nutiteq.location.NutiteqLocationMarker;
 import com.nutiteq.location.providers.AndroidGPSProvider;
 import com.nutiteq.maps.OpenStreetMap;
+import com.nutiteq.maps.StoredMap;
 import com.nutiteq.ui.ThreadDrivenPanning;
 import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
@@ -121,6 +122,9 @@ public class MapActivity extends InactivityListener implements Observer,
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		
+		
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
@@ -157,7 +161,9 @@ public class MapActivity extends InactivityListener implements Observer,
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
-		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+		final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
+		mapComponent.setMap(sm);
+//		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
@@ -185,6 +191,8 @@ public class MapActivity extends InactivityListener implements Observer,
 		mapView.setVisibility(0);
 		activateGPS(gpsOnOff);
 		onRetainCalled = false;
+		
+		
 	}
 
 	private void buildAlertMessageNoGps() {
