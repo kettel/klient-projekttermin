@@ -60,7 +60,7 @@
         </activity>
         <activity
             android:name="messageFunction.CreateMessage"
-            android:label="title_activity_create_new_message" >
+            android:label="@string/title_activity_create_new_message" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
