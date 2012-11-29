@@ -27,7 +27,7 @@ public class ContactsBookActivity extends InactivityListener {
 	private String[] contacts;
 	private Database db;
 	private String[] contactAlts = { "Skicka meddelande till kontakt",
-			"Ring kontakt" };
+			"Ring kontakt", "Gör inget" };
 	public static String contact;
 	private boolean isCreatingDialog = false;
 	private String currentUser;
@@ -42,6 +42,7 @@ public class ContactsBookActivity extends InactivityListener {
 		db = Database.getInstance(this);
 		List<ModelInterface> lista = db.getAllFromDB(new Contact(),
 				getContentResolver());
+		System.out.println(lista.size()+ " ANTAL KONTAKTER");
 		contacts = new String[lista.size()];
 		int i = 0;
 		for (ModelInterface m : lista) {
@@ -83,6 +84,7 @@ public class ContactsBookActivity extends InactivityListener {
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
+		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
@@ -101,6 +103,9 @@ public class ContactsBookActivity extends InactivityListener {
 					break;
 				case 1:
 
+					break;
+				case 2:
+					
 					break;
 				default:
 					break;
