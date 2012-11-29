@@ -18,22 +18,8 @@ package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
 import static com.klient_projekttermin.CommonUtilities.displayMessage;
-
-import java.util.Observable;
-import java.util.Observer;
-
-import models.Assignment;
-import models.Contact;
-import models.MessageModel;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
@@ -45,7 +31,6 @@ import communicationModule.SocketConnection;
 public class GCMIntentService extends GCMBaseIntentService {
 
 	private static final String TAG = "GCMIntentService";
-	private Context context;
 	public GCMIntentService() {
 		super(SENDER_ID);
 	}
@@ -68,7 +53,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 	protected void onMessage(Context context, Intent intent) {
 		Log.i(TAG, "Received message");
 		String message = getString(R.string.gcm_message);
-		this.context=context;
 		displayMessage(context, message);
 		// notifies user
 		generateNotification(context, message);

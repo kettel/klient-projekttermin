@@ -2,29 +2,22 @@ package loginFunction;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import qosManager.QoSManager;
-
 import models.AuthenticationModel;
-import models.ModelInterface;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 import communicationModule.SocketConnection;
-
-import database.Database;
 
 public class LogInFunction extends InactivityListener implements Observer {
 	private TextView userNameView;
