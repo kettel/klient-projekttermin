@@ -34,7 +34,8 @@
     <application
         android:icon="@drawable/loggakrona"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" 
+        android:name="android.app.Application" >
 
         <!-- Receiver -->
         <receiver

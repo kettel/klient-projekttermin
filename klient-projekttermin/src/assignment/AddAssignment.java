@@ -159,14 +159,15 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		
 		SocketConnection connection=new SocketConnection();
 		connection.sendModel(newAssignment);
+		finish();
 		} else {
 			Toast toast = Toast.makeText(getApplicationContext(),
 					"Kan inte skapa uppdrag utan namn",
 					Toast.LENGTH_LONG);
-			toast.setGravity(Gravity.TOP, 0, 50);
+			toast.setGravity(Gravity.CENTER_VERTICAL, 0, 50);
 			toast.show();
 		}
-		finish();
+		
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {

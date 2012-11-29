@@ -3,12 +3,16 @@ package qosManager;
 import java.util.Observable;
 import java.util.Observer;
 
+import loginFunction.LogInFunction;
+
 import com.klient_projekttermin.MainActivity;
 
 import android.net.wifi.WifiManager;
 import android.provider.Settings;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.LoginFilter;
 import android.view.WindowManager;
 
 public class QoSManager implements Observer {
@@ -161,9 +165,9 @@ public class QoSManager implements Observer {
 	 * @param value kan vara ett valfritt float-värde mellan 0.0-1.0;
 	 */
 	public void adjustScreenBrightness(float brightnessValue){
-		WindowManager.LayoutParams layout = ((MainActivity)applicationContext).getWindow().getAttributes();
+		WindowManager.LayoutParams layout = ((LogInFunction) applicationContext).getWindow().getAttributes();
 		layout.screenBrightness = brightnessValue;
-		((MainActivity)applicationContext).getWindow().setAttributes(layout);
+		((LogInFunction)applicationContext).getWindow().setAttributes(layout);
 	}
 
 	/**
@@ -180,7 +184,7 @@ public class QoSManager implements Observer {
 	 */
 	public void adjustGPSStatus(Boolean wantToTurnOn){
 		System.out.println("GPSen är avstängd/startad");
-		((MainActivity)applicationContext).startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+		((LogInFunction)applicationContext).startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 	}
 
 	public boolean allowedToStartMap(){

@@ -43,7 +43,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
 		qosManager = QoSManager.getInstance();
-		qosManager.startBatteryCheckingThread(getApplicationContext());
+		qosManager.startBatteryCheckingThread(this);
 
 	}
 
@@ -52,7 +52,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 		getMenuInflater().inflate(R.menu.activity_log_in_function, menu);
 		return true;
 	}
-	
+
 	/*
 	 * Metoden hämtar data från textfälten i inloggningsfönstret
 	 */
@@ -65,7 +65,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 
 		originalModel = new AuthenticationModel(userName,
 				hashPassword(password));
-		
+
 		user = User.getInstance();
 		user.setAuthenticationModel(originalModel);
 
@@ -144,7 +144,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
 		pd = ProgressDialog.show(LogInFunction.this, "", "Loggar in...", true,
-	                false);
+				false);
 	}
 
 	public void accessGranted() {
