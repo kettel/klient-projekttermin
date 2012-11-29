@@ -32,10 +32,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 	private String userName;
 	private String password;
 
-	private List<ModelInterface> acceptedAuthenticationModels;
-	private Database database;
 	private int numberOfLoginTries = 3;
-	private int waitTime = 1;
 	private QoSManager qosManager;
 	private AuthenticationModel originalModel;
 	private ProgressDialog pd;
@@ -48,7 +45,6 @@ public class LogInFunction extends InactivityListener implements Observer {
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(getApplicationContext());
 
-		database = Database.getInstance(getApplicationContext());
 	}
 
 	@Override
