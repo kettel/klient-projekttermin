@@ -22,23 +22,22 @@ public class Database {
 	private static ContactsDB contactsDB;
 	private static MessagesDB messagesDB;
 	private static AuthenticationDB authenticationDB;
-
 	private Database(){}
 
 	private static Database instance = new Database();
 
 	public static Database getInstance(Context context){
 		// Ladda vid behov in SQLCipher-bibliotek filer
-		if (!isLibraryLoaded) {
-			SQLiteDatabase.loadLibs(context);
-			isLibraryLoaded = true;
-		}
-		// Hämta DB från var och en av de tre (snart fyra ContentProv wrappers)
-		assignmentsDB = AssignmentsDB.getInstance();
-		contactsDB = ContactsDB.getInstance();
-		messagesDB = MessagesDB.getInstance();
-		authenticationDB = AuthenticationDB.getInstance();
-		return instance;
+    	if (!isLibraryLoaded) {
+    		SQLiteDatabase.loadLibs(context);
+    		isLibraryLoaded = true;
+    	}
+    	// Hämta DB från var och en av de tre (snart fyra ContentProv wrappers)
+    	assignmentsDB = AssignmentsDB.getInstance();
+    	contactsDB = ContactsDB.getInstance();
+    	messagesDB = MessagesDB.getInstance();
+    	authenticationDB = AuthenticationDB.getInstance();
+        return instance;
 	}
 
 	public void addToDB(ModelInterface m, ContentResolver contentResolver){

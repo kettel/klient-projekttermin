@@ -3,6 +3,7 @@ package database;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+
 public class AuthenticationTable {
 	public AuthenticationTable() {
 	}
@@ -22,6 +23,7 @@ public class AuthenticationTable {
 		// Kolumner
 		public static final String USERNAME = "userName";
 		public static final String PASSWORD = "password";
+		public static final String ISACCESSGRANTED = "isAccessGranted"; 
 
 	}
 }

@@ -18,6 +18,7 @@ public class ContactsCursorAdapter extends CursorAdapter {
 	public ContactsCursorAdapter(Context context, Cursor c, boolean autoRequery) {
 		super(context, c, autoRequery);
 		contentResolver=context.getContentResolver();
+		runQueryOnBackgroundThread(null);
 	}
 
 	public ContactsCursorAdapter(Context context, Cursor c, int flags) {
@@ -26,6 +27,7 @@ public class ContactsCursorAdapter extends CursorAdapter {
 	}
 	@Override
 	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
+		System.out.println("KOMMER VI TILL CURSORN");
 	    // this is how you query for suggestions
 	    // notice it is just a StringBuilder building the WHERE clause of a cursor which is the used to query for results
 	    if (getFilterQueryProvider() != null) { return getFilterQueryProvider().runQuery(constraint); }

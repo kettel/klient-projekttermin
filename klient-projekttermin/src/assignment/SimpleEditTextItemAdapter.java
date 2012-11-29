@@ -40,8 +40,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private Context context;
 	private boolean isCreatingDialog = false;
 	private boolean isCreatingCoordDialog = false;
-	public static String items;
-
 	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
 	private EditText editText;
 	private boolean isCreatingPrioDialog = false;
@@ -116,7 +114,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				isCreatingPrioDialog = true;
 				priorityAlternatives((EditText)v);
 			}
-			
 		}
 	}
 
@@ -171,6 +168,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
 		
 		final String pos = gson.toJson(wgs, type);
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
 		ListView modeList = new ListView(context);

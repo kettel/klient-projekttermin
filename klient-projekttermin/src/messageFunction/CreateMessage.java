@@ -18,10 +18,12 @@ import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
+import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import communicationModule.CommunicationService;
 import communicationModule.CommunicationService.CommunicationBinder;
 
+import contacts.ContactsBookActivity;
 import contacts.ContactsCursorAdapter;
 import database.Database;
 
@@ -32,6 +34,7 @@ public class CreateMessage extends InactivityListener {
 	private String messageContent;
 	private Database dataBase;
 	private String user;
+	private int caller;
 	private CommunicationService communicationService;
 	private boolean communicationBond = false;
 
@@ -44,6 +47,7 @@ public class CreateMessage extends InactivityListener {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			user = extras.getString("USER");
+			caller = extras.getInt("calling-activity");
 			messageContent = extras.getString("MESSAGE");
 		}
 		
@@ -52,6 +56,16 @@ public class CreateMessage extends InactivityListener {
 
 		message = (EditText) this.findViewById(R.id.message);
 		reciever = (AutoCompleteTextView) this.findViewById(R.id.receiver);
+		
+		switch (caller) {
+		case ActivityConstants.ADD_CONTACT_TO_MESSAGE:
+			String name = extras.getString(ContactsBookActivity.contact);
+		reciever.setText(name);	
+			break;
+		default:
+			break;
+		}
+		
 
 		reciever.setAdapter(new ContactsCursorAdapter(getApplicationContext(),
 				null, 0));
@@ -95,10 +109,7 @@ public class CreateMessage extends InactivityListener {
 	 */
 	public boolean sendMessage(MenuItem v){
 		String recievingContact = reciever.getText().toString();
-		// OBS! FULING FÖR ATT SLIPPA NULL-POINTEREXCEPTION FÖR USER!
-		if(user==null){
-			user = new String();
-		}
+		System.out.println("HEJSAN HOPPSAN " + recievingContact);
 		messageObject = new MessageModel(message.getText().toString(), recievingContact, user);
 
 		// Sparar messageObject i databasen

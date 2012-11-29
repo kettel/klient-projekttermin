@@ -4,10 +4,14 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import map.CustomAdapter;
+import map.MapActivity;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.Contact;
 import models.ModelInterface;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,14 +21,22 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import camera.PhotoGallery;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
 import communicationModule.CommunicationService;
@@ -49,6 +61,8 @@ public class AssignmentDetails extends InactivityListener {
 	private List<ModelInterface> listAssignments;
 	private Assignment currentAssignment;
 	private String currentUser;
+	public static String assignment;
+	private String[] coordAlts = { "Gå till uppdraget på kartan" };
 
 	// -------ComService
 	private CommunicationService communicationService;
@@ -72,8 +86,19 @@ public class AssignmentDetails extends InactivityListener {
 		// Hämtar intent för att nå extras så som ID:t som clickades på i
 		// assignmentoverview.
 		Intent intent = getIntent();
-		assignmentID = intent.getExtras().getLong("assignmentID");
-		currentUser = intent.getExtras().getString("currentUser");
+		int caller = intent.getIntExtra("calling-activity", 0);
+		switch (caller) {
+		case ActivityConstants.ASSIGNMENT_OVERVIEW:
+			assignmentID = intent.getExtras().getLong("assignmentID");
+			currentUser = intent.getExtras().getString("currentUser");
+			break;
+		case ActivityConstants.ASSIGNMENT_NAME:
+			currentUser = intent.getExtras().getString("currentUser");
+			assignmentID = intent.getExtras().getLong(MapActivity.assignmentName);
+		default:
+			break;
+		}
+		
 
 		// Initierar databasen.
 		db = Database.getInstance(this);
@@ -183,6 +208,12 @@ public class AssignmentDetails extends InactivityListener {
 		textViewStreetname.setText(currentAssignment.getStreetName());
 		currentAssignment.getRegion();
 		textViewCoord.setText(sb.toString());
+		textViewCoord.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				centerMapOnLocation();
+			}
+		});
 		Bitmap bitmap = BitmapFactory.decodeByteArray(
 				currentAssignment.getCameraImage(), 0,
 				currentAssignment.getCameraImage().length);
@@ -231,6 +262,39 @@ public class AssignmentDetails extends InactivityListener {
 					}
 				});
 
+	}
+	
+	private void centerMapOnLocation(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Koordinater för uppdraget");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				coordAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		
+		final Dialog dialog = builder.create();
+		dialog.setCancelable(false);
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					Intent intent = new Intent(AssignmentDetails.this, MapActivity.class);
+					intent.putExtra("USER", currentUser);
+					intent.putExtra("calling-activity", ActivityConstants.ASSIGNMENT_DETAILS);
+					intent.putExtra(assignment, currentAssignment.getRegion());
+					AssignmentDetails.this.startActivity(intent);
+					finish();
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
 	}
 
 	/**

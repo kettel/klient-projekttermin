@@ -10,12 +10,15 @@ import java.util.Queue;
 import database.Database;
 import com.google.gson.Gson;
 
+import loginFunction.LogInFunction;
 import models.Assignment;
+import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * En klass som sköter sickandet och motagndet av data mellan klienten och serven.
@@ -44,7 +47,6 @@ public class ClientToServerConnection extends Thread  {
 	 * en tom konstruktor
 	 */
 	public ClientToServerConnection(){
-		
 	}
 	/**
 	 * Används för att förhindra att data sickas 
@@ -80,6 +82,7 @@ public class ClientToServerConnection extends Thread  {
 	 * @param context  använd getApplicationContext()
 	 */
 	public synchronized void setContext(Context context){
+
 		this.context = context;
 		database = Database.getInstance(this.context);
 		ContextIsReady = true;
@@ -131,14 +134,13 @@ public class ClientToServerConnection extends Thread  {
 				Log.e("Connection", ("Connection failed: " + "Time is " + Integer.toString(waitTime)));
 				timeToWait();
 			}
-			
 			while(isConnection()){
 				resetTimeToWait();
 				// inkommande data.
 				try {
 					if(input.ready() && ContextIsReady){
 						inputString = input.readLine();
-						Log.e("incomeing", "icomeing data");
+						Log.e("incoming", "incoming data");
 						if (inputString.contains("\"databaseRepresentation\":\"message\"")) {
 							MessageModel message = gson.fromJson(inputString, MessageModel.class);
 							database.addToDB(message, this.context.getContentResolver());
@@ -149,7 +151,13 @@ public class ClientToServerConnection extends Thread  {
 							database.addToDB(assignment, this.context.getContentResolver());
 						}else if (inputString.contains("\"databaseRepresentation\":\"contact\"")) {
 							Contact contact = gson.fromJson(inputString, Contact.class);
+							System.out.println("ADD CONTACT");
 							database.addToDB(contact, context.getContentResolver());
+						}else if(inputString.contains("\"databaseRepresentation\":\"authentication\"")) {
+							System.out.println("Nu kom en authenticationModel");
+							AuthenticationModel authenticationModel = gson.fromJson(inputString, AuthenticationModel.class);
+							database.addToDB(authenticationModel, context.getContentResolver());
+							
 						}else {
 							Log.e("Database input problem","Did not recognise inputtype.");
 						}

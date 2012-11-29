@@ -1,9 +1,9 @@
 package database;
 
+import java.io.File;
 import java.util.HashMap;
 
 import database.AuthenticationTable.Authentications;
-
 
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -24,11 +24,11 @@ public class AuthenticationContentProvider extends ContentProvider{
 
 	private static final String TAG = "AuthenticationContentProvider";
 
-	private static final String DATABASE_NAME = "authentication.db";
+	private static final String DATABASE_NAME = "authentications.db";
 
 	private static final int DATABASE_VERSION = 1;
 
-	public static final String AUTHORITY = "com.example.klien_projekttermin.database.AuthenticationContentProvider";
+	public static final String AUTHORITY = "database.AuthenticationContentProvider";
 
 	private static final UriMatcher sUriMatcher;
 
@@ -41,7 +41,18 @@ public class AuthenticationContentProvider extends ContentProvider{
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
 		DatabaseHelper(Context context) {
-			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+			  super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	            
+	            // FIX FÖR GALAXY-TABBEN!
+	    		File dbFile = context.getDatabasePath(DATABASE_NAME);
+
+	    		// Om databasfilen inte existerar, skapa den
+	    		if (!dbFile.exists()) {
+	    			dbFile.mkdirs();
+	    			dbFile.delete();
+	    		}
+	    		// Initiera en skrivbar databas (FIX för testDB)
+	    		SQLiteDatabase db = this.getWritableDatabase(PASSWORD);
 		}
 
 
@@ -49,8 +60,10 @@ public class AuthenticationContentProvider extends ContentProvider{
 		public void onCreate(SQLiteDatabase db) {
 			String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
 					+ Authentications.TABLE_NAME + "("
+					+ Authentications.AUTHENTICATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 					+ Authentications.USERNAME + " text, "
-					+ Authentications.PASSWORD + " text);";
+					+ Authentications.PASSWORD + " text, "
+					+ Authentications.ISACCESSGRANTED + " text);";
 			db.execSQL(DATABASE_CREATE);
 		}
 
@@ -119,18 +132,16 @@ public class AuthenticationContentProvider extends ContentProvider{
 
 	@Override
 	public boolean onCreate() {
-		dbHelper = new DatabaseHelper(getContext());
-
 		// Om Assignments inte är skapad än samt om SQLite-biblioteken 
 		// inte är laddade
-		if(!Database.isLibraryLoaded){
-			SQLiteDatabase.loadLibs(getContext());
-			SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
-			db.close();
-			Database.isLibraryLoaded = true;
-		}
-
-		return true;
+		 if(!Database.isLibraryLoaded){
+	        	SQLiteDatabase.loadLibs(getContext());
+	        	Database.isLibraryLoaded = true;
+	        }
+	        dbHelper = new DatabaseHelper(getContext());
+	        SQLiteDatabase db = dbHelper.getWritableDatabase(PASSWORD);
+	    	db.close();
+	        return true;
 	}
 
 	@Override
@@ -181,6 +192,7 @@ public class AuthenticationContentProvider extends ContentProvider{
 		authenticationProjectionMap.put(Authentications.AUTHENTICATION_ID, Authentications.AUTHENTICATION_ID);
 		authenticationProjectionMap.put(Authentications.USERNAME, Authentications.USERNAME);
 		authenticationProjectionMap.put(Authentications.PASSWORD, Authentications.PASSWORD);
-	
+		authenticationProjectionMap.put(Authentications.ISACCESSGRANTED.toString(), Authentications.ISACCESSGRANTED.toString());
+
 	}
 }
