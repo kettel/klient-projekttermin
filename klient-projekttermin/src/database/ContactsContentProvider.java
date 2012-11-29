@@ -125,8 +125,8 @@ public class ContactsContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        // Om Assignments inte är skapad än samt om SQLite-biblioteken 
-        // inte är laddade
+        // Om Contacts inte är skapad än samt om SQLite-biblioteken 
+        // inte är laddade, ladda dem.
         if(!Database.isLibraryLoaded){
         	SQLiteDatabase.loadLibs(getContext());
         	Database.isLibraryLoaded = true;
