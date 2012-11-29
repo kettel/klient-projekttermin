@@ -33,7 +33,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 	private String password;
 
 	private int numberOfLoginTries = 3;
-	private QoSManager qosManager;
+	
 	private AuthenticationModel originalModel;
 	private ProgressDialog pd;
 	private User user;
@@ -42,8 +42,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
-		qosManager = QoSManager.getInstance();
-		qosManager.startBatteryCheckingThread(this);
+		
 
 	}
 
