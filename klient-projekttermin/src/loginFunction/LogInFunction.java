@@ -39,6 +39,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 	private QoSManager qosManager;
 	private AuthenticationModel originalModel;
 	private ProgressDialog pd;
+	private User user;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,10 @@ public class LogInFunction extends InactivityListener implements Observer {
 
 		originalModel = new AuthenticationModel(userName,
 				hashPassword(password));
+		
+		user = User.getInstance();
+		user.setUserName(userName);
+		user.setPassword(hashPassword(password));
 
 		sendAuthenticationRequestToServer(originalModel);
 	}
