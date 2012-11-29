@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import qosManager.QoSManager;
-
 import loginFunction.InactivityListener;
 import loginFunction.LogInFunction;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Contact;
+import qosManager.QoSManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -167,7 +166,6 @@ public class MainActivity extends InactivityListener {
 		socketConnection.addObserver(new PullRequestHandler(this));
 		socketConnection.pullFromServer();
 		checkContactDatabase();
-
 	}
 
 	@Override

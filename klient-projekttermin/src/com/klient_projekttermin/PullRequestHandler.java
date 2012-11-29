@@ -54,9 +54,7 @@ public class PullRequestHandler implements Observer {
 			db.addToDB((MessageModel)data,context.getContentResolver());
 			notificationIntent = new Intent(context, Inbox.class);
 		}
-		int icon = R.drawable.ic_launcher;
-		long when = System.currentTimeMillis(); // can change this to a future
-												// time if desired
+		int icon = R.drawable.loggakrona;
 
 		// set intent so it does not start a new activity
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
