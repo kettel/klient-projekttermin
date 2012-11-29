@@ -15,6 +15,7 @@ import loginFunction.InactivityListener;
 import loginFunction.LogInFunction;
 import map.MapActivity;
 import messageFunction.Inbox;
+import models.Contact;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +45,9 @@ public class MainActivity extends InactivityListener {
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	private QoSManager qosManager;
+	private Database database;
+	private SocketConnection socketConnection;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -102,7 +106,10 @@ public class MainActivity extends InactivityListener {
 		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		lv.setOnItemClickListener(new OnItemClickListener() {
-			Toast unallowedStart = Toast.makeText(getApplicationContext(), "Du har inte tillåtelse att starta denna funktion", Toast.LENGTH_SHORT);
+			Toast unallowedStart = Toast.makeText(getApplicationContext(),
+					"Du har inte tillåtelse att starta denna funktion",
+					Toast.LENGTH_SHORT);
+
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent myIntent = null;
@@ -110,57 +117,57 @@ public class MainActivity extends InactivityListener {
 				// för dessa här.
 				switch (arg2) {
 				case 0:
-					if(qosManager.allowedToStartMap()){
-					myIntent = new Intent(MainActivity.this, MapActivity.class);
-					myIntent.putExtra("USER", userName);
-					}
-					else{
+					if (qosManager.allowedToStartMap()) {
+						myIntent = new Intent(MainActivity.this,
+								MapActivity.class);
+						myIntent.putExtra("USER", userName);
+					} else {
 						unallowedStart.show();
 					}
 					break;
 				case 1:
-					if(qosManager.allowedToStartMessages()){
+					if (qosManager.allowedToStartMessages()) {
 						System.out.println("Startar meddelanden");
-					myIntent = new Intent(MainActivity.this, Inbox.class);
-					myIntent.putExtra("USER", userName);
-					}
-					else{
+						myIntent = new Intent(MainActivity.this, Inbox.class);
+						myIntent.putExtra("USER", userName);
+					} else {
 						unallowedStart.show();
 					}
 					break;
 				case 2:
-					if(qosManager.allowedToStartAssignment()){
-					myIntent = new Intent(MainActivity.this,
-							AssignmentOverview.class);
-					myIntent.putExtra("USER", userName);
-					}
-					else{
+					if (qosManager.allowedToStartAssignment()) {
+						myIntent = new Intent(MainActivity.this,
+								AssignmentOverview.class);
+						myIntent.putExtra("USER", userName);
+					} else {
 						unallowedStart.show();
 					}
 					break;
 				case 3:
-					if(qosManager.allowedToStartCamera()){
-					myIntent = new Intent(MainActivity.this, Camera.class);
-					myIntent.putExtra("USER", userName);
-					}
-					else{
+					if (qosManager.allowedToStartCamera()) {
+						myIntent = new Intent(MainActivity.this, Camera.class);
+						myIntent.putExtra("USER", userName);
+					} else {
 						unallowedStart.show();
 					}
 					break;
 				case 4:
-					myIntent = new Intent(MainActivity.this, ContactsBookActivity.class);
+					myIntent = new Intent(MainActivity.this,
+							ContactsBookActivity.class);
 					myIntent.putExtra("USER", userName);
 				default:
 					break;
 				}
-				if(myIntent!=null){
-				MainActivity.this.startActivity(myIntent);
+				if (myIntent != null) {
+					MainActivity.this.startActivity(myIntent);
 				}
 			}
 		});
-		SocketConnection socketConnection=new SocketConnection();
+		socketConnection = new SocketConnection();
 		socketConnection.addObserver(new PullRequestHandler(this));
 		socketConnection.pullFromServer();
+		checkContactDatabase();
+
 	}
 
 	@Override
@@ -168,9 +175,16 @@ public class MainActivity extends InactivityListener {
 		super.onStart();
 	}
 
+	public void checkContactDatabase() {
+		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
+		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
+			socketConnection.getAllContactsReq();
+		}
+	}
+
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
-		Database.getInstance(context);
+		database = Database.getInstance(context);
 	}
 
 	/**
@@ -186,7 +200,7 @@ public class MainActivity extends InactivityListener {
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
 				"Kamera", "Kontakter" };
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter"};
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" };
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -205,7 +219,7 @@ public class MainActivity extends InactivityListener {
 
 	@Override
 	protected void onDestroy() {
-		
+
 		if (mRegisterTask != null) {
 			mRegisterTask.cancel(true);
 		}
