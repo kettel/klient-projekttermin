@@ -33,7 +33,6 @@ public class BatteryCheckingFunction extends Observable{
 				while(true){
 					int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 
-					System.out.println("ÖL!");
 					if(level!=batteryLevel){
 						batteryLevel = level;
 						sendNotification(level);
