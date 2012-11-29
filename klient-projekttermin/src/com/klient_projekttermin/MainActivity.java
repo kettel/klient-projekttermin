@@ -135,7 +135,7 @@ public class MainActivity extends InactivityListener {
 
 		});
 		SocketConnection socketConnection=new SocketConnection();
-		socketConnection.addObserver(new PullRequestHandler());
+		socketConnection.addObserver(new PullRequestHandler(this));
 		socketConnection.pullFromServer();
 		
 	}
@@ -143,7 +143,6 @@ public class MainActivity extends InactivityListener {
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
 		Database.getInstance(context);
-	
 	}
 
 	/**
