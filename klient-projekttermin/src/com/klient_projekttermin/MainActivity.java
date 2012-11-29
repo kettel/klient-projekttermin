@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import qosManager.QoSManager;
+
 import loginFunction.InactivityListener;
 import loginFunction.LogInFunction;
 import map.MapActivity;
@@ -26,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 import assignment.AssignmentOverview;
 import camera.Camera;
 
@@ -40,10 +43,12 @@ public class MainActivity extends InactivityListener {
 	private String userName;
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
+	private QoSManager qosManager;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
+		qosManager = QoSManager.getInstance();
 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -88,41 +93,59 @@ public class MainActivity extends InactivityListener {
 					protected void onPostExecute(Void result) {
 						mRegisterTask = null;
 					}
-
 				};
 				mRegisterTask.execute(null, null, null);
 			}
-
 		}
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		lv.setOnItemClickListener(new OnItemClickListener() {
-			Intent myIntent = null;
-
+			Toast unallowedStart = Toast.makeText(getApplicationContext(), "Du har inte tillåtelse att starta denna funktion", Toast.LENGTH_SHORT);
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+				Intent myIntent = null;
 				// Har man lagt till ett nytt menyval lägger man till en action
 				// för dessa här.
 				switch (arg2) {
 				case 0:
+					if(qosManager.allowedToStartMap()){
 					myIntent = new Intent(MainActivity.this, MapActivity.class);
 					myIntent.putExtra("USER", userName);
-
+					}
+					else{
+						unallowedStart.show();
+					}
 					break;
 				case 1:
+					if(qosManager.allowedToStartMessages()){
+						System.out.println("Startar meddelanden");
 					myIntent = new Intent(MainActivity.this, Inbox.class);
 					myIntent.putExtra("USER", userName);
+					}
+					else{
+						unallowedStart.show();
+					}
 					break;
 				case 2:
+					if(qosManager.allowedToStartAssignment()){
 					myIntent = new Intent(MainActivity.this,
 							AssignmentOverview.class);
 					myIntent.putExtra("USER", userName);
+					}
+					else{
+						unallowedStart.show();
+					}
 					break;
 				case 3:
+					if(qosManager.allowedToStartCamera()){
 					myIntent = new Intent(MainActivity.this, Camera.class);
 					myIntent.putExtra("USER", userName);
+					}
+					else{
+						unallowedStart.show();
+					}
 					break;
 				case 4:
 					myIntent = new Intent(MainActivity.this, ContactsBookActivity.class);
@@ -130,20 +153,25 @@ public class MainActivity extends InactivityListener {
 				default:
 					break;
 				}
+				if(myIntent!=null){
 				MainActivity.this.startActivity(myIntent);
+				}
 			}
-
 		});
 		SocketConnection socketConnection=new SocketConnection();
-		socketConnection.addObserver(new PullRequestHandler());
+		socketConnection.addObserver(new PullRequestHandler(this));
 		socketConnection.pullFromServer();
 		
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
 	}
 
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
 		Database.getInstance(context);
-	
 	}
 
 	/**
@@ -178,6 +206,7 @@ public class MainActivity extends InactivityListener {
 
 	@Override
 	protected void onDestroy() {
+		
 		if (mRegisterTask != null) {
 			mRegisterTask.cancel(true);
 		}

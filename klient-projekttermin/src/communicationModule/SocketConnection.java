@@ -76,7 +76,7 @@ public class SocketConnection extends Observable {
 			System.out.println("Socketen lyckades ansluta");
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
-			bufferedWriter.write(json + "\n");
+			bufferedWriter.write(json + "\nclose\n");
 			bufferedWriter.flush();
 			System.out.println("Socketen lyckades skriva");
 			BufferedReader bufferedReader = new BufferedReader(

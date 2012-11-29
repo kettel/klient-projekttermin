@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import qosManager.QoSManager;
+
 import models.AuthenticationModel;
 import models.ModelInterface;
 import android.app.ProgressDialog;
@@ -30,19 +32,19 @@ public class LogInFunction extends InactivityListener implements Observer {
 	private String userName;
 	private String password;
 
-	private List<ModelInterface> acceptedAuthenticationModels;
-	private Database database;
 	private int numberOfLoginTries = 3;
-	private int waitTime = 1;
+	private QoSManager qosManager;
 	private AuthenticationModel originalModel;
 	private ProgressDialog pd;
+	private User user;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
+		qosManager = QoSManager.getInstance();
+		qosManager.startBatteryCheckingThread(getApplicationContext());
 
-		database = Database.getInstance(getApplicationContext());
 	}
 
 	@Override
@@ -50,7 +52,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 		getMenuInflater().inflate(R.menu.activity_log_in_function, menu);
 		return true;
 	}
-
+	
 	/*
 	 * Metoden hämtar data från textfälten i inloggningsfönstret
 	 */
@@ -63,6 +65,9 @@ public class LogInFunction extends InactivityListener implements Observer {
 
 		originalModel = new AuthenticationModel(userName,
 				hashPassword(password));
+		
+		user = User.getInstance();
+		user.setAuthenticationModel(originalModel);
 
 		sendAuthenticationRequestToServer(originalModel);
 	}
