@@ -1,6 +1,5 @@
 package models;
 
-import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -8,8 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import com.nutiteq.components.WgsPoint;
 
 public class Assignment implements ModelInterface {
 	// Typen av model

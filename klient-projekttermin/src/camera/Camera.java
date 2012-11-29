@@ -3,126 +3,108 @@ package camera;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import loginFunction.InactivityListener;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
-import android.widget.VideoView;
-
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 
 public class Camera extends InactivityListener {
-	private static final int ACTION_TAKE_PHOTO_B = 1;
-	private static final int ACTION_PHOTO_ALBUM = 2;
-	private static final int ACTION_TAKE_VIDEO = 3;
 
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
 	private ImageView mImageView;
 	private Bitmap mImageBitmap;
 
-	private static final String VIDEO_STORAGE_KEY = "viewvideo";
-	private static final String VIDEOVIEW_VISIBILITY_STORAGE_KEY = "videoviewvisibility";
-	private VideoView mVideoView;
-	private Uri mVideoUri;
-
 	private String mCurrentPhotoPath;
 
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 
-	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+	private String[] from = { "line1", "line2" };
+	private int[] to = { android.R.id.text1, android.R.id.text2 };
 
-	/* Fotoalbum för kameran */
-	private String getAlbumName() {
-		return getString(R.string.album_name);
-	}
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_camera_menu);
+		mImageView = (ImageView) findViewById(R.id.imageView1);
+		mImageBitmap = null;
+		ListView lv = (ListView) findViewById(android.R.id.list);
+		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
+				android.R.layout.simple_list_item_2, from, to));
+		lv.setOnItemClickListener(new OnItemClickListener() {
 
-	private File getAlbumDir() {
-		File storageDir = null;
-
-		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-			storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
-			System.out.println("pathen är: " + storageDir.getPath());
-			try {
-				storageDir.createNewFile();
-				System.out.println("inte catch");
-			} catch (Exception e) {
-				System.out.println("catched: " + e.toString());
-			}
-			if (storageDir != null) {
-				if (!storageDir.mkdirs()) {
-					if (!storageDir.exists()){
-						Log.d("CameraSample", "failed to create directory");
-						return null;
-					}
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				switch (arg2) {
+				case 0:
+					dispatchTakePictureIntent();
+					break;
+				case 1:
+					Intent myIntent2 = new Intent(Camera.this,
+							Album.class);
+					myIntent2.putExtra("calling-activity", ActivityConstants.CAMERA);
+					Camera.this.startActivity(myIntent2);
+					break;
+				default:
+					break;
 				}
 			}
-
-		} else {
-			Log.v(getString(R.string.app_name),
-					"External storage is not mounted READ/WRITE.");
-		}
-
-		return storageDir;
+		});
 	}
 
-	private File createImageFile() throws IOException {
-		// Gör ett filnamn till bilden
-		System.out.println("1");
+	private List<HashMap<String, String>> generateMenuContent() {
+		List<HashMap<String, String>> content = new ArrayList<HashMap<String, String>>();
+		String[] menuItems = { "Kamera", "Album" };
+		String[] menuSubtitle = { "Ta bilder", "Visa upp bilder" };
+		for (int i = 0; i < menuItems.length; i++) {
+			HashMap<String, String> hashMap = new HashMap<String, String>();
+			hashMap.put("line1", menuItems[i]);
+			hashMap.put("line2", menuSubtitle[i]);
+			content.add(hashMap);
+		}
+		return content;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.activity_camera_menu, menu);
+		return true;
+	}
+
+	private File setUpPhotoFile() throws IOException {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 				.format(new Date());
 		String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
-		File albumF = getAlbumDir();
-		System.out.println("2");
+		File albumF = new File(Environment.getExternalStorageDirectory()
+				.getAbsolutePath() + "/Pictures/Album/");
+
 		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX,
 				albumF);
-		System.out.println("3");
-		dirChecker();
+		mCurrentPhotoPath = imageF.getAbsolutePath();
 		return imageF;
-	}
-	private void dirChecker() {
-		System.out.println("DIR CHECK");
-        File FiledirChecker = new File("/storage/sdcard0/Pictures/Album/");
-        if (!FiledirChecker.isDirectory()){
-        	System.out.println("NOT A DIR");
-            FiledirChecker.mkdirs();
-        }
-    }
-
-	private File setUpPhotoFile() throws IOException {
-		System.out.println("setting up PhotoFIle");
-		File f = createImageFile();
-		mCurrentPhotoPath = f.getAbsolutePath();
-		System.out.println("f: " + f.getAbsolutePath() );
-		return f;
 	}
 
 	private void setPic() {
-		/*
-		 * Det finns inte tillräckligt med minne för att öppna mer än några
-		 * bilder
-		 */
-		/* Förhandsvisningen på mål bitmapp till där filen blir dekodad */
-		/* Får strl på bilden */
 		int targetW = mImageView.getWidth();
 		int targetH = mImageView.getHeight();
 
@@ -144,71 +126,38 @@ public class Camera extends InactivityListener {
 
 		/* Decode JPEG filen till en bitmap */
 		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-		
+
 		/* Assosierar bitmap till ImageView */
 		mImageView.setImageBitmap(bitmap);
-		mVideoUri = null;
 		mImageView.setVisibility(View.VISIBLE);
-		mVideoView.setVisibility(View.INVISIBLE);
 	}
 
 	private void galleryAddPic() {
-		Intent mediaScanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
+		Intent mediaScanIntent = new Intent(
+				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
 		File f = new File(mCurrentPhotoPath);
 		Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
 		this.sendBroadcast(mediaScanIntent);
 	}
 
-	private void dispatchTakePictureIntent(int actionCode) {
-
+	private void dispatchTakePictureIntent() {
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-		switch (actionCode) {
-		case ACTION_TAKE_PHOTO_B:
-			File f = null;
-
-			try {
-				f = setUpPhotoFile();
-				mCurrentPhotoPath = f.getAbsolutePath();
-				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-						Uri.fromFile(f));
-			} catch (IOException e) {
-				e.printStackTrace();
-				f = null;
-				mCurrentPhotoPath = null;
-			}
-			startActivityForResult(takePictureIntent, actionCode);
-			break;
-		case ACTION_PHOTO_ALBUM:
-			Intent intent = new Intent(Camera.this, PhotoGallery.class);
-			intent.putExtra("calling-activity", ActivityConstants.CAMERA);
-			startActivity(intent);
-			break;
-		default:
-			break;
+		File f = null;
+		try {
+			f = setUpPhotoFile();
+			mCurrentPhotoPath = f.getAbsolutePath();
+			takePictureIntent
+					.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+		} catch (IOException e) {
+			e.printStackTrace();
+			f = null;
+			mCurrentPhotoPath = null;
 		}
-
-		
-	}
-
-	private void dispatchTakeVideoIntent() {
-		Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-		startActivityForResult(takeVideoIntent, ACTION_TAKE_VIDEO);
-	}
-
-	private void handleSmallCameraPhoto(Intent intent) {
-		System.out.println("handel small");
-		Bundle extras = intent.getExtras();
-		mImageBitmap = (Bitmap) extras.get("data");
-		mImageView.setImageBitmap(mImageBitmap);
-		mVideoUri = null;
-		mImageView.setVisibility(View.VISIBLE);
-		mVideoView.setVisibility(View.INVISIBLE);
+		startActivityForResult(takePictureIntent, 0);
 	}
 
 	private void handleBigCameraPhoto() {
-		System.out.println("Current path is " + mCurrentPhotoPath);
 		if (mCurrentPhotoPath != null) {
 			setPic();
 			galleryAddPic();
@@ -217,126 +166,16 @@ public class Camera extends InactivityListener {
 
 	}
 
-	private void handleCameraVideo(Intent intent) {
-		mVideoUri = intent.getData();
-		mVideoView.setVideoURI(mVideoUri);
-		mImageBitmap = null;
-		mVideoView.setVisibility(View.VISIBLE);
-		mImageView.setVisibility(View.INVISIBLE);
-	}
-
-	Button.OnClickListener mTakePicOnClickListener = new Button.OnClickListener() {
-		public void onClick(View v) {
-			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
-		}
-	};
-
-	Button.OnClickListener mTakePicSOnClickListener = new Button.OnClickListener() {
-		public void onClick(View v) {
-			dispatchTakePictureIntent(ACTION_PHOTO_ALBUM);
-		}
-	};
-
-	Button.OnClickListener mTakeVidOnClickListener = new Button.OnClickListener() {
-		public void onClick(View v) {
-			dispatchTakeVideoIntent();
-		}
-	};
-	private int callingActivity;
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.activity_camera);
-
-		mImageView = (ImageView) findViewById(R.id.imageView1);
-		mVideoView = (VideoView) findViewById(R.id.videoView1);
-		mImageBitmap = null;
-		mVideoUri = null;
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
-		} else {
-			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
-		}
-		
-		callingActivity = getIntent().getIntExtra("calling-activity", 0);
-
-		switch (callingActivity) {
-		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
-			Intent intent = new Intent(Camera.this, PhotoGallery.class);
-			intent.putExtra("calling-activity", ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-			startActivity(intent);
-			finish();
-		break;
-		case ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT:
-			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
-		break;
-		default:
-			createButtons();
-		break;
-		}
-		
-		
-	}
-	
-	private void createButtons(){
-		Button picBtn = (Button) findViewById(R.id.takePicture);
-		setBtnListenerOrDisable(picBtn, mTakePicOnClickListener,
-				MediaStore.ACTION_IMAGE_CAPTURE);
-
-		Button picSBtn = (Button) findViewById(R.id.goAlbum);
-		setBtnListenerOrDisable(picSBtn, mTakePicSOnClickListener,
-				MediaStore.ACTION_IMAGE_CAPTURE);
-
-		Button vidBtn = (Button) findViewById(R.id.makeMovie);
-		setBtnListenerOrDisable(vidBtn, mTakeVidOnClickListener,
-				MediaStore.ACTION_VIDEO_CAPTURE);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_camera, menu);
-		return true;
-	}
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case ACTION_TAKE_PHOTO_B: {
-			if (resultCode == RESULT_OK) {
-				System.out.println("result ok");
-				handleBigCameraPhoto();
-			}
-			break;
-		} // ACTION_TAKE_PHOTO_B
-
-		case ACTION_PHOTO_ALBUM: {
-			if (resultCode == RESULT_OK) {
-				System.out.println("small ok");
-				handleSmallCameraPhoto(data);
-			}
-			break;
-		} // ACTION_TAKE_PHOTO_S
-
-		case ACTION_TAKE_VIDEO: {
-			if (resultCode == RESULT_OK) {
-				handleCameraVideo(data);
-			}
-			break;
-		} // ACTION_TAKE_VIDEO
-		} // switch
+		handleBigCameraPhoto();
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putParcelable(BITMAP_STORAGE_KEY, mImageBitmap);
-		outState.putParcelable(VIDEO_STORAGE_KEY, mVideoUri);
 		outState.putBoolean(IMAGEVIEW_VISIBILITY_STORAGE_KEY,
 				(mImageBitmap != null));
-		outState.putBoolean(VIDEOVIEW_VISIBILITY_STORAGE_KEY,
-				(mVideoUri != null));
 		super.onSaveInstanceState(outState);
 	}
 
@@ -344,51 +183,5 @@ public class Camera extends InactivityListener {
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		mImageBitmap = savedInstanceState.getParcelable(BITMAP_STORAGE_KEY);
-		mVideoUri = savedInstanceState.getParcelable(VIDEO_STORAGE_KEY);
-		mImageView.setImageBitmap(mImageBitmap);
-		mImageView
-				.setVisibility(savedInstanceState
-						.getBoolean(IMAGEVIEW_VISIBILITY_STORAGE_KEY) ? ImageView.VISIBLE
-						: ImageView.INVISIBLE);
-		mVideoView.setVideoURI(mVideoUri);
-		mVideoView
-				.setVisibility(savedInstanceState
-						.getBoolean(VIDEOVIEW_VISIBILITY_STORAGE_KEY) ? ImageView.VISIBLE
-						: ImageView.INVISIBLE);
 	}
-
-	/**
-	 * Indikerar ifall den specifierade händelsen kan användas som en intent.
-	 * Den här medoden behöver paketmanager för installerade paket som kan svara
-	 * till en intent med den spec. händelse. Om inte passande paket hittas,
-	 * kommer metoden retunera false.
-	 * http://android-developers.blogspot.com/2009/01/can-i-use-this-intent.html
-	 * 
-	 * @param context
-	 *            Applikationens miljö.
-	 * @param action
-	 *            Intenthändelsen som kollar tillgänglighet.
-	 * 
-	 * @return True om en Intent med den spec. händelse kan bli skickad och
-	 *         svara till, false annars.
-	 */
-	public static boolean isIntentAvailable(Context context, String action) {
-		final PackageManager packageManager = context.getPackageManager();
-		final Intent intent = new Intent(action);
-		List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
-				PackageManager.MATCH_DEFAULT_ONLY);
-		return list.size() > 0;
-	}
-
-	private void setBtnListenerOrDisable(Button btn,
-			Button.OnClickListener onClickListener, String intentName) {
-		if (isIntentAvailable(this, intentName)) {
-			btn.setOnClickListener(onClickListener);
-		} else {
-			btn.setText(getText(R.string.cannot).toString() + " "
-					+ btn.getText());
-			btn.setClickable(false);
-		}
-	}
-
 }

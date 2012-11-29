@@ -18,6 +18,13 @@ package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
 import static com.klient_projekttermin.CommonUtilities.displayMessage;
+
+import java.util.Observable;
+import java.util.Observer;
+
+import models.Assignment;
+import models.Contact;
+import models.MessageModel;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -30,15 +37,15 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
+import communicationModule.SocketConnection;
 
 /**
  * IntentService responsible for handling GCM messages.
  */
-public class GCMIntentService extends GCMBaseIntentService {
+public class GCMIntentService extends GCMBaseIntentService implements Observer {
 
-	@SuppressWarnings("hiding")
 	private static final String TAG = "GCMIntentService";
-
+	private Context context;
 	public GCMIntentService() {
 		super(SENDER_ID);
 	}
@@ -61,6 +68,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	protected void onMessage(Context context, Intent intent) {
 		Log.i(TAG, "Received message");
 		String message = getString(R.string.gcm_message);
+		this.context=context;
 		displayMessage(context, message);
 		// notifies user
 		generateNotification(context, message);
@@ -93,7 +101,22 @@ public class GCMIntentService extends GCMBaseIntentService {
 	/**
 	 * Issues a notification to inform the user that server has sent a message.
 	 */
-	private static void generateNotification(Context context, String message) {
+	private void generateNotification(Context context, String message) {
+		SocketConnection connection=new SocketConnection();
+		connection.addObserver(this);
+		connection.pullFromServer();
+	}
+
+	public void update(Observable observable, Object data) {
+		System.out.println("notification");
+		String message="";
+		if (data instanceof Contact) {
+			message="Ny kontakt";
+		}else if (data instanceof Assignment) {
+			message="Nytt uppdrag";
+		}else if (data instanceof MessageModel) {
+			message="Nytt meddelande";
+		}
 		int icon = R.drawable.ic_launcher;
 		long when = System.currentTimeMillis(); // can change this to a future
 												// time if desired

@@ -15,14 +15,11 @@ import map.MapActivity;
 import messageFunction.Inbox;
 import sip.SipMain;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,30 +31,18 @@ import assignment.AssignmentOverview;
 import camera.Camera;
 
 import com.google.android.gcm.GCMRegistrar;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
 
 import contacts.ContactsBookActivity;
-import database.Database;
 
 public class MainActivity extends InactivityListener {
 
 	private String userName;
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
-	private CommunicationService communicationService;
-	private boolean communicationBond = false;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// Provar att ta bort DB-init här. Borde funka ändå. Mindre overhead ftw!
-		//initiateDB(this);
-		// Communication model
-		Intent intent = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intent, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -117,8 +102,6 @@ public class MainActivity extends InactivityListener {
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				// for communicationService
-				communicationService.setContext(getApplicationContext());
 				// Har man lagt till ett nytt menyval lägger man till en action
 				// för dessa här.
 				switch (arg2) {
@@ -155,13 +138,12 @@ public class MainActivity extends InactivityListener {
 			}
 
 		});
+		SocketConnection socketConnection=new SocketConnection();
+		socketConnection.addObserver(new PullRequestHandler());
+		socketConnection.pullFromServer();
+		
 	}
 
-	private void initiateDB(Context context) {
-		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
-		// Borde dock vara safe att ta bort. Provar att avkommentera!
-		//Database db = Database.getInstance(context);
-	}
 
 	/**
 	 * Genererar de menyval som ska gå att göra.
@@ -200,10 +182,6 @@ public class MainActivity extends InactivityListener {
 		}
 		unregisterReceiver(mHandleMessageReceiver);
 		GCMRegistrar.onDestroy(this);
-		// communication
-		if (communicationBond) {
-			unbindService(communicationServiceConnection);
-		}
 		super.onDestroy();
 	}
 
@@ -221,20 +199,6 @@ public class MainActivity extends InactivityListener {
 			System.out.println(newMessage);
 			// mDisplay.append(newMessage + "\n");
 		}
-	};
-
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-
 	};
 
 	@Override
