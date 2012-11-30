@@ -37,7 +37,6 @@ public class ContactsBookActivity extends InactivityListener {
 		setContentView(R.layout.activity_contacts_book);
 		ListView lv = (ListView) findViewById(android.R.id.list);
 		db = Database.getInstance(this);
-		db.addToDB(new Contact("Kalle 1"), getContentResolver());
 		List<ModelInterface> lista = db.getAllFromDB(new Contact(),
 				getContentResolver());
 		System.out.println(lista.size()+ " ANTAL KONTAKTER");

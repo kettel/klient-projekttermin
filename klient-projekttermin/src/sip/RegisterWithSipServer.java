@@ -2,6 +2,8 @@ package sip;
 
 import java.text.ParseException;
 
+import com.nutiteq.maps.InitializedMap;
+
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -19,36 +21,45 @@ public class RegisterWithSipServer {
     public static String sipAddress = null;
     public static IncomingCallReceiver callReceiver;
     
-    public static Context context = null;
+    //public static Context context = null;
 	
     // Bör hämtas från databas i framtiden
     public static String username = "1001";
     public static String staticdomain = "94.254.72.38";
     public static String password = "1001";
 	
-	
+    private RegisterWithSipServer(){}
+    
 	private static RegisterWithSipServer instance = new RegisterWithSipServer();
-	private RegisterWithSipServer(){}
 	
+	/**
+	 * Initial getInstance för att sätta context.
+	 * @param context
+	 * @return
+	 */
 	public static RegisterWithSipServer getInstance(Context context){
-		RegisterWithSipServer.context = context;
+		initializeManager(context);
 		return instance;
 	}
+	
+	/**
+	 * getInstance att använda när context är satt.
+	 * @return
+	 */
 	public static RegisterWithSipServer getInstance(){
 		return instance;
 	}
 	
-	public void initializeManager() {
+	public static void initializeManager(Context context) {
 		if(manager == null) {
           manager = SipManager.newInstance(context);
         }
-        initializeLocalProfile();
+        initializeLocalProfile(context);
     }
 	/**
 	 * Registrera användaren hos SIP-servern
 	 */
-	public void initializeLocalProfile() {
-		Log.d("SIP","Ska initiera SIP...@RegisterWithSip/46");
+	public static void initializeLocalProfile(Context context) {
 		if (manager == null) {
             return;
         }
@@ -98,7 +109,7 @@ public class RegisterWithSipServer {
      * Closes out your local profile, freeing associated objects into memory
      * and unregistering your device from the server.
      */
-    public void closeLocalProfile() {
+    public static void closeLocalProfile() {
         if (manager == null) {
             return;
         }
@@ -110,4 +121,12 @@ public class RegisterWithSipServer {
             Log.d("SIP", "Failed to close local profile.", ee);
         }
     }
+
+	public static IncomingCallReceiver getCallReceiver() {
+		return callReceiver;
+	}
+
+	public static void setCallReceiver(IncomingCallReceiver callReceiver) {
+		RegisterWithSipServer.callReceiver = callReceiver;
+	}
 }

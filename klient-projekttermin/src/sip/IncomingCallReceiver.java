@@ -9,7 +9,7 @@ import android.util.Log;
 /*** Lyssnar efter inkommande SIP-samtal, fångar dem och ger dem till SipMain.
 */
 public class IncomingCallReceiver extends BroadcastReceiver {
-	RegisterWithSipServer regSip = RegisterWithSipServer.getInstance();;
+	RegisterWithSipServer regSip = RegisterWithSipServer.getInstance();
    /**
     * Processes the incoming call, answers it, and hands it over to the
     * WalkieTalkieActivity.
@@ -31,15 +31,14 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                    }
                }
            };
-           SipMain sipMain = (SipMain) context;
-           incomingCall = sipMain.manager.takeAudioCall(intent, listener);
+           incomingCall = RegisterWithSipServer.manager.takeAudioCall(intent, listener);
            incomingCall.answerCall(30);
            incomingCall.startAudio();
            incomingCall.setSpeakerMode(true);
            if(incomingCall.isMuted()) {
                incomingCall.toggleMute();
            }
-           sipMain.call = incomingCall;
+           RegisterWithSipServer.call = incomingCall;
 //           sipMain.updateStatus(incomingCall);
        } catch (Exception e) {
            if (incomingCall != null) {

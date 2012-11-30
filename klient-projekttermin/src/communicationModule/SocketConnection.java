@@ -10,8 +10,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import loginFunction.User;
 import models.Assignment;
@@ -19,8 +17,6 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
-
-import android.os.Looper;
 
 import com.google.gson.Gson;
 import com.klient_projekttermin.CommonUtilities;
@@ -47,7 +43,6 @@ public class SocketConnection extends Observable {
 		final ModelInterface model = modelInterface;
 		new Thread(new Runnable() {
 			public void run() {
-				Looper.prepare();
 				sendJSON(gson.toJson(model));
 			}
 		}).start();
