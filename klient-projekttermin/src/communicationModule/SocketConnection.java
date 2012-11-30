@@ -5,10 +5,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import loginFunction.User;
 import models.Assignment;
@@ -95,8 +98,11 @@ public class SocketConnection extends Observable {
 	}
 
 	private void sendAuthentication(String json) {
+
 		try {
-			Socket socket = new Socket(ip, port);
+			System.out.println("INNE I TRY I SEND AUTHENTICATION");
+			Socket socket = new Socket();
+			socket.connect(new InetSocketAddress(ip, port),10000);
 			System.out.println("Socketen lyckades ansluta");
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
@@ -107,8 +113,9 @@ public class SocketConnection extends Observable {
 					new InputStreamReader(socket.getInputStream()));
 			StringBuilder sb = new StringBuilder();
 			String str;
-			while ((str = bufferedReader.readLine()) != null) {
-				sb.append(str);
+
+			while ((str = bufferedReader.readLine()) != null) {				
+				sb.append(str);	
 			}
 			bufferedReader.close();
 			socket.close();
@@ -119,16 +126,25 @@ public class SocketConnection extends Observable {
 					sb.toString(), AuthenticationModel.class);
 			notifyObservers(authenticationModel);
 		} catch (IOException e) {
-			if (servers.iterator().hasNext()) {
-				System.out.println("byter port");
-				String[] server = getAvailableServer();
-				ip = server[0];
-				port = Integer.parseInt(server[1]);
-				CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
-						+ server[2];
-				sendAuthentication(json);
-			}
+			System.out.println("Fångade ett fel");
+
+					if (servers.iterator().hasNext()) {
+						System.out.println("byter port");
+						String[] server = getAvailableServer();
+						ip = server[0];
+						port = Integer.parseInt(server[1]);
+						CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
+								+ server[2];
+						sendAuthentication(json);
+					}
+			setChanged();
+			String fail = "failed to connect";
+			notifyObservers(fail);
 		}
+	}
+
+	public void sendFailedLoginNotification(){
+
 	}
 
 	public void pullFromServer() {

@@ -43,7 +43,6 @@ import database.Database;
 
 public class MainActivity extends InactivityListener {
 
-	private String userName;
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	private QoSManager qosManager;
@@ -56,7 +55,6 @@ public class MainActivity extends InactivityListener {
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
 
-		
 		setContentView(R.layout.activity_main);
 		// Registrera klienten med SIP-servern
 		RegisterWithSipServer regSip = RegisterWithSipServer.getInstance(this);
@@ -121,7 +119,6 @@ public class MainActivity extends InactivityListener {
 					if (qosManager.allowedToStartMap()) {
 						myIntent = new Intent(MainActivity.this,
 								MapActivity.class);
-						myIntent.putExtra("USER", userName);
 					} else {
 						unallowedStart.show();
 					}
@@ -130,7 +127,6 @@ public class MainActivity extends InactivityListener {
 					if (qosManager.allowedToStartMessages()) {
 						System.out.println("Startar meddelanden");
 						myIntent = new Intent(MainActivity.this, Inbox.class);
-						myIntent.putExtra("USER", userName);
 					} else {
 						unallowedStart.show();
 					}
@@ -139,7 +135,6 @@ public class MainActivity extends InactivityListener {
 					if (qosManager.allowedToStartAssignment()) {
 						myIntent = new Intent(MainActivity.this,
 								AssignmentOverview.class);
-						myIntent.putExtra("USER", userName);
 					} else {
 						unallowedStart.show();
 					}
@@ -147,7 +142,6 @@ public class MainActivity extends InactivityListener {
 				case 3:
 					if (qosManager.allowedToStartCamera()) {
 						myIntent = new Intent(MainActivity.this, Camera.class);
-						myIntent.putExtra("USER", userName);
 					} else {
 						unallowedStart.show();
 					}
@@ -155,12 +149,13 @@ public class MainActivity extends InactivityListener {
 				case 4:
 					myIntent = new Intent(MainActivity.this,
 							ContactsBookActivity.class);
-					myIntent.putExtra("USER", userName);
 					break;
 				case 5:
-					myIntent = new Intent(MainActivity.this,
-							SipMain.class);
-					myIntent.putExtra("USER", userName);
+					if (qosManager.allowedToStartSip()) {
+						myIntent = new Intent(MainActivity.this, SipMain.class);
+					} else {
+						unallowedStart.show();
+					}
 					break;
 				default:
 					break;

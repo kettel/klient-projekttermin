@@ -21,6 +21,7 @@ public class QoSManager implements Observer {
 	private Boolean permissionToStartCamera = true;
 	private Boolean permissionToStartMessages = true;
 	private Boolean permissionToStartAssignment = true;
+	private Boolean permissionToStartSip = true;
 
 	private float screenBrightnesslevelDefault = (float) 0.5;
 	private Boolean permissionToStartMapDefault = true;
@@ -28,6 +29,7 @@ public class QoSManager implements Observer {
 	private Boolean permissionToStartCameraDefault = true;
 	private Boolean permissionToStartMessagesDefault = true;
 	private Boolean permissionToStartAssignmentDefault = true;
+	private Boolean permissionToStartSipDefault = true;
 	private Boolean okayBatterylevel = true;
 
 	private float screenBrightnesslevelLow = (float) 0.3;
@@ -36,6 +38,7 @@ public class QoSManager implements Observer {
 	private Boolean permissionToStartCameraLow = true;
 	private Boolean permissionToStartMessagesLow = true;
 	private Boolean permissionToStartAssignmentLow = true;
+	private Boolean permissionToStartSipLow = true;
 
 	private float screenBrightnesslevelCritical = (float) 0.2;
 	private Boolean permissionToStartMapCritical = true;
@@ -43,6 +46,7 @@ public class QoSManager implements Observer {
 	private Boolean permissionToStartCameraCritical = true;
 	private Boolean permissionToStartMessagesCritical = true;
 	private Boolean permissionToStartAssignmentCritical = true;
+	private Boolean permissionToStartSipCritical = true;
 
 	private BatteryCheckingFunction batteryCheckingFunction;
 	private Context applicationContext;
@@ -99,6 +103,7 @@ public class QoSManager implements Observer {
 		permissionToStartCamera = permissionToStartCameraDefault;
 		permissionToStartMap = permissionToStartMapDefault;
 		permissionToStartMessages = permissionToStartMessagesDefault;
+		permissionToStartSip = permissionToStartSipDefault;
 	}
 
 	/**
@@ -113,6 +118,7 @@ public class QoSManager implements Observer {
 		permissionToStartCamera = permissionToStartCameraLow;
 		permissionToStartMap = permissionToStartMapLow;
 		permissionToStartMessages = permissionToStartMessagesLow;
+		permissionToStartSip = permissionToStartSipLow;
 	}
 
 	/**
@@ -127,6 +133,7 @@ public class QoSManager implements Observer {
 		permissionToStartCamera = permissionToStartCameraCritical;
 		permissionToStartMap = permissionToStartMapCritical;
 		permissionToStartMessages = permissionToStartMessagesCritical;
+		permissionToStartSip = permissionToStartSipCritical;
 	}
 
 	/**
@@ -144,6 +151,7 @@ public class QoSManager implements Observer {
 		permissionToStartCameraLow = permissionToStartCamera;
 		permissionToStartMapLow = permissionToStartMap;
 		permissionToStartMessagesLow = permissionToStartMessages;
+		permissionToStartSipLow = permissionToStartSip;
 	}
 
 	/**
@@ -161,6 +169,7 @@ public class QoSManager implements Observer {
 		permissionToStartCameraCritical = permissionToStartCamera;
 		permissionToStartMapCritical = permissionToStartMap;
 		permissionToStartMessagesCritical = permissionToStartMessages;
+		permissionToStartSipCritical = permissionToStartSip;
 	}
 
 	/**
@@ -201,5 +210,9 @@ public class QoSManager implements Observer {
 
 	public boolean allowedToStartCamera() {
 		return permissionToStartCamera;
+	}
+
+	public boolean allowedToStartSip() {
+		return permissionToStartSip;
 	}
 }

@@ -3,6 +3,7 @@ package contacts;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;
@@ -29,15 +30,12 @@ public class ContactsBookActivity extends InactivityListener {
 	private String[] contactAlts = { "Skicka meddelande till kontakt",
 			"Ring kontakt" };
 	public static String contact;
-	private String currentUser;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contacts_book);
 		ListView lv = (ListView) findViewById(android.R.id.list);
-		Intent intent = getIntent();
-		currentUser = intent.getStringExtra("USER");
 		db = Database.getInstance(this);
 		db.addToDB(new Contact("Kalle 1"), getContentResolver());
 		List<ModelInterface> lista = db.getAllFromDB(new Contact(),
@@ -91,7 +89,6 @@ public class ContactsBookActivity extends InactivityListener {
 							CreateMessage.class);
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_CONTACT_TO_MESSAGE);
-					intent.putExtra("USER", currentUser);
 					intent.putExtra(contact, name);
 					ContactsBookActivity.this.startActivity(intent);
 					finish();

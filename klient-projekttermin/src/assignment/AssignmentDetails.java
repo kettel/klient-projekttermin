@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import map.CustomAdapter;
 import map.MapActivity;
 import models.Assignment;
@@ -63,6 +64,9 @@ public class AssignmentDetails extends InactivityListener {
 		setContentView(R.layout.activity_uppdrag);
 		db = Database.getInstance(getApplicationContext());
 
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
+		
 		// Hämtar intent för att nå extras så som ID:t som clickades på i
 		// assignmentoverview.
 		Intent intent = getIntent();
@@ -70,10 +74,8 @@ public class AssignmentDetails extends InactivityListener {
 		switch (caller) {
 		case ActivityConstants.ASSIGNMENT_OVERVIEW:
 			assignmentID = intent.getExtras().getLong("assignmentID");
-			currentUser = intent.getExtras().getString("currentUser");
 			break;
 		case ActivityConstants.ASSIGNMENT_NAME:
-			currentUser = intent.getExtras().getString("currentUser");
 			assignmentID = intent.getExtras().getLong(MapActivity.assignmentName);
 		default:
 			break;
@@ -253,7 +255,6 @@ public class AssignmentDetails extends InactivityListener {
 				switch (arg2) {
 				case 0:
 					Intent intent = new Intent(AssignmentDetails.this, MapActivity.class);
-					intent.putExtra("USER", currentUser);
 					intent.putExtra("calling-activity", ActivityConstants.ASSIGNMENT_DETAILS);
 					intent.putExtra(assignment, currentAssignment.getRegion());
 					AssignmentDetails.this.startActivity(intent);

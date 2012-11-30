@@ -3,6 +3,7 @@ package assignment;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.ModelInterface;
@@ -40,11 +41,8 @@ public class AssignmentOverview extends InactivityListener {
 		setContentView(R.layout.activity_assignment_overview);
 		lv = (ListView)findViewById(android.R.id.list);
 
-		// Hämtar extras
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			currentUser = extras.getString("USER");
-		}
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
 
 	}
 
@@ -62,7 +60,6 @@ public class AssignmentOverview extends InactivityListener {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent = new Intent(AssignmentOverview.this, AddAssignment.class);
-		intent.putExtra("USER", currentUser);
 		AssignmentOverview.this.startActivity(intent);
 
 		return true;
@@ -120,7 +117,6 @@ public class AssignmentOverview extends InactivityListener {
 						AssignmentDetails.class);
 
 				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
-				myIntent.putExtra("currentUser", currentUser);
 				myIntent.putExtra("calling-activity", ActivityConstants.ASSIGNMENT_OVERVIEW);
 				AssignmentOverview.this.startActivity(myIntent);
 			}

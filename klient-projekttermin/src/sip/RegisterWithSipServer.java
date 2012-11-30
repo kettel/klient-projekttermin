@@ -38,11 +38,17 @@ public class RegisterWithSipServer {
 		return instance;
 	}
 	
-	
+	public void initializeManager() {
+		if(manager == null) {
+          manager = SipManager.newInstance(context);
+        }
+        initializeLocalProfile();
+    }
 	/**
 	 * Registrera användaren hos SIP-servern
 	 */
 	public void initializeLocalProfile() {
+		Log.d("SIP","Ska initiera SIP...@RegisterWithSip/46");
 		if (manager == null) {
             return;
         }

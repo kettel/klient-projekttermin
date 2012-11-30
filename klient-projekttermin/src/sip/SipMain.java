@@ -1,6 +1,7 @@
 package sip;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 
 import java.text.ParseException;
 
@@ -34,10 +35,12 @@ public class SipMain extends InactivityListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_sip_main);
 		
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			currentUser = extras.getString("USER");
-		}
+//		Bundle extras = getIntent().getExtras();
+//		if (extras != null) {
+//			currentUser = extras.getString("USER");
+//		}
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
 		
 		// Set up the intent filter.  This will be used to fire an
         // IncomingCallReceiver when someone calls the SIP address used by this
@@ -46,7 +49,7 @@ public class SipMain extends InactivityListener{
         filter.addAction("com.klient_projekttermin.INCOMING_CALL");
         callReceiver = new IncomingCallReceiver();
         this.registerReceiver(callReceiver, filter);
-		initializeManager();
+		regSip.initializeManager();
 		
 		initiateCall("1003");
 	}
@@ -56,7 +59,7 @@ public class SipMain extends InactivityListener{
         super.onStart();
         // When we get back from the preference setting Activity, assume
         // settings have changed, and re-login with new auth info.
-        initializeManager();
+        regSip.initializeManager();
 
 		initiateCall("1003");
     }
@@ -64,7 +67,7 @@ public class SipMain extends InactivityListener{
 	@Override
 	public void onResume(){
 		super.onResume();
-		initializeManager();
+		regSip.initializeManager();
 		initiateCall("1003");
 	}
 	
@@ -81,12 +84,7 @@ public class SipMain extends InactivityListener{
         }
     }
 	
-	public void initializeManager() {
-		if(manager == null) {
-          manager = SipManager.newInstance(this);
-        }
-        regSip.initializeLocalProfile();
-    }
+	
 	
 	
 	
