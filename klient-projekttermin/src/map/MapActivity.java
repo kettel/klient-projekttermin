@@ -58,6 +58,7 @@ import com.nutiteq.components.PolyStyle;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.listeners.MapListener;
+import com.nutiteq.listeners.OnLongClickListener;
 import com.nutiteq.listeners.OnMapElementListener;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
@@ -112,6 +113,7 @@ public class MapActivity extends InactivityListener implements Observer,
 	private static String[] regionAlts = { "Ta bort region",
 			"Skapa uppdrag med region" };
 	private static String[] placeAlts = { "Visa detaljer för uppdrag" };
+	private static String[] clickAlts = { "lägg till uppdrag" };
 	private boolean onRetainCalled;
 	private int callingActivity;
 	private HashMap<Integer, String> content;
@@ -123,17 +125,17 @@ public class MapActivity extends InactivityListener implements Observer,
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		User user = User.getInstance();
 		currentUser = user.getAuthenticationModel().getUserName();
-		
+
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
 		System.out.println("ON CREATE MAP");
 		this.manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		this.locationSource = new AndroidGPSProvider(manager, 1000L);
-//		this.setContentView(R.layout.activity_map);
+		// this.setContentView(R.layout.activity_map);
 		/**
 		 * Kollar om gps är aktiverat
 		 */
@@ -163,8 +165,8 @@ public class MapActivity extends InactivityListener implements Observer,
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
-//		final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
-//		mapComponent.setMap(sm);
+		// final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
+		// mapComponent.setMap(sm);
 		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
@@ -193,8 +195,7 @@ public class MapActivity extends InactivityListener implements Observer,
 		mapView.setVisibility(0);
 		activateGPS(gpsOnOff);
 		onRetainCalled = false;
-		
-		
+
 	}
 
 	private void buildAlertMessageNoGps() {
@@ -561,6 +562,8 @@ public class MapActivity extends InactivityListener implements Observer,
 			Place temp = new Place(1, "dummy", icons[2], arg0);
 			mapComponent.addPlace(temp);
 			regionCorners.add(temp);
+		} else {
+			createInterestPoint(arg0);
 		}
 	}
 
@@ -568,6 +571,48 @@ public class MapActivity extends InactivityListener implements Observer,
 	}
 
 	public void needRepaint(boolean arg0) {
+	}
+
+	private void createInterestPoint(WgsPoint w) {
+		final WgsPoint[] wgs = new WgsPoint[1];
+		wgs[0] = w;
+		final Gson gson = new Gson();
+		final Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("VAl");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				clickAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					addInterestPoint(wgs[0], "Uppdrag");
+					Intent intent = new Intent(MapActivity.this,
+							AddAssignment.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.MAP_ACTIVITY);
+					intent.putExtra(coordinates, gson.toJson(wgs, type));
+					if (callingActivity == ActivityConstants.MAIN_ACTIVITY) {
+						MapActivity.this.startActivity(intent);
+					} else {
+						setResult(ActivityConstants.RESULT_FROM_MAP, intent);
+					}
+					finish();
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
 	}
 
 	public void run() {
@@ -749,7 +794,7 @@ public class MapActivity extends InactivityListener implements Observer,
 	}
 
 	public void elementClicked(OnMapElement arg0) {
-
+		System.out.println("onclicked");
 	}
 
 	/**
@@ -811,7 +856,6 @@ public class MapActivity extends InactivityListener implements Observer,
 			}
 		});
 		dialog.show();
-
 	}
 
 	@Override
