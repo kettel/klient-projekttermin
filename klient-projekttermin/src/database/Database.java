@@ -11,6 +11,7 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
+import models.PictureModel;
 import net.sqlcipher.database.SQLiteDatabase;
 
 public class Database {
@@ -23,6 +24,7 @@ public class Database {
 	private static ContactsDB contactsDB;
 	private static MessagesDB messagesDB;
 	private static AuthenticationDB authenticationDB;
+	private static PictureDB pictureDB;
 	private Database(){}
 
 	private static Database instance = new Database();
@@ -38,6 +40,7 @@ public class Database {
     	contactsDB = ContactsDB.getInstance();
     	messagesDB = MessagesDB.getInstance();
     	authenticationDB = AuthenticationDB.getInstance();
+    	pictureDB = PictureDB.getInstance();
         return instance;
 	}
 
@@ -54,6 +57,10 @@ public class Database {
 		}
 		else if(dbRep.equalsIgnoreCase("authentication")){
 			authenticationDB.addAuthenticationContent(contentResolver, (AuthenticationModel) m);
+		}
+		else if(dbRep.equalsIgnoreCase("picture")){
+			System.out.println("ADD TO DB TO PICTURE");
+			pictureDB.addPicture(contentResolver, (PictureModel) m);
 		}
 	}
 
@@ -105,6 +112,9 @@ public class Database {
 		}
 		else if(dbRep.equalsIgnoreCase("authentication")){
 			returnList = authenticationDB.getAllAuthenticationModels(contentResolver);
+		}
+		else if(dbRep.equalsIgnoreCase("picture")){
+			returnList = pictureDB.getAllPictures(contentResolver);
 		}
 		return returnList;
 	}

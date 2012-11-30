@@ -1,5 +1,7 @@
 package loginFunction;
 
+import com.klient_projekttermin.ActivityConstants;
+
 import qosManager.QoSManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -17,6 +19,8 @@ import android.os.Message;
 @SuppressLint("HandlerLeak")
 public class InactivityListener extends Activity {
 	private QoSManager qosManager;
+	public static String inactivity;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,6 +44,7 @@ public class InactivityListener extends Activity {
     private Runnable disconnectCallback = new Runnable() {
         public void run() {
             Intent intent = new Intent(InactivityListener.this, LogInFunction.class);
+            intent.putExtra("calling-activity", ActivityConstants.INACTIVITY);
             InactivityListener.this.startActivity(intent);
         }
     };
