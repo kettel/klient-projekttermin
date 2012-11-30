@@ -18,9 +18,11 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 import camera.Album;
 
 import com.klient_projekttermin.ActivityConstants;
@@ -62,7 +64,11 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 		Intent i = getIntent();
 		callingActivity = i.getIntExtra("calling-activity", 0);
-
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			currentUser = extras.getString("USER");
+		}
+		
 		switch (callingActivity) {
 		case ActivityConstants.MAP_ACTIVITY:
 			fromMap(i);
@@ -142,6 +148,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv
 				.getAdapter()).getItemStrings();
+		if(temp.get(0) != null){
 		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 				currentUser, false, temp.get(2), temp.get(3),
 				AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
@@ -153,9 +160,18 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				+ temp.get(5));
 
 		db.addToDB(newAssignment, getContentResolver());
+		
 		SocketConnection connection=new SocketConnection();
 		connection.sendModel(newAssignment);
 		finish();
+		} else {
+			Toast toast = Toast.makeText(getApplicationContext(),
+					"Kan inte skapa uppdrag utan namn",
+					Toast.LENGTH_LONG);
+			toast.setGravity(Gravity.CENTER_VERTICAL, 0, 50);
+			toast.show();
+		}
+		
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {

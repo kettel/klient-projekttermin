@@ -29,7 +29,6 @@ public class ContactsBookActivity extends InactivityListener {
 	private String[] contactAlts = { "Skicka meddelande till kontakt",
 			"Ring kontakt" };
 	public static String contact;
-	private boolean isCreatingDialog = false;
 	private String currentUser;
 
 	@Override
@@ -43,6 +42,7 @@ public class ContactsBookActivity extends InactivityListener {
 		db.addToDB(new Contact("Kalle 1"), getContentResolver());
 		List<ModelInterface> lista = db.getAllFromDB(new Contact(),
 				getContentResolver());
+		System.out.println(lista.size()+ " ANTAL KONTAKTER");
 		contacts = new String[lista.size()];
 		int i = 0;
 		for (ModelInterface m : lista) {
@@ -65,10 +65,7 @@ public class ContactsBookActivity extends InactivityListener {
 				getContentResolver())) {
 			Contact c = (Contact) temp;
 			if (c.getContactName().equals(contacts[v.getId()])) {
-				if (!isCreatingDialog) {
-					isCreatingDialog = true;
 					showAlertDialog(c);
-				}
 			}
 		}
 	}
@@ -88,7 +85,6 @@ public class ContactsBookActivity extends InactivityListener {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
-				isCreatingDialog = false;
 				switch (arg2) {
 				case 0:
 					Intent intent = new Intent(ContactsBookActivity.this,

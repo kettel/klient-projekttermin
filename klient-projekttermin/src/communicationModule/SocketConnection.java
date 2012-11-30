@@ -5,17 +5,15 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.Observable;
 
+import loginFunction.User;
 import models.Assignment;
 import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -76,7 +74,7 @@ public class SocketConnection extends Observable {
 			System.out.println("Socketen lyckades ansluta");
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
-			bufferedWriter.write(json + "\n");
+			bufferedWriter.write(json + "\nclose\n");
 			bufferedWriter.flush();
 			System.out.println("Socketen lyckades skriva");
 			BufferedReader bufferedReader = new BufferedReader(
@@ -110,7 +108,9 @@ public class SocketConnection extends Observable {
 					System.out.println("Socketen lyckades ansluta");
 					BufferedWriter bufferedWriter = new BufferedWriter(
 							new OutputStreamWriter(socket.getOutputStream()));
-					bufferedWriter.write("pull\n");
+					User user=User.getInstance();
+					String json=gson.toJson(user.getAuthenticationModel());
+					bufferedWriter.write(json+"\n"+"pull\nclose\n");
 					bufferedWriter.flush();
 					System.out.println("Socketen lyckades skriva");
 					BufferedReader bufferedReader = new BufferedReader(
@@ -126,29 +126,74 @@ public class SocketConnection extends Observable {
 							setChanged();
 							notifyObservers(message);
 						} else if (inputString
-								.contains("\"databasetRepresentation\":\"assignment\"")) {
+								.contains("\"databaseRepresentation\":\"assignment\"")) {
 							System.out.println("assignment");
 							Assignment assignment = gson.fromJson(inputString,
 									Assignment.class);
 							setChanged();
 							notifyObservers(assignment);
 						} else if (inputString
-								.contains("\"databasetRepresentation\":\"contact\"")) {
+								.contains("\"databaseRepresentation\":\"contact\"")) {
 							System.out.println("contact");
 							Contact contact = gson.fromJson(inputString,
 									Contact.class);
 							setChanged();
 							notifyObservers(contact);
+						}else if (inputString
+								.contains("\"databaseRepresentation\":\"authentication\"")) {
 						} else {
-							Log.e("Database input problem",
-									"Did not recognise inputtype.");
+							System.out.println("Did not recognize model: "+inputString);
 						}
 					}
 					bufferedReader.close();
 					inputString = sb.toString();
-
+					socket.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
+	public void getAllContactsReq() {
+		new Thread(new Runnable() {
+
+			public void run() {
+				ip = getAvailableIP();
+				port = getPortForIP(ip);
+				try {
+					Socket socket = new Socket(ip, port);
+					System.out.println("Socketen lyckades ansluta");
+					BufferedWriter bufferedWriter = new BufferedWriter(
+							new OutputStreamWriter(socket.getOutputStream()));
+					User user=User.getInstance();
+					String json=gson.toJson(user.getAuthenticationModel());
+					bufferedWriter.write(json+"\ngetAllContacts\nclose\n");
+					bufferedWriter.flush();
+					System.out.println("Socketen lyckades skriva");
+					BufferedReader bufferedReader = new BufferedReader(
+							new InputStreamReader(socket.getInputStream()));
+					StringBuilder sb = new StringBuilder();
+					String inputString;
+					while ((inputString = bufferedReader.readLine()) != null) {
+						if (inputString
+								.contains("\"databaseRepresentation\":\"contact\"")) {
+							System.out.println("contact");
+							Contact contact = gson.fromJson(inputString,
+									Contact.class);
+							setChanged();
+							notifyObservers(contact);
+						}else if (inputString
+								.contains("\"databaseRepresentation\":\"authentication\"")) {
+						} else {
+							System.out.println("Did not recognize model: "+inputString);
+						}
+					}
+					bufferedReader.close();
+					inputString = sb.toString();
+					socket.close();
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
