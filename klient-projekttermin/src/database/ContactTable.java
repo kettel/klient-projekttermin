@@ -20,6 +20,5 @@ public class ContactTable {
 
 		public static final String NAME = "name";
 	}
-
 }
 

@@ -1,10 +1,11 @@
 package camera;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import map.CustomAdapter;
+import models.ModelInterface;
+import models.PictureModel;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,7 +15,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,18 +27,20 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import assignment.AddAssignment;
 
-import com.google.gson.Gson;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
+
+import database.Database;
 
 public class Album extends Activity implements OnItemClickListener {
 	public boolean Visibility = true;
 
-	public ArrayList<Bitmap> images;
+	public List<ModelInterface> imagesFromDB;
 	public static String pic;
 	private int callingActivity;
 	private String[] pictureAlts = { "Skapa uppdrag med foto" };
 	private int currentPictureId;
+	private List<Bitmap> images  = new ArrayList<Bitmap>();
 
 	/** Called when the activity is first created. */
 	@Override
@@ -47,26 +49,20 @@ public class Album extends Activity implements OnItemClickListener {
 		setContentView(R.layout.activity_photo_gallery);
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		Gallery g = (Gallery) findViewById(R.id.Gallery);
-		images = getArrayOfPictures();
+		Database db = Database.getInstance(getApplicationContext());
+		imagesFromDB = db.getAllFromDB(new PictureModel(), getContentResolver());
+		for (ModelInterface temp : imagesFromDB) {
+			PictureModel p = (PictureModel) temp;
+			Bitmap bitmap = BitmapFactory.decodeByteArray(
+					p.getPicture(), 0,
+					p.getPicture().length);
+			images.add(bitmap);
+		}
 		g.setAdapter(new ImageAdapter(this));
 		g.setSpacing(10);
 		g.setOnItemClickListener(this);
 	}
 
-	private ArrayList<Bitmap> getArrayOfPictures() {
-		File file = new File(Environment.getExternalStorageDirectory()
-				.getAbsolutePath() + "/Pictures/Album/");
-		File imageList[] = file.listFiles();
-		images = new ArrayList<Bitmap>();
-		BitmapFactory.Options bitop = new BitmapFactory.Options();
-		bitop.inSampleSize = 16;
-		for (int i = 0; i < imageList.length; i++) {
-			Bitmap b = BitmapFactory.decodeFile(imageList[i].getAbsolutePath(),
-					bitop);
-			images.add(b);
-		}
-		return images;
-	}
 
 	public class ImageAdapter extends BaseAdapter {
 		private Context myContext;
@@ -132,17 +128,14 @@ public class Album extends Activity implements OnItemClickListener {
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		currentPictureId = arg2;
-		System.out.println("HDFKJFNKDSMFKLA " + arg2);
 		switch (callingActivity) {
 		case ActivityConstants.CAMERA:
 			showPictureAlts();
-			System.out.println("SKICKA BILD TILL ASS");
 			break;
 		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
 			Intent intent = new Intent(Album.this, AddAssignment.class);
 			intent.putExtra("calling-activity",
 					ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-			System.out.println(images.get(currentPictureId));
 			intent.putExtra(pic, images.get(currentPictureId));
 			setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
 			finish();
@@ -167,7 +160,6 @@ public class Album extends Activity implements OnItemClickListener {
 				dialog.dismiss();
 				switch (arg2) {
 				case 0:
-					System.out.println("I SHOW SEARCH ASLTS");
 					createAssignmentFromPicture();
 					finish();
 					break;
