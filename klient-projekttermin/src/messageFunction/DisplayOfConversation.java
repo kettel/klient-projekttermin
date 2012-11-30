@@ -12,12 +12,8 @@ import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -29,9 +25,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.klient_projekttermin.R;
+import communicationModule.SocketConnection;
+
 import database.Database;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
 
 public class DisplayOfConversation extends InactivityListener {
 
@@ -45,7 +41,6 @@ public class DisplayOfConversation extends InactivityListener {
 	private String user;
 	private MessageModel messageObject;
 	private String[] options = {"AVBRYT","RADERA","VIDAREBEFORDRA"};
-	private CommunicationService communicationService;
 	private boolean communicationBond = false;
 	//	private CommunicationModule communicationModule = new CommunicationModule();
 
@@ -53,9 +48,6 @@ public class DisplayOfConversation extends InactivityListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_of_conversation);
-
-		Intent intent = new Intent(this, CommunicationService.class);
-		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 		message = (TextView) this.findViewById(R.id.messageBox);
 
@@ -82,12 +74,6 @@ public class DisplayOfConversation extends InactivityListener {
 	public void onStart(){
 		super.onStart();
 		addOnLongClickListener();
-	}
-
-	@Override
-	protected void onDestroy() {
-		unbindService(serviceConnection);
-		super.onDestroy();
 	}
 
 	/*
@@ -258,22 +244,8 @@ public class DisplayOfConversation extends InactivityListener {
 		//Tar bort texten ur textrutan
 		message.getEditableText().clear();
 
-		if(communicationBond){
-			communicationService.sendMessage(messageObject);
-		}
+		SocketConnection connection=new SocketConnection();
+		connection.sendModel(messageObject);
 		loadConversation(chosenContact);
 	}
-
-	private ServiceConnection serviceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className,IBinder service) {
-			System.out.println("OnServiceConnection");
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-	};
 }

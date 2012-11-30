@@ -40,6 +40,7 @@ public class ContactsBookActivity extends InactivityListener {
 		Intent intent = getIntent();
 		currentUser = intent.getStringExtra("USER");
 		db = Database.getInstance(this);
+		db.addToDB(new Contact("Kalle 1"), getContentResolver());
 		List<ModelInterface> lista = db.getAllFromDB(new Contact(),
 				getContentResolver());
 		contacts = new String[lista.size()];
