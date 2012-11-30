@@ -214,17 +214,8 @@ public class LogInFunction extends Activity implements Observer {
 
 	public void update(Observable observable, Object data) {
 		System.out.println("Inne i update");
-		if (data instanceof String) {
-			System.out.println("inne i instance of String ");
-			System.out.println("tar bort en Progress dialog");
-			this.runOnUiThread(new Runnable() {
-
-				public void run() {
-					pd.dismiss();
-				}
-			});
-
-		} else if (data instanceof AuthenticationModel) {
+		
+		if (data instanceof AuthenticationModel) {
 			System.out.println("Inne i instance of AuthenticationModel");
 			System.out.println("tar bort en Progress dialog");
 			this.runOnUiThread(new Runnable() {
@@ -235,7 +226,20 @@ public class LogInFunction extends Activity implements Observer {
 			});
 			checkAuthenticity((AuthenticationModel) data);
 		}
-		System.out.println("HIT BORDE VI ALDRIG KOMMA");
-	}
+		else {
+			System.out.println("inne i instance of String ");
+			System.out.println("tar bort en Progress dialog");
+			this.runOnUiThread(new Runnable() {
 
+				public void run() {
+					pd.dismiss();
+					Toast toast = Toast.makeText(getApplicationContext(),
+							"Det gick inte att ansluta till servern!",
+									Toast.LENGTH_LONG);
+					toast.setGravity(Gravity.TOP, 0, 300);
+					toast.show();
+				}
+			});
+		}
+	}
 }

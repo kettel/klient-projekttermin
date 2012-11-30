@@ -153,10 +153,6 @@ public class MainActivity extends InactivityListener {
 				}
 			}
 		});
-		socketConnection = new SocketConnection();
-		socketConnection.addObserver(new PullRequestHandler(this));
-		socketConnection.pullFromServer();
-		checkContactDatabase();
 	}
 
 	@Override
@@ -228,8 +224,15 @@ public class MainActivity extends InactivityListener {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
-			System.out.println(newMessage);
-			// mDisplay.append(newMessage + "\n");
+			if (newMessage.contains("registered")) {
+				System.out.println("New gcm-message: "+newMessage);
+				User user=User.getInstance();
+				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
+				socketConnection = new SocketConnection();
+				socketConnection.addObserver(new PullRequestHandler(getApplicationContext()));
+				socketConnection.pullFromServer();
+				checkContactDatabase();
+			}
 		}
 	};
 

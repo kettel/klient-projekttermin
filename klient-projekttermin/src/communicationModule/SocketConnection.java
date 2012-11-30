@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,21 +23,33 @@ import models.ModelInterface;
 import android.os.Looper;
 
 import com.google.gson.Gson;
+import com.klient_projekttermin.CommonUtilities;
 
 public class SocketConnection extends Observable {
 	private Gson gson = new Gson();
 	private String ip = "94.254.72.38";
 	private int port = 17234;
+	private ArrayList<String[]> servers = new ArrayList<String[]>();
+
+	public SocketConnection() {
+		super();
+		initServerList();
+	}
+
+	private void initServerList() {
+		String[] i = { "94.254.72.38", "17234", "16783" };
+		servers.add(i);
+		String[] j = { "94.254.72.38", "17234", "17783" };
+		servers.add(j);
+	}
 
 	public void sendModel(ModelInterface modelInterface) {
 		final ModelInterface model = modelInterface;
 		new Thread(new Runnable() {
-
 			public void run() {
 				sendJSON(gson.toJson(model));
 			}
 		}).start();
-
 	}
 
 	public void authenticate(AuthenticationModel authenticationModel) {
@@ -48,9 +62,12 @@ public class SocketConnection extends Observable {
 		}).start();
 	}
 
+	public HashMap<String, int[]> getServer() {
+
+		return null;
+	}
+
 	private void sendJSON(String json) {
-		ip = getAvailableIP();
-		port = getPortForIP(ip);
 		try {
 			Socket socket = new Socket(ip, port);
 			BufferedWriter bufferedWriter = new BufferedWriter(
@@ -59,22 +76,28 @@ public class SocketConnection extends Observable {
 			bufferedWriter.flush();
 			socket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			if (servers.iterator().hasNext()) {
+				System.out.println("byter port");
+				String[] server = getAvailableServer();
+				ip = server[0];
+				port = Integer.parseInt(server[1]);
+				CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
+						+ server[2];
+				sendJSON(json);
+			}
 		}
 	}
+	private String[] getAvailableServer() {
+		if (servers.iterator().hasNext()) {
+			return servers.iterator().next();
+		} else {
+			return null;
+		}
 
-	private int getPortForIP(String ip) {
-		return 17234;
-	}
-
-	private String getAvailableIP() {
-		return "94.254.72.38";
 	}
 
 	private void sendAuthentication(String json) {
-		ip = getAvailableIP();
-		port = getPortForIP(ip);
-		System.out.println("INNE I SENDAUTHENTICATION");
+
 		try {
 			System.out.println("INNE I TRY I SEND AUTHENTICATION");
 			Socket socket = new Socket();
@@ -89,7 +112,7 @@ public class SocketConnection extends Observable {
 					new InputStreamReader(socket.getInputStream()));
 			StringBuilder sb = new StringBuilder();
 			String str;
-			
+
 			while ((str = bufferedReader.readLine()) != null) {				
 				sb.append(str);	
 			}
@@ -103,30 +126,38 @@ public class SocketConnection extends Observable {
 			notifyObservers(authenticationModel);
 		} catch (IOException e) {
 			System.out.println("Fångade ett fel");
+
+					if (servers.iterator().hasNext()) {
+						System.out.println("byter port");
+						String[] server = getAvailableServer();
+						ip = server[0];
+						port = Integer.parseInt(server[1]);
+						CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
+								+ server[2];
+						sendAuthentication(json);
+					}
 			setChanged();
 			String fail = "failed to connect";
 			notifyObservers(fail);
 		}
 	}
-	
+
 	public void sendFailedLoginNotification(){
-		
+
 	}
 
 	public void pullFromServer() {
 		new Thread(new Runnable() {
 
 			public void run() {
-				ip = getAvailableIP();
-				port = getPortForIP(ip);
 				try {
 					Socket socket = new Socket(ip, port);
 					System.out.println("Socketen lyckades ansluta");
 					BufferedWriter bufferedWriter = new BufferedWriter(
 							new OutputStreamWriter(socket.getOutputStream()));
-					User user=User.getInstance();
-					String json=gson.toJson(user.getAuthenticationModel());
-					bufferedWriter.write(json+"\n"+"pull\nclose\n");
+					User user = User.getInstance();
+					String json = gson.toJson(user.getAuthenticationModel());
+					bufferedWriter.write(json + "\n" + "pull\nclose\n");
 					bufferedWriter.flush();
 					System.out.println("Socketen lyckades skriva");
 					BufferedReader bufferedReader = new BufferedReader(
@@ -155,18 +186,26 @@ public class SocketConnection extends Observable {
 									Contact.class);
 							setChanged();
 							notifyObservers(contact);
-						}else if (inputString
+						} else if (inputString
 								.contains("\"databaseRepresentation\":\"authentication\"")) {
 						} else {
-							System.out.println("Did not recognize model: "+inputString);
+							System.out.println("Did not recognize model: "
+									+ inputString);
 						}
 					}
 					bufferedReader.close();
 					inputString = sb.toString();
 					socket.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if (servers.iterator().hasNext()) {
+						System.out.println("byter port");
+						String[] server = getAvailableServer();
+						ip = server[0];
+						port = Integer.parseInt(server[1]);
+						CommonUtilities.SERVER_URL = "http://" + server[0]
+								+ ":" + server[2];
+						pullFromServer();
+					}
 				}
 			}
 		}).start();
@@ -176,16 +215,14 @@ public class SocketConnection extends Observable {
 		new Thread(new Runnable() {
 
 			public void run() {
-				ip = getAvailableIP();
-				port = getPortForIP(ip);
 				try {
 					Socket socket = new Socket(ip, port);
 					System.out.println("Socketen lyckades ansluta");
 					BufferedWriter bufferedWriter = new BufferedWriter(
 							new OutputStreamWriter(socket.getOutputStream()));
-					User user=User.getInstance();
-					String json=gson.toJson(user.getAuthenticationModel());
-					bufferedWriter.write(json+"\ngetAllContacts\nclose\n");
+					User user = User.getInstance();
+					String json = gson.toJson(user.getAuthenticationModel());
+					bufferedWriter.write(json + "\ngetAllContacts\nclose\n");
 					bufferedWriter.flush();
 					System.out.println("Socketen lyckades skriva");
 					BufferedReader bufferedReader = new BufferedReader(
@@ -200,17 +237,26 @@ public class SocketConnection extends Observable {
 									Contact.class);
 							setChanged();
 							notifyObservers(contact);
-						}else if (inputString
+						} else if (inputString
 								.contains("\"databaseRepresentation\":\"authentication\"")) {
 						} else {
-							System.out.println("Did not recognize model: "+inputString);
+							System.out.println("Did not recognize model: "
+									+ inputString);
 						}
 					}
 					bufferedReader.close();
 					inputString = sb.toString();
 					socket.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					if (servers.iterator().hasNext()) {
+						System.out.println("byter port");
+						String[] server = getAvailableServer();
+						ip = server[0];
+						port = Integer.parseInt(server[1]);
+						CommonUtilities.SERVER_URL = "http://" + server[0]
+								+ ":" + server[2];
+						getAllContactsReq();
+					}
 				}
 			}
 		}).start();
