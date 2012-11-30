@@ -32,6 +32,7 @@ public class ContactsDB {
     public void addContact(ContentResolver contentResolver, Contact contact) {
         ContentValues values = new ContentValues();
         values.put(Contacts.NAME, contact.getContactName());
+        Log.d("DB","Contact in i DB: " + values.toString());
         contentResolver.insert(Contacts.CONTENT_URI, values);
     }
     

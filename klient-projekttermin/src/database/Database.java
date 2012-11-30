@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.util.Log;
 import models.Assignment;
 import models.AuthenticationModel;
 import models.Contact;

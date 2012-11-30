@@ -52,7 +52,7 @@ public class SipMain extends InactivityListener{
 		
 		initializeManager();
 		
-		//makeOutgoingCall("1002");
+		initiateCall("1003");
 	}
 	
 	@Override
@@ -61,7 +61,16 @@ public class SipMain extends InactivityListener{
         // When we get back from the preference setting Activity, assume
         // settings have changed, and re-login with new auth info.
         initializeManager();
+
+		initiateCall("1003");
     }
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		initializeManager();
+		initiateCall("1003");
+	}
 	
 	@Override
     public void onDestroy() {
@@ -150,7 +159,7 @@ public class SipMain extends InactivityListener{
         }
     }
 	
-	private void initiateCall() {
+	private void initiateCall(String numberToCall) {
 		try {
             SipAudioCall.Listener listener = new SipAudioCall.Listener() {
                 // Much of the client's interaction with the SIP Stack will
@@ -172,8 +181,9 @@ public class SipMain extends InactivityListener{
                     Log.d("SIP","Samtal avslutat");
                 }
             };
-            String sipNumber = "1002";
-            sipAddress = "sip:"+sipNumber+"@"+domain;
+            
+            sipAddress = "sip:"+numberToCall+"@"+domain;
+            Log.d("SIP","Nummer att ringa: " + sipAddress);
             call = manager.makeAudioCall(me.getUriString(), sipAddress, listener, 30);
 
         }

@@ -9,15 +9,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import qosManager.QoSManager;
-
-import sip.SipMain;
-
 import loginFunction.InactivityListener;
 import loginFunction.LogInFunction;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Contact;
+import qosManager.QoSManager;
+import sip.SipMain;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -53,6 +51,7 @@ public class MainActivity extends InactivityListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		initiateDB(this);
 		qosManager = QoSManager.getInstance();
 
 		Bundle extras = getIntent().getExtras();
@@ -158,10 +157,10 @@ public class MainActivity extends InactivityListener {
 					myIntent.putExtra("USER", userName);
 					break;
 				case 5:
-					myIntent = new Intent(MainActivity.this, SipMain.class);
+					myIntent = new Intent(MainActivity.this,
+							SipMain.class);
 					myIntent.putExtra("USER", userName);
 					break;
-
 				default:
 					break;
 				}
@@ -188,6 +187,10 @@ public class MainActivity extends InactivityListener {
 		}
 	}
 
+	private void initiateDB(Context context) {
+		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
+		database = Database.getInstance(context);
+	}
 
 	/**
 	 * Genererar de menyval som ska gå att göra.
@@ -200,10 +203,9 @@ public class MainActivity extends InactivityListener {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera", "Kontakter", "Samtal" };
-
+				"Kamera", "Kontakter" ,"Samtal"};
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter", "Ring ett röstsamtal"};
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" ,"Ring ett samtal"};
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
