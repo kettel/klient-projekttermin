@@ -604,8 +604,9 @@ public class MapActivity extends InactivityListener implements Observer,
 						MapActivity.this.startActivity(intent);
 					} else {
 						setResult(ActivityConstants.RESULT_FROM_MAP, intent);
+						finish();
 					}
-					finish();
+					
 					break;
 				default:
 					break;
