@@ -2,10 +2,12 @@ package loginFunction;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import models.AuthenticationModel;
+import models.ModelInterface;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,16 +20,19 @@ import android.widget.Toast;
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 import communicationModule.SocketConnection;
+import database.Database;
 
 public class LogInFunction extends InactivityListener implements Observer {
 	private TextView userNameView;
 	private TextView passwordView;
 	private String userName;
 	private String password;
+	private Database database;
 
-	private int numberOfLoginTries = 3;
-	
+	private int numberOfLoginTries = 4;
+
 	private AuthenticationModel originalModel;
+	private AuthenticationModel au;
 	private ProgressDialog pd;
 	private User user;
 
@@ -35,8 +40,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
-		
-
+		database = Database.getInstance(getApplicationContext());
 	}
 
 	@Override
@@ -61,16 +65,48 @@ public class LogInFunction extends InactivityListener implements Observer {
 		user = User.getInstance();
 		user.setAuthenticationModel(originalModel);
 
-		sendAuthenticationRequestToServer(originalModel);
+		tryOfflineLogin(originalModel);
 	}
 
-	/*
+	public void tryOfflineLogin(AuthenticationModel loginInput) throws NoSuchAlgorithmException{
+
+		System.out.println("Saker i databasen: "+database.getAllFromDB(loginInput, getContentResolver()).size());
+
+		if(database.getDBCount(new AuthenticationModel(), getContentResolver())!=0){
+			System.out.println("Försöker logga in offline");
+
+			List modelList = database.getAllFromDB(loginInput, getContentResolver());
+			AuthenticationModel loadedModel = (AuthenticationModel) modelList.get(0);
+
+			if(loadedModel.getUserName().equals(loginInput.getUserName())){
+				if(loadedModel.getPasswordHash().equals(loginInput.getPasswordHash())){
+					accessGranted();
+				}
+				else{
+					incorrectLogIn();
+				}
+			}
+			else{
+				removeLastUserFromDB();
+				sendAuthenticationRequestToServer(loginInput);
+			}
+		}
+
+		else{
+			System.out.println("Försöker logga in online");
+			database.addToDB(loginInput, getContentResolver());
+			sendAuthenticationRequestToServer(loginInput);
+		}
+	}
+
+	/**
 	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som
 	 * finns i databasen först och om så inte är fallet försöker den hämta
 	 * informationen från servern.
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel) {
 		pd.dismiss();
+
 		if (authenticationModel.getUserName().equals(
 				originalModel.getUserName())
 				&& authenticationModel.isAccessGranted().equals("true")) {
@@ -85,24 +121,24 @@ public class LogInFunction extends InactivityListener implements Observer {
 
 	}
 
-	public void loginFailure() {
-		Toast.makeText(getApplicationContext(),
-				"Get gick inte att hämta inloggningsuppgifter från servern",
-				Toast.LENGTH_SHORT).show();
-	}
-
 	public void incorrectLogIn() {
 		numberOfLoginTries--;
 		if (numberOfLoginTries == 0) {
+			removeLastUserFromDB();
 			finish();
 		} else {
 			Toast toast = Toast.makeText(getApplicationContext(),
 					"Felaktigt användarnamn eller lösenord! "
 							+ numberOfLoginTries + " försök kvar!",
-					Toast.LENGTH_LONG);
-			toast.setGravity(Gravity.TOP, 0, 50);
+							Toast.LENGTH_LONG);
+			toast.setGravity(Gravity.TOP, 0, 300);
 			toast.show();
 		}
+	}
+
+	public void removeLastUserFromDB(){
+		List list = database.getAllFromDB(new AuthenticationModel(), getContentResolver());
+		database.deleteFromDB((AuthenticationModel) list.get(0), getContentResolver());
 	}
 
 	/*
@@ -130,8 +166,8 @@ public class LogInFunction extends InactivityListener implements Observer {
 	/*
 	 * Metoden skickar iväg autenticeringsförfrågan till servern
 	 */
-	public void sendAuthenticationRequestToServer(
-			AuthenticationModel authenticationModel) {
+	public void sendAuthenticationRequestToServer(AuthenticationModel authenticationModel){
+
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
@@ -149,6 +185,7 @@ public class LogInFunction extends InactivityListener implements Observer {
 	public void update(Observable observable, Object data) {
 		if (data instanceof AuthenticationModel) {
 			System.out.println((AuthenticationModel) data);
+			database.addToDB((AuthenticationModel) data, getContentResolver());
 			checkAuthenticity((AuthenticationModel) data);
 		}
 	}
