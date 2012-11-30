@@ -99,6 +99,14 @@
             android:label="@string/uppdrag" >
         </activity>
         <activity
+            android:name="qos.QoS_Controller"
+            android:label="@string/qos" >
+        </activity>
+        <activity
+            android:name="qos.QoS_Options"
+            android:label="@string/qos" >
+            </activity>
+        <activity
             android:name="loginFunction.LogInFunction"
             android:label="@string/title_activity_login_function" >
             <intent-filter>

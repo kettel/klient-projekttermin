@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    
+    	<CheckBox
+        android:id="@+id/chkQosAuto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/qosauto" />
+
+    	<CheckBox
+        android:id="@+id/chkQosOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true" 
+        android:text="@string/qoson" />
+
+
+
+    	<CheckBox
+        android:id="@+id/chkQosOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/qosoff" />
+    
+        <SeekBar 
+        android:paddingTop="10dip"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:max="19"
+        android:progress="0"
+        android:secondaryProgress="0"
+        android:id="@+id/slider"
+        android:progressDrawable="@xml/progress_drawable"
+        android:thumb="@xml/thumb_drawable"/>	
+
+ 		<TextView
+ 		android:id="@+id/percent"
+   	    android:paddingTop="10dip"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/lightlvl" 
+        android:textSize="12sp"
+        />
+ 		<Button
+		android:id="@+id/btnQoSIns"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="QoS Instsällningar" />
+
+		<Button
+		android:id="@+id/btnHelp"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Hjälp" />
+
+</LinearLayout>

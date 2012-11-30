@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    
+    	<CheckBox
+        android:id="@+id/chkQKarta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/qosmap" />
+
+    	<CheckBox
+        android:id="@+id/chkKamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true" 
+        android:text="@string/qoscam" />
+
+
+
+    	<CheckBox
+        android:id="@+id/chkMedelande"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/qosmedd" />
+        
+        <CheckBox
+        android:id="@+id/chkUppdrag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/qosass" />
+        
+        <CheckBox
+        android:id="@+id/chkGPSOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/qosgps" />
+    
+
+
+</LinearLayout>

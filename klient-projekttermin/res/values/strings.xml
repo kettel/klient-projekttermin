@@ -85,5 +85,15 @@
     <string name="title_activity_login_function">Login</string>
 	<string name="login">Login</string>
 	<string name="logout">Logout</string>
+	<string name="qosauto">Energisparning Auto</string>
+	<string name="qoson">Energisparning På</string>
+	<string name="qosoff">Energisparning Av</string>
+	<string name="qos">Energisparning</string>
+	<string name="lightlvl">50%</string>
+	<string name="qosmap">Karta</string>
+	<string name="qoscam">Kamera</string>
+	<string name="qosmedd">Meddelnade</string>
+	<string name="qosass">Uppdragshanterare</string>
+	<string name="qosgps">GPS</string>
 </resources>
 

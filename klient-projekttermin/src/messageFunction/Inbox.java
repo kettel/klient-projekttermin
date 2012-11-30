@@ -46,7 +46,7 @@ public class Inbox extends InactivityListener {
 			userName = extras.getString("USER");
 		}
 
-		//Ropar p� en metod som skapar en lista �ver alla kontakter som anv�ndaren har haft en konversation med.
+		//Ropar på en metod som skapar en lista över alla kontakter som anv�ndaren har haft en konversation med.
 		loadListOfSenders();
 	}
 
