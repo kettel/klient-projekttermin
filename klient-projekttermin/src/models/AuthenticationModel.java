@@ -7,6 +7,7 @@ public class AuthenticationModel implements ModelInterface {
 	private String isAccessGranted;
 	private String databaseRepresentation = "authentication";
 	private long id = -1;
+	private String gcmId="";
 	
 	public AuthenticationModel(){
 		
@@ -45,6 +46,14 @@ public class AuthenticationModel implements ModelInterface {
 		return passwordHash;
 	}
 	
+	public String getGCMID() {
+		return gcmId;
+	}
+
+	public void setGCMID(String gCMID) {
+		this.gcmId = gCMID;
+	}
+
 	/**
 	 * Metoden returnerar true om användaren får access, annars false;
 	 */

@@ -11,6 +11,7 @@ import java.util.List;
 
 import loginFunction.InactivityListener;
 import loginFunction.LogInFunction;
+import loginFunction.User;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Contact;
@@ -55,10 +56,7 @@ public class MainActivity extends InactivityListener {
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
 
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			userName = extras.getString("USER");
-		}
+		
 		setContentView(R.layout.activity_main);
 		// Registrera klienten med SIP-servern
 		RegisterWithSipServer regSip = RegisterWithSipServer.getInstance(this);
@@ -172,10 +170,6 @@ public class MainActivity extends InactivityListener {
 				}
 			}
 		});
-		socketConnection = new SocketConnection();
-		socketConnection.addObserver(new PullRequestHandler(this));
-		socketConnection.pullFromServer();
-		checkContactDatabase();
 	}
 
 	@Override
@@ -247,8 +241,15 @@ public class MainActivity extends InactivityListener {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
-			System.out.println(newMessage);
-			// mDisplay.append(newMessage + "\n");
+			if (newMessage.contains("registered")) {
+				System.out.println("New gcm-message: "+newMessage);
+				User user=User.getInstance();
+				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
+				socketConnection = new SocketConnection();
+				socketConnection.addObserver(new PullRequestHandler(getApplicationContext()));
+				socketConnection.pullFromServer();
+				checkContactDatabase();
+			}
 		}
 	};
 
