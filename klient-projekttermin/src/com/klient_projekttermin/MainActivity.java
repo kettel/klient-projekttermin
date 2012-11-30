@@ -15,6 +15,7 @@ import map.MapActivity;
 import messageFunction.Inbox;
 import models.Contact;
 import qosManager.QoSManager;
+import sip.RegisterWithSipServer;
 import sip.SipMain;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -59,7 +60,9 @@ public class MainActivity extends InactivityListener {
 			userName = extras.getString("USER");
 		}
 		setContentView(R.layout.activity_main);
-
+		// Registrera klienten med SIP-servern
+		RegisterWithSipServer regSip = RegisterWithSipServer.getInstance(this);
+		regSip.initializeLocalProfile();
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
 

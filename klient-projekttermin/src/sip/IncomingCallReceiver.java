@@ -9,6 +9,7 @@ import android.util.Log;
 /*** Lyssnar efter inkommande SIP-samtal, fångar dem och ger dem till SipMain.
 */
 public class IncomingCallReceiver extends BroadcastReceiver {
+	RegisterWithSipServer regSip = RegisterWithSipServer.getInstance();;
    /**
     * Processes the incoming call, answers it, and hands it over to the
     * WalkieTalkieActivity.

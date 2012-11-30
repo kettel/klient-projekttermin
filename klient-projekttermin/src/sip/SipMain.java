@@ -21,16 +21,13 @@ import com.klient_projekttermin.R;
 
 public class SipMain extends InactivityListener{
 	private String currentUser;
-	public SipManager manager = null;
-    public SipProfile me = null;
-    public SipAudioCall call = null;
-    public String sipAddress = null;
-    public IncomingCallReceiver callReceiver;
-    
-    // Bör hämtas från databas i framtiden
-    String username = "1001";
-    String domain = "94.254.72.38";
-    String password = "1001";
+	SipManager manager = null;
+    private SipProfile me = null;
+    SipAudioCall call = null;
+    private String sipAddress = null;
+    private IncomingCallReceiver callReceiver;
+	private RegisterWithSipServer regSip = RegisterWithSipServer.getInstance();
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +46,6 @@ public class SipMain extends InactivityListener{
         filter.addAction("com.klient_projekttermin.INCOMING_CALL");
         callReceiver = new IncomingCallReceiver();
         this.registerReceiver(callReceiver, filter);
-		
 		initializeManager();
 		
 		initiateCall("1003");
@@ -78,8 +74,7 @@ public class SipMain extends InactivityListener{
         if (call != null) {
             call.close();
         }
-
-        closeLocalProfile();
+        regSip.closeLocalProfile();
 
         if (callReceiver != null) {
             this.unregisterReceiver(callReceiver);
@@ -90,74 +85,10 @@ public class SipMain extends InactivityListener{
 		if(manager == null) {
           manager = SipManager.newInstance(this);
         }
-        initializeLocalProfile();
+        regSip.initializeLocalProfile();
     }
 	
-	/**
-	 * Registrera användaren hos SIP-servern
-	 */
-	private void initializeLocalProfile() {
-		if (manager == null) {
-            return;
-        }
-
-        if (me != null) {
-            closeLocalProfile();
-        }
-        try {
-        	
-        	SipProfile.Builder builder = new SipProfile.Builder(username, domain);
-        	builder.setPassword(password);
-        	me = builder.build();
-
-        	// Låt klienten kunna ta emot samtal (kryssrutan under Konton i samtalsinställningar)
-        	Intent intent = new Intent();
-        	intent.setAction("com.klient_projekttermin.INCOMING_CALL");
-        	PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, Intent.FILL_IN_DATA);
-        	manager.open(me, pendingIntent, null);
-
-        	
-        	// Sätt upp en lyssnare som lyssnar efter hur väl anslutningen har gått
-        	manager.setRegistrationListener(me.getUriString(), new SipRegistrationListener() {
-                public void onRegistering(String localProfileUri) {
-                	Log.d("SIP","Registering with SIP Server...");
-                }
-
-                public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                	Log.d("SIP","Ready");
-                }
-
-                public void onRegistrationFailed(String localProfileUri, int errorCode,
-                        String errorMessage) {
-                	Log.d("SIP","Registration failed.  Please check settings.");
-                }
-            });
-        } 
-        catch (ParseException e) {
-        	Log.e("SIP","Parse error.. "+e);
-        }
-        catch (SipException e) {
-        	Log.e("SIP","Sip exceptionerror.. "+e);
-        }
-		
-	}
 	
-	/**
-     * Closes out your local profile, freeing associated objects into memory
-     * and unregistering your device from the server.
-     */
-    public void closeLocalProfile() {
-        if (manager == null) {
-            return;
-        }
-        try {
-            if (me != null) {
-                manager.close(me.getUriString());
-            }
-        } catch (Exception ee) {
-            Log.d("SIP", "Failed to close local profile.", ee);
-        }
-    }
 	
 	private void initiateCall(String numberToCall) {
 		try {
@@ -182,9 +113,9 @@ public class SipMain extends InactivityListener{
                 }
             };
             
-            sipAddress = "sip:"+numberToCall+"@"+domain;
-            Log.d("SIP","Nummer att ringa: " + sipAddress);
+            sipAddress = "sip:"+numberToCall+"@"+regSip.staticdomain;
             call = manager.makeAudioCall(me.getUriString(), sipAddress, listener, 30);
+            
 
         }
         catch (Exception e) {

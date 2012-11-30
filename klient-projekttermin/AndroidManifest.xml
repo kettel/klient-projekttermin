@@ -96,7 +96,12 @@
         <service android:name=".GCMIntentService" />
         <!-- SIP Receiver -->
         <receiver android:name="sip.IncomingCallReceiver" android:label="Call Receiver"/>
-        <!-- GCM Receiver -->
+        <receiver android:name="sip.Dialer" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
+		<!-- GCM Receiver -->
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
