@@ -22,7 +22,7 @@ import com.klient_projekttermin.R;
 
 public class SipMain extends InactivityListener{
 	@Override
-	void onCreate(){
+	public void onCreate(Bundle savedInstanceState) {
 		
 	}
 }
