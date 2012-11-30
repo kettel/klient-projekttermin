@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.sip.*;
+import android.util.Log;
 
 /*** Lyssnar efter inkommande SIP-samtal, fångar dem och ger dem till SipMain.
 */
@@ -17,6 +18,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
    @Override
    public void onReceive(Context context, Intent intent) {
        SipAudioCall incomingCall = null;
+       Log.d("SIP","Ett inkommande samtal...");
        try {
            SipAudioCall.Listener listener = new SipAudioCall.Listener() {
                @Override

@@ -129,7 +129,10 @@
     <!-- SIP permission -->
     <uses-permission android:name="android.permission.USE_SIP" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Permissions -->
     <permission
         android:name="com.klient_projekttermin.permission.C2D_MESSAGE"
@@ -139,7 +142,7 @@
     <uses-feature android:name="android.hardware.camera" />
     <!-- SIP features -->
 	<uses-feature android:name="android.hardware.sip.voip" android:required="true" />
-  	<uses-feature android:name="android.hardware.wifi" android:required="true" />
-  	<uses-feature android:name="android.hardware.microphone" android:required="true" />
+    <uses-feature android:name="android.hardware.wifi" android:required="true" />
+    <uses-feature android:name="android.hardware.microphone" android:required="true" />
 
 </manifest>
