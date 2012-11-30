@@ -7,6 +7,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import models.AuthenticationModel;
+
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,13 +18,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class LogInFunction extends InactivityListener implements Observer {
+public class LogInFunction extends Activity implements Observer {
 	private TextView userNameView;
 	private TextView passwordView;
 	private String userName;
@@ -34,12 +37,16 @@ public class LogInFunction extends InactivityListener implements Observer {
 	private AuthenticationModel originalModel;
 	private ProgressDialog pd;
 	private User user;
+	private int callingactivity;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
 		database = Database.getInstance(getApplicationContext());
+		Intent intent = getIntent();
+		callingactivity = intent.getIntExtra("calling-activity", 0);
+		
 	}
 
 	@Override
@@ -193,9 +200,15 @@ public class LogInFunction extends InactivityListener implements Observer {
 	}
 
 	public void accessGranted() {
-		Intent intent = new Intent(this, MainActivity.class);
-		intent.putExtra("USER", userName);
-		startActivity(intent);
+		switch (callingactivity) {
+		case ActivityConstants.INACTIVITY:
+			break;
+		default:
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.putExtra("USER", userName);
+			startActivity(intent);
+			break;
+		}
 		finish();
 	}
 

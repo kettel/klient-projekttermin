@@ -1,10 +1,10 @@
 package assignment;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import loginFunction.InactivityListener;
 import loginFunction.User;
@@ -12,12 +12,13 @@ import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
 import models.AssignmentStatus;
+import models.ModelInterface;
+import models.PictureModel;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -108,6 +109,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 	private void fromCamera(Intent intent) {
 		int id = intent.getIntExtra(Album.pic, 0);
+		System.out.println(id + "fromcamera");
 		bitmap = getPic(id);
 		adapter.textToItem(6, "Bifogad bild");
 		runOnUiThread(new Runnable() {
@@ -190,14 +192,11 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	}
 
 	private byte[] getByteArray() {
-		System.out.println(bitmap);
 		if (bitmap != null) {
 			ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
 			bitmap.compress(Bitmap.CompressFormat.PNG, 100,
 					byteArrayBitmapStream);
-			System.out.println("BITMAP TO BYTE[]");
 			byte[] b = byteArrayBitmapStream.toByteArray();
-			System.out.println(b);
 			return b;
 		} else {
 			return new byte[2];
@@ -205,17 +204,12 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	}
 	
 	private Bitmap getPic(int id){
-		File file = new File(Environment.getExternalStorageDirectory()
-				.getAbsolutePath() + "/Pictures/Album/");
-		File imageList[] = file.listFiles();
-		ArrayList<Bitmap> images = new ArrayList<Bitmap>();
-		BitmapFactory.Options bitop = new BitmapFactory.Options();
-		bitop.inSampleSize = 16;
-		for (int i = 0; i < imageList.length; i++) {
-			Bitmap b = BitmapFactory.decodeFile(imageList[i].getAbsolutePath(),
-					bitop);
-			images.add(b);
-		}
-		return images.get(id);
+		db = Database.getInstance(getApplicationContext());
+		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(), getContentResolver());
+		PictureModel p = (PictureModel)pics.get(id);
+		Bitmap bitmap = BitmapFactory.decodeByteArray(
+				p.getPicture(), 0,
+				p.getPicture().length);
+		return bitmap;
 	}
 }

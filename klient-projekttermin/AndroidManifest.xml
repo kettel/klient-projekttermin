@@ -120,6 +120,9 @@
         <provider
             android:name="database.AuthenticationContentProvider"
             android:authorities="database.AuthenticationContentProvider" />
+        <provider
+            android:name="database.PictureContentProvider"
+            android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
 

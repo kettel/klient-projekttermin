@@ -1,43 +1,36 @@
 package camera;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import models.PictureModel;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 
+import database.Database;
+
 public class Camera extends InactivityListener {
 
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
-	private ImageView mImageView;
+//	private ImageView mImageView;
 	private Bitmap mImageBitmap;
-
-	private String mCurrentPhotoPath;
-
-	private static final String JPEG_FILE_PREFIX = "IMG_";
-	private static final String JPEG_FILE_SUFFIX = ".jpg";
+	
+	private static final int CAMERA_REQUEST = 1337;
 
 	private String[] from = { "line1", "line2" };
 	private int[] to = { android.R.id.text1, android.R.id.text2 };
@@ -46,7 +39,7 @@ public class Camera extends InactivityListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera_menu);
-		mImageView = (ImageView) findViewById(R.id.imageView1);
+//		mImageView = (ImageView) findViewById(R.id.imageView1);
 		mImageBitmap = null;
 		ListView lv = (ListView) findViewById(android.R.id.list);
 		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -60,9 +53,9 @@ public class Camera extends InactivityListener {
 					dispatchTakePictureIntent();
 					break;
 				case 1:
-					Intent myIntent2 = new Intent(Camera.this,
-							Album.class);
-					myIntent2.putExtra("calling-activity", ActivityConstants.CAMERA);
+					Intent myIntent2 = new Intent(Camera.this, Album.class);
+					myIntent2.putExtra("calling-activity",
+							ActivityConstants.CAMERA);
 					Camera.this.startActivity(myIntent2);
 					break;
 				default:
@@ -91,84 +84,32 @@ public class Camera extends InactivityListener {
 		return true;
 	}
 
-	private File setUpPhotoFile() throws IOException {
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
-				.format(new Date());
-		String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
-		File albumF = new File(Environment.getExternalStorageDirectory()
-				.getAbsolutePath() + "/Pictures/Album/");
-
-		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX,
-				albumF);
-		mCurrentPhotoPath = imageF.getAbsolutePath();
-		return imageF;
-	}
-
-	private void setPic() {
-		int targetW = mImageView.getWidth();
-		int targetH = mImageView.getHeight();
-
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		bmOptions.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-		int photoW = bmOptions.outWidth;
-		int photoH = bmOptions.outHeight;
-
-		/* Räknar ut hur den ska reduceras */
-		int scaleFactor = 1;
-		if ((targetW > 0) || (targetH > 0)) {
-			scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-		}
-		/* Sätter bitmap-inställningar till att skala bild dekod målet */
-		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inSampleSize = scaleFactor;
-		bmOptions.inPurgeable = true;
-
-		/* Decode JPEG filen till en bitmap */
-		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-
-		/* Assosierar bitmap till ImageView */
-		mImageView.setImageBitmap(bitmap);
-		mImageView.setVisibility(View.VISIBLE);
-	}
-
-	private void galleryAddPic() {
-		Intent mediaScanIntent = new Intent(
-				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
-		File f = new File(mCurrentPhotoPath);
-		Uri contentUri = Uri.fromFile(f);
-		mediaScanIntent.setData(contentUri);
-		this.sendBroadcast(mediaScanIntent);
-	}
-
 	private void dispatchTakePictureIntent() {
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		File f = null;
-		try {
-			f = setUpPhotoFile();
-			mCurrentPhotoPath = f.getAbsolutePath();
-			takePictureIntent
-					.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-		} catch (IOException e) {
-			e.printStackTrace();
-			f = null;
-			mCurrentPhotoPath = null;
-		}
-		startActivityForResult(takePictureIntent, 0);
+		startActivityForResult(takePictureIntent, CAMERA_REQUEST);
 	}
 
-	private void handleBigCameraPhoto() {
-		if (mCurrentPhotoPath != null) {
-			setPic();
-			galleryAddPic();
-			mCurrentPhotoPath = null;
-		}
-
-	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		handleBigCameraPhoto();
+		if (requestCode == 1337) {
+			Bitmap bm = (Bitmap) data.getExtras().get("data");
+			Database db = Database.getInstance(getApplicationContext());
+			db.addToDB(new PictureModel(getByteArray(bm)), getContentResolver());
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	private byte[] getByteArray(Bitmap bitmap) {
+		if (bitmap != null) {
+			ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100,
+					byteArrayBitmapStream);
+			byte[] b = byteArrayBitmapStream.toByteArray();
+			return b;
+		} else {
+			return new byte[2];
+		}
 	}
 
 	@Override

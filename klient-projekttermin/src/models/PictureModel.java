@@ -6,82 +6,70 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import android.graphics.Bitmap;
-
-public class ImageModel implements ModelInterface {
+public class PictureModel implements ModelInterface {
 	// Databasrepresentation för bilden
-	private String databaseRepresentation = "image";
+	private String databaseRepresentation = "picture";
 	// Id för ett meddelande är -1 tils dess id är satt av databasen
 	private long id = -1;
 	// bilden
-	private Bitmap image;
-	// Mottagare av bilden
-	private String reciever;
-	// Vem som skickade bilden
-	private String sender;
+	private byte[] picture;
 	// Tiddstämpel i UNIX Epoch-format för när bilden skapades
-	private Long imageTimeStamp;
+	private Long pictureTimeStamp;
 
 	/**
 	 * Tom konstruktor. Används för att hämta från databasen.
 	 */
-	public ImageModel() {
+	public PictureModel() {
 
 	}
 
 	/**
 	 * Konstruktor för att skapa en bild
 	 * 
-	 * @param image
-	 * @param reciever
 	 * @param image 
 	 */
-	public ImageModel(Bitmap image, String reciever, String sender) {
-		this.image = image;
-		this.reciever = reciever;
-		this.sender = sender;
-		imageTimeStamp = Calendar.getInstance().getTimeInMillis();
+	public PictureModel(byte[] picture) {
+		this.picture = picture;
+		pictureTimeStamp = Calendar.getInstance().getTimeInMillis();
+	}
+	
+	public PictureModel(long id, byte[] picture) {
+		this.id = id;
+		this.picture = picture;
+		pictureTimeStamp = Calendar.getInstance().getTimeInMillis();
 	}
 
 	/**
 	 * Konstruktor för att återskapa en bild
 	 * 
-	 * @param image
-	 * @param reciever
 	 * @param image 
 	 * @param timeStamp
 	 */
-	public ImageModel(long id, Bitmap image, String reciever,
-			String sender, Long imageTimeStamp) {
+	public PictureModel(long id, byte[] image, Long imageTimeStamp) {
 		this.id = id;
-		this.image = image;
-		this.reciever = reciever;
-		this.sender = sender;
-		this.imageTimeStamp = imageTimeStamp;
+		this.picture = image;
+		this.pictureTimeStamp = imageTimeStamp;
 	}
 	
 	/**
 	 * Hämta bilden
 	 * @return	en bild som är en Bitmap
 	 */
-	public Bitmap getImage() {
-		return image;
-	}
-
-	/**
-	 * Hämta mottagare av bilden
-	 * @return	CharSequence
-	 */
-	public CharSequence getReciever() {
-		return (CharSequence) reciever;
+	public byte[] getPicture() {
+		if (picture == null) {
+			System.out.println("IF PIC = 0");
+			picture = new byte[2];
+		}
+		System.out.println(picture.length + " get pciture " + picture);
+		return picture;
 	}
 
 	/**
 	 * Hämta tidsstämpel för bilden
 	 * @return	Long
 	 */
-	public Long getImageTimeStamp() {
-		return imageTimeStamp;
+	public Long getPictureTimeStamp() {
+		return pictureTimeStamp;
 	}
 
 	/**
@@ -95,8 +83,8 @@ public class ImageModel implements ModelInterface {
 	 * Hämta datum i format yyyy-MM-dd HH:mm:ss för tidszon CET
 	 * @return String
 	 */
-	public String getImageTimeStampSmart() {
-		Date date = new Date(imageTimeStamp);
+	public String getPictureTimeStampSmart() {
+		Date date = new Date(pictureTimeStamp);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 		format.setTimeZone(TimeZone.getTimeZone("CET"));
 		String smartTime = format.format(date).toString();
@@ -110,13 +98,5 @@ public class ImageModel implements ModelInterface {
 	 */
 	public long getId() {
 		return id;
-	}
-	
-	/**
-	 * Hämta vem som är avsändare av bilden
-	 * @return
-	 */
-	public String getSender(){
-		return sender;
 	}
 }
