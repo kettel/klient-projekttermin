@@ -5,8 +5,11 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Observable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import loginFunction.User;
 import models.Assignment;
@@ -14,6 +17,8 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
+
+import android.os.Looper;
 
 import com.google.gson.Gson;
 
@@ -69,8 +74,11 @@ public class SocketConnection extends Observable {
 	private void sendAuthentication(String json) {
 		ip = getAvailableIP();
 		port = getPortForIP(ip);
+		System.out.println("INNE I SENDAUTHENTICATION");
 		try {
-			Socket socket = new Socket(ip, port);
+			System.out.println("INNE I TRY I SEND AUTHENTICATION");
+			Socket socket = new Socket();
+			socket.connect(new InetSocketAddress(ip, port),10000);
 			System.out.println("Socketen lyckades ansluta");
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
@@ -81,8 +89,9 @@ public class SocketConnection extends Observable {
 					new InputStreamReader(socket.getInputStream()));
 			StringBuilder sb = new StringBuilder();
 			String str;
-			while ((str = bufferedReader.readLine()) != null) {
-				sb.append(str);
+			
+			while ((str = bufferedReader.readLine()) != null) {				
+				sb.append(str);	
 			}
 			bufferedReader.close();
 			socket.close();
@@ -93,8 +102,15 @@ public class SocketConnection extends Observable {
 					sb.toString(), AuthenticationModel.class);
 			notifyObservers(authenticationModel);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Fångade ett fel");
+			setChanged();
+			String fail = "failed to connect";
+			notifyObservers(fail);
 		}
+	}
+	
+	public void sendFailedLoginNotification(){
+		
 	}
 
 	public void pullFromServer() {

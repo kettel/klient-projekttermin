@@ -1,6 +1,7 @@
 package messageFunction;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import models.MessageModel;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -26,7 +27,7 @@ public class CreateMessage extends InactivityListener {
 	private MessageModel messageObject;
 	private String messageContent;
 	private Database dataBase;
-	private String user;
+	private String currentUser;
 	private int caller;
 
 	@Override
@@ -35,9 +36,11 @@ public class CreateMessage extends InactivityListener {
 		setContentView(R.layout.activity_create_new_message);
 		dataBase = Database.getInstance(getApplicationContext());
 
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
+		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			user = extras.getString("USER");
 			caller = extras.getInt("calling-activity");
 			messageContent = extras.getString("MESSAGE");
 		}
@@ -90,7 +93,7 @@ public class CreateMessage extends InactivityListener {
 		String recievingContact = reciever.getText().toString();
 		System.out.println("HEJSAN HOPPSAN " + recievingContact);
 		messageObject = new MessageModel(message.getText().toString(),
-				recievingContact, user);
+				recievingContact, currentUser);
 
 		// Sparar messageObject i databasen
 		dataBase.addToDB(messageObject, getContentResolver());
@@ -104,7 +107,6 @@ public class CreateMessage extends InactivityListener {
 		// Öppnar konversatinsvyn för kontakten man skickade till
 		Intent intent = new Intent(this, DisplayOfConversation.class);
 		intent.putExtra("ChosenContact", recievingContact);
-		intent.putExtra("USER", user);
 		startActivity(intent);
 		return true;
 	}

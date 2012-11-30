@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
@@ -64,10 +65,9 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 		Intent i = getIntent();
 		callingActivity = i.getIntExtra("calling-activity", 0);
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			currentUser = extras.getString("USER");
-		}
+		
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
 		
 		switch (callingActivity) {
 		case ActivityConstants.MAP_ACTIVITY:

@@ -11,6 +11,7 @@ import java.util.List;
 
 import loginFunction.InactivityListener;
 import loginFunction.LogInFunction;
+import loginFunction.User;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Contact;
@@ -40,7 +41,6 @@ import database.Database;
 
 public class MainActivity extends InactivityListener {
 
-	private String userName;
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	private QoSManager qosManager;
@@ -53,10 +53,6 @@ public class MainActivity extends InactivityListener {
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
 
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			userName = extras.getString("USER");
-		}
 		setContentView(R.layout.activity_main);
 
 		// used to replace listview functionality
@@ -119,7 +115,6 @@ public class MainActivity extends InactivityListener {
 					if (qosManager.allowedToStartMap()) {
 						myIntent = new Intent(MainActivity.this,
 								MapActivity.class);
-						myIntent.putExtra("USER", userName);
 					} else {
 						unallowedStart.show();
 					}
@@ -128,7 +123,6 @@ public class MainActivity extends InactivityListener {
 					if (qosManager.allowedToStartMessages()) {
 						System.out.println("Startar meddelanden");
 						myIntent = new Intent(MainActivity.this, Inbox.class);
-						myIntent.putExtra("USER", userName);
 					} else {
 						unallowedStart.show();
 					}
@@ -137,7 +131,6 @@ public class MainActivity extends InactivityListener {
 					if (qosManager.allowedToStartAssignment()) {
 						myIntent = new Intent(MainActivity.this,
 								AssignmentOverview.class);
-						myIntent.putExtra("USER", userName);
 					} else {
 						unallowedStart.show();
 					}
@@ -145,7 +138,6 @@ public class MainActivity extends InactivityListener {
 				case 3:
 					if (qosManager.allowedToStartCamera()) {
 						myIntent = new Intent(MainActivity.this, Camera.class);
-						myIntent.putExtra("USER", userName);
 					} else {
 						unallowedStart.show();
 					}
@@ -153,7 +145,6 @@ public class MainActivity extends InactivityListener {
 				case 4:
 					myIntent = new Intent(MainActivity.this,
 							ContactsBookActivity.class);
-					myIntent.putExtra("USER", userName);
 				default:
 					break;
 				}

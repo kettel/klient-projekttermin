@@ -8,6 +8,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import models.Assignment;
 import models.ModelInterface;
 import routing.MapManager;
@@ -123,7 +124,8 @@ public class MapActivity extends InactivityListener implements Observer,
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
 		
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
@@ -161,9 +163,9 @@ public class MapActivity extends InactivityListener implements Observer,
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
-		final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
-		mapComponent.setMap(sm);
-//		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+//		final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
+//		mapComponent.setMap(sm);
+		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
@@ -401,9 +403,6 @@ public class MapActivity extends InactivityListener implements Observer,
 		super.onResume();
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			currentUser = extras.getString("USER");
-		}
 		createMap();
 		switch (callingActivity) {
 		case ActivityConstants.ADD_ASSIGNMENT_ACTIVITY:

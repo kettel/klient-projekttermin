@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import models.MessageModel;
 import models.ModelInterface;
 import android.app.Activity;
@@ -38,7 +39,7 @@ public class DisplayOfConversation extends InactivityListener {
 	private HashMap<String, Long> messageAndIdMap = new HashMap<String, Long>();
 	private String chosenContact;
 	private Database dataBase;
-	private String user;
+	private String currentUser;
 	private MessageModel messageObject;
 	private String[] options = {"AVBRYT","RADERA","VIDAREBEFORDRA"};
 	private boolean communicationBond = false;
@@ -53,12 +54,14 @@ public class DisplayOfConversation extends InactivityListener {
 
 		dataBase = Database.getInstance(getApplicationContext());
 
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
+		
 		//Metoden testar om någonting skickades med från Inbox och skriver i så fall ut det till strängen chosenContact
 		Bundle extras = getIntent().getExtras();
 
 		if (extras != null) {
 			chosenContact = extras.getString("ChosenContact");
-			user = extras.getString("USER");
 		}	 
 
 		loadConversation(chosenContact);
@@ -152,7 +155,6 @@ public class DisplayOfConversation extends InactivityListener {
 	public void forwardMessage(String messageContent){
 		Intent intent = new Intent(this, CreateMessage.class);
 		intent.putExtra("MESSAGE",messageContent);
-		intent.putExtra("USER",user);
 		startActivity(intent);
 	}
 
@@ -235,7 +237,7 @@ public class DisplayOfConversation extends InactivityListener {
 	public void sendMessage(View v){
 		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 
-		messageObject = new MessageModel(message.getText().toString(), chosenContact, user); 
+		messageObject = new MessageModel(message.getText().toString(), chosenContact, currentUser); 
 
 		//Sparar messageObject i databasen
 		dataBase.addToDB(messageObject,getContentResolver());
