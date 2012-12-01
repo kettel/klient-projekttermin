@@ -5,8 +5,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+import logger.logger;
 import loginFunction.InactivityListener;
 import map.MapActivity;
 import models.Assignment;
@@ -179,11 +181,16 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				temp.get(5), checkPrioString(temp.get(7)));
 		System.out.println("temp8: " + temp.get(8));
 		String tempUnseparated = temp.get(8);
+		
+		if (tempUnseparated == null) {
+			tempUnseparated = "";
+		}
+		
 		addAgentsFromList(tempUnseparated, newAssignment); // temp(8) är en sträng
 														// med agenter som ska
 														// separeras med ",".
 		
-		tempUnseparated = "";
+		tempUnseparated = ""; //Nolla strängen
 
 		Log.d("Assignment", "Ska nu lägga till ett uppdrag " + temp.get(0)
 				+ temp.get(1) + currentUser + false + temp.get(2) + temp.get(3)
@@ -197,9 +204,15 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 	private void addAgentsFromList(String agents, Assignment newAssignment) {
 
-		Log.e("agents", agents);
+		String newString = agents.substring(9);
+		Log.e("FEL", "Rätt split? ->" + newString);
 
-		List<String> items = Arrays.asList(agents.split("\\s*,\\s*"));
+		List<String> items = new LinkedList<String>(Arrays.asList(newString.split("\\s*,\\s*"))); //reguljära uttryck haxx 
+		
+		for (String string : items) {
+			Log.e("FEL", "Regexplittade agents: " + string);
+		}
+		
 		List<ModelInterface> list = db.getAllFromDB(new Contact(),
 				getContentResolver());
 
@@ -211,6 +224,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				}
 			}
 		}
+		items.clear();
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {

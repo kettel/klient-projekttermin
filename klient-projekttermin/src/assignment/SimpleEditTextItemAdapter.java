@@ -48,6 +48,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private boolean isCreatingDialog = false;
 	private boolean isCreatingCoordDialog = false;
 	public static String items;
+	private String temp = "Agenter: ";
 
 	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
 	private EditText editText;
@@ -80,7 +81,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			convertView = inflater.inflate(getItemViewType(position), null);
 			if (position == 8) {
 				
-				AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
+				final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
 						.findViewById(R.id.autoText_item);
 				
 				
@@ -90,14 +91,21 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 					autoCompleteTextView.setHint(((HashMap<String, String>) this
 							.getItem(position)).get("line1"));
+					
 					//Snygghax.. för att få tag i auto-vyns text.
 					autoCompleteTextView.setOnItemClickListener(new OnItemClickListener() {
 
 						public void onItemClick(AdapterView<?> arg0, View arg1,
 								int arg2, long arg3) {
 							TextView e = (TextView)arg1;
-							Log.e("CP", e.getText().toString());
-							itemStrings.put(8, e.getText().toString());
+							Log.e("FEL", e.getText().toString());
+							
+							temp = temp + e.getText().toString()+ ", ";
+							
+							itemStrings.put(8, temp);
+							autoCompleteTextView.setHint(temp);
+							autoCompleteTextView.setText("");
+							//itemStrings.put(8, e.getText().toString());
 						}
 					});
 
@@ -234,7 +242,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				coordsAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
-		System.out.println("KKK");
 		final Dialog dialog = builder.create();
 		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
@@ -252,7 +259,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 							ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
 					((AddAssignment) context).startActivityForResult(intent, 0);
 				case 1:
-					System.out.println("KOmmer vi hit");
 					Intent intent2 = new Intent(context, MapActivity.class);
 					intent2.putExtra("calling-activity",
 							ActivityConstants.GET_GPS_LOCATION);

@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -49,6 +50,7 @@ public class AssignmentDetails extends InactivityListener {
 	private List<ModelInterface> listAssignments;
 	private Assignment currentAssignment;
 	private String currentUser;
+	private boolean needToListen;
 
 	// -------ComService
 	private CommunicationService communicationService;
@@ -61,7 +63,8 @@ public class AssignmentDetails extends InactivityListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_uppdrag);
 		db = Database.getInstance(getApplicationContext());
-
+		needToListen = true;
+		
 		// -------ComService---
 		Intent intentServer = new Intent(this.getApplicationContext(),
 				CommunicationService.class);
@@ -80,6 +83,7 @@ public class AssignmentDetails extends InactivityListener {
 
 		listAssignments = db.getAllFromDB(new Assignment(),
 				getContentResolver());
+
 
 		// Hittar rätt assignment i databasen och sätter den tillgänglig i denna
 		// klass.
@@ -101,8 +105,10 @@ public class AssignmentDetails extends InactivityListener {
 		// det.
 		setCheckedIfAssigned();
 
-		// Lyssnar den efter klick i checkrutan
-		setCheckboxCheckedListener();
+		if (needToListen) {
+			// Lyssnar den efter klick i checkrutan
+			setCheckboxCheckedListener();
+		}
 
 		// Sätter texten som ska visas i uppdragsvyn.
 		setAssignmentToView();
@@ -139,6 +145,7 @@ public class AssignmentDetails extends InactivityListener {
 				// Klicka i låådan checkboxchecked
 				checkboxAssign.setChecked(true);
 				checkboxAssign.setEnabled(false);
+				needToListen = false;
 			}
 
 		}
