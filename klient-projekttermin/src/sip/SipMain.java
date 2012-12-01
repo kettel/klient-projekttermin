@@ -1,28 +1,25 @@
 package sip;
 
 import loginFunction.InactivityListener;
-import loginFunction.User;
-
-import java.text.ParseException;
-
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.sip.SipAudioCall;
-import android.net.sip.SipException;
-import android.net.sip.SipManager;
-import android.net.sip.SipProfile;
-import android.net.sip.SipRegistrationListener;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-
-import com.klient_projekttermin.R;
 
 
 public class SipMain extends InactivityListener{
+	/**
+	 * TODO: Skriv om enligt WalkieTalkie med massa crap i MainActivity
+	 * TODO: Få ovan att funka.
+	 * TODO: Skapa en aktivitet att starta när samtal kommer in där man får välja att svara
+	 * 		 eller att inte svara.
+	 * TODO: Skapa en aktivitet när man har svarat som innehåller: * Vem som ringer
+	 * 															   * Samtalstid
+	 * 															   * Lägga på knapp
+	 * 															   * Kvalitet?
+	 * 															   * Övrig statistik
+	 * TODO: Gör åtminstonde registreringen på SIP-servern till en service.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		
 	}
 }

@@ -5,6 +5,7 @@ import static com.klient_projekttermin.CommonUtilities.EXTRA_MESSAGE;
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
 import static com.klient_projekttermin.CommonUtilities.SERVER_URL;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,14 +18,20 @@ import messageFunction.Inbox;
 import models.Contact;
 import qosManager.QoSManager;
 import sip.IncomingCallReceiver;
-import sip.RegisterWithSipServer;
 import sip.SipMain;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.sip.SipAudioCall;
+import android.net.sip.SipException;
+import android.net.sip.SipManager;
+import android.net.sip.SipProfile;
+import android.net.sip.SipRegistrationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,8 +56,14 @@ public class MainActivity extends InactivityListener {
 	private QoSManager qosManager;
 	private Database database;
 	private SocketConnection socketConnection;
-	private IncomingCallReceiver callReceiver;
 
+	// SIP-variabler
+	public String sipAddress = null;
+    public SipManager manager = null;
+    public SipProfile me = null;
+    public SipAudioCall call = null;
+    public IncomingCallReceiver callReceiver;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,10 +71,17 @@ public class MainActivity extends InactivityListener {
 		qosManager = QoSManager.getInstance();
 
 		setContentView(R.layout.activity_main);
-		// Registrera klienten med SIP-servern
-		RegisterWithSipServer regSip = RegisterWithSipServer.getInstance(this);
 		
-		
+		// SIP: Registrera Intent för att hantera inkommande SIP-samtal
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.klient_projekttermin.INCOMING_CALL");
+        callReceiver = new IncomingCallReceiver();
+        this.registerReceiver(callReceiver, filter);
+        
+        // SIP: Registrera klienten hos SIP-servern 
+        // TODO: Skriv om till service..
+        initializeManager();
+        
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
 
@@ -174,7 +194,87 @@ public class MainActivity extends InactivityListener {
 	protected void onStart() {
 		super.onStart();
 	}
+	
+	/**
+	 * Registrera med SIP-servern.
+	 */
+	public void initializeManager() {
+        if(manager == null) {
+          manager = SipManager.newInstance(this);
+        }
 
+        initializeLocalProfile();
+    }
+
+    /**
+     * Logs you into your SIP provider, registering this device as the location to
+     * send SIP calls to for your SIP address.
+     */
+    public void initializeLocalProfile() {
+        if (manager == null) {
+            return;
+        }
+
+        if (me != null) {
+            closeLocalProfile();
+        }
+
+        String username = "1001";
+        String domain = "94.254.72.38";
+        String password = "1001";
+
+        try {
+            SipProfile.Builder builder = new SipProfile.Builder(username, domain);
+            builder.setPassword(password);
+            me = builder.build();
+
+            Intent i = new Intent();
+            i.setAction("com.klient_projekttermin.INCOMING_CALL");
+            PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, Intent.FILL_IN_DATA);
+            manager.open(me, pi, null);
+
+
+            // This listener must be added AFTER manager.open is called,
+            // Otherwise the methods aren't guaranteed to fire.
+
+            manager.setRegistrationListener(me.getUriString(), new SipRegistrationListener() {
+                    public void onRegistering(String localProfileUri) {
+                    	Log.d("SIP","Registering with SIP Server...");
+                    }
+
+                    public void onRegistrationDone(String localProfileUri, long expiryTime) {
+                    	Log.d("SIP","Ready");
+                    }
+
+                    public void onRegistrationFailed(String localProfileUri, int errorCode,
+                            String errorMessage) {
+                    	Log.d("SIP","Registration failed.  Please check settings.");
+                    }
+                });
+        } catch (ParseException pe) {
+            //updateStatus("Connection Error.");
+        } catch (SipException se) {
+            //updateStatus("Connection error.");
+        }
+    }
+    
+    /**
+     * Closes out your local profile, freeing associated objects into memory
+     * and unregistering your device from the server.
+     */
+    public void closeLocalProfile() {
+        if (manager == null) {
+            return;
+        }
+        try {
+            if (me != null) {
+                manager.close(me.getUriString());
+            }
+        } catch (Exception ee) {
+            Log.d("MainActivity/closeLocalProfile", "Failed to close local profile.", ee);
+        }
+    }
+	
 	public void checkContactDatabase() {
 		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {

@@ -1,5 +1,7 @@
 package sip;
 
+import com.klient_projekttermin.MainActivity;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +11,6 @@ import android.util.Log;
 /*** Lyssnar efter inkommande SIP-samtal, fångar dem och ger dem till SipMain.
 */
 public class IncomingCallReceiver extends BroadcastReceiver {
-	RegisterWithSipServer regSip = RegisterWithSipServer.getInstance();
    /**
     * Processes the incoming call, answers it, and hands it over to the
     * WalkieTalkieActivity.
@@ -31,15 +32,15 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                    }
                }
            };
-           incomingCall = RegisterWithSipServer.manager.takeAudioCall(intent, listener);
+           MainActivity mActivity = (MainActivity) context;
+           incomingCall = mActivity.manager.takeAudioCall(intent, listener);
            incomingCall.answerCall(30);
            incomingCall.startAudio();
            incomingCall.setSpeakerMode(true);
            if(incomingCall.isMuted()) {
                incomingCall.toggleMute();
            }
-           RegisterWithSipServer.call = incomingCall;
-//           sipMain.updateStatus(incomingCall);
+           mActivity.call = incomingCall;
        } catch (Exception e) {
            if (incomingCall != null) {
                incomingCall.close();
