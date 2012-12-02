@@ -29,7 +29,6 @@ public class BatteryCheckingFunction extends Observable{
 		new Thread(new Runnable() {
 
 			public void run() {
-				Looper.prepare();
 				while(true){
 					int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 

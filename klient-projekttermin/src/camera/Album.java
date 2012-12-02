@@ -36,7 +36,7 @@ public class Album extends Activity implements OnItemClickListener {
 	public boolean Visibility = true;
 
 	public List<ModelInterface> imagesFromDB;
-	public static String pic;
+	public static String pic = "";
 	private int callingActivity;
 	private String[] pictureAlts = { "Skapa uppdrag med foto" };
 	private int currentPictureId;
@@ -172,6 +172,8 @@ public class Album extends Activity implements OnItemClickListener {
 
 	private void createAssignmentFromPicture() {
 		Intent i = new Intent(Album.this, AddAssignment.class);
+		System.out.println("pic: "+pic);
+		System.out.println("currentPictureId: "+currentPictureId);
 		i.putExtra(pic, currentPictureId);
 		i.putExtra("calling-activity",
 				ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
