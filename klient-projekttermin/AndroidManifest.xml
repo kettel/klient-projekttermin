@@ -2,16 +2,38 @@
     package="com.klient_projekttermin"
     android:versionCode="1"
     android:versionName="1.0" >
+     <!-- Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="com.klient_projekttermin.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- App receives GCM messages. -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- GCM connects to Google Services. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Permissions -->
+    <permission
+        android:name="com.klient_projekttermin.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <!-- Features -->
+    <uses-feature android:name="android.hardware.camera" />
 
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="16" />
 
     <application
+        android:name="android.app.Application"
         android:icon="@drawable/loggakrona"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" 
-        android:name="android.app.Application" >
+        android:theme="@style/AppTheme" >
 
         <!-- Receiver -->
         <receiver
@@ -110,6 +132,5 @@
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
     </application>
-    
 
 </manifest>

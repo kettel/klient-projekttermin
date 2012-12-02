@@ -77,37 +77,37 @@ public class LogInFunction extends Activity implements Observer {
 	public void tryOfflineLogin(AuthenticationModel loginInput)
 			throws NoSuchAlgorithmException {
 
-		System.out.println("Saker i databasen: "
-				+ database.getAllFromDB(loginInput, getContentResolver())
-				.size());
-
-		if (database
-				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
-			System.out.println("Försöker logga in offline");
-
-			List modelList = database.getAllFromDB(loginInput,
-					getContentResolver());
-			AuthenticationModel loadedModel = (AuthenticationModel) modelList
-					.get(0);
-
-			if (loadedModel.getUserName().equals(loginInput.getUserName())) {
-				if (loadedModel.getPasswordHash().equals(
-						loginInput.getPasswordHash())
-						&& loadedModel.isAccessGranted().equals("true")) {
-					accessGranted();
-				} else {
-					incorrectLogIn();
-				}
-			} else {
-				removeLastUserFromDB();
-				tryOnlineLogin(loginInput);
-			}
-		}
-
-		else {
+//		System.out.println("Saker i databasen: "
+//				+ database.getAllFromDB(loginInput, getContentResolver())
+//				.size());
+//
+//		if (database
+//				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
+//			System.out.println("Försöker logga in offline");
+//
+//			List modelList = database.getAllFromDB(loginInput,
+//					getContentResolver());
+//			AuthenticationModel loadedModel = (AuthenticationModel) modelList
+//					.get(0);
+//
+//			if (loadedModel.getUserName().equals(loginInput.getUserName())) {
+//				if (loadedModel.getPasswordHash().equals(
+//						loginInput.getPasswordHash())
+//						&& loadedModel.isAccessGranted().equals("true")) {
+//					accessGranted();
+//				} else {
+//					incorrectLogIn();
+//				}
+//			} else {
+//				removeLastUserFromDB();
+//				tryOnlineLogin(loginInput);
+//			}
+//		}
+//
+//		else {
 			System.out.println("Försöker logga in online");
 			tryOnlineLogin(loginInput);
-		}
+//		}
 	}
 
 	/**

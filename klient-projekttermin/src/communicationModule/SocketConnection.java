@@ -104,8 +104,8 @@ public class SocketConnection extends Observable {
 
 		try {
 			System.out.println("Försöker autentisera mot "+ip+":"+port);
-			Socket socket = new Socket(ip,port);
-			//socket.connect(new InetSocketAddress(ip, port), 10000);
+			Socket socket = new Socket();
+			socket.connect(new InetSocketAddress(ip, port), 10000);
 			System.out.println("Socketen lyckades ansluta");
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
@@ -124,11 +124,11 @@ public class SocketConnection extends Observable {
 			socket.close();
 			System.out.println("Socketen tog emot: " + sb.toString());
 			setChanged();
-			System.out.println(hasChanged());
 			AuthenticationModel authenticationModel = gson.fromJson(
 					sb.toString(), AuthenticationModel.class);
 			notifyObservers(authenticationModel);
 		} catch (IOException e) {
+			e.printStackTrace();
 			if (iterator.hasNext()) {
 				String[] server = getAvailableServer();
 				System.out.println("byter port: "+server[1]);
@@ -166,7 +166,6 @@ public class SocketConnection extends Observable {
 					System.out.println("Socketen lyckades skriva");
 					BufferedReader bufferedReader = new BufferedReader(
 							new InputStreamReader(socket.getInputStream()));
-					StringBuilder sb = new StringBuilder();
 					String inputString;
 					while ((inputString = bufferedReader.readLine()) != null) {
 						if (inputString
@@ -198,9 +197,8 @@ public class SocketConnection extends Observable {
 						}
 					}
 					bufferedReader.close();
-					inputString = sb.toString();
 					socket.close();
-					if (!inputString.isEmpty()) {
+					if (inputString==null) {
 						setChanged();
 						notifyObservers(null);
 					}
@@ -239,12 +237,10 @@ public class SocketConnection extends Observable {
 					System.out.println("Socketen lyckades skriva");
 					BufferedReader bufferedReader = new BufferedReader(
 							new InputStreamReader(socket.getInputStream()));
-					StringBuilder sb = new StringBuilder();
 					String inputString;
 					while ((inputString = bufferedReader.readLine()) != null) {
 						if (inputString
 								.contains("\"databaseRepresentation\":\"contact\"")) {
-							System.out.println("contact");
 							Contact contact = gson.fromJson(inputString,
 									Contact.class);
 							setChanged();
@@ -257,8 +253,11 @@ public class SocketConnection extends Observable {
 						}
 					}
 					bufferedReader.close();
-					inputString = sb.toString();
 					socket.close();
+					if (inputString==null) {
+						setChanged();
+						notifyObservers(null);
+					}
 				} catch (IOException e) {
 					if (iterator.hasNext()) {
 						System.out.println("byter port");
