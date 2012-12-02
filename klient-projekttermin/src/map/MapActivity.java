@@ -1,11 +1,14 @@
 package map;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Vector;
 
 import loginFunction.InactivityListener;
 import loginFunction.User;
@@ -23,6 +26,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -57,6 +61,9 @@ import com.nutiteq.components.PlaceLabel;
 import com.nutiteq.components.PolyStyle;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
+import com.nutiteq.fs.AndroidFileSystem;
+import com.nutiteq.fs.FileSystem;
+import com.nutiteq.fs.FileSystemConnection;
 import com.nutiteq.listeners.MapListener;
 import com.nutiteq.listeners.OnLongClickListener;
 import com.nutiteq.listeners.OnMapElementListener;
@@ -113,7 +120,8 @@ public class MapActivity extends InactivityListener implements Observer,
 	private static String[] regionAlts = { "Ta bort region",
 			"Skapa uppdrag med region" };
 	private static String[] placeAlts = { "Visa detaljer för uppdrag" };
-	private static String[] clickAlts = { "lägg till uppdrag" };
+	private static String[] clickAlts = { "Lägg till uppdrag",
+			"Lägg till intreese punkt" };
 	private boolean onRetainCalled;
 	private int callingActivity;
 	private HashMap<Integer, String> content;
@@ -129,13 +137,13 @@ public class MapActivity extends InactivityListener implements Observer,
 		User user = User.getInstance();
 		currentUser = user.getAuthenticationModel().getUserName();
 
+		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
-		System.out.println("ON CREATE MAP");
 		this.manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		this.locationSource = new AndroidGPSProvider(manager, 1000L);
-		// this.setContentView(R.layout.activity_map);
+		this.setContentView(R.layout.activity_map);
 		/**
 		 * Kollar om gps är aktiverat
 		 */
@@ -149,15 +157,8 @@ public class MapActivity extends InactivityListener implements Observer,
 		 * till en observer på searchSuggestions
 		 */
 		this.searchSuggestions.addObserver(this);
-
-		this.haveNetworkConnection();
-		/**
-		 * Hämta information från databasen om aktuella uppdrag
-		 */
-		// this.getDatabaseInformation();
-		/**
-		 * GPS:en ska vara påslagen vid start
-		 */
+		haveNetworkConnection();
+		
 
 	}
 
@@ -166,8 +167,14 @@ public class MapActivity extends InactivityListener implements Observer,
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
 		// final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
-		// mapComponent.setMap(sm);
-		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+		final StoredMap sm = new StoredMap("OpenStreetMap", Environment
+				.getExternalStorageDirectory().getPath() + "/MGMapsCache", true);
+		// System.out.println(Environment.getExternalStorageDirectory().getPath()
+		// + "/MGMapsCache");
+
+		this.mapComponent.setFileSystem(new AndroidFileSystem());
+		this.mapComponent.setMap(sm);
+		// this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
@@ -238,7 +245,7 @@ public class MapActivity extends InactivityListener implements Observer,
 		if (!haveConnectedWifi && !haveConnectedMobile) {
 			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(
-					"No network connection enabled, do you want to enable it?")
+					"Ingen nätverksanslutning hittades. Sökning kräver nätverksanslutning, vill du aktivera det?")
 					.setCancelable(false)
 					.setPositiveButton("Yes",
 							new DialogInterface.OnClickListener() {
@@ -437,6 +444,8 @@ public class MapActivity extends InactivityListener implements Observer,
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.equals(this.searchItem)) {
+			this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+			this.haveNetworkConnection();
 			actv.requestFocus();
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -563,7 +572,12 @@ public class MapActivity extends InactivityListener implements Observer,
 			mapComponent.addPlace(temp);
 			regionCorners.add(temp);
 		} else {
-			createInterestPoint(arg0);
+			System.out.println("Callign "+ callingActivity);
+			if (callingActivity == ActivityConstants.MAIN_ACTIVITY) {
+				createInterestPoint(arg0);
+			} else {
+				createAssignmentFromClick(arg0);
+			}
 		}
 	}
 
@@ -573,6 +587,45 @@ public class MapActivity extends InactivityListener implements Observer,
 	public void needRepaint(boolean arg0) {
 	}
 
+	private void createAssignmentFromClick(WgsPoint w) {
+		final WgsPoint[] wgs = new WgsPoint[1];
+		wgs[0] = w;
+		final Gson gson = new Gson();
+		final Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Lägg till punkt");
+		ListView modeList = new ListView(this);
+		String[] s = {"Lägg till plats till uppdrag" };
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				s);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					addInterestPoint(wgs[0], "Uppdrag");
+					Intent intent = new Intent(MapActivity.this,
+							AddAssignment.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.MAP_ACTIVITY);
+					intent.putExtra(coordinates, gson.toJson(wgs, type));
+					setResult(ActivityConstants.RESULT_FROM_MAP, intent);
+					finish();
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
+
 	private void createInterestPoint(WgsPoint w) {
 		final WgsPoint[] wgs = new WgsPoint[1];
 		wgs[0] = w;
@@ -580,7 +633,7 @@ public class MapActivity extends InactivityListener implements Observer,
 		final Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("VAl");
+		builder.setTitle("Lägg till punkt");
 		ListView modeList = new ListView(this);
 		CustomAdapter modeAdapter = new CustomAdapter(this,
 				android.R.layout.simple_list_item_1, android.R.id.text1,
@@ -600,14 +653,11 @@ public class MapActivity extends InactivityListener implements Observer,
 					intent.putExtra("calling-activity",
 							ActivityConstants.MAP_ACTIVITY);
 					intent.putExtra(coordinates, gson.toJson(wgs, type));
-					if (callingActivity == ActivityConstants.MAIN_ACTIVITY) {
-						MapActivity.this.startActivity(intent);
-					} else {
-						setResult(ActivityConstants.RESULT_FROM_MAP, intent);
-						finish();
-					}
-					
+					MapActivity.this.startActivity(intent);
 					break;
+				case 1:
+					addInterestPoint(wgs[0], "");
+				break;
 				default:
 					break;
 				}
@@ -795,7 +845,6 @@ public class MapActivity extends InactivityListener implements Observer,
 	}
 
 	public void elementClicked(OnMapElement arg0) {
-		System.out.println("onclicked");
 	}
 
 	/**

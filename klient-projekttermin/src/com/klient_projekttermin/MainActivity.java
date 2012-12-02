@@ -115,6 +115,7 @@ public class MainActivity extends InactivityListener {
 					if (qosManager.allowedToStartMap()) {
 						myIntent = new Intent(MainActivity.this,
 								MapActivity.class);
+						myIntent.putExtra("calling-activity", ActivityConstants.MAIN_ACTIVITY);
 					} else {
 						unallowedStart.show();
 					}
