@@ -4,16 +4,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 import loginFunction.InactivityListener;
-import loginFunction.LogInFunction;
-
-import com.klient_projekttermin.MainActivity;
-
-import android.net.wifi.WifiManager;
-import android.provider.Settings;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.text.LoginFilter;
+import android.net.wifi.WifiManager;
 import android.view.WindowManager;
 
 public class QoSManager implements Observer {
@@ -69,22 +61,22 @@ public class QoSManager implements Observer {
 	public void update(Observable observable, Object data) {
 		int batteryLevel = (Integer) data;
 
-		if (batteryLevel > 30) {
-			if (!okayBatterylevel) {
-				adjustToOkayBatteryLevel();
-			}
-		}
-
-		else if (batteryLevel < 30 && batteryLevel > 15) {
-			System.out.println("Batterinivån är låg: " + batteryLevel + "%");
-			adjustToLowBatteryLevel();
-		}
-
-		else if (batteryLevel < 15) {
-			System.out
-					.println("Batterinivån är kritisk: " + batteryLevel + "%");
-			adjustToCriticalBatteryLevel();
-		}
+//		if (batteryLevel > 30) {
+//			if (!okayBatterylevel) {
+//				adjustToOkayBatteryLevel();
+//			}
+//		}
+//
+//		else if (batteryLevel < 30 && batteryLevel > 15) {
+//			System.out.println("Batterinivån är låg: " + batteryLevel + "%");
+//			adjustToLowBatteryLevel();
+//		}
+//
+//		else if (batteryLevel < 15) {
+//			System.out
+//					.println("Batterinivån är kritisk: " + batteryLevel + "%");
+//			adjustToCriticalBatteryLevel();
+//		}
 	}
 
 	/**
@@ -183,7 +175,7 @@ public class QoSManager implements Observer {
 		System.out
 				.println("Nätverksanslutningar är avstängda/startade i enheten");
 		WifiManager wifiManager = (WifiManager) applicationContext
-				.getSystemService(applicationContext.WIFI_SERVICE);
+				.getSystemService(Context.WIFI_SERVICE);
 		wifiManager.setWifiEnabled(wantToTurnOn);
 	}
 

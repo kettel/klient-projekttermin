@@ -9,9 +9,8 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Observable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import loginFunction.User;
 import models.Assignment;
@@ -19,8 +18,6 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
-
-import android.os.Looper;
 
 import com.google.gson.Gson;
 import com.klient_projekttermin.CommonUtilities;
@@ -30,7 +27,7 @@ public class SocketConnection extends Observable {
 	private String ip = "94.254.72.38";
 	private int port = 17234;
 	private ArrayList<String[]> servers = new ArrayList<String[]>();
-
+	Iterator<String[]> iterator;
 	public SocketConnection() {
 		super();
 		initServerList();
@@ -39,8 +36,14 @@ public class SocketConnection extends Observable {
 	private void initServerList() {
 		String[] i = { "94.254.72.38", "17234", "16783" };
 		servers.add(i);
-		String[] j = { "94.254.72.38", "17234", "17783" };
+		String[] j = { "94.254.72.38", "18234", "17783" };
 		servers.add(j);
+		iterator=servers.iterator();
+		String[]server=getAvailableServer();
+		ip=server[0];
+		port=Integer.parseInt(server[1]);
+		CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
+				+ server[2];
 	}
 
 	public void sendModel(ModelInterface modelInterface) {
@@ -76,9 +79,9 @@ public class SocketConnection extends Observable {
 			bufferedWriter.flush();
 			socket.close();
 		} catch (IOException e) {
-			if (servers.iterator().hasNext()) {
-				System.out.println("byter port");
+			if (iterator.hasNext()) {
 				String[] server = getAvailableServer();
+				System.out.println("byter port: "+server[1]);
 				ip = server[0];
 				port = Integer.parseInt(server[1]);
 				CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
@@ -87,9 +90,10 @@ public class SocketConnection extends Observable {
 			}
 		}
 	}
+
 	private String[] getAvailableServer() {
-		if (servers.iterator().hasNext()) {
-			return servers.iterator().next();
+		if (iterator.hasNext()) {
+			return iterator.next();
 		} else {
 			return null;
 		}
@@ -99,9 +103,9 @@ public class SocketConnection extends Observable {
 	private void sendAuthentication(String json) {
 
 		try {
-			System.out.println("INNE I TRY I SEND AUTHENTICATION");
-			Socket socket = new Socket();
-			socket.connect(new InetSocketAddress(ip, port),10000);
+			System.out.println("Försöker autentisera mot "+ip+":"+port);
+			Socket socket = new Socket(ip,port);
+			//socket.connect(new InetSocketAddress(ip, port), 10000);
 			System.out.println("Socketen lyckades ansluta");
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
@@ -113,8 +117,8 @@ public class SocketConnection extends Observable {
 			StringBuilder sb = new StringBuilder();
 			String str;
 
-			while ((str = bufferedReader.readLine()) != null) {				
-				sb.append(str);	
+			while ((str = bufferedReader.readLine()) != null) {
+				sb.append(str);
 			}
 			bufferedReader.close();
 			socket.close();
@@ -125,24 +129,24 @@ public class SocketConnection extends Observable {
 					sb.toString(), AuthenticationModel.class);
 			notifyObservers(authenticationModel);
 		} catch (IOException e) {
-			System.out.println("Fångade ett fel");
-
-					if (servers.iterator().hasNext()) {
-						System.out.println("byter port");
-						String[] server = getAvailableServer();
-						ip = server[0];
-						port = Integer.parseInt(server[1]);
-						CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
-								+ server[2];
-						sendAuthentication(json);
-					}
-			setChanged();
-			String fail = "failed to connect";
-			notifyObservers(fail);
+			if (iterator.hasNext()) {
+				String[] server = getAvailableServer();
+				System.out.println("byter port: "+server[1]);
+				ip = server[0];
+				port = Integer.parseInt(server[1]);
+				CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
+						+ server[2];
+				System.out.println(CommonUtilities.SERVER_URL);
+				sendAuthentication(json);
+			}else{
+				setChanged();
+				String fail = "failed to connect";
+				notifyObservers(fail);	
+			}
 		}
 	}
 
-	public void sendFailedLoginNotification(){
+	public void sendFailedLoginNotification() {
 
 	}
 
@@ -196,8 +200,12 @@ public class SocketConnection extends Observable {
 					bufferedReader.close();
 					inputString = sb.toString();
 					socket.close();
+					if (!inputString.isEmpty()) {
+						setChanged();
+						notifyObservers(null);
+					}
 				} catch (IOException e) {
-					if (servers.iterator().hasNext()) {
+					if (iterator.hasNext()) {
 						System.out.println("byter port");
 						String[] server = getAvailableServer();
 						ip = server[0];
@@ -205,6 +213,10 @@ public class SocketConnection extends Observable {
 						CommonUtilities.SERVER_URL = "http://" + server[0]
 								+ ":" + server[2];
 						pullFromServer();
+					}else{
+						setChanged();
+						String fail = "failed to connect";
+						notifyObservers(fail);	
 					}
 				}
 			}
@@ -248,7 +260,7 @@ public class SocketConnection extends Observable {
 					inputString = sb.toString();
 					socket.close();
 				} catch (IOException e) {
-					if (servers.iterator().hasNext()) {
+					if (iterator.hasNext()) {
 						System.out.println("byter port");
 						String[] server = getAvailableServer();
 						ip = server[0];
@@ -256,6 +268,10 @@ public class SocketConnection extends Observable {
 						CommonUtilities.SERVER_URL = "http://" + server[0]
 								+ ":" + server[2];
 						getAllContactsReq();
+					}else{
+						setChanged();
+						String fail = "failed to connect";
+						notifyObservers(fail);	
 					}
 				}
 			}
