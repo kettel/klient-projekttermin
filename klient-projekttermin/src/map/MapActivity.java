@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import loginFunction.InactivityListener;
-import loginFunction.User;
+import login.User;
 import models.Assignment;
 import models.ModelInterface;
 import routing.MapManager;
@@ -47,6 +46,7 @@ import assignment.AssignmentDetails;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
@@ -81,7 +81,7 @@ import database.Database;
  * @author nicklas
  * 
  */
-public class MapActivity extends InactivityListener implements Observer,
+public class MapActivity extends SecureActivity implements Observer,
 		MapListener, Runnable, OnItemClickListener, OnMapElementListener {
 
 	private BasicMapComponent mapComponent;
@@ -323,6 +323,7 @@ public class MapActivity extends InactivityListener implements Observer,
 	/**
 	 * Skapa meny i actionbar
 	 */
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		final Menu m = menu;
 		runOnUiThread(new Runnable() {
@@ -346,9 +347,9 @@ public class MapActivity extends InactivityListener implements Observer,
 				});
 			}
 		});
-		View v = (View) menu.findItem(R.id.menu_search).getActionView();
+		View v = menu.findItem(R.id.menu_search).getActionView();
 		this.sp = (ProgressBar) v.findViewById(R.id.spinner);
-		this.searchItem = (MenuItem) menu.findItem(R.id.menu_search);
+		this.searchItem = menu.findItem(R.id.menu_search);
 		this.clearSearch = (Button) v.findViewById(R.id.clearSearch);
 		this.clearSearch.setOnClickListener(new OnClickListener() {
 
@@ -367,7 +368,7 @@ public class MapActivity extends InactivityListener implements Observer,
 				if (!temp.isEmpty()) {
 					runOnUiThread(new Runnable() {
 						public void run() {
-							sp.setVisibility(ProgressBar.VISIBLE);
+							sp.setVisibility(View.VISIBLE);
 						}
 					});
 					new Thread(new Runnable() {
@@ -379,7 +380,7 @@ public class MapActivity extends InactivityListener implements Observer,
 				} else {
 					runOnUiThread(new Runnable() {
 						public void run() {
-							sp.setVisibility(ProgressBar.GONE);
+							sp.setVisibility(View.GONE);
 						}
 					});
 					sm.clear();
@@ -512,7 +513,7 @@ public class MapActivity extends InactivityListener implements Observer,
 		else {
 			m.setTitle("Markera region");
 			if (!points.isEmpty()) {
-				WgsPoint[] p = (WgsPoint[]) (points)
+				WgsPoint[] p = (points)
 						.toArray(new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
 			}
@@ -520,7 +521,7 @@ public class MapActivity extends InactivityListener implements Observer,
 			 * Tar bort punkterna från kartan
 			 */
 			if (!regionCorners.isEmpty()) {
-				Place[] corners = (Place[]) regionCorners
+				Place[] corners = regionCorners
 						.toArray(new Place[regionCorners.size()]);
 				mapComponent.removePlaces(corners);
 			}
@@ -661,9 +662,9 @@ public class MapActivity extends InactivityListener implements Observer,
 	}
 
 	public void run() {
-		if (this.lv.getVisibility() == ListView.GONE) {
-			this.lv.setVisibility(ListView.VISIBLE);
-			this.zoomControls.setVisibility(ZoomControls.GONE);
+		if (this.lv.getVisibility() == View.GONE) {
+			this.lv.setVisibility(View.VISIBLE);
+			this.zoomControls.setVisibility(View.GONE);
 		}
 		sm.clear();
 		for (KmlPlace temp : searchSuggestions.getList()) {
@@ -671,7 +672,7 @@ public class MapActivity extends InactivityListener implements Observer,
 			System.out.println("LIST ALLT" + temp.getName());
 		}
 		sm.notifyDataSetChanged();
-		sp.setVisibility(ProgressBar.GONE);
+		sp.setVisibility(View.GONE);
 	}
 
 	public void showMapView() {
@@ -679,8 +680,8 @@ public class MapActivity extends InactivityListener implements Observer,
 			public void run() {
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-				lv.setVisibility(ListView.GONE);
-				zoomControls.setVisibility(ZoomControls.VISIBLE);
+				lv.setVisibility(View.GONE);
+				zoomControls.setVisibility(View.VISIBLE);
 			}
 		});
 	}

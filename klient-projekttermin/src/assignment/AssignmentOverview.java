@@ -2,13 +2,11 @@ package assignment;
 
 import java.util.List;
 
-import loginFunction.InactivityListener;
-import loginFunction.User;
+import login.User;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.ModelInterface;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,13 +21,14 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 import communicationModule.SocketConnection;
 
 import database.AssignmentTable;
 import database.Database;
 
-public class AssignmentOverview extends InactivityListener {
+public class AssignmentOverview extends SecureActivity {
 
 	private long[] idInAdapter;
 	private Database db;
@@ -153,13 +152,13 @@ public class AssignmentOverview extends InactivityListener {
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("Radera uppdrag.");
 		alertDialog.setMessage("Vill du ta bort uppdraget?");
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA",
+		alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "JA",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						eraseAssignment(eraseById);
 					}
 				});
-		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "AVBRYT",
+		alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "AVBRYT",
 				new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {

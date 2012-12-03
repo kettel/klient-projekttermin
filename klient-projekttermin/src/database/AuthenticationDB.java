@@ -68,7 +68,7 @@ public class AuthenticationDB {
 					
 				}
 				AuthenticationModel authenticationModel = new AuthenticationModel(authenticationId, userName, password, isAccessGranted);
-				returnList.add((ModelInterface) authenticationModel);
+				returnList.add(authenticationModel);
 			} while (cursor.moveToNext());
 		}
 		return returnList;

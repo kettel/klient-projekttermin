@@ -3,8 +3,7 @@ package assignment;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import loginFunction.InactivityListener;
-import loginFunction.User;
+import login.User;
 import map.CustomAdapter;
 import map.MapActivity;
 import models.Assignment;
@@ -34,13 +33,14 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
 import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class AssignmentDetails extends InactivityListener {
+public class AssignmentDetails extends SecureActivity {
 
 	private Database db;
 	private long assignmentID;
@@ -252,7 +252,7 @@ public class AssignmentDetails extends InactivityListener {
 						
 
 						// Uppdaterar Uppdraget med den nya kontakten.
-						db.updateModel((ModelInterface) currentAssignment,
+						db.updateModel(currentAssignment,
 								getContentResolver());
 						SocketConnection connection=new SocketConnection();
 						connection.sendModel(currentAssignment);

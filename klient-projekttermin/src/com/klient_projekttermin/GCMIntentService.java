@@ -18,14 +18,13 @@ package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
 import static com.klient_projekttermin.CommonUtilities.displayMessage;
+import login.LogInActivity;
+import login.User;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
-
-import communicationModule.PullResponseHandler;
-import communicationModule.SocketConnection;
 
 /**
  * IntentService responsible for handling GCM messages.
@@ -53,11 +52,18 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 	@Override
 	protected void onMessage(Context context, Intent intent) {
-		Log.i(TAG, "Received message");
-		String message = getString(R.string.gcm_message);
-		displayMessage(context, message);
-		// notifies user
-		generateNotification(context, message);
+		System.out.println("message");
+		if (intent.getExtras().containsKey("logout")&&intent.getExtras().get("logout").equals("true")) {
+			System.out.println("logga ut");
+			User user=User.getInstance();
+			user.setLoggedIn(false);
+			Intent i = new Intent(this, LogInActivity.class);
+			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		}else{
+			Log.i(TAG, "Received message");
+			String message = getString(R.string.gcm_message);
+			displayMessage(context, message);
+		}
 	}
 
 	@Override
@@ -65,8 +71,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.i(TAG, "Received deleted messages notification");
 		String message = getString(R.string.gcm_deleted, total);
 		displayMessage(context, message);
-		// notifies user
-		generateNotification(context, message);
 	}
 
 	@Override
@@ -83,14 +87,4 @@ public class GCMIntentService extends GCMBaseIntentService {
 				getString(R.string.gcm_recoverable_error, errorId));
 		return super.onRecoverableError(context, errorId);
 	}
-
-	/**
-	 * Issues a notification to inform the user that server has sent a message.
-	 */
-	private void generateNotification(Context context, String message) {
-		SocketConnection connection=new SocketConnection();
-		connection.addObserver(new PullResponseHandler(context));
-		connection.pullFromServer();
-	}
-
 }

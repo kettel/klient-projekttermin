@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+
 import logger.logger;
-import loginFunction.InactivityListener;
-import loginFunction.User;
+import login.User;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
@@ -33,12 +33,13 @@ import android.widget.Toast;
 import camera.Album;
 
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class AddAssignment extends InactivityListener implements Serializable {
+public class AddAssignment extends SecureActivity implements Serializable {
 	/**
 	 * 
 	 */
@@ -60,6 +61,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	private CheckBox toOutsiders;
 	private boolean isExternalMission;
 
+	@Override
 	@SuppressLint("UseSparseArrays")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -217,6 +219,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		
 		if (!agents.equals("")) {
 			newString = agents.substring(9);
+			newAssignment.setAssignmentStatus(AssignmentStatus.STARTED);
 		}
 		
 		Log.e("FEL", "Rätt split? ->" + newString);

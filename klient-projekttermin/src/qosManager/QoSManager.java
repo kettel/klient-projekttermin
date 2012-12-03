@@ -3,7 +3,8 @@ package qosManager;
 import java.util.Observable;
 import java.util.Observer;
 
-import loginFunction.InactivityListener;
+import com.klient_projekttermin.SecureActivity;
+
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.view.WindowManager;
@@ -162,10 +163,10 @@ public class QoSManager implements Observer {
 	 *            kan vara ett valfritt float-värde mellan 0.0-1.0;
 	 */
 	public void adjustScreenBrightness(float brightnessValue) {
-		WindowManager.LayoutParams layout = ((InactivityListener) applicationContext)
+		WindowManager.LayoutParams layout = ((SecureActivity) applicationContext)
 				.getWindow().getAttributes();
 		layout.screenBrightness = brightnessValue;
-		((InactivityListener) applicationContext).getWindow().setAttributes(layout);
+		((SecureActivity) applicationContext).getWindow().setAttributes(layout);
 	}
 
 	/**

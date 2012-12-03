@@ -1,4 +1,4 @@
-package loginFunction;
+package login;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,7 +7,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import models.AuthenticationModel;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -25,7 +24,7 @@ import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class LogInFunction extends Activity implements Observer {
+public class LogInActivity extends Activity implements Observer {
 	private TextView userNameView;
 	private TextView passwordView;
 	private String userName;
@@ -188,8 +187,8 @@ public class LogInFunction extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
-		pd = ProgressDialog.show(LogInFunction.this, "", "Loggar in...", true,
-				true);
+		System.out.println("Skapar en ny ProgressDialog");
+		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
 	}
 
 	public void accessGranted() {
@@ -202,6 +201,7 @@ public class LogInFunction extends Activity implements Observer {
 			startActivity(intent);
 			break;
 		}
+		user.setLoggedIn(true);
 		finish();
 	}
 
