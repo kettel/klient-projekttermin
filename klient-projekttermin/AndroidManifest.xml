@@ -2,12 +2,11 @@
     package="com.klient_projekttermin"
     android:versionCode="1"
     android:versionName="1.0" >
-
-    <!-- Permissions -->
+     <!-- Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />        
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="com.klient_projekttermin.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -19,7 +18,6 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <!-- Keeps the processor from sleeping when a message is received. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <!-- Permissions -->
     <permission
         android:name="com.klient_projekttermin.permission.C2D_MESSAGE"
@@ -32,10 +30,10 @@
         android:targetSdkVersion="16" />
 
     <application
+        android:name="android.app.Application"
         android:icon="@drawable/loggakrona"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" 
-        android:name="android.app.Application" >
+        android:theme="@style/AppTheme" >
 
         <!-- Receiver -->
         <receiver
@@ -107,6 +105,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="contacts.ContactsBookActivity"
+            android:label="@string/title_activity_contacts_book" >
+        </activity>
+        <activity
+            android:name="camera.Album"
+            android:label="@string/title_activity_album" >
+        </activity>
         <!-- Database Content Providers -->
         <provider
             android:name="database.ContactsContentProvider"
@@ -125,15 +131,6 @@
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
-
-        <activity
-            android:name="contacts.ContactsBookActivity"
-            android:label="@string/title_activity_contacts_book" >
-        </activity>
-        <activity
-            android:name="camera.Album"
-            android:label="@string/title_activity_album" >
-        </activity>
     </application>
 
 </manifest>

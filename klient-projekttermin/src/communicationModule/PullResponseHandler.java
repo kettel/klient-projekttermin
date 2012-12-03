@@ -1,13 +1,7 @@
-package com.klient_projekttermin;
+package communicationModule;
 
 import java.util.Observable;
 import java.util.Observer;
-
-import com.google.gson.Gson;
-
-import contacts.ContactsBookActivity;
-
-import database.Database;
 
 import messageFunction.Inbox;
 import models.Assignment;
@@ -24,36 +18,60 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import assignment.AssignmentOverview;
 
-public class PullRequestHandler implements Observer {
-	
+import com.klient_projekttermin.MainActivity;
+import com.klient_projekttermin.R;
+
+import contacts.ContactsBookActivity;
+import database.Database;
+
+public class PullResponseHandler implements Observer {
+
 	private Context context;
 	private Database db;
-	public PullRequestHandler(Context context) {
+	private Intent notificationIntent;
+	private boolean hasChanged=false;
+	private String message = "";
+
+	public PullResponseHandler(Context context) {
 		super();
-		this.context=context;
-		db=Database.getInstance(context);
+		this.context = context;
+		db = Database.getInstance(context);
 	}
 
 	public void update(Observable observable, Object data) {
 		System.out.println("notification");
-		String message="";
+
+		notificationIntent = new Intent(context, MainActivity.class);
+		if (data == null && hasChanged) {
+			System.out.println("klar med pull");
+			showNotification();
+		} else {
+			if (data instanceof Contact) {
+				message = "Ny kontakt";
+				db.addToDB((Contact) data, context.getContentResolver());
+				notificationIntent = new Intent(context,
+						ContactsBookActivity.class);
+				hasChanged = true;
+			} else if (data instanceof Assignment) {
+				message = "Nytt uppdrag";
+				db.addToDB((Assignment) data, context.getContentResolver());
+				notificationIntent = new Intent(context,
+						AssignmentOverview.class);
+				hasChanged = true;
+			} else if (data instanceof MessageModel) {
+				message = "Nytt meddelande";
+				db.addToDB((MessageModel) data, context.getContentResolver());
+				notificationIntent = new Intent(context, Inbox.class);
+				hasChanged = true;
+			}
+		}
+
+	}
+
+	private void showNotification() {
 		String title = context.getString(R.string.app_name);
 		NotificationManager notificationManager = (NotificationManager) context
 				.getSystemService(Context.NOTIFICATION_SERVICE);
-		Intent notificationIntent = new Intent(context, MainActivity.class);;
-		if (data instanceof Contact) {
-			message="Ny kontakt";
-			db.addToDB((Contact)data,context.getContentResolver());
-			notificationIntent = new Intent(context, ContactsBookActivity.class);
-		}else if (data instanceof Assignment) {
-			message="Nytt uppdrag";
-			db.addToDB((Assignment)data,context.getContentResolver());
-			notificationIntent = new Intent(context, AssignmentOverview.class);
-		}else if (data instanceof MessageModel) {
-			message="Nytt meddelande";
-			db.addToDB((MessageModel)data,context.getContentResolver());
-			notificationIntent = new Intent(context, Inbox.class);
-		}
 		int icon = R.drawable.loggakrona;
 
 		// set intent so it does not start a new activity

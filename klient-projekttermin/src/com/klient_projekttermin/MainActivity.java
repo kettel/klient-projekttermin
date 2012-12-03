@@ -34,6 +34,8 @@ import assignment.AssignmentOverview;
 import camera.Camera;
 
 import com.google.android.gcm.GCMRegistrar;
+
+import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
 import contacts.ContactsBookActivity;
@@ -230,7 +232,7 @@ public class MainActivity extends InactivityListener {
 				User user=User.getInstance();
 				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
 				socketConnection = new SocketConnection();
-				socketConnection.addObserver(new PullRequestHandler(getApplicationContext()));
+				socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 				socketConnection.pullFromServer();
 				checkContactDatabase();
 			}
