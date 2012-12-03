@@ -18,8 +18,8 @@ package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
 import static com.klient_projekttermin.CommonUtilities.displayMessage;
-import loginFunction.LogInActivity;
-import loginFunction.User;
+import login.LogInActivity;
+import login.User;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;

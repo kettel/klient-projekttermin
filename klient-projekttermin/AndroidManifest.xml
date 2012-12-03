@@ -130,7 +130,7 @@
             android:name="database.PictureContentProvider"
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
-        <service android:name=".GCMIntentService" />
+        <service android:name="com.klient_projekttermin.GCMIntentService" />
     </application>
 
 </manifest>

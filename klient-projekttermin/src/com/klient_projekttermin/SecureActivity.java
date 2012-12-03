@@ -1,7 +1,7 @@
 package com.klient_projekttermin;
 
-import loginFunction.LogInActivity;
-import loginFunction.User;
+import login.LogInActivity;
+import login.User;
 import qosManager.QoSManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;

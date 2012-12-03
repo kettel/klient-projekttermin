@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import loginFunction.LogInActivity;
-import loginFunction.User;
+import login.LogInActivity;
+import login.User;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Contact;

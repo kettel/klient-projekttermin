@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import loginFunction.User;
+import login.User;
 import models.MessageModel;
 import models.ModelInterface;
 import android.app.Activity;

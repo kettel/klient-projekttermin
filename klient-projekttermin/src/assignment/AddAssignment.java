@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import loginFunction.User;
+import login.User;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
