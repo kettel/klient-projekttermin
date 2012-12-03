@@ -27,10 +27,17 @@ public class SearchSuggestions extends Observable implements
 		if (service!=null) {
 			service.cancel();
 		}
+		
+		final int[] cat = new int[0];
+		final GeocodingService service = new GeocodingService(this, GeocodingService.DEFAULT_URL,
+		"en", currentPos, text, GeocodingService.SEARCH_TYPE_GEOCODING, cat, 10, false);
+//		service.execute();
+		
 		System.out.println(GeocodingService.DEFAULT_URL);
-		service = new GeocodingService(this,
-				GeocodingService.DEFAULT_URL, "et", currentPos, text,
-				GeocodingService.SEARCH_TYPE_GEOCODING, null, 5, false);
+		
+//		service = new GeocodingService(this,
+//				GeocodingService.DEFAULT_URL, "et", currentPos, text,
+//				GeocodingService.SEARCH_TYPE_GEOCODING, null, 5, false);
 		service.execute();
 	}
 

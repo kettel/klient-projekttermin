@@ -347,9 +347,9 @@ public class MapActivity extends SecureActivity implements Observer,
 				});
 			}
 		});
-		View v = menu.findItem(R.id.menu_search).getActionView();
+		View v = (View)menu.findItem(R.id.menu_search).getActionView();
 		this.sp = (ProgressBar) v.findViewById(R.id.spinner);
-		this.searchItem = menu.findItem(R.id.menu_search);
+		this.searchItem = (MenuItem)menu.findItem(R.id.menu_search);
 		this.clearSearch = (Button) v.findViewById(R.id.clearSearch);
 		this.clearSearch.setOnClickListener(new OnClickListener() {
 
@@ -513,7 +513,7 @@ public class MapActivity extends SecureActivity implements Observer,
 		else {
 			m.setTitle("Markera region");
 			if (!points.isEmpty()) {
-				WgsPoint[] p = (points)
+				WgsPoint[] p = (WgsPoint[])(points)
 						.toArray(new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
 			}
@@ -521,7 +521,7 @@ public class MapActivity extends SecureActivity implements Observer,
 			 * Tar bort punkterna från kartan
 			 */
 			if (!regionCorners.isEmpty()) {
-				Place[] corners = regionCorners
+				Place[] corners = (Place[])regionCorners
 						.toArray(new Place[regionCorners.size()]);
 				mapComponent.removePlaces(corners);
 			}

@@ -54,7 +54,7 @@ public class Album extends Activity implements OnItemClickListener {
 		setContentView(R.layout.activity_photo_gallery);
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		Gallery g = (Gallery) findViewById(R.id.Gallery);
-		Database db = Database.getInstance(getApplicationContext());
+		Database db = Database.getInstance(getApplicationContext());	
 		imagesFromDB = db
 				.getAllFromDB(new PictureModel(), getContentResolver());
 			for (ModelInterface temp : imagesFromDB) {
