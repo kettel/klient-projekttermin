@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import loginFunction.InactivityListener;
 import loginFunction.User;
 import models.MessageModel;
 import models.ModelInterface;
@@ -22,11 +21,12 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 
 import database.Database;
 
-public class Inbox extends InactivityListener {
+public class Inbox extends SecureActivity {
 
 	private ListView listOfPeopleEngagedInConversation;
 	private String[] peopleIveBeenTalkingTo;
@@ -44,7 +44,7 @@ public class Inbox extends InactivityListener {
 		User user = User.getInstance();
 		userName = user.getAuthenticationModel().getUserName();
 
-		//Ropar p� en metod som skapar en lista �ver alla kontakter som anv�ndaren har haft en konversation med.
+		//Ropar på en metod som skapar en lista över alla kontakter som användaren har haft en konversation med.
 		loadListOfSenders();
 	}
 
@@ -132,14 +132,14 @@ public class Inbox extends InactivityListener {
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("RADERA?");
 		alertDialog.setMessage("Vill du ta bort konversation?");
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA", new DialogInterface.OnClickListener() {
+		alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "JA", new DialogInterface.OnClickListener() {
 
 			//Om användaren trycker på ja så körs metoden eraseMessage()
 			public void onClick(DialogInterface dialog, int which) {
 				eraseConversation(peopleIveBeenTalkingTo[conversationNumber]);
 			}
 		});
-		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "AVBRYT", new DialogInterface.OnClickListener() {
+		alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "AVBRYT", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
 				//Gör inget

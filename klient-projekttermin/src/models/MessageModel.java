@@ -64,7 +64,7 @@ public class MessageModel implements ModelInterface {
 	 * @return	CharSequence
 	 */
 	public CharSequence getMessageContent() {
-		return (CharSequence) messageContent;
+		return messageContent;
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class MessageModel implements ModelInterface {
 	 * @return	CharSequence
 	 */
 	public CharSequence getReciever() {
-		return (CharSequence) reciever;
+		return reciever;
 	}
 
 	/**

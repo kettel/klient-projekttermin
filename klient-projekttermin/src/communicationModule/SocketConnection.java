@@ -28,6 +28,7 @@ public class SocketConnection extends Observable {
 	private int port = 17234;
 	private ArrayList<String[]> servers = new ArrayList<String[]>();
 	Iterator<String[]> iterator;
+
 	public SocketConnection() {
 		super();
 		initServerList();
@@ -38,12 +39,8 @@ public class SocketConnection extends Observable {
 		servers.add(i);
 		String[] j = { "94.254.72.38", "18234", "17783" };
 		servers.add(j);
-		iterator=servers.iterator();
-		String[]server=getAvailableServer();
-		ip=server[0];
-		port=Integer.parseInt(server[1]);
-		CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
-				+ server[2];
+		iterator = servers.iterator();
+		loadNextServer();
 	}
 
 	public void sendModel(ModelInterface modelInterface) {
@@ -70,6 +67,12 @@ public class SocketConnection extends Observable {
 		return null;
 	}
 
+	/**
+	 * Skapar en ny socketanslutning och skriver en sträng på denna
+	 * 
+	 * @param json
+	 *            - En sträng med det som ska skickas
+	 */
 	private void sendJSON(String json) {
 		try {
 			Socket socket = new Socket(ip, port);
@@ -80,30 +83,28 @@ public class SocketConnection extends Observable {
 			socket.close();
 		} catch (IOException e) {
 			if (iterator.hasNext()) {
-				String[] server = getAvailableServer();
-				System.out.println("byter port: "+server[1]);
-				ip = server[0];
-				port = Integer.parseInt(server[1]);
-				CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
-						+ server[2];
+				loadNextServer();
 				sendJSON(json);
 			}
 		}
 	}
 
-	private String[] getAvailableServer() {
-		if (iterator.hasNext()) {
-			return iterator.next();
-		} else {
-			return null;
-		}
-
+	/**
+	 * Laddar in nästa server. Server addressen samt portar finnsi arrayen.Ip på
+	 * index 0, port på index 1 och jettyport på index 2
+	 */
+	private void loadNextServer() {
+		String[] server = iterator.next();
+		System.out.println("byter port: " + server[1]);
+		ip = server[0];
+		port = Integer.parseInt(server[1]);
+		CommonUtilities.SERVER_URL = "http://" + server[0] + ":" + server[2];
 	}
 
 	private void sendAuthentication(String json) {
 
 		try {
-			System.out.println("Försöker autentisera mot "+ip+":"+port);
+			System.out.println("Försöker autentisera mot " + ip + ":" + port);
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(ip, port), 10000);
 			System.out.println("Socketen lyckades ansluta");
@@ -130,18 +131,12 @@ public class SocketConnection extends Observable {
 		} catch (IOException e) {
 			e.printStackTrace();
 			if (iterator.hasNext()) {
-				String[] server = getAvailableServer();
-				System.out.println("byter port: "+server[1]);
-				ip = server[0];
-				port = Integer.parseInt(server[1]);
-				CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
-						+ server[2];
-				System.out.println(CommonUtilities.SERVER_URL);
+				loadNextServer();
 				sendAuthentication(json);
-			}else{
+			} else {
 				setChanged();
 				String fail = "failed to connect";
-				notifyObservers(fail);	
+				notifyObservers(fail);
 			}
 		}
 	}
@@ -170,21 +165,18 @@ public class SocketConnection extends Observable {
 					while ((inputString = bufferedReader.readLine()) != null) {
 						if (inputString
 								.contains("\"databaseRepresentation\":\"message\"")) {
-							System.out.println("message");
 							MessageModel message = gson.fromJson(inputString,
 									MessageModel.class);
 							setChanged();
 							notifyObservers(message);
 						} else if (inputString
 								.contains("\"databaseRepresentation\":\"assignment\"")) {
-							System.out.println("assignment");
 							Assignment assignment = gson.fromJson(inputString,
 									Assignment.class);
 							setChanged();
 							notifyObservers(assignment);
 						} else if (inputString
 								.contains("\"databaseRepresentation\":\"contact\"")) {
-							System.out.println("contact");
 							Contact contact = gson.fromJson(inputString,
 									Contact.class);
 							setChanged();
@@ -198,23 +190,19 @@ public class SocketConnection extends Observable {
 					}
 					bufferedReader.close();
 					socket.close();
-					if (inputString==null) {
+					if (inputString == null) {
 						setChanged();
 						notifyObservers(null);
 					}
 				} catch (IOException e) {
 					if (iterator.hasNext()) {
 						System.out.println("byter port");
-						String[] server = getAvailableServer();
-						ip = server[0];
-						port = Integer.parseInt(server[1]);
-						CommonUtilities.SERVER_URL = "http://" + server[0]
-								+ ":" + server[2];
+						loadNextServer();
 						pullFromServer();
-					}else{
+					} else {
 						setChanged();
 						String fail = "failed to connect";
-						notifyObservers(fail);	
+						notifyObservers(fail);
 					}
 				}
 			}
@@ -247,6 +235,7 @@ public class SocketConnection extends Observable {
 							notifyObservers(contact);
 						} else if (inputString
 								.contains("\"databaseRepresentation\":\"authentication\"")) {
+							// ska vara tom
 						} else {
 							System.out.println("Did not recognize model: "
 									+ inputString);
@@ -254,23 +243,18 @@ public class SocketConnection extends Observable {
 					}
 					bufferedReader.close();
 					socket.close();
-					if (inputString==null) {
+					if (inputString == null) {
 						setChanged();
 						notifyObservers(null);
 					}
 				} catch (IOException e) {
 					if (iterator.hasNext()) {
-						System.out.println("byter port");
-						String[] server = getAvailableServer();
-						ip = server[0];
-						port = Integer.parseInt(server[1]);
-						CommonUtilities.SERVER_URL = "http://" + server[0]
-								+ ":" + server[2];
+						loadNextServer();
 						getAllContactsReq();
-					}else{
+					} else {
 						setChanged();
 						String fail = "failed to connect";
-						notifyObservers(fail);	
+						notifyObservers(fail);
 					}
 				}
 			}

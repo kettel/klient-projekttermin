@@ -5,6 +5,7 @@ import models.AuthenticationModel;
 public class User {
 
 	private AuthenticationModel authenticationModel;
+	private boolean loggedIn=false;
 
 	private User(){}
 
@@ -20,5 +21,12 @@ public class User {
 
 	public void setAuthenticationModel(AuthenticationModel authenticationModel) {
 		this.authenticationModel = authenticationModel;
+	}
+
+	public boolean isLogged() {
+		return loggedIn;
+	}
+	public void setLoggedIn(boolean b){
+		this.loggedIn=b;
 	}
 }

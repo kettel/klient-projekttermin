@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import loginFunction.InactivityListener;
-import loginFunction.LogInFunction;
+import loginFunction.LogInActivity;
 import loginFunction.User;
 import map.MapActivity;
 import messageFunction.Inbox;
@@ -41,13 +40,14 @@ import communicationModule.SocketConnection;
 import contacts.ContactsBookActivity;
 import database.Database;
 
-public class MainActivity extends InactivityListener {
+public class MainActivity extends SecureActivity {
 
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	private QoSManager qosManager;
 	private Database database;
-	private SocketConnection socketConnection;
+	private SocketConnection socketConnection=new SocketConnection();
+	private User user=User.getInstance();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -77,6 +77,8 @@ public class MainActivity extends InactivityListener {
 			// Device is already registered on GCM, check server.
 			if (GCMRegistrar.isRegisteredOnServer(this)) {
 				// Skips registration.
+				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
+				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
 				// It's also necessary to cancel the thread onDestroy(),
@@ -163,11 +165,6 @@ public class MainActivity extends InactivityListener {
 		});
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-	}
-
 	public void checkContactDatabase() {
 		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
@@ -233,10 +230,7 @@ public class MainActivity extends InactivityListener {
 		public void onReceive(Context context, Intent intent) {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
 			if (newMessage.contains("registered")) {
-				System.out.println("New gcm-message: "+newMessage);
-				User user=User.getInstance();
 				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
-				socketConnection = new SocketConnection();
 				socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 				socketConnection.pullFromServer();
 				checkContactDatabase();
@@ -246,9 +240,13 @@ public class MainActivity extends InactivityListener {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		finish();
-		Intent intent = new Intent(MainActivity.this, LogInFunction.class);
-		this.startActivity(intent);
+		logout();
 		return false;
+	}
+	public void logout(){
+		finish();
+		Intent intent = new Intent(MainActivity.this, LogInActivity.class);
+		user.setLoggedIn(false);
+		this.startActivity(intent);
 	}
 }
