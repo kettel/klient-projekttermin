@@ -29,11 +29,17 @@ public class SocketConnection extends Observable {
 	private ArrayList<String[]> servers = new ArrayList<String[]>();
 	Iterator<String[]> iterator;
 
+	/**
+	 * Konstruktor som även initierar serverlistan.
+	 */
 	public SocketConnection() {
 		super();
 		initServerList();
 	}
 
+	/**
+	 * Skapar en array av addresser till servrar samt laddar in den första
+	 */
 	private void initServerList() {
 		String[] i = { "94.254.72.38", "17234", "16783" };
 		servers.add(i);
@@ -43,6 +49,12 @@ public class SocketConnection extends Observable {
 		loadNextServer();
 	}
 
+	/**
+	 * Skickar en modell till servern
+	 * 
+	 * @param modelInterface
+	 *            -modellen
+	 */
 	public void sendModel(ModelInterface modelInterface) {
 		final ModelInterface model = modelInterface;
 		new Thread(new Runnable() {
@@ -52,6 +64,12 @@ public class SocketConnection extends Observable {
 		}).start();
 	}
 
+	/**
+	 * Skickar en autentiseringsförfrågan till servern
+	 * 
+	 * @param authenticationModel
+	 *            - modellen
+	 */
 	public void authenticate(AuthenticationModel authenticationModel) {
 		final AuthenticationModel model = authenticationModel;
 		new Thread(new Runnable() {
@@ -101,6 +119,12 @@ public class SocketConnection extends Observable {
 		CommonUtilities.SERVER_URL = "http://" + server[0] + ":" + server[2];
 	}
 
+	/**
+	 * Skapar en anslutning o skickar strängen till servern
+	 * 
+	 * @param json
+	 *            - Strängen
+	 */
 	private void sendAuthentication(String json) {
 
 		try {
@@ -139,10 +163,6 @@ public class SocketConnection extends Observable {
 				notifyObservers(fail);
 			}
 		}
-	}
-
-	public void sendFailedLoginNotification() {
-
 	}
 
 	public void pullFromServer() {
