@@ -28,6 +28,8 @@ public class IncomingCallDialog extends Activity {
 		Bundle extras = getIntent().getExtras();
 		caller = extras.getString("caller") + " ringer...";
 
+		Log.d("SIP/IncomingCallDialog","Tagit emot samtal från " + caller);
+		
 		int delay = 5000; // delay for 5 sec.
 		int period = 1000; // repeat every sec.
 

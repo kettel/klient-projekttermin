@@ -31,7 +31,7 @@ public class RegisterWithSipServerService extends Service {
 	
 	// Variabler som jag inte vet vart de ska vara. Main? Service? Hjälpklass?
 	public static IncomingCallReceiver callReceiver;
-    public static OutgoingCallReceiver callSender;
+//    public static OutgoingCallReceiver callSender;
 	public static SipAudioCall call = null;
 	
 	// Bör hämtas från databas i framtiden
@@ -43,10 +43,6 @@ public class RegisterWithSipServerService extends Service {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		Boolean voipSupported = SipManager.isVoipSupported(this);
-		Boolean apiSupported = SipManager.isApiSupported(this);
-		Log.d("SIP/RegWithSipServ","voipSupport: "+voipSupported);
-		Log.d("SIP/RegWithSipServ","apiSupport: "+apiSupported);
 		initializeManager(getApplicationContext());
 		return mBinder;
 	}
@@ -67,10 +63,10 @@ public class RegisterWithSipServerService extends Service {
 	        callReceiver = new IncomingCallReceiver();
 	        context.registerReceiver(callReceiver, filter);
 	        // SIP: Utgående samtal
-	        IntentFilter filterOut = new IntentFilter();
-	        filterOut.addAction("com.klient_projekttermin.OUTGOING_CALL");
-	        callSender = new OutgoingCallReceiver();
-	        context.registerReceiver(callSender, filter);
+//	        IntentFilter filterOut = new IntentFilter();
+//	        filterOut.addAction("com.klient_projekttermin.OUTGOING_CALL");
+//	        callSender = new OutgoingCallReceiver();
+//	        context.registerReceiver(callSender, filter);
 		}
 		
 		if(RegisterWithSipServerService.manager == null) {

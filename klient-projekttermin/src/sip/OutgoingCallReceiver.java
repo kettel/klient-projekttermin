@@ -20,6 +20,7 @@ public class OutgoingCallReceiver extends BroadcastReceiver {
      */
 	@Override
 	public void onReceive(final Context context, Intent intent) {
+		Log.d("SIP/OutgoingCallReceiver","Tog emot ett utgående samtal..");
 		boolean isRegistred = false;
 		try{
 			isRegistred = RegisterWithSipServerService.manager.isRegistered(RegisterWithSipServerService.me.getUriString());

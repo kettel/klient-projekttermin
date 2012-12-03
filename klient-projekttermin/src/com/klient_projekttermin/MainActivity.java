@@ -16,8 +16,6 @@ import map.MapActivity;
 import messageFunction.Inbox;
 import models.Contact;
 import qosManager.QoSManager;
-import sip.IncomingCallReceiver;
-import sip.OutgoingCallReceiver;
 import sip.RegisterWithSipServerService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;

@@ -32,22 +32,25 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 					try {
 						Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 						startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
+						startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						context.startActivity(startIncomingCallDialog);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			};
-			
 			incomingCall = RegisterWithSipServerService.manager.takeAudioCall(intent, listener);
-			// Fuling för att hindra att fler än 1 callDialog startas..
 			Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 			startIncomingCallDialog.putExtra("caller", incomingCall.getPeerProfile().getDisplayName());
-			context.startActivity(startIncomingCallDialog);
+			startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			RegisterWithSipServerService.call = incomingCall;
+			context.startActivity(startIncomingCallDialog);
 		} catch (Exception e) {
 			if (incomingCall != null) {
+				Log.d("SIP/IncomingCallReceiver","IncomingCall är inte null men något gick fel. Stänger...");
 				incomingCall.close();
+				Log.d("SIP/IncomingCallReceiver","Fel: " + e.toString());
+				e.printStackTrace();
 			}
 		}
 	}
