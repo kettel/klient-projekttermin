@@ -40,7 +40,7 @@ public class Album extends Activity implements OnItemClickListener {
 	private int callingActivity;
 	private String[] pictureAlts = { "Skapa uppdrag med foto" };
 	private int currentPictureId;
-	private List<Bitmap> images  = new ArrayList<Bitmap>();
+	private List<Bitmap> images = new ArrayList<Bitmap>();
 
 	/** Called when the activity is first created. */
 	@Override
@@ -50,19 +50,18 @@ public class Album extends Activity implements OnItemClickListener {
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		Gallery g = (Gallery) findViewById(R.id.Gallery);
 		Database db = Database.getInstance(getApplicationContext());
-		imagesFromDB = db.getAllFromDB(new PictureModel(), getContentResolver());
-		for (ModelInterface temp : imagesFromDB) {
-			PictureModel p = (PictureModel) temp;
-			Bitmap bitmap = BitmapFactory.decodeByteArray(
-					p.getPicture(), 0,
-					p.getPicture().length);
-			images.add(bitmap);
-		}
-		g.setAdapter(new ImageAdapter(this));
-		g.setSpacing(10);
-		g.setOnItemClickListener(this);
+		imagesFromDB = db
+				.getAllFromDB(new PictureModel(), getContentResolver());
+			for (ModelInterface temp : imagesFromDB) {
+				PictureModel p = (PictureModel) temp;
+				Bitmap bitmap = BitmapFactory.decodeByteArray(p.getPicture(),
+						0, p.getPicture().length);
+				images.add(bitmap);
+			}
+			g.setAdapter(new ImageAdapter(this));
+			g.setSpacing(10);
+			g.setOnItemClickListener(this);
 	}
-
 
 	public class ImageAdapter extends BaseAdapter {
 		private Context myContext;

@@ -23,6 +23,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
+
+import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
 /**
@@ -87,7 +89,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	 */
 	private void generateNotification(Context context, String message) {
 		SocketConnection connection=new SocketConnection();
-		connection.addObserver(new PullRequestHandler(context));
+		connection.addObserver(new PullResponseHandler(context));
 		connection.pullFromServer();
 	}
 

@@ -34,6 +34,8 @@ import assignment.AssignmentOverview;
 import camera.Camera;
 
 import com.google.android.gcm.GCMRegistrar;
+
+import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
 import contacts.ContactsBookActivity;
@@ -52,6 +54,7 @@ public class MainActivity extends InactivityListener {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
+		qosManager.startBatteryCheckingThread(this);
 
 		setContentView(R.layout.activity_main);
 
@@ -112,15 +115,16 @@ public class MainActivity extends InactivityListener {
 				// för dessa här.
 				switch (arg2) {
 				case 0:
-					if (qosManager.allowedToStartMap()) {
+					if (qosManager.isAllowedToStartMap()) {
 						myIntent = new Intent(MainActivity.this,
 								MapActivity.class);
+						myIntent.putExtra("calling-activity", ActivityConstants.MAIN_ACTIVITY);
 					} else {
 						unallowedStart.show();
 					}
 					break;
 				case 1:
-					if (qosManager.allowedToStartMessages()) {
+					if (qosManager.isAllowedToStartMessages()) {
 						System.out.println("Startar meddelanden");
 						myIntent = new Intent(MainActivity.this, Inbox.class);
 					} else {
@@ -128,7 +132,7 @@ public class MainActivity extends InactivityListener {
 					}
 					break;
 				case 2:
-					if (qosManager.allowedToStartAssignment()) {
+					if (qosManager.isAllowedToStartAssignment()) {
 						myIntent = new Intent(MainActivity.this,
 								AssignmentOverview.class);
 					} else {
@@ -136,7 +140,7 @@ public class MainActivity extends InactivityListener {
 					}
 					break;
 				case 3:
-					if (qosManager.allowedToStartCamera()) {
+					if (qosManager.isAllowedToStartCamera()) {
 						myIntent = new Intent(MainActivity.this, Camera.class);
 					} else {
 						unallowedStart.show();
@@ -229,7 +233,7 @@ public class MainActivity extends InactivityListener {
 				User user=User.getInstance();
 				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
 				socketConnection = new SocketConnection();
-				socketConnection.addObserver(new PullRequestHandler(getApplicationContext()));
+				socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 				socketConnection.pullFromServer();
 				checkContactDatabase();
 			}
