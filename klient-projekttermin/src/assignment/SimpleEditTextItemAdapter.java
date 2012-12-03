@@ -83,56 +83,59 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		if (convertView == null) {
+		
+		convertView = null;
+
+		final View v = super.getView(position, convertView, parent);
+		editText = (EditText) v.findViewById(R.id.text_item);
+		if (position == 8) {
 			convertView = inflater.inflate(getItemViewType(position), null);
-			if (position == 8) {
-				
-				final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
-						.findViewById(R.id.autoText_item);
-				
-				
-				
-				autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
-						context, null, true));
+	
+	final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
+			.findViewById(R.id.autoText_item);
+	
+	
+	
+	autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
+			context, null, true));
 
-					autoCompleteTextView.setHint(((HashMap<String, String>) this
-							.getItem(position)).get("line1"));
-					
-					//Snygghax.. för att få tag i auto-vyns text.
-					autoCompleteTextView.setOnItemClickListener(new OnItemClickListener() {
+		autoCompleteTextView.setHint(((HashMap<String, String>) this
+				.getItem(position)).get("line1"));
+		
+		//Snygghax.. för att få tag i auto-vyns text.
+		autoCompleteTextView.setOnItemClickListener(new OnItemClickListener() {
 
-						public void onItemClick(AdapterView<?> arg0, View arg1,
-								int arg2, long arg3) {
-							TextView e = (TextView)arg1;
-							Log.e("FEL", e.getText().toString());
-							
-							temp = temp + e.getText().toString()+ ", ";
-							
-							itemStrings.put(8, temp);
-							autoCompleteTextView.setHint(temp);
-							autoCompleteTextView.setText("");
-							//itemStrings.put(8, e.getText().toString());
-						}
-					});
-
-			} else {
-				System.out.println("else");
-				editText = (EditText) convertView.findViewById(R.id.text_item);
-
-				if (editText != null) {
-					if (itemStrings.get(position) != null) {
-						editText.setText(itemStrings.get(position));
-					} else {
-						editText.setText(null);
-					}
-					editText.setHint(((HashMap<String, String>) this
-							.getItem(position)).get("line1"));
-					editText.setId(position);
-					editText.setOnFocusChangeListener(this);
-				}
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				TextView e = (TextView)arg1;
+				Log.e("FEL", e.getText().toString());
+				
+				temp = temp + e.getText().toString()+ ", ";
+				
+				itemStrings.put(8, temp);
+				autoCompleteTextView.setHint(temp);
+				autoCompleteTextView.setText("");
+				//itemStrings.put(8, e.getText().toString());
 			}
+		});
+
+}
+		else if (editText != null) {
+		if (itemStrings.get(position) != null) {
+		editText.setText(itemStrings.get(position));
+		} else {
+		editText.setText(null);
 		}
-		return convertView;
+		editText.setHint(((HashMap<String, String>) this.getItem(position))
+		.get("line1"));
+		editText.setId(position);
+		editText.setOnFocusChangeListener(this);
+		}
+		if (position == 8) {
+			return convertView;
+		}
+		else
+		return v;
 
 	}
 
