@@ -274,6 +274,7 @@ public class MainActivity extends InactivityListener {
      * and unregistering your device from the server.
      */
     public void closeLocalProfile() {
+    	Log.d("SIP","Ska stänga SIP-profil..");
         if (manager == null) {
             return;
         }
@@ -336,6 +337,10 @@ public class MainActivity extends InactivityListener {
 		}
 		unregisterReceiver(mHandleMessageReceiver);
 		GCMRegistrar.onDestroy(getApplicationContext());
+		
+		// Avregistrera klienten från SIP-servern
+		closeLocalProfile();
+		
 		super.onDestroy();
 	}
 

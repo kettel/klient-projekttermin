@@ -33,6 +33,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 				public void onRinging(SipAudioCall call, SipProfile caller) {
 					try {
 						Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
+						startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
 						context.startActivity(startIncomingCallDialog);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -43,6 +44,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 			incomingCall = mActivity.manager.takeAudioCall(intent, listener);
 			// Fuling för att hindra att fler än 1 callDialog startas..
 			Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
+			startIncomingCallDialog.putExtra("caller", incomingCall.getPeerProfile().getDisplayName());
 			context.startActivity(startIncomingCallDialog);
 			mActivity.call = incomingCall;
 		} catch (Exception e) {

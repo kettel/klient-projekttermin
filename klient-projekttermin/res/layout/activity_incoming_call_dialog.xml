@@ -13,30 +13,30 @@
         android:layout_marginBottom="55dp"
         android:text="ToggleButton" />
 
-    <QuickContactBadge
-        android:id="@+id/quickContactBadge1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="86dp" />
-
     <TextView
         android:id="@+id/textViewCaller"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/toggleButton1"
-        android:layout_marginBottom="77dp"
-        android:layout_toLeftOf="@+id/quickContactBadge1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="75dp"
         android:text="TextView" />
+
+    <QuickContactBadge
+        android:id="@+id/quickContactBadge1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textViewCaller"
+        android:layout_alignLeft="@+id/textViewCaller"
+        android:layout_marginBottom="44dp" />
 
     <TextView
         android:id="@+id/textViewTimeInCall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_alignTop="@+id/textView1"
-        android:layout_marginTop="34dp"
+        android:layout_above="@+id/toggleButton1"
+        android:layout_alignLeft="@+id/toggleButton1"
+        android:layout_marginBottom="32dp"
         android:text="TextView" />
 
 </RelativeLayout>
