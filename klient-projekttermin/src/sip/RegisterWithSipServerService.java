@@ -29,6 +29,8 @@ public class RegisterWithSipServerService extends Service {
 	public static SipProfile me = null;
 	public static String sipAddress = null;
 	
+	public static boolean isInCall = false;
+	
 	// Variabler som jag inte vet vart de ska vara. Main? Service? Hjälpklass?
 	public static IncomingCallReceiver callReceiver;
 //    public static OutgoingCallReceiver callSender;
@@ -176,6 +178,7 @@ public class RegisterWithSipServerService extends Service {
                 // forget to set up a listener to set things up once the call is established.
                 @Override
                 public void onCallEstablished(SipAudioCall call) {
+                	isInCall= true;
                     call.startAudio();
                     call.setSpeakerMode(true);
                     //call.toggleMute();
@@ -183,12 +186,17 @@ public class RegisterWithSipServerService extends Service {
 
                 @Override
                 public void onCallEnded(SipAudioCall call) {
+                	isInCall = false;
                     //updateStatus("Ready.");
                 }
             };
 
             call = RegisterWithSipServerService.manager.makeAudioCall(me.getUriString(), sipAddress, listener, 30);
-
+            Intent startIncomingCallDialog = new Intent(staticContext,IncomingCallDialog.class);
+			startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
+			startIncomingCallDialog.putExtra("outgoing",true);
+			startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			staticContext.startActivity(startIncomingCallDialog);
         }
         catch (Exception e) {
             Log.i("RegisterWithSipServerService/InitiateCall", "Error when trying to close manager.", e);
