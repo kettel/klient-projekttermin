@@ -77,7 +77,7 @@ public class RegisterWithSipServerService extends Service {
         int delay = 5000; // delay for 5 sec.
 		int period = 1000; // repeat every sec.
 
-		// Försök återregistrera varje sekund
+		// Försök återregistrera varje sekund om man inte är registrerad
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask()
 		{
