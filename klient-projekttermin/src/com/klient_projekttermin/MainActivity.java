@@ -18,7 +18,6 @@ import messageFunction.Inbox;
 import models.Contact;
 import qosManager.QoSManager;
 import sip.IncomingCallReceiver;
-import sip.SipMain;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -175,7 +174,7 @@ public class MainActivity extends InactivityListener {
 					break;
 				case 5:
 					if (qosManager.allowedToStartSip()) {
-						myIntent = new Intent(MainActivity.this, SipMain.class);
+						//myIntent = new Intent(MainActivity.this, SipMain.class);
 					} else {
 						unallowedStart.show();
 					}
@@ -193,6 +192,31 @@ public class MainActivity extends InactivityListener {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		
+		// SIP: Registrera Intent för att hantera inkommande SIP-samtal
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.klient_projekttermin.INCOMING_CALL");
+        callReceiver = new IncomingCallReceiver();
+        this.registerReceiver(callReceiver, filter);
+        
+        // SIP: Registrera klienten hos SIP-servern 
+        // TODO: Skriv om till service..
+        initializeManager();
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		
+		// SIP: Registrera Intent för att hantera inkommande SIP-samtal
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.klient_projekttermin.INCOMING_CALL");
+        callReceiver = new IncomingCallReceiver();
+        this.registerReceiver(callReceiver, filter);
+        
+        // SIP: Registrera klienten hos SIP-servern 
+        // TODO: Skriv om till service..
+        initializeManager();
 	}
 	
 	/**
@@ -232,7 +256,6 @@ public class MainActivity extends InactivityListener {
             i.setAction("com.klient_projekttermin.INCOMING_CALL");
             PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, Intent.FILL_IN_DATA);
             manager.open(me, pi, null);
-
 
             // This listener must be added AFTER manager.open is called,
             // Otherwise the methods aren't guaranteed to fire.
