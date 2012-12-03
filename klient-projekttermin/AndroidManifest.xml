@@ -71,7 +71,7 @@
             android:label="@string/uppdrag" >
         </activity>
         <activity
-            android:name="com.example.android.sip.IncomingCallDialog"
+            android:name="sip.IncomingCallDialog"
             android:label="@string/title_activity_incoming_call_dialog" >
         </activity>
         <activity

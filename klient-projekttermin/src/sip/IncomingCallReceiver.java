@@ -15,6 +15,7 @@ import com.klient_projekttermin.MainActivity;
 public class IncomingCallReceiver extends BroadcastReceiver {
 	static boolean answerCall = false;
 	static SipAudioCall incomingCall = null;
+	static int callCounter = 0;
 	/**
 	 * Processes the incoming call, answers it, and hands it over to the
 	 * WalkieTalkieActivity.
@@ -23,8 +24,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 	 */
 	@Override
 	public void onReceive(final Context context, Intent intent) {
-
-		Log.d("SIP","Ett inkommande samtal...");
+		callCounter++;
+		Log.d("SIP","Ett inkommande samtal... Samtal nummer: "+callCounter);
+		
 		try {
 			SipAudioCall.Listener listener = new SipAudioCall.Listener() {
 				@Override

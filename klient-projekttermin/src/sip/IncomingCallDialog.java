@@ -16,7 +16,6 @@ public class IncomingCallDialog extends Activity {
 		super.onCreate(savedInstanceState);
 		Log.d("SIP","Inne i incomingCallDialog-aktiviteten");
 		setContentView(R.layout.activity_incoming_call_dialog);
-//		Bundle bundle = this.getIntent().getExtras();
 		
 		ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
 		toggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
