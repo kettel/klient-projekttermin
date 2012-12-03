@@ -59,6 +59,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 			user.setLoggedIn(false);
 			Intent i = new Intent(this, LogInActivity.class);
 			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(i);
 		}else{
 			Log.i(TAG, "Received message");
 			String message = getString(R.string.gcm_message);
