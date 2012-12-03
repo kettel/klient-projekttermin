@@ -71,6 +71,9 @@ public class AssignmentDetails extends InactivityListener {
 		bindService(intentServer, communicationServiceConnection,
 				Context.BIND_AUTO_CREATE);
 		// ----End----
+		
+
+		
 
 		// Hämtar intent för att nå extras så som ID:t som clickades på i
 		// assignmentoverview.
@@ -88,6 +91,7 @@ public class AssignmentDetails extends InactivityListener {
 		// Hittar rätt assignment i databasen och sätter den tillgänglig i denna
 		// klass.
 		setCurrentAssignmentToReach();
+		
 
 		// Hämtar textvyerna som ska sättas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
@@ -147,9 +151,7 @@ public class AssignmentDetails extends InactivityListener {
 				checkboxAssign.setEnabled(false);
 				needToListen = false;
 			}
-
 		}
-
 	}
 
 	public void setCurrentAssignmentToReach() {
