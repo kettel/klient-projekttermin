@@ -8,7 +8,10 @@ import java.util.Observer;
 
 import models.AuthenticationModel;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -46,6 +49,41 @@ public class LogInActivity extends Activity implements Observer {
 		Intent intent = getIntent();
 		callingactivity = intent.getIntExtra("calling-activity", 0);
 		
+	}
+	@Override
+	public void onBackPressed() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setTitle("Title");
+	    builder.setMessage("Vill du logga ut?");
+	    builder.setPositiveButton("Ja", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	                SocketConnection socketConnection=new SocketConnection();
+	                socketConnection.logout();
+	                /*
+	                 * Notify the system to finalize and collect all objects of the app
+	                 * on exit so that the virtual machine running the app can be killed
+	                 * by the system without causing issues. NOTE: If this is set to
+	                 * true then the virtual machine will not be killed until all of its
+	                 * threads have closed.
+	                 */
+	                System.runFinalization();
+
+	                /*
+	                 * Force the system to close the app down completely instead of
+	                 * retaining it in the background. The virtual machine that runs the
+	                 * app will be killed. The app will be completely created as a new
+	                 * app in a new virtual machine running in a new process if the user
+	                 * starts the app again.
+	                 */
+	                System.exit(0);
+	            }});
+	    builder.setNegativeButton("Nej", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	            }});
+	    builder.setCancelable(false);
+	    builder.create().show();
 	}
 
 	@Override

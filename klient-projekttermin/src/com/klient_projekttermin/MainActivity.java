@@ -78,6 +78,7 @@ public class MainActivity extends SecureActivity {
 			if (GCMRegistrar.isRegisteredOnServer(this)) {
 				// Skips registration.
 				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
+				socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
@@ -163,6 +164,7 @@ public class MainActivity extends SecureActivity {
 	public void checkContactDatabase() {
 		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
+			socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 			socketConnection.getAllContactsReq();
 		}
 	}
