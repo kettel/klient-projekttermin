@@ -132,12 +132,11 @@
             android:name="database.PictureContentProvider"
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
-        <service android:name=".GCMIntentService" />
-
         <activity
             android:name="alternativeCamera.Cam"
             android:label="@string/title_activity_cam" >
         </activity>
+        <service android:name="com.klient_projekttermin.GCMIntentService" />
     </application>
 
 </manifest>

@@ -3,7 +3,7 @@ package assignment;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import loginFunction.User;
+import login.User;
 import map.CustomAdapter;
 import map.MapActivity;
 import models.Assignment;

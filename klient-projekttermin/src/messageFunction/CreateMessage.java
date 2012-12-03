@@ -1,6 +1,6 @@
 package messageFunction;
 
-import loginFunction.User;
+import login.User;
 import models.MessageModel;
 import android.app.AlertDialog;
 import android.content.DialogInterface;

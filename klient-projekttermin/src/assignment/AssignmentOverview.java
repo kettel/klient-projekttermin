@@ -2,7 +2,7 @@ package assignment;
 
 import java.util.List;
 
-import loginFunction.User;
+import login.User;
 import models.Assignment;
 import models.AssignmentStatus;
 import models.ModelInterface;

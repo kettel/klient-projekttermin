@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Observable;
 
-import loginFunction.User;
+import login.User;
 import models.Assignment;
 import models.AuthenticationModel;
 import models.Contact;

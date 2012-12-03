@@ -1,4 +1,4 @@
-package loginFunction;
+package login;
 
 import models.AuthenticationModel;
 
