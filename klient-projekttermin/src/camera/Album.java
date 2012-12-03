@@ -15,9 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +105,6 @@ public class Album extends Activity implements OnItemClickListener {
 			i.setScaleType(ImageView.ScaleType.FIT_XY);
 			/* Set the Width/Height of the ImageView. */
 			i.setLayoutParams(new Gallery.LayoutParams(700, 400));
-
 			return i;
 		}
 
@@ -143,6 +140,7 @@ public class Album extends Activity implements OnItemClickListener {
 	}
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		System.out.println("CLICKED");
 		currentPictureId = arg2;
 		switch (callingActivity) {
 		case ActivityConstants.CAMERA:
@@ -155,6 +153,7 @@ public class Album extends Activity implements OnItemClickListener {
 			intent.putExtra(pic, imagesToAssignment.get(currentPictureId));
 			setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
 			finish();
+			break;
 		default:
 			break;
 		}
