@@ -71,7 +71,7 @@ public class LogInFunction extends Activity implements Observer {
 		user = User.getInstance();
 		user.setAuthenticationModel(originalModel);
 
-		tryOfflineLogin(originalModel);
+		tryOnlineLogin(originalModel);
 	}
 
 	public void tryOfflineLogin(AuthenticationModel loginInput)
@@ -100,7 +100,7 @@ public class LogInFunction extends Activity implements Observer {
 				}
 			} else {
 				removeLastUserFromDB();
-				tryOnlineLogin(loginInput);
+//				tryOnlineLogin(loginInput);
 			}
 		}
 
@@ -234,12 +234,19 @@ public class LogInFunction extends Activity implements Observer {
 				public void run() {
 					pd.dismiss();
 					Toast toast = Toast.makeText(getApplicationContext(),
-							"Det gick inte att ansluta till servern!",
+							"Det gick inte att ansluta till servern!, Försöker logga in offline",
 									Toast.LENGTH_LONG);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}
 			});
+			
+			try {
+				tryOfflineLogin(originalModel);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }
