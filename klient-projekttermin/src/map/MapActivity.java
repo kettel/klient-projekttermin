@@ -1,14 +1,11 @@
 package map;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Vector;
 
 import loginFunction.InactivityListener;
 import loginFunction.User;
@@ -62,10 +59,7 @@ import com.nutiteq.components.PolyStyle;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.fs.AndroidFileSystem;
-import com.nutiteq.fs.FileSystem;
-import com.nutiteq.fs.FileSystemConnection;
 import com.nutiteq.listeners.MapListener;
-import com.nutiteq.listeners.OnLongClickListener;
 import com.nutiteq.listeners.OnMapElementListener;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
@@ -558,6 +552,7 @@ public class MapActivity extends InactivityListener implements Observer,
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
+		System.out.println("UPDATE");
 		runOnUiThread(this);
 	}
 
@@ -572,7 +567,6 @@ public class MapActivity extends InactivityListener implements Observer,
 			mapComponent.addPlace(temp);
 			regionCorners.add(temp);
 		} else {
-			System.out.println("Callign "+ callingActivity);
 			if (callingActivity == ActivityConstants.MAIN_ACTIVITY) {
 				createInterestPoint(arg0);
 			} else {
@@ -674,6 +668,7 @@ public class MapActivity extends InactivityListener implements Observer,
 		sm.clear();
 		for (KmlPlace temp : searchSuggestions.getList()) {
 			sm.addAll(temp.getName());
+			System.out.println("LIST ALLT" + temp.getName());
 		}
 		sm.notifyDataSetChanged();
 		sp.setVisibility(ProgressBar.GONE);

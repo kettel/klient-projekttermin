@@ -99,6 +99,7 @@ public class LogInFunction extends Activity implements Observer {
 					incorrectLogIn();
 				}
 			} else {
+				System.out.println("ONLINE LOG");
 				removeLastUserFromDB();
 				tryOnlineLogin(loginInput);
 			}
@@ -116,23 +117,19 @@ public class LogInFunction extends Activity implements Observer {
 	 * informationen från servern.
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel) {
-		System.out.println("INNE I CHECK AUTHENTICITY");
 		if (authenticationModel.getUserName().equals(
 				originalModel.getUserName())
 				&& authenticationModel.isAccessGranted().equals("true")) {
-			System.out.println("DOM KOM IN!");
 			database.addToDB(authenticationModel, getContentResolver());
 			accessGranted();
 
 		} else {
-			System.out.println("INNE I ELSE");
 			incorrectLogIn();
 		}
 
 	}
 
 	public void incorrectLogIn() {
-		System.out.println("INNE I INCORRECTLOGIN");
 		numberOfLoginTries--;
 		if (numberOfLoginTries == 0) {
 			if(database.getDBCount(new AuthenticationModel(), getContentResolver())!=0){
@@ -140,7 +137,6 @@ public class LogInFunction extends Activity implements Observer {
 			}
 			finish();
 		} else {
-			System.out.println("INNE I ELSE I INCORRECTLOGIN");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -156,7 +152,6 @@ public class LogInFunction extends Activity implements Observer {
 	}
 
 	public void removeLastUserFromDB() {
-		System.out.println("NU TAS NÅGOT BORT");
 		List list = database.getAllFromDB(new AuthenticationModel(),
 				getContentResolver());
 		System.out.println("DATABASSTORLEK: "+list.size());
@@ -194,7 +189,6 @@ public class LogInFunction extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
-		System.out.println("Skapar en ny ProgressDialog");
 		pd = ProgressDialog.show(LogInFunction.this, "", "Loggar in...", true,
 				true);
 	}
@@ -212,12 +206,8 @@ public class LogInFunction extends Activity implements Observer {
 		finish();
 	}
 
-	public void update(Observable observable, Object data) {
-		System.out.println("Inne i update");
-		
+	public void update(Observable observable, Object data) {		
 		if (data instanceof AuthenticationModel) {
-			System.out.println("Inne i instance of AuthenticationModel");
-			System.out.println("tar bort en Progress dialog");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -227,8 +217,6 @@ public class LogInFunction extends Activity implements Observer {
 			checkAuthenticity((AuthenticationModel) data);
 		}
 		else {
-			System.out.println("inne i instance of String ");
-			System.out.println("tar bort en Progress dialog");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
