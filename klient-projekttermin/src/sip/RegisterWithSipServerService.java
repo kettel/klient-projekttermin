@@ -74,8 +74,8 @@ public class RegisterWithSipServerService extends Service {
 //	        context.registerReceiver(callSender, filter);
 		}
 		
-		if(RegisterWithSipServerService.manager == null) {
-			RegisterWithSipServerService.manager = SipManager.newInstance(context);
+		if(manager == null) {
+			manager = SipManager.newInstance(context);
         }
         initializeLocalProfile(context);
         
@@ -90,8 +90,8 @@ public class RegisterWithSipServerService extends Service {
 			{
 				if(!isRegistred){
 					Log.d("SIP/RegisterWithSipServer","Försöker mot SIP-server...");
-					if(RegisterWithSipServerService.manager == null) {
-						RegisterWithSipServerService.manager = SipManager.newInstance(staticContext);
+					if(manager == null) {
+						manager = SipManager.newInstance(staticContext);
 					}
 					initializeLocalProfile(staticContext);
 				}
@@ -102,11 +102,11 @@ public class RegisterWithSipServerService extends Service {
 	 * Registrera användaren hos SIP-servern
 	 */
 	public static void initializeLocalProfile(Context context) {
-		if (RegisterWithSipServerService.manager == null) {
+		if (manager == null) {
             return;
         }
 
-        if (RegisterWithSipServerService.me != null) {
+        if (me != null) {
         	closeLocalProfile();
         }
         Log.d("SIP","Ska skapa profil..");
@@ -114,17 +114,17 @@ public class RegisterWithSipServerService extends Service {
         	
         	SipProfile.Builder builder = new SipProfile.Builder(username, staticdomain);
         	builder.setPassword(password);
-        	RegisterWithSipServerService.me = builder.build();
+        	me = builder.build();
 
         	// Låt klienten kunna ta emot samtal (kryssrutan under Konton i samtalsinställningar)
         	Intent intent = new Intent();
         	intent.setAction("com.klient_projekttermin.INCOMING_CALL");
         	//intent.setAction("com.klient_projekttermin.OUTGOING_CALL");
         	PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA);
-        	RegisterWithSipServerService.manager.open(RegisterWithSipServerService.me, pendingIntent, null);
+        	manager.open(me, pendingIntent, null);
 
         	// Sätt upp en lyssnare som lyssnar efter hur väl anslutningen har gått
-        	RegisterWithSipServerService.manager.setRegistrationListener(RegisterWithSipServerService.me.getUriString(), new SipRegistrationListener() {
+        	manager.setRegistrationListener(me.getUriString(), new SipRegistrationListener() {
                 public void onRegistering(String localProfileUri) {
                 	Log.d("SIP","Registrerar mot SIP-server...");
                 	//isRegistred = false;
@@ -156,12 +156,12 @@ public class RegisterWithSipServerService extends Service {
      * and unregistering your device from the server.
      */
     public static void closeLocalProfile() {
-        if (RegisterWithSipServerService.manager == null) {
+        if (manager == null) {
             return;
         }
         try {
-            if (RegisterWithSipServerService.me != null) {
-            	RegisterWithSipServerService.manager.close(RegisterWithSipServerService.me.getUriString());
+            if (me != null) {
+            	manager.close(me.getUriString());
             }
         } catch (Exception ee) {
             Log.d("SIP", "Failed to close local profile.", ee);
@@ -171,7 +171,7 @@ public class RegisterWithSipServerService extends Service {
     /**
      * Make an outgoing call.
      */
-    public static void initiateCall() {
+    public void initiateCall() {
     	sipAddress = "sip:1002@94.254.72.38";
 
         try {
@@ -196,7 +196,7 @@ public class RegisterWithSipServerService extends Service {
                 }
             };
 
-            call = RegisterWithSipServerService.manager.makeAudioCall(me.getUriString(), sipAddress, listener, 30);
+            call = manager.makeAudioCall(me.getUriString(), sipAddress, listener, 30);
             Intent startIncomingCallDialog = new Intent(staticContext,IncomingCallDialog.class);
 			startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
 			startIncomingCallDialog.putExtra("outgoing",true);
@@ -205,9 +205,9 @@ public class RegisterWithSipServerService extends Service {
         }
         catch (Exception e) {
             Log.i("RegisterWithSipServerService/InitiateCall", "Error when trying to close manager.", e);
-            if (RegisterWithSipServerService.me != null) {
+            if (me != null) {
                 try {
-                	RegisterWithSipServerService.manager.close(RegisterWithSipServerService.me.getUriString());
+                	manager.close(me.getUriString());
                 } catch (Exception ee) {
                     Log.i("RegisterWithSipServerService/InitiateCall",
                             "Error when trying to close manager.", ee);

@@ -30,7 +30,9 @@ import com.klient_projekttermin.R;
 import database.Database;
 
 public class ContactsBookActivity extends InactivityListener {
-
+	// Hämta instans av SipServicen
+	public RegisterWithSipServerService s;
+	
 	private String[] contacts;
 	private Database db;
 	private String[] contactAlts = { "Skicka meddelande till kontakt",
@@ -59,6 +61,36 @@ public class ContactsBookActivity extends InactivityListener {
 		lv.setAdapter(new ContacsAdapter(this,
 				android.R.layout.simple_list_item_1, contacts));
 	}
+	
+	@Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to LocalService
+        Intent intent = new Intent(this, RegisterWithSipServerService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+	
+	/**
+	 * Skapa en ServiceConnection till SipService
+	 */
+	private ServiceConnection mConnection = new ServiceConnection() {
+
+	    public void onServiceConnected(ComponentName className, IBinder binder) {
+	      s = ((RegisterWithSipServerService.MyBinder) binder).getService();
+	    }
+	    public void onServiceDisconnected(ComponentName className) {
+	      s = null;
+	    }
+	  };
+	/**
+	 * Bind med SipService
+	 */
+	void doBindService() {
+		bindService(new Intent(this, RegisterWithSipServerService.class), mConnection,
+				Context.BIND_AUTO_CREATE);
+	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,7 +139,9 @@ public class ContactsBookActivity extends InactivityListener {
 //					i.setAction(OutgoingCallReceiver.OUTGOING_CALL);
 //					Log.d("SIP/Contactbook","Ska ringa 1002...");
 //					getApplicationContext().sendBroadcast(i);
-					RegisterWithSipServerService.initiateCall();
+					//RegisterWithSipServerService.initiateCall();
+					Log.d("SIP/ContactBookActivity","Ska starta ett utgående samtal...");
+					s.initiateCall();
 					break;
 				default:
 					break;
