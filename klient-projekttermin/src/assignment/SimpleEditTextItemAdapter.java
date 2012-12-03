@@ -98,9 +98,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	
 	autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
 			context, null, true));
-
+		
 		autoCompleteTextView.setHint(((HashMap<String, String>) this
 				.getItem(position)).get("line1"));
+		if (itemStrings.get(position) != null && !itemStrings.get(position).equals("")) {
+			autoCompleteTextView.setHint(itemStrings.get(position));
+		}
+		
 		
 		//Snygghax.. för att få tag i auto-vyns text.
 		autoCompleteTextView.setOnItemClickListener(new OnItemClickListener() {

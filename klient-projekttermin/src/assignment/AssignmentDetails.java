@@ -58,14 +58,6 @@ public class AssignmentDetails extends SecureActivity {
 	private Assignment currentAssignment;
 	private String currentUser;
 	private boolean needToListen;
-//<<<<<<< HEAD
-//
-//	// -------ComService
-//	private CommunicationService communicationService;
-//	private boolean communicationBond = false;
-//
-//	// -------End
-//=======
 	public static String assignment;
 	private String[] coordAlts = { "Gå till uppdraget på kartan" };
 
@@ -76,12 +68,6 @@ public class AssignmentDetails extends SecureActivity {
 		db = Database.getInstance(getApplicationContext());
 		needToListen = true;
 		
-//		// -------ComService---
-//		Intent intentServer = new Intent(this.getApplicationContext(),
-//				CommunicationService.class);
-//		bindService(intentServer, communicationServiceConnection,
-//				Context.BIND_AUTO_CREATE);
-//		// ----End----
 
 
 		User user = User.getInstance();
@@ -225,7 +211,7 @@ public class AssignmentDetails extends SecureActivity {
 					+ ", ";
 		}
 		agentCount.setText(" Antal: " + currentAssignment.getAgents().size()
-				+ "(" + temp + ")");
+				+ "(" + temp + ")\n");
 	}
 
 	/**
