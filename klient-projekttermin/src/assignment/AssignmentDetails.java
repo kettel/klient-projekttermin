@@ -226,7 +226,7 @@ public class AssignmentDetails extends SecureActivity {
 								.setAssignmentStatus(AssignmentStatus.STARTED);
 
 						// Uppdaterar Uppdraget med den nya kontakten.
-						db.updateModel((ModelInterface) currentAssignment,
+						db.updateModel(currentAssignment,
 								getContentResolver());
 						SocketConnection connection=new SocketConnection();
 						connection.sendModel(currentAssignment);

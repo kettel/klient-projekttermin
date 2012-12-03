@@ -1,15 +1,11 @@
 package map;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Vector;
-
 import loginFunction.User;
 import models.Assignment;
 import models.ModelInterface;
@@ -62,10 +58,7 @@ import com.nutiteq.components.PolyStyle;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
 import com.nutiteq.fs.AndroidFileSystem;
-import com.nutiteq.fs.FileSystem;
-import com.nutiteq.fs.FileSystemConnection;
 import com.nutiteq.listeners.MapListener;
-import com.nutiteq.listeners.OnLongClickListener;
 import com.nutiteq.listeners.OnMapElementListener;
 import com.nutiteq.location.LocationMarker;
 import com.nutiteq.location.LocationSource;
@@ -329,6 +322,7 @@ public class MapActivity extends SecureActivity implements Observer,
 	/**
 	 * Skapa meny i actionbar
 	 */
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		final Menu m = menu;
 		runOnUiThread(new Runnable() {
@@ -352,9 +346,9 @@ public class MapActivity extends SecureActivity implements Observer,
 				});
 			}
 		});
-		View v = (View) menu.findItem(R.id.menu_search).getActionView();
+		View v = menu.findItem(R.id.menu_search).getActionView();
 		this.sp = (ProgressBar) v.findViewById(R.id.spinner);
-		this.searchItem = (MenuItem) menu.findItem(R.id.menu_search);
+		this.searchItem = menu.findItem(R.id.menu_search);
 		this.clearSearch = (Button) v.findViewById(R.id.clearSearch);
 		this.clearSearch.setOnClickListener(new OnClickListener() {
 
@@ -373,7 +367,7 @@ public class MapActivity extends SecureActivity implements Observer,
 				if (!temp.isEmpty()) {
 					runOnUiThread(new Runnable() {
 						public void run() {
-							sp.setVisibility(ProgressBar.VISIBLE);
+							sp.setVisibility(View.VISIBLE);
 						}
 					});
 					new Thread(new Runnable() {
@@ -385,7 +379,7 @@ public class MapActivity extends SecureActivity implements Observer,
 				} else {
 					runOnUiThread(new Runnable() {
 						public void run() {
-							sp.setVisibility(ProgressBar.GONE);
+							sp.setVisibility(View.GONE);
 						}
 					});
 					sm.clear();
@@ -518,7 +512,7 @@ public class MapActivity extends SecureActivity implements Observer,
 		else {
 			m.setTitle("Markera region");
 			if (!points.isEmpty()) {
-				WgsPoint[] p = (WgsPoint[]) (points)
+				WgsPoint[] p = (points)
 						.toArray(new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
 			}
@@ -526,7 +520,7 @@ public class MapActivity extends SecureActivity implements Observer,
 			 * Tar bort punkterna från kartan
 			 */
 			if (!regionCorners.isEmpty()) {
-				Place[] corners = (Place[]) regionCorners
+				Place[] corners = regionCorners
 						.toArray(new Place[regionCorners.size()]);
 				mapComponent.removePlaces(corners);
 			}
@@ -667,16 +661,16 @@ public class MapActivity extends SecureActivity implements Observer,
 	}
 
 	public void run() {
-		if (this.lv.getVisibility() == ListView.GONE) {
-			this.lv.setVisibility(ListView.VISIBLE);
-			this.zoomControls.setVisibility(ZoomControls.GONE);
+		if (this.lv.getVisibility() == View.GONE) {
+			this.lv.setVisibility(View.VISIBLE);
+			this.zoomControls.setVisibility(View.GONE);
 		}
 		sm.clear();
 		for (KmlPlace temp : searchSuggestions.getList()) {
 			sm.addAll(temp.getName());
 		}
 		sm.notifyDataSetChanged();
-		sp.setVisibility(ProgressBar.GONE);
+		sp.setVisibility(View.GONE);
 	}
 
 	public void showMapView() {
@@ -684,8 +678,8 @@ public class MapActivity extends SecureActivity implements Observer,
 			public void run() {
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-				lv.setVisibility(ListView.GONE);
-				zoomControls.setVisibility(ZoomControls.VISIBLE);
+				lv.setVisibility(View.GONE);
+				zoomControls.setVisibility(View.VISIBLE);
 			}
 		});
 	}

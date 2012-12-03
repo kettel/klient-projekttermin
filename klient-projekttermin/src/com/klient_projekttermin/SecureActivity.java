@@ -2,7 +2,6 @@ package com.klient_projekttermin;
 
 import loginFunction.LogInActivity;
 import loginFunction.User;
-import map.MapActivity;
 import qosManager.QoSManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -41,7 +40,8 @@ public class SecureActivity extends Activity {
     public static final long DISCONNECT_TIMEOUT = 600000; 
 
     private Handler disconnectHandler = new Handler(){
-        public void handleMessage(Message msg) {
+        @Override
+		public void handleMessage(Message msg) {
         }
     };
 

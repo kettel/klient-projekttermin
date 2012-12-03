@@ -115,7 +115,7 @@ public class CreateMessage extends SecureActivity {
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("Avsluta?");
 		alertDialog.setMessage("Vill du avsluta?");
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA",
+		alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "JA",
 				new DialogInterface.OnClickListener() {
 
 					// Om användaren trycker på ja så körs metoden
@@ -124,7 +124,7 @@ public class CreateMessage extends SecureActivity {
 						finish();
 					}
 				});
-		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NEJ",
+		alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "NEJ",
 				new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {

@@ -12,6 +12,7 @@ import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -160,7 +161,7 @@ public class DisplayOfConversation extends SecureActivity {
 
 	public void eraseMessage(String messageText){
 
-		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+		InputMethodManager inm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		MessageModel messageModelInList;
 		long id = messageAndIdMap.get(messageText);
 
@@ -235,7 +236,7 @@ public class DisplayOfConversation extends SecureActivity {
 	}
 
 	public void sendMessage(View v){
-		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+		InputMethodManager inm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		messageObject = new MessageModel(message.getText().toString(), chosenContact, currentUser); 
 

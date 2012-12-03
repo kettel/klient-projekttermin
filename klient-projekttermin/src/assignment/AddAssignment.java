@@ -53,6 +53,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private Bitmap bitmap;
 	private int callingActivity;
 
+	@Override
 	@SuppressLint("UseSparseArrays")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

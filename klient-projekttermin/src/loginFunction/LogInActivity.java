@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gcm.GCMRegistrar;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
@@ -209,6 +210,7 @@ public class LogInActivity extends Activity implements Observer {
 			startActivity(intent);
 			break;
 		}
+		user.setLoggedIn(true);
 		finish();
 	}
 

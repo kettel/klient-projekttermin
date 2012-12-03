@@ -94,7 +94,7 @@ public class SocketConnection extends Observable {
 	 * index 0, port på index 1 och jettyport på index 2
 	 */
 	private void loadNextServer() {
-		String[] server=iterator.next();
+		String[] server = iterator.next();
 		System.out.println("byter port: " + server[1]);
 		ip = server[0];
 		port = Integer.parseInt(server[1]);
@@ -165,21 +165,18 @@ public class SocketConnection extends Observable {
 					while ((inputString = bufferedReader.readLine()) != null) {
 						if (inputString
 								.contains("\"databaseRepresentation\":\"message\"")) {
-							System.out.println("message");
 							MessageModel message = gson.fromJson(inputString,
 									MessageModel.class);
 							setChanged();
 							notifyObservers(message);
 						} else if (inputString
 								.contains("\"databaseRepresentation\":\"assignment\"")) {
-							System.out.println("assignment");
 							Assignment assignment = gson.fromJson(inputString,
 									Assignment.class);
 							setChanged();
 							notifyObservers(assignment);
 						} else if (inputString
 								.contains("\"databaseRepresentation\":\"contact\"")) {
-							System.out.println("contact");
 							Contact contact = gson.fromJson(inputString,
 									Contact.class);
 							setChanged();
@@ -252,7 +249,6 @@ public class SocketConnection extends Observable {
 					}
 				} catch (IOException e) {
 					if (iterator.hasNext()) {
-						System.out.println("byter port");
 						loadNextServer();
 						getAllContactsReq();
 					} else {

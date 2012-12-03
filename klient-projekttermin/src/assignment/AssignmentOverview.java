@@ -7,7 +7,6 @@ import models.Assignment;
 import models.AssignmentStatus;
 import models.ModelInterface;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -151,13 +150,13 @@ public class AssignmentOverview extends SecureActivity {
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("Radera uppdrag.");
 		alertDialog.setMessage("Vill du ta bort uppdraget?");
-		alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "JA",
+		alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "JA",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						eraseAssignment(eraseById);
 					}
 				});
-		alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "AVBRYT",
+		alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "AVBRYT",
 				new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {

@@ -2,7 +2,6 @@ package contacts;
 
 import java.util.List;
 
-import loginFunction.User;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;

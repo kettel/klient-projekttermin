@@ -46,7 +46,8 @@ public class MainActivity extends SecureActivity {
 
 	private QoSManager qosManager;
 	private Database database;
-	private SocketConnection socketConnection;
+	private SocketConnection socketConnection=new SocketConnection();
+	private User user=User.getInstance();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,8 @@ public class MainActivity extends SecureActivity {
 			// Device is already registered on GCM, check server.
 			if (GCMRegistrar.isRegisteredOnServer(this)) {
 				// Skips registration.
+				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
+				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
 				// It's also necessary to cancel the thread onDestroy(),
@@ -157,11 +160,6 @@ public class MainActivity extends SecureActivity {
 		});
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-	}
-
 	public void checkContactDatabase() {
 		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
@@ -227,10 +225,7 @@ public class MainActivity extends SecureActivity {
 		public void onReceive(Context context, Intent intent) {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
 			if (newMessage.contains("registered")) {
-				System.out.println("New gcm-message: "+newMessage);
-				User user=User.getInstance();
 				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
-				socketConnection = new SocketConnection();
 				socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 				socketConnection.pullFromServer();
 				checkContactDatabase();
@@ -240,9 +235,13 @@ public class MainActivity extends SecureActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		logout();
+		return false;
+	}
+	public void logout(){
 		finish();
 		Intent intent = new Intent(MainActivity.this, LogInActivity.class);
+		user.setLoggedIn(false);
 		this.startActivity(intent);
-		return false;
 	}
 }
