@@ -2,6 +2,7 @@ package sip;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -13,6 +14,7 @@ public class IncomingCallDialog extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d("SIP","Inne i incomingCallDialog-aktiviteten");
 		setContentView(R.layout.activity_incoming_call_dialog);
 //		Bundle bundle = this.getIntent().getExtras();
 		

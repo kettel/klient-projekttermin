@@ -91,5 +91,6 @@
     <string name="title_activity_camera_menu">CameraMenuActivity</string>
     <string name="title_activity_take_pictures">TakePicturesActivity</string>
     <string name="title_activity_album">Album</string>
+    <string name="title_activity_incoming_call_dialog">Samtal</string>
 
 </resources>
