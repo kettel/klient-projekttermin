@@ -8,8 +8,6 @@ import android.net.sip.SipException;
 import android.net.sip.SipProfile;
 import android.util.Log;
 
-import com.klient_projekttermin.MainActivity;
-
 /*** Lyssnar efter inkommande SIP-samtal, fångar dem och ger dem till SipMain.
  */
 public class IncomingCallReceiver extends BroadcastReceiver {
@@ -40,13 +38,13 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 					}
 				}
 			};
-			MainActivity mActivity = (MainActivity) context;
-			incomingCall = mActivity.manager.takeAudioCall(intent, listener);
+			
+			incomingCall = RegisterWithSipServerService.manager.takeAudioCall(intent, listener);
 			// Fuling för att hindra att fler än 1 callDialog startas..
 			Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 			startIncomingCallDialog.putExtra("caller", incomingCall.getPeerProfile().getDisplayName());
 			context.startActivity(startIncomingCallDialog);
-			mActivity.call = incomingCall;
+			RegisterWithSipServerService.call = incomingCall;
 		} catch (Exception e) {
 			if (incomingCall != null) {
 				incomingCall.close();

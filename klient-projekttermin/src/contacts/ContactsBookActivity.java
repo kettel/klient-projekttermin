@@ -3,15 +3,21 @@ package contacts;
 import java.util.List;
 
 import loginFunction.InactivityListener;
-import loginFunction.User;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;
 import models.ModelInterface;
+import sip.OutgoingCallReceiver;
+import sip.RegisterWithSipServerService;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,12 +34,15 @@ public class ContactsBookActivity extends InactivityListener {
 	private String[] contacts;
 	private Database db;
 	private String[] contactAlts = { "Skicka meddelande till kontakt",
-			"Ring kontakt" };
+	"Ring kontakt" };
 	public static String contact;
 
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+
 		setContentView(R.layout.activity_contacts_book);
 		ListView lv = (ListView) findViewById(android.R.id.list);
 		db = Database.getInstance(this);
@@ -62,7 +71,7 @@ public class ContactsBookActivity extends InactivityListener {
 				getContentResolver())) {
 			Contact c = (Contact) temp;
 			if (c.getContactName().equals(contacts[v.getId()])) {
-					showAlertDialog(c);
+				showAlertDialog(c);
 			}
 		}
 	}
@@ -93,7 +102,12 @@ public class ContactsBookActivity extends InactivityListener {
 					finish();
 					break;
 				case 1:
-
+					Intent i= new Intent();
+//					i.putExtra("contactToCall", "1002");
+//					i.setAction(OutgoingCallReceiver.OUTGOING_CALL);
+//					Log.d("SIP/Contactbook","Ska ringa 1002...");
+//					getApplicationContext().sendBroadcast(i);
+					RegisterWithSipServerService.initiateCall();
 					break;
 				default:
 					break;

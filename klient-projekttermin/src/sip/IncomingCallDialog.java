@@ -47,13 +47,12 @@ public class IncomingCallDialog extends Activity {
 						String time = "" + minutes + ":0" + seconds;
 						Log.d("SIP",time);
 						timeInCall = time;
-						//timeView.setText(time);
 					} else {
 						String time = "" + minutes + ":" + seconds;
 						Log.d("SIP",time);
 						timeInCall = time;
-						//timeView.setText(time);
 					}
+					// Uppdatera samtalstiden
 					updateCallTime();
 				}
 			}

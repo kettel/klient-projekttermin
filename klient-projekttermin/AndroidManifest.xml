@@ -97,8 +97,16 @@
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
+        <!-- SIP Service -->
+        <service android:name="sip.RegisterWithSipServerService" />
         <!-- SIP Receiver -->
         <receiver android:name="sip.IncomingCallReceiver" />
+        <receiver android:name="sip.OutgoingCallReceiver" >
+        	<intent-filter >
+        	    <action android:name="com.klient_projekttermin.action.OUTGOING_CALL" />
+        	</intent-filter>
+        </receiver>
+        
 		<!-- GCM Receiver -->
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
