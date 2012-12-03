@@ -8,6 +8,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import models.Assignment;
 import models.ModelInterface;
 import routing.MapManager;
@@ -17,10 +18,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -39,7 +42,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ZoomControls;
 import assignment.AddAssignment;
-import assignment.SimpleEditTextItemAdapter;
+import assignment.AssignmentDetails;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -51,8 +54,11 @@ import com.nutiteq.components.KmlPlace;
 import com.nutiteq.components.OnMapElement;
 import com.nutiteq.components.Place;
 import com.nutiteq.components.PlaceIcon;
+import com.nutiteq.components.PlaceLabel;
+import com.nutiteq.components.PolyStyle;
 import com.nutiteq.components.Polygon;
 import com.nutiteq.components.WgsPoint;
+import com.nutiteq.fs.AndroidFileSystem;
 import com.nutiteq.listeners.MapListener;
 import com.nutiteq.listeners.OnMapElementListener;
 import com.nutiteq.location.LocationMarker;
@@ -60,6 +66,7 @@ import com.nutiteq.location.LocationSource;
 import com.nutiteq.location.NutiteqLocationMarker;
 import com.nutiteq.location.providers.AndroidGPSProvider;
 import com.nutiteq.maps.OpenStreetMap;
+import com.nutiteq.maps.StoredMap;
 import com.nutiteq.ui.ThreadDrivenPanning;
 import com.nutiteq.utils.Utils;
 import com.nutiteq.wrappers.AppContext;
@@ -106,21 +113,31 @@ public class MapActivity extends InactivityListener implements Observer,
 	private MapManager mm = new MapManager();
 	private static String[] regionAlts = { "Ta bort region",
 			"Skapa uppdrag med region" };
+	private static String[] placeAlts = { "Visa detaljer för uppdrag" };
+	private static String[] clickAlts = { "Lägg till uppdrag",
+			"Lägg till intreese punkt" };
 	private boolean onRetainCalled;
 	private int callingActivity;
 	private HashMap<Integer, String> content;
 	public static String contents;
 	public static String activityId;
+	public static String assignmentName;
+	private String currentUser;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
+
+		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		/**
 		 * Sätter inställningar för kartan, samt lägger till en lyssnare.
 		 */
 		this.manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		this.locationSource = new AndroidGPSProvider(manager, 1000L);
-		// this.setContentView(R.layout.activity_map);
+		this.setContentView(R.layout.activity_map);
 		/**
 		 * Kollar om gps är aktiverat
 		 */
@@ -134,15 +151,8 @@ public class MapActivity extends InactivityListener implements Observer,
 		 * till en observer på searchSuggestions
 		 */
 		this.searchSuggestions.addObserver(this);
-
-		this.haveNetworkConnection();
-		/**
-		 * Hämta information från databasen om aktuella uppdrag
-		 */
-		// this.getDatabaseInformation();
-		/**
-		 * GPS:en ska vara påslagen vid start
-		 */
+		haveNetworkConnection();
+		
 
 	}
 
@@ -150,7 +160,15 @@ public class MapActivity extends InactivityListener implements Observer,
 		this.setContentView(R.layout.activity_map);
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
-		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+		// final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
+		final StoredMap sm = new StoredMap("OpenStreetMap", Environment
+				.getExternalStorageDirectory().getPath() + "/MGMapsCache", true);
+		// System.out.println(Environment.getExternalStorageDirectory().getPath()
+		// + "/MGMapsCache");
+
+		this.mapComponent.setFileSystem(new AndroidFileSystem());
+		this.mapComponent.setMap(sm);
+		// this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
@@ -178,6 +196,7 @@ public class MapActivity extends InactivityListener implements Observer,
 		mapView.setVisibility(0);
 		activateGPS(gpsOnOff);
 		onRetainCalled = false;
+
 	}
 
 	private void buildAlertMessageNoGps() {
@@ -195,7 +214,7 @@ public class MapActivity extends InactivityListener implements Observer,
 						})
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
 					public void onClick(final DialogInterface dialog,
-							@SuppressWarnings("unused") final int id) {
+							final int id) {
 						dialog.cancel();
 					}
 				});
@@ -220,13 +239,13 @@ public class MapActivity extends InactivityListener implements Observer,
 		if (!haveConnectedWifi && !haveConnectedMobile) {
 			final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(
-					"No network connection enabled, do you want to enable it?")
+					"Ingen nätverksanslutning hittades. Sökning kräver nätverksanslutning, vill du aktivera det?")
 					.setCancelable(false)
 					.setPositiveButton("Yes",
 							new DialogInterface.OnClickListener() {
 								public void onClick(
-										@SuppressWarnings("unused") final DialogInterface dialog,
-										@SuppressWarnings("unused") final int id) {
+										final DialogInterface dialog,
+										final int id) {
 									startActivity(new Intent(
 											Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
 								}
@@ -235,7 +254,7 @@ public class MapActivity extends InactivityListener implements Observer,
 							new DialogInterface.OnClickListener() {
 								public void onClick(
 										final DialogInterface dialog,
-										@SuppressWarnings("unused") final int id) {
+										final int id) {
 									dialog.cancel();
 								}
 							});
@@ -270,8 +289,14 @@ public class MapActivity extends InactivityListener implements Observer,
 			}.getType();
 			if (!a.getRegion().equals("")) {
 				WgsPoint[] co = gson.fromJson(a.getRegion(), type);
-				for (WgsPoint wgsPoint : co) {
-					addInterestPoint(wgsPoint);
+				if (co.length > 1) {
+					PlaceLabel pl = new PlaceLabel(a.getName());
+					Polygon p = new Polygon(co, new PolyStyle(Color.BLUE), pl);
+					mapComponent.addPolygon(p);
+				} else {
+					for (WgsPoint wgsPoint : co) {
+						addInterestPoint(wgsPoint, a.getName());
+					}
 				}
 			}
 		}
@@ -375,13 +400,11 @@ public class MapActivity extends InactivityListener implements Observer,
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onResume() {
 		super.onResume();
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
-		content = (HashMap<Integer, String>) getIntent().getSerializableExtra(
-				SimpleEditTextItemAdapter.items);
+		Bundle extras = getIntent().getExtras();
 		createMap();
 		switch (callingActivity) {
 		case ActivityConstants.ADD_ASSIGNMENT_ACTIVITY:
@@ -389,6 +412,11 @@ public class MapActivity extends InactivityListener implements Observer,
 			break;
 		case ActivityConstants.MAIN_ACTIVITY:
 			getDatabaseRegionInformation();
+			break;
+		case ActivityConstants.ASSIGNMENT_DETAILS:
+			getDatabaseRegionInformation();
+			centerMapOnAssignment(extras
+					.getString(AssignmentDetails.assignment));
 			break;
 		default:
 			getDatabaseRegionInformation();
@@ -410,6 +438,8 @@ public class MapActivity extends InactivityListener implements Observer,
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.equals(this.searchItem)) {
+			this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+			this.haveNetworkConnection();
 			actv.requestFocus();
 			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -439,6 +469,15 @@ public class MapActivity extends InactivityListener implements Observer,
 				.getPlace().getWgs());
 	}
 
+	public void centerMapOnAssignment(String region) {
+		activateGPS(false);
+		Gson gson = new Gson();
+		Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		WgsPoint[] co = gson.fromJson(region, type);
+		mapComponent.setMiddlePoint(co[0]);
+	}
+
 	/**
 	 * Markera en punkt på kartan
 	 * 
@@ -447,8 +486,8 @@ public class MapActivity extends InactivityListener implements Observer,
 	 * @param label
 	 *            Namn som syns om man klickar på punkten
 	 */
-	public void addInterestPoint(WgsPoint region) {
-		Place p = new Place(1, " ", icons[2], region);
+	public void addInterestPoint(WgsPoint region, String name) {
+		Place p = new Place(1, name, icons[2], region);
 		mapComponent.addPlace(p);
 	}
 
@@ -513,6 +552,7 @@ public class MapActivity extends InactivityListener implements Observer,
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
+		System.out.println("UPDATE");
 		runOnUiThread(this);
 	}
 
@@ -526,6 +566,12 @@ public class MapActivity extends InactivityListener implements Observer,
 			Place temp = new Place(1, "dummy", icons[2], arg0);
 			mapComponent.addPlace(temp);
 			regionCorners.add(temp);
+		} else {
+			if (callingActivity == ActivityConstants.MAIN_ACTIVITY) {
+				createInterestPoint(arg0);
+			} else {
+				createAssignmentFromClick(arg0);
+			}
 		}
 	}
 
@@ -533,6 +579,85 @@ public class MapActivity extends InactivityListener implements Observer,
 	}
 
 	public void needRepaint(boolean arg0) {
+	}
+
+	private void createAssignmentFromClick(WgsPoint w) {
+		final WgsPoint[] wgs = new WgsPoint[1];
+		wgs[0] = w;
+		final Gson gson = new Gson();
+		final Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Lägg till punkt");
+		ListView modeList = new ListView(this);
+		String[] s = {"Lägg till plats till uppdrag" };
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				s);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					addInterestPoint(wgs[0], "Uppdrag");
+					Intent intent = new Intent(MapActivity.this,
+							AddAssignment.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.MAP_ACTIVITY);
+					intent.putExtra(coordinates, gson.toJson(wgs, type));
+					setResult(ActivityConstants.RESULT_FROM_MAP, intent);
+					finish();
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
+
+	private void createInterestPoint(WgsPoint w) {
+		final WgsPoint[] wgs = new WgsPoint[1];
+		wgs[0] = w;
+		final Gson gson = new Gson();
+		final Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Lägg till punkt");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				clickAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					addInterestPoint(wgs[0], "Uppdrag");
+					Intent intent = new Intent(MapActivity.this,
+							AddAssignment.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.MAP_ACTIVITY);
+					intent.putExtra(coordinates, gson.toJson(wgs, type));
+					MapActivity.this.startActivity(intent);
+					break;
+				case 1:
+					addInterestPoint(wgs[0], "");
+				break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
 	}
 
 	public void run() {
@@ -543,6 +668,7 @@ public class MapActivity extends InactivityListener implements Observer,
 		sm.clear();
 		for (KmlPlace temp : searchSuggestions.getList()) {
 			sm.addAll(temp.getName());
+			System.out.println("LIST ALLT" + temp.getName());
 		}
 		sm.notifyDataSetChanged();
 		sp.setVisibility(ProgressBar.GONE);
@@ -573,8 +699,6 @@ public class MapActivity extends InactivityListener implements Observer,
 
 	public void displayAddCoordinatesToAssignment(int ch) {
 		final int choice = ch;
-		final Context context = getApplicationContext();
-
 		final Gson gson = new Gson();
 		final Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
@@ -678,10 +802,10 @@ public class MapActivity extends InactivityListener implements Observer,
 					mapComponent.removePolygon(((Polygon) argument));
 					break;
 				case 1:
-					if(callingActivity == ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT){
+					if (callingActivity == ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT) {
 						addRegionToAssignment(argument);
 					} else {
-					createAssignmentFromRegion(argument);
+						createAssignmentFromRegion(argument);
 					}
 					break;
 				default:
@@ -703,7 +827,7 @@ public class MapActivity extends InactivityListener implements Observer,
 		setResult(ActivityConstants.RESULT_FROM_MAP, intent);
 		finish();
 	}
-	
+
 	public void createAssignmentFromRegion(OnMapElement arg) {
 		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
 		Gson gson = new Gson();
@@ -714,7 +838,6 @@ public class MapActivity extends InactivityListener implements Observer,
 		intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
 		MapActivity.this.startActivity(intent);
 	}
-	
 
 	public void elementClicked(OnMapElement arg0) {
 	}
@@ -726,9 +849,58 @@ public class MapActivity extends InactivityListener implements Observer,
 		if (arg0 instanceof Polygon) {
 			regionChoice(arg0);
 		}
+		if (arg0 instanceof Place) {
+			getAssignmentFromLabel(arg0);
+		}
 	}
 
 	public void elementLeft(OnMapElement arg0) {
+	}
+
+	private void getAssignmentFromLabel(OnMapElement l) {
+		final OnMapElement label = l;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(label.getLabel().toString());
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				placeAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					Assignment a = new Assignment();
+					Database db = Database.getInstance(getApplicationContext());
+					List<ModelInterface> list = db.getAllFromDB(a,
+							getContentResolver());
+					for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
+						a = (Assignment) list.get(i);
+						System.out.println("ASS NAME" + a.getName());
+						System.out.println("label name "
+								+ label.getLabel().toString());
+						if (a.getName().equals(label.getLabel().toString())) {
+							Intent intent = new Intent(MapActivity.this,
+									AssignmentDetails.class);
+							intent.putExtra("calling-activity",
+									ActivityConstants.ASSIGNMENT_NAME);
+							intent.putExtra(assignmentName, a.getId());
+							intent.putExtra("currentUser", currentUser);
+							MapActivity.this.startActivity(intent);
+							break;
+						}
+					}
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
 	}
 
 	@Override

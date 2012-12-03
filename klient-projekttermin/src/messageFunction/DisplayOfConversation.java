@@ -7,17 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import models.MessageModel;
 import models.ModelInterface;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -29,9 +26,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.klient_projekttermin.R;
+import communicationModule.SocketConnection;
+
 import database.Database;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
 
 public class DisplayOfConversation extends InactivityListener {
 
@@ -42,10 +39,9 @@ public class DisplayOfConversation extends InactivityListener {
 	private HashMap<String, Long> messageAndIdMap = new HashMap<String, Long>();
 	private String chosenContact;
 	private Database dataBase;
-	private String user;
+	private String currentUser;
 	private MessageModel messageObject;
 	private String[] options = {"AVBRYT","RADERA","VIDAREBEFORDRA"};
-	private CommunicationService communicationService;
 	private boolean communicationBond = false;
 	//	private CommunicationModule communicationModule = new CommunicationModule();
 
@@ -54,19 +50,18 @@ public class DisplayOfConversation extends InactivityListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_of_conversation);
 
-		Intent intent = new Intent(this, CommunicationService.class);
-		bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-
 		message = (TextView) this.findViewById(R.id.messageBox);
 
 		dataBase = Database.getInstance(getApplicationContext());
 
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
+		
 		//Metoden testar om någonting skickades med från Inbox och skriver i så fall ut det till strängen chosenContact
 		Bundle extras = getIntent().getExtras();
 
 		if (extras != null) {
 			chosenContact = extras.getString("ChosenContact");
-			user = extras.getString("USER");
 		}	 
 
 		loadConversation(chosenContact);
@@ -82,12 +77,6 @@ public class DisplayOfConversation extends InactivityListener {
 	public void onStart(){
 		super.onStart();
 		addOnLongClickListener();
-	}
-
-	@Override
-	protected void onDestroy() {
-		unbindService(serviceConnection);
-		super.onDestroy();
 	}
 
 	/*
@@ -166,7 +155,6 @@ public class DisplayOfConversation extends InactivityListener {
 	public void forwardMessage(String messageContent){
 		Intent intent = new Intent(this, CreateMessage.class);
 		intent.putExtra("MESSAGE",messageContent);
-		intent.putExtra("USER",user);
 		startActivity(intent);
 	}
 
@@ -249,7 +237,7 @@ public class DisplayOfConversation extends InactivityListener {
 	public void sendMessage(View v){
 		InputMethodManager inm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 
-		messageObject = new MessageModel(message.getText().toString(), chosenContact, user); 
+		messageObject = new MessageModel(message.getText().toString(), chosenContact, currentUser); 
 
 		//Sparar messageObject i databasen
 		dataBase.addToDB(messageObject,getContentResolver());
@@ -258,22 +246,8 @@ public class DisplayOfConversation extends InactivityListener {
 		//Tar bort texten ur textrutan
 		message.getEditableText().clear();
 
-		if(communicationBond){
-			communicationService.sendMessage(messageObject);
-		}
+		SocketConnection connection=new SocketConnection();
+		connection.sendModel(messageObject);
 		loadConversation(chosenContact);
 	}
-
-	private ServiceConnection serviceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className,IBinder service) {
-			System.out.println("OnServiceConnection");
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-	};
 }

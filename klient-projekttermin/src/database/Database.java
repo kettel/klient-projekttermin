@@ -10,11 +10,12 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
+import models.PictureModel;
 import net.sqlcipher.database.SQLiteDatabase;
 
 public class Database {
 	// SQLCipher-lösen
-	public static final String PASSWORD = "password";
+	public static final String PASSWORD = 	"password";
 
 	public static boolean isLibraryLoaded = false;
 
@@ -22,23 +23,24 @@ public class Database {
 	private static ContactsDB contactsDB;
 	private static MessagesDB messagesDB;
 	private static AuthenticationDB authenticationDB;
-
+	private static PictureDB pictureDB;
 	private Database(){}
 
 	private static Database instance = new Database();
 
 	public static Database getInstance(Context context){
 		// Ladda vid behov in SQLCipher-bibliotek filer
-		if (!isLibraryLoaded) {
-			SQLiteDatabase.loadLibs(context);
-			isLibraryLoaded = true;
-		}
-		// Hämta DB från var och en av de tre (snart fyra ContentProv wrappers)
-		assignmentsDB = AssignmentsDB.getInstance();
-		contactsDB = ContactsDB.getInstance();
-		messagesDB = MessagesDB.getInstance();
-		authenticationDB = AuthenticationDB.getInstance();
-		return instance;
+    	if (!isLibraryLoaded) {
+    		SQLiteDatabase.loadLibs(context);
+    		isLibraryLoaded = true;
+    	}
+    	// Hämta DB från var och en av de tre (snart fyra ContentProv wrappers)
+    	assignmentsDB = AssignmentsDB.getInstance();
+    	contactsDB = ContactsDB.getInstance();
+    	messagesDB = MessagesDB.getInstance();
+    	authenticationDB = AuthenticationDB.getInstance();
+    	pictureDB = PictureDB.getInstance();
+        return instance;
 	}
 
 	public void addToDB(ModelInterface m, ContentResolver contentResolver){
@@ -54,6 +56,10 @@ public class Database {
 		}
 		else if(dbRep.equalsIgnoreCase("authentication")){
 			authenticationDB.addAuthenticationContent(contentResolver, (AuthenticationModel) m);
+		}
+		else if(dbRep.equalsIgnoreCase("picture")){
+			System.out.println("ADD TO DB TO PICTURE");
+			pictureDB.addPicture(contentResolver, (PictureModel) m);
 		}
 	}
 
@@ -105,6 +111,9 @@ public class Database {
 		}
 		else if(dbRep.equalsIgnoreCase("authentication")){
 			returnList = authenticationDB.getAllAuthenticationModels(contentResolver);
+		}
+		else if(dbRep.equalsIgnoreCase("picture")){
+			returnList = pictureDB.getAllPictures(contentResolver);
 		}
 		return returnList;
 	}

@@ -10,30 +10,32 @@ import java.util.List;
 
 import logger.logger;
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
 import models.AssignmentStatus;
 import models.Contact;
 import models.ModelInterface;
+import models.PictureModel;
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import camera.PhotoGallery;
+import android.widget.Toast;
+import camera.Album;
+
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
+
 import database.Database;
 
 public class AddAssignment extends InactivityListener implements Serializable {
@@ -41,12 +43,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	// --------ComService
-	private CommunicationService communicationService;
-	private boolean communicationBond = false;
-	// ----End
 	private String jsonCoord = null;
-	private String jsonPict = null;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Uppdragsnamn", "Koordinater",
 			"Uppdragsbeskrivning", "Uppskattad tid", "Gatuadress",
@@ -66,13 +63,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	@SuppressLint("UseSparseArrays")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// ----ComService
-		Intent intent = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intent, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
-		// ---End
 		setContentView(R.layout.activity_add_assignment);
 		lv = (ListView) findViewById(android.R.id.list);
 		loadContent();
@@ -83,7 +73,10 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 		Intent i = getIntent();
 		callingActivity = i.getIntExtra("calling-activity", 0);
-
+		
+		User user = User.getInstance();
+		currentUser = user.getAuthenticationModel().getUserName();
+		
 		switch (callingActivity) {
 		case ActivityConstants.MAP_ACTIVITY:
 			fromMap(i);
@@ -94,7 +87,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		default:
 			break;
 		}
-
 	}
 
 	@Override
@@ -123,10 +115,10 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	}
 
 	private void fromCamera(Intent intent) {
-		bitmap = (Bitmap) intent.getExtras()
-				.getParcelable(PhotoGallery.picture);
-		jsonPict = "Bifogad bild";
-		adapter.textToItem(6, jsonPict);
+		int id = intent.getIntExtra(Album.pic, 0);
+		System.out.println(id + "fromcamera");
+		bitmap = getPic(id);
+		adapter.textToItem(6, "Bifogad bild");
 		runOnUiThread(new Runnable() {
 			public void run() {
 				adapter.notifyDataSetChanged();
@@ -136,6 +128,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 	private void fromMap(Intent intent) {
 		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
+		System.out.println(jsonCoord);
 		adapter.textToItem(1, jsonCoord);
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -144,24 +137,10 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		});
 	}
 
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-	};
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_add_assignment, menu);
 		this.saveItem = menu.findItem(R.id.save);
-		communicationService.setContext(getApplicationContext()); // --ComService
 		return true;
 	}
 
@@ -188,7 +167,8 @@ public class AddAssignment extends InactivityListener implements Serializable {
 
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv
 				.getAdapter()).getItemStrings();
-		
+
+		if(temp.get(0) != null){
 		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 				currentUser, isExternalMission, temp.get(2), temp.get(3),
 				AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
@@ -217,8 +197,18 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				+ temp.get(5));
 
 		db.addToDB(newAssignment, getContentResolver());
-		communicationService.sendAssignment(newAssignment);
+		
+		SocketConnection connection=new SocketConnection();
+		connection.sendModel(newAssignment);
 		finish();
+		} else {
+			Toast toast = Toast.makeText(getApplicationContext(),
+					"Kan inte skapa uppdrag utan namn",
+					Toast.LENGTH_LONG);
+			toast.setGravity(Gravity.CENTER_VERTICAL, 0, 50);
+			toast.show();
+		}
+		
 	}
 
 	private void addAgentsFromList(String agents, Assignment newAssignment) {
@@ -280,12 +270,14 @@ public class AddAssignment extends InactivityListener implements Serializable {
 			return new byte[2];
 		}
 	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (communicationBond)
-			unbindService(communicationServiceConnection);
+	
+	private Bitmap getPic(int id){
+		db = Database.getInstance(getApplicationContext());
+		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(), getContentResolver());
+		PictureModel p = (PictureModel)pics.get(id);
+		Bitmap bitmap = BitmapFactory.decodeByteArray(
+				p.getPicture(), 0,
+				p.getPicture().length);
+		return bitmap;
 	}
-
 }

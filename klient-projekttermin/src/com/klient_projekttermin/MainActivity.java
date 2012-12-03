@@ -11,22 +11,17 @@ import java.util.List;
 
 import loginFunction.InactivityListener;
 import loginFunction.LogInFunction;
+import loginFunction.User;
 import map.MapActivity;
 import messageFunction.Inbox;
-import models.Assignment;
-import models.AssignmentPriority;
-import models.AssignmentStatus;
 import models.Contact;
-import models.MessageModel;
+import qosManager.QoSManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,23 +29,27 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 import assignment.AssignmentOverview;
 import camera.Camera;
 
 import com.google.android.gcm.GCMRegistrar;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
 
+import communicationModule.PullResponseHandler;
+import communicationModule.SocketConnection;
+
+import contacts.ContactsBookActivity;
 import database.Database;
 
 public class MainActivity extends InactivityListener {
 
-	private String userName;
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
-	private CommunicationService communicationService;
-	private boolean communicationBond = false;
-
+	private QoSManager qosManager;
+	private Database database;
+	private SocketConnection socketConnection;
+	private String userName;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,16 +57,21 @@ public class MainActivity extends InactivityListener {
 		Database database=Database.getInstance(getApplicationContext());
 //		database.addToDB(new Contact("eric"), getContentResolver());
 //		database.addToDB(new Contact("erica"), getContentResolver());
-		// Communication model
-		Intent intent = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intent, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
+		
+		
+//		// Communication model
+//		Intent intent = new Intent(this.getApplicationContext(),
+//				CommunicationService.class);
+//		bindService(intent, communicationServiceConnection,
+//				Context.BIND_AUTO_CREATE);
 
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			userName = extras.getString("USER");
-		}
+		
+			User user = User.getInstance();
+			userName = user.getAuthenticationModel().getUserName();
+
+		
+		qosManager = QoSManager.getInstance();
+
 		setContentView(R.layout.activity_main);
 
 		// used to replace listview functionality
@@ -85,7 +89,7 @@ public class MainActivity extends InactivityListener {
 		final String regId = GCMRegistrar.getRegistrationId(this);
 		if (regId.equals("")) {
 			// Automatically registers application on startup.
-			GCMRegistrar.register(this, SENDER_ID);
+			GCMRegistrar.register(getApplicationContext(), SENDER_ID);
 		} else {
 			// Device is already registered on GCM, check server.
 			if (GCMRegistrar.isRegisteredOnServer(this)) {
@@ -107,57 +111,85 @@ public class MainActivity extends InactivityListener {
 					protected void onPostExecute(Void result) {
 						mRegisterTask = null;
 					}
-
 				};
 				mRegisterTask.execute(null, null, null);
 			}
-
 		}
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
 				android.R.layout.simple_list_item_2, from, to));
 		lv.setOnItemClickListener(new OnItemClickListener() {
-			Intent myIntent = null;
+			Toast unallowedStart = Toast.makeText(getApplicationContext(),
+					"Du har inte tillåtelse att starta denna funktion",
+					Toast.LENGTH_SHORT);
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				// for communicationService
-				communicationService.setContext(getApplicationContext());
+				Intent myIntent = null;
 				// Har man lagt till ett nytt menyval lägger man till en action
 				// för dessa här.
 				switch (arg2) {
 				case 0:
-					myIntent = new Intent(MainActivity.this, MapActivity.class);
-					myIntent.putExtra("USER", userName);
-
+					if (qosManager.allowedToStartMap()) {
+						myIntent = new Intent(MainActivity.this,
+								MapActivity.class);
+						myIntent.putExtra("calling-activity", ActivityConstants.MAIN_ACTIVITY);
+					} else {
+						unallowedStart.show();
+					}
 					break;
 				case 1:
-					myIntent = new Intent(MainActivity.this, Inbox.class);
-					myIntent.putExtra("USER", userName);
+					if (qosManager.allowedToStartMessages()) {
+						System.out.println("Startar meddelanden");
+						myIntent = new Intent(MainActivity.this, Inbox.class);
+					} else {
+						unallowedStart.show();
+					}
 					break;
 				case 2:
-					myIntent = new Intent(MainActivity.this,
-							AssignmentOverview.class);
-					myIntent.putExtra("USER", userName);
+					if (qosManager.allowedToStartAssignment()) {
+						myIntent = new Intent(MainActivity.this,
+								AssignmentOverview.class);
+					} else {
+						unallowedStart.show();
+					}
 					break;
 				case 3:
-					myIntent = new Intent(MainActivity.this, Camera.class);
-					myIntent.putExtra("USER", userName);
+					if (qosManager.allowedToStartCamera()) {
+						myIntent = new Intent(MainActivity.this, Camera.class);
+					} else {
+						unallowedStart.show();
+					}
 					break;
+				case 4:
+					myIntent = new Intent(MainActivity.this,
+							ContactsBookActivity.class);
 				default:
 					break;
 				}
-				MainActivity.this.startActivity(myIntent);
+				if (myIntent != null) {
+					MainActivity.this.startActivity(myIntent);
+				}
 			}
-
 		});
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+	}
+
+	public void checkContactDatabase() {
+		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
+		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
+			socketConnection.getAllContactsReq();
+		}
 	}
 
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
-		Database db = Database.getInstance(context);
-	
+		database = Database.getInstance(context);
 	}
 
 	/**
@@ -171,9 +203,9 @@ public class MainActivity extends InactivityListener {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera" };
+				"Kamera", "Kontakter" };
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder" };
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" };
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -192,15 +224,12 @@ public class MainActivity extends InactivityListener {
 
 	@Override
 	protected void onDestroy() {
+
 		if (mRegisterTask != null) {
 			mRegisterTask.cancel(true);
 		}
 		unregisterReceiver(mHandleMessageReceiver);
-		GCMRegistrar.onDestroy(this);
-		// communication
-		if (communicationBond) {
-			unbindService(communicationServiceConnection);
-		}
+		GCMRegistrar.onDestroy(getApplicationContext());
 		super.onDestroy();
 	}
 
@@ -215,23 +244,16 @@ public class MainActivity extends InactivityListener {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
-			System.out.println(newMessage);
-			// mDisplay.append(newMessage + "\n");
+			if (newMessage.contains("registered")) {
+				System.out.println("New gcm-message: "+newMessage);
+				User user=User.getInstance();
+				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
+				socketConnection = new SocketConnection();
+				socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
+				socketConnection.pullFromServer();
+				checkContactDatabase();
+			}
 		}
-	};
-
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-
 	};
 
 	@Override

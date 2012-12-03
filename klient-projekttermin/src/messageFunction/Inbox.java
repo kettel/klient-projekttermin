@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import loginFunction.InactivityListener;
+import loginFunction.User;
 import models.MessageModel;
 import models.ModelInterface;
 import android.app.AlertDialog;
@@ -32,6 +33,7 @@ public class Inbox extends InactivityListener {
 	private HashMap<String, Long> contactAndIdMap = new HashMap<String, Long>();
 	private List<ModelInterface> peopleEngagedInConversation;
 	private Database dataBase; 
+	// Sätter den som tom sträng för att undvika NULLPOINTER!
 	private String userName;
 
 	@Override
@@ -39,10 +41,8 @@ public class Inbox extends InactivityListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
 
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			userName = extras.getString("USER");
-		}
+		User user = User.getInstance();
+		userName = user.getAuthenticationModel().getUserName();
 
 		//Ropar p� en metod som skapar en lista �ver alla kontakter som anv�ndaren har haft en konversation med.
 		loadListOfSenders();
@@ -174,7 +174,6 @@ public class Inbox extends InactivityListener {
 		Intent intent = new Intent(this, DisplayOfConversation.class);
 		//Metoden skickar med namnet p� den kontakt som klickades p�.
 		intent.putExtra("ChosenContact", chosenContact);
-		intent.putExtra("USER", userName);
 		startActivity(intent);
 	}
 
@@ -192,6 +191,10 @@ public class Inbox extends InactivityListener {
 
 		for (int i = 0; i < peopleEngagedInConversation.size(); i++) {
 			messageModel = (MessageModel) peopleEngagedInConversation.get(i);
+			// Fulhack för att lösa NullpointerException!
+			if(userName == null){
+				userName = new String();
+			}
 			if(messageModel.getReciever().toString().toLowerCase().equals(userName.toLowerCase())){
 				if(!setOfPeople.contains(messageModel.getSender().toString())){
 					setOfPeople.add(messageModel.getSender().toString());
@@ -225,7 +228,6 @@ public class Inbox extends InactivityListener {
 	 */
 	public void createNewMessage(View v){
 		Intent intent = new Intent(this, CreateMessage.class);
-		intent.putExtra("USER",userName);
 		startActivity(intent);
 	}
 }

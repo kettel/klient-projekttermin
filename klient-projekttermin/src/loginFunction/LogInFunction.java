@@ -1,58 +1,52 @@
 package loginFunction;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import models.AuthenticationModel;
-import models.ModelInterface;
-import android.content.ComponentName;
-import android.content.Context;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
-import communicationModule.CommunicationService;
-import communicationModule.CommunicationService.CommunicationBinder;
+import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class LogInFunction extends InactivityListener {
+public class LogInFunction extends Activity implements Observer {
 	private TextView userNameView;
 	private TextView passwordView;
 	private String userName;
 	private String password;
-	private String passwordHashReference;
-	private String userNameReference;
-	private CommunicationService communicationService;
-	private AuthenticationModel AM;
-	private Database dataBase;
-	private boolean communicationBond = false;
-	private List<ModelInterface> listOfAuthenticationModels;
+	private Database database;
+
+	private int numberOfLoginTries = 4;
+
+	private AuthenticationModel originalModel;
+	private ProgressDialog pd;
+	private User user;
+	private int callingactivity;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_log_in_function);
-
-		try {
-			createPassWordHashRepresentation();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Intent intent = new Intent(this.getApplicationContext(),
-				CommunicationService.class);
-		bindService(intent, communicationServiceConnection,
-				Context.BIND_AUTO_CREATE);
+		database = Database.getInstance(getApplicationContext());
+		Intent intent = getIntent();
+		callingactivity = intent.getIntExtra("calling-activity", 0);
+		
 	}
 
 	@Override
@@ -64,46 +58,104 @@ public class LogInFunction extends InactivityListener {
 	/*
 	 * Metoden hämtar data från textfälten i inloggningsfönstret
 	 */
-	public void logIn(View v) throws NoSuchAlgorithmException,
-			UnsupportedEncodingException {
+	public void logIn(View v) throws NoSuchAlgorithmException {
+
 		userNameView = (TextView) this.findViewById(R.id.userName);
 		passwordView = (TextView) this.findViewById(R.id.password);
 		userName = userNameView.getText().toString();
 		password = passwordView.getText().toString();
 
-		AuthenticationModel authenticationModel = new AuthenticationModel(
-				userName, hashPassword(password));
+		originalModel = new AuthenticationModel(userName,
+				hashPassword(password));
 
-		sendAuthenticationRequestToServer(v, authenticationModel);
-		passwordView.getEditableText().clear();
+		user = User.getInstance();
+		user.setAuthenticationModel(originalModel);
+
+		tryOfflineLogin(originalModel);
 	}
 
-	/*
-	 * Metoden skapar ett användar inlogg
-	 */
-	public void createUser(View v) throws NoSuchAlgorithmException {
-		dataBase = Database.getInstance(getApplicationContext());
-		userNameView = (TextView) this.findViewById(R.id.userName);
-		passwordView = (TextView) this.findViewById(R.id.password);
-		userName = userNameView.getText().toString();
-		password = passwordView.getText().toString();
+	public void tryOfflineLogin(AuthenticationModel loginInput)
+			throws NoSuchAlgorithmException {
 
-		AuthenticationModel authenticationModel = new AuthenticationModel(
-				userName, hashPassword(password));
-
-		dataBase.addToDB(authenticationModel, getContentResolver());
+//		System.out.println("Saker i databasen: "
+//				+ database.getAllFromDB(loginInput, getContentResolver())
+//				.size());
+//
+//		if (database
+//				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
+//			System.out.println("Försöker logga in offline");
+//
+//			List modelList = database.getAllFromDB(loginInput,
+//					getContentResolver());
+//			AuthenticationModel loadedModel = (AuthenticationModel) modelList
+//					.get(0);
+//
+//			if (loadedModel.getUserName().equals(loginInput.getUserName())) {
+//				if (loadedModel.getPasswordHash().equals(
+//						loginInput.getPasswordHash())
+//						&& loadedModel.isAccessGranted().equals("true")) {
+//					accessGranted();
+//				} else {
+//					incorrectLogIn();
+//				}
+//			} else {
+//				removeLastUserFromDB();
+//				tryOnlineLogin(loginInput);
+//			}
+//		}
+//
+//		else {
+			System.out.println("Försöker logga in online");
+			tryOnlineLogin(loginInput);
+//		}
 	}
 
-	/*
-	 * Metoden hämtar authenticeringsinformationen från databasen
+	/**
+	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som
+	 * finns i databasen först och om så inte är fallet försöker den hämta
+	 * informationen från servern.
 	 */
-	public void authenticate(AuthenticationModel authenticationModel) {
+	private void checkAuthenticity(AuthenticationModel authenticationModel) {
+		if (authenticationModel.getUserName().equals(
+				originalModel.getUserName())
+				&& authenticationModel.isAccessGranted().equals("true")) {
+			database.addToDB(authenticationModel, getContentResolver());
+			accessGranted();
 
-		dataBase = Database.getInstance(getApplicationContext());
+		} else {
+			incorrectLogIn();
+		}
 
-		listOfAuthenticationModels = dataBase.getAllFromDB(
-				new AuthenticationModel(), getContentResolver());
-		AuthenticationModel authenticatioReference;
+	}
+
+	public void incorrectLogIn() {
+		numberOfLoginTries--;
+		if (numberOfLoginTries == 0) {
+			if(database.getDBCount(new AuthenticationModel(), getContentResolver())!=0){
+				removeLastUserFromDB();
+			}
+			finish();
+		} else {
+			this.runOnUiThread(new Runnable() {
+
+				public void run() {
+					Toast toast = Toast.makeText(getApplicationContext(),
+							"Felaktigt användarnamn eller lösenord! "
+									+ numberOfLoginTries + " försök kvar!",
+									Toast.LENGTH_LONG);
+					toast.setGravity(Gravity.TOP, 0, 300);
+					toast.show();
+				}
+			});
+		}
+	}
+
+	public void removeLastUserFromDB() {
+		List list = database.getAllFromDB(new AuthenticationModel(),
+				getContentResolver());
+		System.out.println("DATABASSTORLEK: "+list.size());
+		database.deleteFromDB((AuthenticationModel) list.get(0),
+				getContentResolver());
 	}
 
 	/*
@@ -131,92 +183,50 @@ public class LogInFunction extends InactivityListener {
 	/*
 	 * Metoden skickar iväg autenticeringsförfrågan till servern
 	 */
-	public void sendAuthenticationRequestToServer(View v,
-			AuthenticationModel authenticationModel) {
+	public void tryOnlineLogin(AuthenticationModel authenticationModel) {
 
-		if (communicationBond) {
-			System.out.println("TO SERVER");
-			communicationService.sendAuthentication(authenticationModel);
-		}
-		sendAuthenticationRequestToLocalDatabase(v, authenticationModel);
-	}
-
-	/*
-	 * Metoden authenticerar användaren mot den lokala databasen
-	 */
-	private void sendAuthenticationRequestToLocalDatabase(View v,
-			AuthenticationModel authenticationModel) {
-
-		System.out.println(authenticationModel.getUserName().toString());
-		System.out.println(authenticationModel.getPasswordHash());
-		if (authenticationModel.getUserName().toString()
-				.equals(userNameReference)
-				&& authenticationModel.getPasswordHash().equals(
-						passwordHashReference)) {
-			accessGranted();
-		}
-
-		else {
-			// get your custom_toast.xml ayout
-			// LayoutInflater inflater = getLayoutInflater();
-			//
-			// View layout =
-			// inflater.inflate(R.layout.activity_log_in_function,(ViewGroup)
-			// findViewById(R.id.LogInFunction));
-			//
-			// Toast toast = new Toast(getApplicationContext());
-			Toast.makeText(getApplicationContext(),
-					"Användarnamn eller lösenord är felaktigt, försök igen!",
-					Toast.LENGTH_SHORT).show();
-			// toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-			// toast.setView(layout);
-			// toast.show();
-		}
+		SocketConnection connection = new SocketConnection();
+		connection.addObserver(this);
+		connection.authenticate(authenticationModel);
+		pd = ProgressDialog.show(LogInFunction.this, "", "Loggar in...", true,
+				true);
 	}
 
 	public void accessGranted() {
-		Intent intent = new Intent(this, MainActivity.class);
-		intent.putExtra("USER", userName);
-		startActivity(intent);
+		switch (callingactivity) {
+		case ActivityConstants.INACTIVITY:
+			break;
+		default:
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.putExtra("USER", userName);
+			startActivity(intent);
+			break;
+		}
 		finish();
 	}
 
-	/*
-	 * Metoden skapar en hashrepresentation av ett hårdkodat lösenord
-	 */
-	public void createPassWordHashRepresentation()
-			throws NoSuchAlgorithmException {
-		String password = "a";
-		userNameReference = "fredde";
+	public void update(Observable observable, Object data) {		
+		if (data instanceof AuthenticationModel) {
+			this.runOnUiThread(new Runnable() {
 
-		AM = new AuthenticationModel(password, userNameReference);
-
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		md.update(password.getBytes());
-
-		byte byteData[] = md.digest();
-
-		// convert the byte to hex format
-		StringBuffer hexString = new StringBuffer();
-		for (int i = 0; i < byteData.length; i++) {
-			String hex = Integer.toHexString(0xff & byteData[i]);
-			if (hex.length() == 1)
-				hexString.append('0');
-			hexString.append(hex);
+				public void run() {
+					pd.dismiss();
+				}
+			});
+			checkAuthenticity((AuthenticationModel) data);
 		}
-		passwordHashReference = hexString.toString();
+		else {
+			this.runOnUiThread(new Runnable() {
+
+				public void run() {
+					pd.dismiss();
+					Toast toast = Toast.makeText(getApplicationContext(),
+							"Det gick inte att ansluta till servern!",
+									Toast.LENGTH_LONG);
+					toast.setGravity(Gravity.TOP, 0, 300);
+					toast.show();
+				}
+			});
+		}
 	}
-
-	private ServiceConnection communicationServiceConnection = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			CommunicationBinder binder = (CommunicationBinder) service;
-			communicationService = binder.getService();
-			communicationBond = true;
-		}
-
-		public void onServiceDisconnected(ComponentName arg0) {
-			communicationBond = false;
-		}
-	};
 }

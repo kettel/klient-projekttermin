@@ -28,7 +28,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import camera.PhotoGallery;
+//<<<<<<< HEAD
+//import android.widget.TextView;
+//import camera.PhotoGallery;
+//=======
+import camera.Album;
+import camera.Camera;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -47,6 +52,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private Context context;
 	private boolean isCreatingDialog = false;
 	private boolean isCreatingCoordDialog = false;
+
 	public static String items;
 	private String temp = "Agenter: ";
 
@@ -142,7 +148,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				if (v.getId() != 1 && v.getId() != 6) {
 					itemStrings.put(v.getId(), s.toString());
 				}
-
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -152,21 +157,21 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void afterTextChanged(Editable s) {
 			}
 		});
-		
-		if (hasFocus && v.getId() == 1) {
+
+		if (hasFocus && v.getId() == 1 && itemStrings.get(v.getId()) == null) {
 			if (!isCreatingCoordDialog) {
 				isCreatingCoordDialog = true;
 				coordinateField(v);
 			}
 		}
-		if (hasFocus && v.getId() == 6) {
+		if (hasFocus && v.getId() == 6 && itemStrings.get(v.getId()) == null) {
 			if (!isCreatingDialog) {
 				isCreatingDialog = true;
 				pictureAlternatives();
 			}
 		}
-		if (hasFocus && v.getId() == 7) {
-			if (!isCreatingPrioDialog) {
+		if (hasFocus && v.getId() == 7 && itemStrings.get(v.getId()) == null) {
+			if (!isCreatingPrioDialog ) {
 				isCreatingPrioDialog = true;
 				priorityAlternatives((EditText) v);
 			}
@@ -192,13 +197,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				isCreatingDialog = false;
 				switch (arg2) {
 				case 0:
-					Intent intent = new Intent(context, PhotoGallery.class);
+					Intent intent = new Intent(context, Album.class);
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 					((AddAssignment) context).startActivityForResult(intent, 1);
 					break;
 				case 1:
-					Intent intent2 = new Intent(context, PhotoGallery.class);
+					Intent intent2 = new Intent(context, Camera.class);
 					intent2.putExtra("calling-activity",
 							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
 					((AddAssignment) context)
@@ -214,26 +219,18 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 	private void coordinateField(final View v) {
 		final EditText ed1 = (EditText) v;
-		// LocationManager manager = (LocationManager) context
-		// .getSystemService(Context.LOCATION_SERVICE);
-		// String provider = manager.getBestProvider(new Criteria(), true);
-		// Location location = manager.getLastKnownLocation(provider);
-		// System.out.println(location + " LOCATION");
-		// LocationManager manager = (LocationManager)
-		// context.getSystemService(Context.LOCATION_SERVICE);
-		// AndroidGPSProvider locationSource = new AndroidGPSProvider(manager,
-		// 1000L);
-		// WgsPoint location = locationSource.getLocation();
-		// Gson gson = new Gson();
-		// final Type type = new TypeToken<WgsPoint[]>() {
-		// }.getType();
-		// WgsPoint[] wgs = new WgsPoint[1];
-		// wgs[0] = location;
-		// // System.out.println(new WgsPoint(location.getLatitude(), location
-		// // .getLongitude()));
-		// final String pos = gson.toJson(wgs, type);
 
-		// System.out.println("POS: " + pos);
+		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		String provider = manager.getBestProvider(new Criteria(), true);
+		Location location = manager.getLastKnownLocation(provider);
+		Gson gson = new Gson();
+		final Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		WgsPoint[] wgs = new WgsPoint[1];
+		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
+		
+		final String pos = gson.toJson(wgs, type);
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
 		ListView modeList = new ListView(context);
@@ -248,8 +245,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
-
-				isCreatingDialog = false;
 				switch (arg2) {
 				case 0:
 					isCreatingCoordDialog = false;
@@ -258,6 +253,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
 					((AddAssignment) context).startActivityForResult(intent, 0);
+					break;
 				case 1:
 					Intent intent2 = new Intent(context, MapActivity.class);
 					intent2.putExtra("calling-activity",
@@ -287,6 +283,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
+		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
