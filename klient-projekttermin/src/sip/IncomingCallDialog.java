@@ -5,10 +5,8 @@ import java.util.TimerTask;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
@@ -22,7 +20,7 @@ public class IncomingCallDialog extends Activity {
 	private String timeInCall = new String();
 	private String caller = new String();
 	private Timer timer;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,6 +32,10 @@ public class IncomingCallDialog extends Activity {
 			caller = "ringer " + extras.getString("caller") + "...";
 			startCallTimer();
 			setToggleButtonChecked();
+			
+			// Lyssna efter om personen har svarat på påringningen
+			ObserverCallStatus observer = new ObserverCallStatus();
+			RegisterWithSipServerService.callStatus.addObserver(observer);
 			
 			// Lyssna på toggle-knappen
 			ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
