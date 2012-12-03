@@ -13,7 +13,6 @@ public class BatteryCheckingFunction extends Observable {
 	private int batteryLevel = 0;
 
 	public BatteryCheckingFunction(Context context) {
-		System.out.println("Tjena");
 		startCheckThread(context);
 	}
 
@@ -21,7 +20,6 @@ public class BatteryCheckingFunction extends Observable {
 		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 		final Intent batteryStatus = context.registerReceiver(null, ifilter);
 
-		System.out.println("KÖR startCheckThread");
 		new Thread(new Runnable() {
 
 			public void run() {

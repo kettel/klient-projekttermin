@@ -27,7 +27,7 @@ public class SearchSuggestions extends Observable implements
 		if (service!=null) {
 			service.cancel();
 		}
-		System.out.println("UPdate search");
+		System.out.println(GeocodingService.DEFAULT_URL);
 		service = new GeocodingService(this,
 				GeocodingService.DEFAULT_URL, "et", currentPos, text,
 				GeocodingService.SEARCH_TYPE_GEOCODING, null, 5, false);
@@ -35,12 +35,14 @@ public class SearchSuggestions extends Observable implements
 	}
 
 	public void errors(int arg0) {
+		System.out.println("errors " + arg0);
 	}
 
 	/**
 	 * Lägger till funna sökord i en lista, max 10 sökord skrivs ut 
 	 */
 	public void searchResults(KmlPlace[] kmlPlaces) {
+		System.out.println("Seatch results");
 		list.clear();
 		for (int i = 0; i < kmlPlaces.length; i++) {
 			list.add(kmlPlaces[i]);

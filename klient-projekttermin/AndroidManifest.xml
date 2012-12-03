@@ -2,12 +2,14 @@
     package="com.klient_projekttermin"
     android:versionCode="1"
     android:versionName="1.0" >
-     <!-- Permissions -->
+
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="com.klient_projekttermin.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- App receives GCM messages. -->
@@ -131,6 +133,11 @@
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
+
+        <activity
+            android:name="alternativeCamera.Cam"
+            android:label="@string/title_activity_cam" >
+        </activity>
     </application>
 
 </manifest>
