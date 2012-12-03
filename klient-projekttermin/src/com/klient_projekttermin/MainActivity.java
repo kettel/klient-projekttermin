@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import loginFunction.InactivityListener;
-import loginFunction.LogInFunction;
+import loginFunction.LogInActivity;
 import loginFunction.User;
 import map.MapActivity;
 import messageFunction.Inbox;
@@ -41,7 +40,7 @@ import communicationModule.SocketConnection;
 import contacts.ContactsBookActivity;
 import database.Database;
 
-public class MainActivity extends InactivityListener {
+public class MainActivity extends SecureActivity {
 
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
@@ -242,7 +241,7 @@ public class MainActivity extends InactivityListener {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		finish();
-		Intent intent = new Intent(MainActivity.this, LogInFunction.class);
+		Intent intent = new Intent(MainActivity.this, LogInActivity.class);
 		this.startActivity(intent);
 		return false;
 	}

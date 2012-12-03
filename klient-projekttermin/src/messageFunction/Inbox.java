@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import loginFunction.InactivityListener;
 import loginFunction.User;
 import models.MessageModel;
 import models.ModelInterface;
@@ -22,11 +21,12 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 
 import database.Database;
 
-public class Inbox extends InactivityListener {
+public class Inbox extends SecureActivity {
 
 	private ListView listOfPeopleEngagedInConversation;
 	private String[] peopleIveBeenTalkingTo;

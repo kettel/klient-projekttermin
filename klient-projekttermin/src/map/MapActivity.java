@@ -10,7 +10,6 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
 
-import loginFunction.InactivityListener;
 import loginFunction.User;
 import models.Assignment;
 import models.ModelInterface;
@@ -50,6 +49,7 @@ import assignment.AssignmentDetails;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
@@ -87,7 +87,7 @@ import database.Database;
  * @author nicklas
  * 
  */
-public class MapActivity extends InactivityListener implements Observer,
+public class MapActivity extends SecureActivity implements Observer,
 		MapListener, Runnable, OnItemClickListener, OnMapElementListener {
 
 	private BasicMapComponent mapComponent;

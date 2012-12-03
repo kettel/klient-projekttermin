@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import loginFunction.InactivityListener;
 import models.PictureModel;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,11 +18,12 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 
 import database.Database;
 
-public class Camera extends InactivityListener {
+public class Camera extends SecureActivity {
 
 	private static final String BITMAP_STORAGE_KEY = "viewbitmap";
 	private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";

@@ -2,7 +2,6 @@ package assignment;
 
 import java.util.List;
 
-import loginFunction.InactivityListener;
 import loginFunction.User;
 import models.Assignment;
 import models.AssignmentStatus;
@@ -21,13 +20,14 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 import communicationModule.SocketConnection;
 
 import database.AssignmentTable;
 import database.Database;
 
-public class AssignmentOverview extends InactivityListener {
+public class AssignmentOverview extends SecureActivity {
 
 	private long[] idInAdapter;
 	private Database db;

@@ -2,7 +2,6 @@ package contacts;
 
 import java.util.List;
 
-import loginFunction.InactivityListener;
 import loginFunction.User;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
@@ -19,11 +18,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 
 import database.Database;
 
-public class ContactsBookActivity extends InactivityListener {
+public class ContactsBookActivity extends SecureActivity {
 
 	private String[] contacts;
 	private Database db;
