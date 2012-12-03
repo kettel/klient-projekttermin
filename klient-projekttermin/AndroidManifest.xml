@@ -39,10 +39,6 @@
             android:label="@string/title_activity_photo_gallery" >
         </activity>
         <activity 
-            android:name="sip.SipMain"
-            android:label="@string/title_activity_sip_main">
-        </activity>
-        <activity 
             android:name="contacts.ContactsBookActivity"
             android:label="@string/title_activity_contacts_book">
         </activity>

@@ -34,10 +34,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 					try {
 						Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 						context.startActivity(startIncomingCallDialog);
-						Log.d("SIP","..lyckades nog inte starta dialogen...");
-						if(answerCall){
-							answerCall(call);
-						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -45,12 +41,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 			};
 			MainActivity mActivity = (MainActivity) context;
 			incomingCall = mActivity.manager.takeAudioCall(intent, listener);
+			// Fuling för att hindra att fler än 1 callDialog startas..
 			Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 			context.startActivity(startIncomingCallDialog);
-			Log.d("SIP","..lyckades nog inte starta dialogen...");
-			if(answerCall){
-				answerCall(incomingCall);
-			}
 			mActivity.call = incomingCall;
 		} catch (Exception e) {
 			if (incomingCall != null) {

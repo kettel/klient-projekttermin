@@ -193,12 +193,6 @@ public class MainActivity extends InactivityListener {
 	protected void onStart() {
 		super.onStart();
 		
-		// SIP: Registrera Intent för att hantera inkommande SIP-samtal
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.klient_projekttermin.INCOMING_CALL");
-        callReceiver = new IncomingCallReceiver();
-        this.registerReceiver(callReceiver, filter);
-        
         // SIP: Registrera klienten hos SIP-servern 
         // TODO: Skriv om till service..
         initializeManager();
@@ -208,12 +202,6 @@ public class MainActivity extends InactivityListener {
 	public void onResume(){
 		super.onResume();
 		
-		// SIP: Registrera Intent för att hantera inkommande SIP-samtal
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.klient_projekttermin.INCOMING_CALL");
-        callReceiver = new IncomingCallReceiver();
-        this.registerReceiver(callReceiver, filter);
-        
         // SIP: Registrera klienten hos SIP-servern 
         // TODO: Skriv om till service..
         initializeManager();

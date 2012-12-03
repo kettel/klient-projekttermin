@@ -31,6 +31,7 @@ public class IncomingCallDialog extends Activity {
 				if(!buttonView.isChecked() && IncomingCallReceiver.answerCall){
 					IncomingCallReceiver.answerCall = false;
 					IncomingCallReceiver.dropCall(IncomingCallReceiver.incomingCall);
+					Log.d("SIP", "Samtal avslutat. Ska nu köra finish på aktivitet...");
 					finish();
 				}
 			}
