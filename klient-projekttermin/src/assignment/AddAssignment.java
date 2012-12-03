@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import loginFunction.InactivityListener;
-import loginFunction.User;
+import login.User;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
@@ -28,12 +27,13 @@ import android.widget.Toast;
 import camera.Album;
 
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class AddAssignment extends InactivityListener implements Serializable {
+public class AddAssignment extends SecureActivity implements Serializable {
 	/**
 	 * 
 	 */
@@ -53,6 +53,7 @@ public class AddAssignment extends InactivityListener implements Serializable {
 	private Bitmap bitmap;
 	private int callingActivity;
 
+	@Override
 	@SuppressLint("UseSparseArrays")
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -162,7 +163,6 @@ public class AddAssignment extends InactivityListener implements Serializable {
 				+ temp.get(5));
 
 		db.addToDB(newAssignment, getContentResolver());
-		
 		SocketConnection connection=new SocketConnection();
 		connection.sendModel(newAssignment);
 		finish();
@@ -207,9 +207,11 @@ public class AddAssignment extends InactivityListener implements Serializable {
 		db = Database.getInstance(getApplicationContext());
 		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(), getContentResolver());
 		PictureModel p = (PictureModel)pics.get(id);
+		BitmapFactory.Options ops = new BitmapFactory.Options();
+		ops.inSampleSize = 2;
 		Bitmap bitmap = BitmapFactory.decodeByteArray(
 				p.getPicture(), 0,
-				p.getPicture().length);
+				p.getPicture().length, ops);
 		return bitmap;
 	}
 }

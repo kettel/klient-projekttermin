@@ -90,6 +90,7 @@
     <string name="title_activity_camera_menu">CameraMenuActivity</string>
     <string name="title_activity_take_pictures">TakePicturesActivity</string>
     <string name="title_activity_album">Album</string>
+    <string name="title_activity_cam">Cam</string>
     <string name="title_activity_qo_sinterface">Inställningar för batterisparläge</string>
     <string name="automaticQoS">Automatiskt QoS-läge</string>
     <string name="automaticBatterySaveModeText">Automatisk aktivering av batterisparläge är: </string>

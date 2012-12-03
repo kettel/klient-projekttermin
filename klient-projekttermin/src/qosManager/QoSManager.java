@@ -3,12 +3,11 @@ package qosManager;
 import java.util.Observable;
 import java.util.Observer;
 
-import loginFunction.InactivityListener;
 import android.app.Activity;
+
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.view.WindowManager;
-import android.widget.ToggleButton;
 
 public class QoSManager implements Observer {
 	private Boolean permissionToStartMap = true;

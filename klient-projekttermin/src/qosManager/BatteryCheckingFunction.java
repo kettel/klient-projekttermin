@@ -14,7 +14,6 @@ public class BatteryCheckingFunction extends Observable {
 	private Thread batteryCheckThread;
 
 	public BatteryCheckingFunction(Context context) {
-		System.out.println("Tjena");
 		startCheckThread(context);
 	}
 
@@ -24,6 +23,7 @@ public class BatteryCheckingFunction extends Observable {
 
 		System.out.println("KÖR startCheckThread");
 		batteryCheckThread = new Thread(new Runnable() {
+
 
 			public void run() {
 				while (true) {

@@ -2,12 +2,14 @@
     package="com.klient_projekttermin"
     android:versionCode="1"
     android:versionName="1.0" >
-     <!-- Permissions -->
+
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="com.klient_projekttermin.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- App receives GCM messages. -->
@@ -50,7 +52,11 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-            
+              <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -98,7 +104,7 @@
             android:label="@string/uppdrag" >
         </activity>
         <activity
-            android:name="loginFunction.LogInFunction"
+            android:name="login.LogInActivity"
             android:label="@string/title_activity_login_function" >
         </activity>
         <activity
@@ -113,11 +119,7 @@
             android:name="qosManager.QoSInterface"
             android:label="@string/title_activity_qo_sinterface"
             android:screenOrientation="portrait"  >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+          
         </activity>
         <!-- Database Content Providers -->
         <provider
@@ -136,8 +138,11 @@
             android:name="database.PictureContentProvider"
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
-        <service android:name=".GCMIntentService" />
+        <activity
+            android:name="alternativeCamera.Cam"
+            android:label="@string/title_activity_cam" >
+        </activity>
+        <service android:name="com.klient_projekttermin.GCMIntentService" />
     </application>
 
->>>>>>> cc72411b382eced7867fcd132b50afd71f69bec9
 </manifest>

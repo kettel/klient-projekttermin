@@ -1,7 +1,8 @@
-package loginFunction;
+package com.klient_projekttermin;
 
-import com.klient_projekttermin.ActivityConstants;
 
+import login.LogInActivity;
+import login.User;
 import qosManager.QoSManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -17,7 +18,7 @@ import android.os.Message;
  *
  */
 @SuppressLint("HandlerLeak")
-public class InactivityListener extends Activity {
+public class SecureActivity extends Activity {
 	private QoSManager qosManager;
 	public static String inactivity;
 	
@@ -26,6 +27,12 @@ public class InactivityListener extends Activity {
 		super.onCreate(savedInstanceState);
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
+		User user =User.getInstance();
+		if (!user.isLogged()) {
+			Intent myIntent = new Intent(SecureActivity.this,
+					LogInActivity.class);
+			this.startActivity(myIntent);
+		}
 	}
 
 	/**
@@ -34,7 +41,8 @@ public class InactivityListener extends Activity {
     public static final long DISCONNECT_TIMEOUT = 600000; 
 
     private Handler disconnectHandler = new Handler(){
-        public void handleMessage(Message msg) {
+        @Override
+		public void handleMessage(Message msg) {
         }
     };
 
@@ -43,9 +51,9 @@ public class InactivityListener extends Activity {
      */
     private Runnable disconnectCallback = new Runnable() {
         public void run() {
-            Intent intent = new Intent(InactivityListener.this, LogInFunction.class);
+            Intent intent = new Intent(SecureActivity.this, LogInActivity.class);
             intent.putExtra("calling-activity", ActivityConstants.INACTIVITY);
-            InactivityListener.this.startActivity(intent);
+            SecureActivity.this.startActivity(intent);
         }
     };
 

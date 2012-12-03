@@ -69,7 +69,6 @@ public class PictureDB {
 	// erases all entries in the database
 	public void refreshCache(ContentResolver contentResolver) {
 		int delete = contentResolver.delete(Pictures.CONTENT_URI, null, null);
-		System.out.println("DELETED " + delete + " RECORDS FROM PICTURES DB");
 	}
 
 	public List<ModelInterface> getAllPictures(ContentResolver contentResolver) {

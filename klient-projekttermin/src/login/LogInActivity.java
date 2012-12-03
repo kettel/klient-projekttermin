@@ -1,4 +1,4 @@
-package loginFunction;
+package login;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,9 +7,11 @@ import java.util.Observable;
 import java.util.Observer;
 
 import models.AuthenticationModel;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -25,7 +27,7 @@ import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class LogInFunction extends Activity implements Observer {
+public class LogInActivity extends Activity implements Observer {
 	private TextView userNameView;
 	private TextView passwordView;
 	private String userName;
@@ -47,6 +49,41 @@ public class LogInFunction extends Activity implements Observer {
 		Intent intent = getIntent();
 		callingactivity = intent.getIntExtra("calling-activity", 0);
 		
+	}
+	@Override
+	public void onBackPressed() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setTitle("Title");
+	    builder.setMessage("Vill du logga ut?");
+	    builder.setPositiveButton("Ja", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	                SocketConnection socketConnection=new SocketConnection();
+	                socketConnection.logout();
+	                /*
+	                 * Notify the system to finalize and collect all objects of the app
+	                 * on exit so that the virtual machine running the app can be killed
+	                 * by the system without causing issues. NOTE: If this is set to
+	                 * true then the virtual machine will not be killed until all of its
+	                 * threads have closed.
+	                 */
+	                System.runFinalization();
+
+	                /*
+	                 * Force the system to close the app down completely instead of
+	                 * retaining it in the background. The virtual machine that runs the
+	                 * app will be killed. The app will be completely created as a new
+	                 * app in a new virtual machine running in a new process if the user
+	                 * starts the app again.
+	                 */
+	                System.exit(0);
+	            }});
+	    builder.setNegativeButton("Nej", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	            }});
+	    builder.setCancelable(false);
+	    builder.create().show();
 	}
 
 	@Override
@@ -116,23 +153,19 @@ public class LogInFunction extends Activity implements Observer {
 	 * informationen från servern.
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel) {
-		System.out.println("INNE I CHECK AUTHENTICITY");
 		if (authenticationModel.getUserName().equals(
 				originalModel.getUserName())
 				&& authenticationModel.isAccessGranted().equals("true")) {
-			System.out.println("DOM KOM IN!");
 			database.addToDB(authenticationModel, getContentResolver());
 			accessGranted();
 
 		} else {
-			System.out.println("INNE I ELSE");
 			incorrectLogIn();
 		}
 
 	}
 
 	public void incorrectLogIn() {
-		System.out.println("INNE I INCORRECTLOGIN");
 		numberOfLoginTries--;
 		if (numberOfLoginTries == 0) {
 			if(database.getDBCount(new AuthenticationModel(), getContentResolver())!=0){
@@ -140,7 +173,6 @@ public class LogInFunction extends Activity implements Observer {
 			}
 			finish();
 		} else {
-			System.out.println("INNE I ELSE I INCORRECTLOGIN");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -156,7 +188,6 @@ public class LogInFunction extends Activity implements Observer {
 	}
 
 	public void removeLastUserFromDB() {
-		System.out.println("NU TAS NÅGOT BORT");
 		List list = database.getAllFromDB(new AuthenticationModel(),
 				getContentResolver());
 		System.out.println("DATABASSTORLEK: "+list.size());
@@ -195,8 +226,7 @@ public class LogInFunction extends Activity implements Observer {
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
 		System.out.println("Skapar en ny ProgressDialog");
-		pd = ProgressDialog.show(LogInFunction.this, "", "Loggar in...", true,
-				true);
+		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
 	}
 
 	public void accessGranted() {
@@ -209,15 +239,12 @@ public class LogInFunction extends Activity implements Observer {
 			startActivity(intent);
 			break;
 		}
+		user.setLoggedIn(true);
 		finish();
 	}
 
-	public void update(Observable observable, Object data) {
-		System.out.println("Inne i update");
-		
+	public void update(Observable observable, Object data) {		
 		if (data instanceof AuthenticationModel) {
-			System.out.println("Inne i instance of AuthenticationModel");
-			System.out.println("tar bort en Progress dialog");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -227,8 +254,6 @@ public class LogInFunction extends Activity implements Observer {
 			checkAuthenticity((AuthenticationModel) data);
 		}
 		else {
-			System.out.println("inne i instance of String ");
-			System.out.println("tar bort en Progress dialog");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
