@@ -1,7 +1,8 @@
 package contacts;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;
@@ -17,8 +18,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.klient_projekttermin.ActivityConstants;
-import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
+import com.klient_projekttermin.SecureActivity;
 
 import database.Database;
 
@@ -38,12 +39,18 @@ public class ContactsBookActivity extends SecureActivity {
 		db = Database.getInstance(this);
 		List<ModelInterface> lista = db.getAllFromDB(new Contact(),
 				getContentResolver());
-		System.out.println(lista.size()+ " ANTAL KONTAKTER");
 		contacts = new String[lista.size()];
-		int i = 0;
+		
+		List<String> sortedContact = new ArrayList<String>();
 		for (ModelInterface m : lista) {
 			Contact c = (Contact) m;
-			contacts[i] = c.getContactName();
+			sortedContact.add(c.getContactName());
+		}
+		
+		int i = 0;
+		Collections.sort(sortedContact);
+		for (String string : sortedContact) {
+			contacts[i] = string;
 			i++;
 		}
 		lv.setAdapter(new ContacsAdapter(this,

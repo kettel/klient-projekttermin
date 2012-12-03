@@ -552,6 +552,7 @@ public class MapActivity extends SecureActivity implements Observer,
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
+		System.out.println("UPDATE");
 		runOnUiThread(this);
 	}
 
@@ -566,7 +567,6 @@ public class MapActivity extends SecureActivity implements Observer,
 			mapComponent.addPlace(temp);
 			regionCorners.add(temp);
 		} else {
-			System.out.println("Callign "+ callingActivity);
 			if (callingActivity == ActivityConstants.MAIN_ACTIVITY) {
 				createInterestPoint(arg0);
 			} else {
@@ -668,6 +668,7 @@ public class MapActivity extends SecureActivity implements Observer,
 		sm.clear();
 		for (KmlPlace temp : searchSuggestions.getList()) {
 			sm.addAll(temp.getName());
+			System.out.println("LIST ALLT" + temp.getName());
 		}
 		sm.notifyDataSetChanged();
 		sp.setVisibility(View.GONE);

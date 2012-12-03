@@ -27,6 +27,7 @@ public class SearchSuggestions extends Observable implements
 		if (service!=null) {
 			service.cancel();
 		}
+		System.out.println("UPdate search");
 		service = new GeocodingService(this,
 				GeocodingService.DEFAULT_URL, "et", currentPos, text,
 				GeocodingService.SEARCH_TYPE_GEOCODING, null, 5, false);
@@ -43,6 +44,7 @@ public class SearchSuggestions extends Observable implements
 		list.clear();
 		for (int i = 0; i < kmlPlaces.length; i++) {
 			list.add(kmlPlaces[i]);
+			System.out.println("KML PLACE" + kmlPlaces[i]);
 		}
 		/**
 		 * Notifierar alla observers om att datan har ändrats
