@@ -118,7 +118,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private void fromCamera(Intent intent) {
 		int id = intent.getIntExtra("pic", 0);
 		bitmap = getPic(id);
-		adapter.textToItem(6, "Bifogad bild");
+		adapter.textToItem(5, "Bifogad bild");
 		runOnUiThread(new Runnable() {
 			public void run() {
 				adapter.notifyDataSetChanged();
@@ -173,9 +173,9 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 					currentUser, isExternalMission, temp.get(2), temp.get(3),
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
-					temp.get(5), checkPrioString(temp.get(7)));
+					temp.get(4), checkPrioString(temp.get(6)));
 
-			String tempUnseparated = temp.get(8);
+			String tempUnseparated = temp.get(7);
 
 			if (tempUnseparated == null) {
 				tempUnseparated = "";
@@ -219,13 +219,10 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			newAssignment.setAssignmentStatus(AssignmentStatus.STARTED);
 		}
 
-		Log.e("FEL", "Rätt split? ->" + newString);
-
 		List<String> items = new LinkedList<String>(Arrays.asList(newString
 				.split("\\s*,\\s*"))); // reguljära uttryck haxx
 
 		for (String string : items) {
-			Log.e("FEL", "Regexplittade agents: " + string);
 		}
 		List<ModelInterface> list = db.getAllFromDB(new Contact(),
 				getContentResolver());
