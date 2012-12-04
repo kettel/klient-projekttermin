@@ -6,18 +6,17 @@ import java.util.Observer;
 import android.app.Activity;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.view.WindowManager;
 
 public class QoSManager implements Observer {
+	private int lowBatteryLevel=20;
 	private Boolean permissionToStartMap = true;
 	private Boolean permissionToUseNetwork = true;
 	private Boolean permissionToStartCamera = true;
 	private Boolean permissionToStartMessages = true;
 	private Boolean permissionToStartAssignment = true;
 	private float screenBrightnesslevel = (float) 0.2;
-	private int lowBatteryLevel=20;
 	
 	private float screenBrightnesslevelOkay = (float) 0.3;
 	private Boolean permissionToStartMapOkay = true;
@@ -64,6 +63,7 @@ public class QoSManager implements Observer {
 			adjustToLowBatteryLevel();
 		}
 		else{
+			System.out.println("Här är det nog");
 			adjustToOkayBatteryLevel();
 		}
 	}
@@ -74,12 +74,15 @@ public class QoSManager implements Observer {
 	 */
 	public void update(Observable observable, Object data) {
 		int batteryLevel = (Integer) data;
-
+		System.out.println("Kör en update");
+		
 		if(batteryLevel<=lowBatteryLevel&&okayBatterylevel){
+			System.out.println("Justerar för lågt batteri");
 			okayBatterylevel=false;
 			adjustToLowBatteryLevel();
 		}
 		else if(batteryLevel>lowBatteryLevel&&!okayBatterylevel){
+			System.out.println("Justerar för okej batterinivå");
 			okayBatterylevel = true;
 			adjustToOkayBatteryLevel();
 		}
@@ -115,6 +118,7 @@ public class QoSManager implements Observer {
 	 * @param value kan vara ett valfritt float-värde mellan 0.0-1.0;
 	 */
 	public void adjustScreenBrightness(float brightnessValue) {
+		System.out.println("Nu aktiveras den nya ljusstyrkan");
 		WindowManager.LayoutParams layout = ((Activity) applicationContext).getWindow().getAttributes();
 		layout.screenBrightness = brightnessValue;
 		((Activity) applicationContext).getWindow().setAttributes(layout);
@@ -129,7 +133,7 @@ public class QoSManager implements Observer {
 		wifiManager.setWifiEnabled(wantToTurnOn);
 	}
 	
-	public Boolean isBatterySaveModeActivated(){
+	public Boolean batterySaveModeIsActivated(){
 		return BatterySaveModeIsActivated;
 	}
 
@@ -138,10 +142,13 @@ public class QoSManager implements Observer {
 	}
 
 	public boolean isAllowedToStartAssignment() {
+		System.out.println("Tillåtelsen för assignment är: "+permissionToStartAssignment);
+
 		return permissionToStartAssignment;
 	}
 
 	public boolean isAllowedToStartMessages() {
+		System.out.println("Tillåtelsen för meddelanden är: "+permissionToStartMessages);
 		return permissionToStartMessages;
 	}
 
@@ -163,14 +170,18 @@ public class QoSManager implements Observer {
 	/**
 	 * Metoden sätter ett värde på skärmljusstyrkan
 	 */
-	public void setScreenBrightnessValueLow(float screenBrightnessLevel){
-		screenBrightnesslevel = screenBrightnessLevel;
+	public void setScreenBrightnessValueLow(float newScreenBrightnessLevel){
+		System.out.println("Nu sätts en ny ljusstyrka");
+		screenBrightnesslevel = newScreenBrightnessLevel;
+		
 		if(BatterySaveModeIsActivated){
 			adjustScreenBrightness(screenBrightnesslevel);
 		}
 	}
 
 	public void setPermissionToStartMessages(Boolean permissionStartMessagesLow) {
+		System.out.println("MESSAGE SÄTTS TILL: "+permissionStartMessagesLow);
+
 		permissionToStartMessages = permissionStartMessagesLow;
 	}
 
@@ -186,12 +197,15 @@ public class QoSManager implements Observer {
 		permissionToStartCamera = permissionStartCameraLow;
 	}
 
-	public void setPermissionToStartAssignment(
-			Boolean permissionStartAssignmentLow) {
+	public void setPermissionToStartAssignment(Boolean permissionStartAssignmentLow) {
+		System.out.println("ASSIGNMENT SÄTTS TILL: "+permissionStartAssignmentLow);
 		permissionToStartAssignment = permissionStartAssignmentLow;
 	}
 
 	public void setLowBatteryLevel(int batterylevel) {
 		lowBatteryLevel = batterylevel;
+		if(batterySaveModeIsActivated()){
+		adjustToLowBatteryLevel();
+		}
 	}
 }

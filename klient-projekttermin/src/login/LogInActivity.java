@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import qosManager.QoSManager;
+
 import models.AuthenticationModel;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
+
 import communicationModule.SocketConnection;
 
 import database.Database;
@@ -40,6 +43,7 @@ public class LogInActivity extends Activity implements Observer {
 	private ProgressDialog pd;
 	private User user;
 	private int callingactivity;
+	private QoSManager qosManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,10 +102,6 @@ public class LogInActivity extends Activity implements Observer {
 
 	public void tryOfflineLogin(AuthenticationModel loginInput)
 			throws NoSuchAlgorithmException {
-
-		System.out.println("Saker i databasen: "
-				+ database.getAllFromDB(loginInput, getContentResolver())
-				.size());
 
 		if (database
 				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
@@ -212,6 +212,10 @@ public class LogInActivity extends Activity implements Observer {
 	}
 
 	public void accessGranted() {
+//		qosManager = QoSManager.getInstance();
+//		qosManager.setContext(this);
+//		qosManager.adjustToCurrentBatteryMode();
+
 		switch (callingactivity) {
 		case ActivityConstants.INACTIVITY:
 			break;
@@ -228,6 +232,7 @@ public class LogInActivity extends Activity implements Observer {
 
 	public void update(Observable observable, Object data) {		
 		if (data instanceof AuthenticationModel) {
+			System.out.println("DET KOMMER NÅGOT FRÅN SERVERN");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -242,7 +247,7 @@ public class LogInActivity extends Activity implements Observer {
 				public void run() {
 					pd.dismiss();
 					Toast toast = Toast.makeText(getApplicationContext(),
-							"Det gick inte att ansluta till servern!, Försöker logga in offline",
+							"Det gick inte att ansluta till servern! Försöker logga in offline",
 									Toast.LENGTH_LONG);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();

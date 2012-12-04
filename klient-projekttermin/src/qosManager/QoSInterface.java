@@ -2,13 +2,9 @@ package qosManager;
 
 import com.klient_projekttermin.R;
 import com.klient_projekttermin.R.id;
-import com.klient_projekttermin.R.layout;
-import com.klient_projekttermin.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.view.Menu;
 import android.view.View;
 import android.widget.CheckBox;
@@ -32,12 +28,6 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	private CheckBox wifiPermission;
 	private TextView lowBatteryLevelText;
 	private TextView screenBrightnessLevelText;
-
-	@Override
-	protected void onStart() {
-		//    	setCurrentValues();
-		super.onStart();
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -65,10 +55,11 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		lowBatteryLevelText = (TextView) findViewById(id.lowBatteryValue);
 		screenBrightnessLevelText = (TextView) findViewById(id.lowScreenBrightnessValue);
 
-		if(qosManager.isBatterySaveModeActivated()){
+		if(qosManager.batterySaveModeIsActivated()){
+			System.out.println("Batterisparläge är aktiverat");
 			batterySaveToggle.setChecked(true);
 		}
-		System.out.println("Sätter default");
+
 		setCurrentValues();
 	}
 
@@ -124,10 +115,10 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 
 	public void setAssignmentPermission(View v){
 		if(assignmentPermission.isChecked()){
-			qosManager.setPermissionToStartMessages(false);
+			qosManager.setPermissionToStartAssignment(false);
 		}
 		else {
-			qosManager.setPermissionToStartMessages(true);
+			qosManager.setPermissionToStartAssignment(true);
 		}
 	}
 
@@ -141,12 +132,10 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	}
 
 	public void setWiFiPermission(View v){
-		System.out.println("INNE I WIFIpermission");
 		if(wifiPermission.isChecked()){
 			qosManager.setPermissionToUseNetwork(false);
 		}
 		else {
-			System.out.println("DU Bockade ut WIFIn");
 			qosManager.setPermissionToUseNetwork(true);
 		}
 	}
@@ -160,21 +149,20 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		screenBrightnessBar.setProgress(20);
 		batterylevelBar.setProgress(20);
 
-		qosManager.setPermissionToStartMap(false);
-		qosManager.setPermissionToUseNetwork(false);
-		qosManager.setPermissionToStartCamera(false);
-		qosManager.setPermissionToStartMessages(true);
-		qosManager.setPermissionToStartAssignment(false);
-		qosManager.setLowBatteryLevel(20);
-		qosManager.setScreenBrightnessValueLow((float) 0.2);
-
-		if(batterySaveToggle.isChecked()){
+		if(qosManager.batterySaveModeIsActivated()){
+			qosManager.setPermissionToStartMap(false);
+			qosManager.setPermissionToUseNetwork(false);
+			qosManager.setPermissionToStartCamera(false);
+			qosManager.setPermissionToStartMessages(true);
+			qosManager.setPermissionToStartAssignment(false);
+			qosManager.setLowBatteryLevel(20);
+			qosManager.setScreenBrightnessValueLow((float) 0.2);
 			qosManager.adjustToLowBatteryLevel();
 		}
 	}
 
 	private void setCurrentValues() {
-		System.out.println("Kör currentValues");
+		System.out.println("Nu uppdateras current values");
 
 		if(!qosManager.isAllowedToStartMap()){
 			mapPermission.setChecked(true);
@@ -183,15 +171,19 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			mapPermission.setChecked(false);
 		}
 		if(!qosManager.isAllowedToStartMessages()){
+			System.out.println("Message sätts till checked");
 			messagePermission.setChecked(true);
 		}
 		else{
+			System.out.println("Message sätts till unchecked");
 			messagePermission.setChecked(false);
 		}
 		if(!qosManager.isAllowedToStartAssignment()){
+			System.out.println("Uppdrag sätts till checked");
 			assignmentPermission.setChecked(true);
 		}
 		else{
+			System.out.println("Uppdrag sätts till unchecked");
 			assignmentPermission.setChecked(false);
 		}
 		if(!qosManager.isAllowedToStartCamera()){
@@ -214,6 +206,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			boolean fromUser) {
 
 		if(seekBar.equals(screenBrightnessBar)){
+			System.out.println("Nu hände det något med ljusstyrkan");
 			float value = ((float) progress/100);
 
 			if(value<=0.1){
@@ -223,10 +216,10 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			qosManager.setScreenBrightnessValueLow(value);
 		}
 		else{
+			System.out.println("Nu hände det något med baterinivån");
 			lowBatteryLevelText.setText(progress+" %");
 			qosManager.setLowBatteryLevel(progress);
 		}
-
 	}
 
 	public void onStartTrackingTouch(SeekBar seekBar) {
@@ -247,14 +240,14 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		int wifiChkId = wifiPermission.getId();
 
 		if(mapChkId==buttonView.getId()){
-			System.out.println("Ändrar karta");
 			setMapPermission(buttonView);
 		}
 		else if(messageChkId==buttonView.getId()){
-			System.out.println("Ändrar assignmet");
+			System.out.println("DU TRYCKTE PÅ MESSAGE");
 			setMessagePermission(buttonView);
 		}
 		else if(assignmentChkId==buttonView.getId()){
+			System.out.println("DU TRYCKTE PÅ ASSIGNMENT");
 			setAssignmentPermission(buttonView);
 		}
 		else if(cameraChkId==buttonView.getId()){

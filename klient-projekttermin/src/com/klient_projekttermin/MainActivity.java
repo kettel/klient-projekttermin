@@ -51,7 +51,6 @@ public class MainActivity extends SecureActivity {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
-		qosManager.startBatteryCheckingThread(this);
 
 		user=User.getInstance();
 		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));

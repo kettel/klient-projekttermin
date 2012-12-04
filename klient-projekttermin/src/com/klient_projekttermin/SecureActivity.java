@@ -44,7 +44,6 @@ public class SecureActivity extends Activity {
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
 		qosManager.adjustToCurrentBatteryMode();
-
 		
 		if (!user.isLoggedIn()) {
 			Intent myIntent = new Intent(SecureActivity.this,
