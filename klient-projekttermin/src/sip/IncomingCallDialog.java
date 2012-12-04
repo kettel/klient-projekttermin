@@ -1,5 +1,7 @@
 package sip;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,9 +23,9 @@ public class IncomingCallDialog extends Activity {
 	private String timeInCall = new String();
 	private String caller = new String();
 	private Timer timer;
-	
+
 	RegisterWithSipSingleton regSip;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -31,106 +33,42 @@ public class IncomingCallDialog extends Activity {
 		setContentView(R.layout.activity_incoming_call_dialog);
 		Bundle extras = getIntent().getExtras();
 		boolean isOutgoing = extras.getBoolean("outgoing");
-		
+
+		// Sätt text i dialogfönstret
+		if(extras.getString("caller") != null){
+			caller = extras.getString("caller");
+		}else{
+			caller = "";
+		}
+		// Utgående samtal
 		if(isOutgoing){
-			Log.d("SIP/IncomingCallDialog/OnCreate","Startar ett utgående samtal..");
-			if(extras.getString("caller") != null){
-				caller = extras.getString("caller");
-				updateCaller("Ringer "+caller+"...");
-			}else{
-				updateCaller("Ringer...");
-			}
-			
-			startCallTimer();
-			
-			setToggleButtonChecked();
-			
-			// Lyssna efter om personen har svarat på påringningen
-			ObserverCallStatus observer = new ObserverCallStatus();
-			RegisterWithSipSingleton.callStatus.addObserver(observer);
-			
-			// Lyssna på toggle-knappen
-			ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
-			
-			toggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				public void onCheckedChanged(CompoundButton buttonView,
-						boolean isChecked) {
-					// Svara på samtal
-					if(buttonView.isChecked()){
-						// Samtal är besvarat
-						regSip.isCallAnswered = true;
-						// Sätt aktuell tid till initialtid för samtalsstart
-						timeWhenCallStarted = System.currentTimeMillis();
-						// Besvara samtalet
-						//IncomingCallReceiver.answerCall(IncomingCallReceiver.incomingCall);
-						// Uppdatera tiden i textView
-						updateCallTime();
-					}
-					// Lägg på samtal
-					if(!buttonView.isChecked()){
-						regSip.isCallAnswered = false;
-						StaticCall.dropCall(StaticCall.call);
-						Log.d("SIP", "Samtal avslutat. Ska nu köra finish på aktivitet...");
-						finish();
-					}
-				}
-			});
-			
+			outgoingCall();
 		}
 		// Inkommande samtal
 		else{
-			caller = extras.getString("caller");
-			Log.d("SIP/IncomingCallDialog","Tagit emot samtal från " + caller);
-
-			startCallTimer();
-			updateCaller(caller + " ringer...");
-			
-
-			// Lyssna på toggle-knappen
-			ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
-			toggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				public void onCheckedChanged(CompoundButton buttonView,
-						boolean isChecked) {
-					// Svara på samtal
-					if(buttonView.isChecked()){
-						// Uppdatera samtalstexten
-						updateCaller("I samtal med "+caller);
-						// Samtal är besvarat
-						regSip.isCallAnswered = true;
-						// Sätt aktuell tid till initialtid för samtalsstart
-						timeWhenCallStarted = System.currentTimeMillis();
-						// Besvara samtalet
-						StaticCall.answerCall(StaticCall.call);
-						// Uppdatera tiden i textView
-						updateCallTime();
-					}
-					// Lägg på samtal
-					if(!buttonView.isChecked() && regSip.isCallAnswered){
-						regSip.isCallAnswered = false;
-						StaticCall.dropCall(StaticCall.call);
-						Log.d("SIP", "Samtal avslutat. Ska nu köra finish på aktivitet...");
-						finish();
-					}
-				}
-			});
+			incomingCall();
 		}
 
 	}
+
 	@Override
 	protected void onStart(){
 		super.onStart();
-		
+
 		// Hämta regSip från MainActivity
 		// .. är det här som nyttan med en service börjar uppenbara sig?
+		
 		regSip = MainActivity.regSip;
+		Log.d("SIP/IncomingCallDialog/onStart","kör en onStart och hämtat regSip. Null? " + ((regSip==null)?"sant":"falskt"));
 	}
-	
+
 	@Override
 	protected void onDestroy(){
 		super.onDestroy();
 		// Döda timern när samtalsdialogen stängs
 		timer.cancel();
 		timer.purge();
+		timeInCall = "";
 	}
 
 	@Override
@@ -139,7 +77,121 @@ public class IncomingCallDialog extends Activity {
 		getMenuInflater().inflate(R.menu.activity_incoming_call_dialog, menu);
 		return true;
 	}
+	/**
+	 * Hantera ett utgående samtal
+	 */
+	private void outgoingCall() {
+		Log.d("SIP/IncomingCallDialog/OnCreate","Startar ett utgående samtal..");
 
+		updateCaller("Ringer "+caller+"...");
+
+		// Starta timern
+		startCallTimer();
+
+		// Sätt toggle-knappen till nedtryckt (det är ju vi som ringer...)
+		setToggleButtonChecked();
+
+		// Lyssna efter om personen har svarat på påringningen
+		final class ObserverCallStatus implements Observer {
+			public void update(Observable arg0, Object arg1) {
+				Log.d("SIP/SipSingleton/Outgoingcall/ObserverCallStatus","Nu har visst användaren gjort något..");
+				// Om något har avbrutit samtalet så callStatus är false
+				if(!RegisterWithSipSingleton.callStatus.getStatus()){
+					Log.d("SIP/SipSingleton/Outgoingcall/ObserverCallStatus","Andra änden la visst på...");
+					finish();
+				}
+			}
+		}
+		ObserverCallStatus observer = new ObserverCallStatus();
+		RegisterWithSipSingleton.callStatus.addObserver(observer);
+
+
+
+		// Lyssna på toggle-knappen
+		ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
+
+		toggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				// Svara på samtal
+				if(buttonView.isChecked()){
+					// Samtal är besvarat
+					regSip.isCallAnswered = true;
+					// Sätt aktuell tid till initialtid för samtalsstart
+					timeWhenCallStarted = System.currentTimeMillis();
+					// Besvara samtalet
+					//IncomingCallReceiver.answerCall(IncomingCallReceiver.incomingCall);
+					// Uppdatera tiden i textView
+					updateCallTime();
+				}
+				// Lägg på samtal
+				if(!buttonView.isChecked()){
+					regSip.isCallAnswered = false;
+					StaticCall.dropCall(StaticCall.call);
+					Log.d("SIP", "Samtal avslutat. Ska nu köra finish på aktivitet...");
+					finish();
+				}
+			}
+		});
+	}
+	/**
+	 * Hantera ett inkommande samtal
+	 */
+	public void incomingCall(){
+
+		Log.d("SIP/IncomingCallDialog","Tagit emot samtal från " + caller);
+
+		startCallTimer();
+		updateCaller(caller + " ringer...");
+		updateCallTime();
+
+		// Lyssna efter om personen har svarat på påringningen
+		final class ObserverCallStatus implements Observer {
+			public void update(Observable arg0, Object arg1) {
+				Log.d("SIP/SipSingleton/Outgoingcall/ObserverCallStatus","Nu har visst användaren gjort något..");
+				// Om något har avbrutit samtalet så callStatus är false
+				if(!RegisterWithSipSingleton.callStatus.getStatus()){
+					Log.d("SIP/SipSingleton/Outgoingcall/ObserverCallStatus","Andra änden la visst på...");
+					finish();
+				}
+			}
+		}
+		// Lyssna efter om personen har svarat på påringningen
+		ObserverCallStatus observer = new ObserverCallStatus();
+		RegisterWithSipSingleton.callStatus.addObserver(observer);
+
+
+		// Lyssna på toggle-knappen
+		ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
+		toggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				// Svara på samtal
+				if(buttonView.isChecked()){
+					// Sätt true då samtalet är öppet
+					RegisterWithSipSingleton.callStatus.setStatus(true);
+					// Uppdatera samtalstexten
+					updateCaller("I samtal med "+caller);
+					// Samtal är besvarat
+					regSip.isCallAnswered = true;
+					// Sätt aktuell tid till initialtid för samtalsstart
+					timeWhenCallStarted = System.currentTimeMillis();
+					// Besvara samtalet
+					StaticCall.answerCall(StaticCall.call);
+					// Uppdatera tiden i textView
+					updateCallTime();
+				}
+				// Lägg på samtal
+				if(!buttonView.isChecked() && regSip.isCallAnswered){
+					regSip.isCallAnswered = false;
+					RegisterWithSipSingleton.callStatus.setStatus(false);
+					StaticCall.dropCall(StaticCall.call);
+					Log.d("SIP", "Samtal avslutat. Ska nu köra finish på aktivitet...");
+					finish();
+				}
+			}
+		});
+	}
 	private void setToggleButtonChecked(){
 		this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -149,7 +201,7 @@ public class IncomingCallDialog extends Activity {
 			}
 		});
 	}
-	
+
 	private void startCallTimer(){
 		int delay = 0; // Vänta inte innan timern ska starta
 		int period = 1000; // Upprepa varje sekund
@@ -179,7 +231,7 @@ public class IncomingCallDialog extends Activity {
 			}
 		}, delay, period);
 	}
-	
+
 	private void updateCallTime(){
 		this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -196,10 +248,12 @@ public class IncomingCallDialog extends Activity {
 				// Sätt namnet på den som ringer
 				TextView callerView = (TextView) findViewById(R.id.textViewCaller);
 				callerView.setText(text);
-				TextView timeView = (TextView) findViewById(R.id.textViewTimeInCall);
-				timeView.setText(timeInCall);
 			}
 		});
+	}
+
+	public static void endCall(){
+		RegisterWithSipSingleton.callStatus.setStatus(false);
 	}
 
 }

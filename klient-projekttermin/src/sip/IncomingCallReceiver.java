@@ -43,6 +43,11 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 						e.printStackTrace();
 					}
 				}
+				@Override
+				public void onCallEnded(SipAudioCall call){
+					Log.d("SIP/IncomingCallRec/onCallEnded","Samtalet avslutades...");
+					RegisterWithSipSingleton.callStatus.setStatus(false);
+				}
 			};
 			// TODO: Problem i Static-land här då manager antagligen inte riktigt finns..
 			// TODO: Se till så att inställningar inte dras ned i hastighet så kopiöst...
