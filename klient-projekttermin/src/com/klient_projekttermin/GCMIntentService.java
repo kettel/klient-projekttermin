@@ -95,4 +95,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 				getString(R.string.gcm_recoverable_error, errorId));
 		return super.onRecoverableError(context, errorId);
 	}
+	public static void sendMessage(Context context,String message){
+		displayMessage(context,message);
+	}
 }
