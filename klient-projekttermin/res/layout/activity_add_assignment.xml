@@ -1,6 +1,23 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    
+ <ListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="True"
     android:divider="@android:color/transparent">
 </ListView>
+
+     <CheckBox
+        android:id="@+id/checkBox_to_outsider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="True"
+        android:layout_centerHorizontal="True"
+        android:text="Inkludera utomstående aktörer." />
+
+</RelativeLayout>
+

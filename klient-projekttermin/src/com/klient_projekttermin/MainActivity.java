@@ -13,6 +13,7 @@ import login.LogInActivity;
 import login.User;
 import map.MapActivity;
 import messageFunction.Inbox;
+import models.AuthenticationModel;
 import models.Contact;
 import qosManager.QoSManager;
 import alternativeCamera.Cam;
@@ -46,13 +47,29 @@ public class MainActivity extends SecureActivity {
 
 	private QoSManager qosManager;
 	private Database database;
+	private String userName;
 	private SocketConnection socketConnection=new SocketConnection();
-	private User user=User.getInstance();
+	private User user = User.getInstance();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
+		Database database=Database.getInstance(getApplicationContext());
+//		database.addToDB(new Contact("eric"), getContentResolver());
+//		database.addToDB(new Contact("erica"), getContentResolver());
+		
+		
+//		// Communication model
+//		Intent intent = new Intent(this.getApplicationContext(),
+//				CommunicationService.class);
+//		bindService(intent, communicationServiceConnection,
+//				Context.BIND_AUTO_CREATE);
+
+			
+			userName = user.getAuthenticationModel().getUserName();
+
+		
 		qosManager = QoSManager.getInstance();
 		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 		setContentView(R.layout.activity_main);

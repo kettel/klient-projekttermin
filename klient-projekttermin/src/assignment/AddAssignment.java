@@ -3,14 +3,21 @@ package assignment;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+
+import logger.logger;
 import login.User;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
 import models.AssignmentStatus;
+import models.Contact;
 import models.ModelInterface;
 import models.PictureModel;
 import android.annotation.SuppressLint;
@@ -22,6 +29,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 import camera.Album;
@@ -42,7 +50,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Uppdragsnamn", "Koordinater",
 			"Uppdragsbeskrivning", "Uppskattad tid", "Gatuadress",
-			"Uppdragsplats", "Bild", "Prioritet" };
+			"Uppdragsplats", "Bild", "Prioritet", "Lägg till agenter" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.text_item };
@@ -52,6 +60,8 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private ListView lv;
 	private Bitmap bitmap;
 	private int callingActivity;
+	private CheckBox toOutsiders;
+	private boolean isExternalMission;
 
 	@Override
 	@SuppressLint("UseSparseArrays")
@@ -148,14 +158,42 @@ public class AddAssignment extends SecureActivity implements Serializable {
 
 	private void saveToDB() {
 		db = Database.getInstance(getApplicationContext());
+		
+		//------Kollar om det är ett externt uppdrag;
+		toOutsiders = (CheckBox) findViewById(R.id.checkBox_to_outsider);
+		if (toOutsiders.isChecked()) {
+			isExternalMission = true;
+		}
+		else
+			isExternalMission = false;
+		//-----End
+		
 
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv
 				.getAdapter()).getItemStrings();
+
 		if(temp.get(0) != null){
 		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
-				currentUser, false, temp.get(2), temp.get(3),
+				currentUser, isExternalMission, temp.get(2), temp.get(3),
 				AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
 				temp.get(5), checkPrioString(temp.get(7)));
+
+		Log.e("FEL", "Det är ett externt uppdrag: " + newAssignment.isExternalMission());
+		System.out.println("temp8: " + temp.get(8));
+		String tempUnseparated = temp.get(8);
+
+		if (tempUnseparated == null) {
+			tempUnseparated = "";
+		}
+
+		addAgentsFromList(tempUnseparated, newAssignment); // temp(8) är en
+															// sträng
+															// med agenter som
+															// ska
+															// separeras med
+															// ",".
+
+		tempUnseparated = ""; // Nolla strängen
 
 		Log.d("Assignment", "Ska nu lägga till ett uppdrag " + temp.get(0)
 				+ temp.get(1) + currentUser + false + temp.get(2) + temp.get(3)
@@ -174,6 +212,41 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			toast.show();
 		}
 		
+	}
+
+	private void addAgentsFromList(String agents, Assignment newAssignment) {
+
+		String newString = "";
+		
+		if (!agents.equals("")) {
+			newString = agents.substring(9);
+			newAssignment.setAssignmentStatus(AssignmentStatus.STARTED);
+		}
+		
+		Log.e("FEL", "Rätt split? ->" + newString);
+
+		List<String> items = new LinkedList<String>(Arrays.asList(newString
+				.split("\\s*,\\s*"))); // reguljära uttryck haxx
+
+		for (String string : items) {
+			Log.e("FEL", "Regexplittade agents: " + string);
+		}
+		List<ModelInterface> list = db.getAllFromDB(new Contact(),
+				getContentResolver());	
+		Set<String> noDoublicatesSet = new HashSet<String>(items);
+
+
+
+		for (String agent : noDoublicatesSet) {
+			for (ModelInterface modelInterface : list) {
+				Contact contact = (Contact) modelInterface;
+				if (contact.getContactName().equals(agent)) {
+					newAssignment.addAgents(new Contact(agent));
+				}
+			}
+		}
+		items.clear();
+		noDoublicatesSet.clear();
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {

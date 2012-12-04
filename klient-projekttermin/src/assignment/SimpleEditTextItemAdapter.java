@@ -17,13 +17,21 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
+//<<<<<<< HEAD
+//import android.widget.TextView;
+//import camera.PhotoGallery;
+//=======
 import camera.Album;
 import camera.Camera;
 
@@ -32,6 +40,9 @@ import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
+import com.nutiteq.location.providers.AndroidGPSProvider;
+
+import contacts.ContactsCursorAdapter;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
@@ -41,12 +52,18 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private Context context;
 	private boolean isCreatingDialog = false;
 	private boolean isCreatingCoordDialog = false;
+
+	public static String items;
+	private String temp = "Agenter: ";
+
 	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
 	private EditText editText;
 	private boolean isCreatingPrioDialog = false;
-	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" , "Ingen bild"};
-	private static String[] coordsAlts = { "Bifoga koordinater från karta" , "Använd GPS position" , "Inga koordinater" };
-
+	private boolean isCreatingAgentDialog = false;
+	private static String[] pictureAlts = { "Bifoga bild", "Ta bild",
+			"Ingen bild" };
+	private static String[] coordsAlts = { "Bifoga koordinater från karta",
+			"Använd GPS position", "Inga koordinater" };
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -55,26 +72,75 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		this.context = context;
 	}
 
+	@Override
+	public int getItemViewType(int position) {
+		// TODO Auto-generated method stub
+		return position == 8 ? R.layout.autocomp_item : R.layout.textfield_item;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		LayoutInflater inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
 		convertView = null;
 
 		final View v = super.getView(position, convertView, parent);
 		editText = (EditText) v.findViewById(R.id.text_item);
-
-		if (editText != null) {
-			if (itemStrings.get(position) != null) {
-				editText.setText(itemStrings.get(position));
-			} else {
-				editText.setText(null);
-			}
-			editText.setHint(((HashMap<String, String>) this.getItem(position))
-					.get("line1"));
-			editText.setId(position);
-			editText.setOnFocusChangeListener(this);
+		if (position == 8) {
+			convertView = inflater.inflate(getItemViewType(position), null);
+	
+	final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
+			.findViewById(R.id.autoText_item);
+	
+	
+	
+	autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
+			context, null, true));
+		
+		autoCompleteTextView.setHint(((HashMap<String, String>) this
+				.getItem(position)).get("line1"));
+		if (itemStrings.get(position) != null && !itemStrings.get(position).equals("")) {
+			autoCompleteTextView.setHint(itemStrings.get(position));
 		}
+		
+		
+		//Snygghax.. för att få tag i auto-vyns text.
+		autoCompleteTextView.setOnItemClickListener(new OnItemClickListener() {
+
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				TextView e = (TextView)arg1;
+				Log.e("FEL", e.getText().toString());
+				
+				temp = temp + e.getText().toString()+ ", ";
+				
+				itemStrings.put(8, temp);
+				autoCompleteTextView.setHint(temp);
+				autoCompleteTextView.setText("");
+				//itemStrings.put(8, e.getText().toString());
+			}
+		});
+
+}
+		else if (editText != null) {
+		if (itemStrings.get(position) != null) {
+		editText.setText(itemStrings.get(position));
+		} else {
+		editText.setText(null);
+		}
+		editText.setHint(((HashMap<String, String>) this.getItem(position))
+		.get("line1"));
+		editText.setId(position);
+		editText.setOnFocusChangeListener(this);
+		}
+		if (position == 8) {
+			return convertView;
+		}
+		else
 		return v;
+
 	}
 
 	public void textToItem(int position, String s) {
@@ -98,6 +164,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void afterTextChanged(Editable s) {
 			}
 		});
+
 		if (hasFocus && v.getId() == 1 && itemStrings.get(v.getId()) == null) {
 			if (!isCreatingCoordDialog) {
 				isCreatingCoordDialog = true;
@@ -113,7 +180,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		if (hasFocus && v.getId() == 7 && itemStrings.get(v.getId()) == null) {
 			if (!isCreatingPrioDialog ) {
 				isCreatingPrioDialog = true;
-				priorityAlternatives((EditText)v);
+				priorityAlternatives((EditText) v);
 			}
 		}
 	}
@@ -127,7 +194,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				pictureAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
-		
+
 		final Dialog dialog = builder.create();
 		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
@@ -159,6 +226,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 	private void coordinateField(final View v) {
 		final EditText ed1 = (EditText) v;
+
 		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		String provider = manager.getBestProvider(new Criteria(), true);
 		Location location = manager.getLastKnownLocation(provider);
@@ -178,7 +246,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				coordsAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
-		
 		final Dialog dialog = builder.create();
 		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
@@ -195,9 +262,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					((AddAssignment) context).startActivityForResult(intent, 0);
 					break;
 				case 1:
-					isCreatingCoordDialog = false;
-					itemStrings.put(v.getId(), pos);
-					ed1.setText(pos);
+					 itemStrings.put(v.getId(), pos);
+					 ed1.setText(pos);
 					break;
 				default:
 					isCreatingCoordDialog = false;

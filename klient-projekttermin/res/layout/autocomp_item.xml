@@ -4,8 +4,8 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/text_item"
+    <AutoCompleteTextView
+        android:id="@+id/autoText_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:ems="10"
