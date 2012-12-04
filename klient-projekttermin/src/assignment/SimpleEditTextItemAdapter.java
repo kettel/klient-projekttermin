@@ -290,13 +290,16 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				switch (arg2) {
 				case 0:
 					isCreatingPrioDialog = false;
+					itemStrings.put(6, "Hög prioritet");
 					v.setText("Hög prioritet");
 					break;
 				case 1:
+					itemStrings.put(6, "Normal prioritet");
 					isCreatingPrioDialog = false;
 					v.setText("Normal prioritet");
 					break;
 				case 2:
+					itemStrings.put(6, "Låg prioritet");
 					isCreatingPrioDialog = false;
 					v.setText("Låg prioritet");
 				default:
