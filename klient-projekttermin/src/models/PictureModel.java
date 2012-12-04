@@ -57,10 +57,8 @@ public class PictureModel implements ModelInterface {
 	 */
 	public byte[] getPicture() {
 		if (picture == null) {
-			System.out.println("IF PIC = 0");
 			picture = new byte[2];
 		}
-		System.out.println(picture.length + " get pciture " + picture);
 		return picture;
 	}
 

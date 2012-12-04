@@ -91,5 +91,7 @@
     <string name="title_activity_take_pictures">TakePicturesActivity</string>
     <string name="title_activity_album">Album</string>
     <string name="title_activity_cam">Cam</string>
+    <string name="discard">Discard</string>
+    <string name="use">Save</string>
 
 </resources>

@@ -10,6 +10,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -123,11 +125,11 @@ public class AssignmentOverview extends SecureActivity {
 	}
 
 	/**
-	 * Tillsatt lyssnare i meddelandelistan som lyssnar efterz tryckningar p�
+	 * Tillsatt lyssnare i meddelandelistan som lyssnar efterz tryckningar på
 	 * listobjekt
 	 */
 	public void setLongItemClickListener() {
-		// Skapar en lyssnare som lyssnar efter l�nga intryckningar
+		// Skapar en lyssnare som lyssnar efter långa intryckningar
 		this.lv.setOnItemLongClickListener(
 		new OnItemLongClickListener() {
 

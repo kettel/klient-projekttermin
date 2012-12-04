@@ -97,8 +97,17 @@ public class PictureDB {
 	}
 
 	public void delete(ContentResolver contentResolver, PictureModel pic) {
+		Cursor cursor = contentResolver.query(Pictures.CONTENT_URI, null,
+				Pictures.PICTURE_ID + " IS NOT null", null, null);
+		cursor.moveToFirst();
+		int id = 0;
+		for (int i = 0; i < cursor.getColumnCount(); i++) {
+			if (cursor.getColumnName(i).equalsIgnoreCase(Pictures.PICTURE_ID)) {
+				id = cursor.getInt(i);
+			}
+		}
 		contentResolver.delete(Pictures.CONTENT_URI, Pictures.PICTURE_ID
-				+ " = " + Long.toString(pic.getId()), null);
+				+ " = " + Long.toString(id), null);
 	}
 
 	public void updateContact(ContentResolver contentResolver, PictureModel pic) {
