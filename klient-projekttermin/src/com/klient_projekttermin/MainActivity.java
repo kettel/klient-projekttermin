@@ -119,7 +119,6 @@ public class MainActivity extends SecureActivity {
 					break;
 				case 1:
 					if (qosManager.allowedToStartMessages()) {
-						System.out.println("Startar meddelanden");
 						myIntent = new Intent(MainActivity.this, Inbox.class);
 					} else {
 						unallowedStart.show();
