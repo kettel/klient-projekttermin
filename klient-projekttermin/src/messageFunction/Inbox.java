@@ -45,6 +45,7 @@ public class Inbox extends SecureActivity {
 	private String userName;
 	private User user = User.getInstance();
 	private SocketConnection socketConnection = new SocketConnection();
+	private ArrayAdapter<String> adapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -70,13 +71,10 @@ public class Inbox extends SecureActivity {
 		public void onReceive(Context context, Intent intent) {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
 			if (newMessage.equals("message")) {
-				user.getAuthenticationModel()
-						.setGCMID(
-								GCMRegistrar
-										.getRegistrationId(getApplicationContext()));
-				socketConnection.pullFromServer();
-				checkContactDatabase();
-			} 
+				System.out.println("Inbox data change");
+				loadListOfSenders();
+				adapter.notifyDataSetChanged();
+			}
 		}
 	};
 
@@ -121,7 +119,7 @@ public class Inbox extends SecureActivity {
 		// // Second parameter - Layout for the row
 		// // Third parameter - ID of the TextView to which the data is written
 		// // Forth - the Array of data
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, android.R.id.text1,
 				peopleIveBeenTalkingTo);
 
@@ -209,7 +207,7 @@ public class Inbox extends SecureActivity {
 
 			if (messageModelInList.getReciever().toString().equals(contact)) {
 				dataBase.deleteFromDB(messageModelInList, getContentResolver());
-			} 
+			}
 			if (messageModelInList.getSender().toString().equals(contact)) {
 				dataBase.deleteFromDB(messageModelInList, getContentResolver());
 			}

@@ -54,7 +54,7 @@ public class LogInActivity extends Activity implements Observer {
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    builder.setTitle("Title");
-	    builder.setMessage("Vill du logga ut?");
+	    builder.setMessage("Vill du avsluta ut?");
 	    builder.setPositiveButton("Ja", new OnClickListener() {
 	            public void onClick(DialogInterface dialog, int arg1) {
 	                dialog.dismiss();
@@ -62,23 +62,6 @@ public class LogInActivity extends Activity implements Observer {
 	                socketConnection.logout();
 	                setResult(RESULT_CANCELED);
 	                finish();
-//	                /*
-//	                 * Notify the system to finalize and collect all objects of the app
-//	                 * on exit so that the virtual machine running the app can be killed
-//	                 * by the system without causing issues. NOTE: If this is set to
-//	                 * true then the virtual machine will not be killed until all of its
-//	                 * threads have closed.
-//	                 */
-//	                System.runFinalization();
-//
-//	                /*
-//	                 * Force the system to close the app down completely instead of
-//	                 * retaining it in the background. The virtual machine that runs the
-//	                 * app will be killed. The app will be completely created as a new
-//	                 * app in a new virtual machine running in a new process if the user
-//	                 * starts the app again.
-//	                 */
-//	                System.exit(0);
 	            }});
 	    builder.setNegativeButton("Nej", new OnClickListener() {
 	            public void onClick(DialogInterface dialog, int arg1) {
