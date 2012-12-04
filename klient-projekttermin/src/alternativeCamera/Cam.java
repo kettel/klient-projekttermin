@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -17,7 +18,6 @@ import android.media.ExifInterface;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -25,7 +25,6 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import camera.Album;
 
@@ -88,9 +87,11 @@ public class Cam extends Activity implements SensorEventListener {
 
 		// Setting the right parameters in the camera
 		Camera.Parameters params = mCamera.getParameters();
-//		params.setPictureSize(1600, 1200);
+		// HÄlften av va de va
+		params.setPictureSize(800, 600);
 		params.setPictureFormat(PixelFormat.JPEG);
 		params.setJpegQuality(85);
+
 		mCamera.setParameters(params);
 
 		// Create our Preview view and set it as the content of our activity.
@@ -160,7 +161,20 @@ public class Cam extends Activity implements SensorEventListener {
 		public void onPictureTaken(byte[] data, Camera camera) {
 
 			Database db = Database.getInstance(getApplicationContext());
-			db.addToDB(new PictureModel(data), getContentResolver());
+			int count = db.getDBCount(new PictureModel(), getContentResolver());
+			System.out.println(count);
+			if (count > 5) {
+				System.out.println("Count större än 5");
+				while (db.getDBCount(new PictureModel(), getContentResolver()) > 5) {
+					System.out.println("REMOEV");
+					System.out.println(db.getDBCount(new PictureModel(), getContentResolver()));
+					db.deleteFromDB(new PictureModel(), getContentResolver());
+				}
+				db.addToDB(new PictureModel(data), getContentResolver());
+			} else {
+				db.addToDB(new PictureModel(data), getContentResolver());
+			}
+
 			camera.startPreview();
 
 			BitmapFactory.Options ops = new BitmapFactory.Options();

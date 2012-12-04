@@ -13,10 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -41,9 +38,8 @@ public class Album extends Activity implements OnItemClickListener {
 	private String[] pictureAlts = { "Skapa uppdrag med foto" };
 	private int currentPictureId;
 	private List<Bitmap> images = new ArrayList<Bitmap>();
-	private List<Bitmap> imagesToAssignment = new ArrayList<Bitmap>();
 	private Bitmap bitmap;
-	private int currentPic = 0;
+	private Database db;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -51,31 +47,30 @@ public class Album extends Activity implements OnItemClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo_gallery);
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
-		Gallery g = (Gallery) findViewById(R.id.Gallery);
-		Database db = Database.getInstance(getApplicationContext());	
+
+		db = Database.getInstance(getApplicationContext());
 		imagesFromDB = db
 				.getAllFromDB(new PictureModel(), getContentResolver());
-			for (ModelInterface temp : imagesFromDB) {
-				PictureModel p = (PictureModel) temp;
-				BitmapFactory.Options ops = new BitmapFactory.Options();
-				ops.inSampleSize = 2;
-				
-				bitmap = BitmapFactory.decodeByteArray(p.getPicture(),
-						0, p.getPicture().length, ops);
-				images.add(bitmap);
-				ops.inSampleSize = 8;
-				Bitmap b = BitmapFactory.decodeByteArray(p.getPicture(),
-						0, p.getPicture().length, ops);
-				imagesToAssignment.add(b);
-			}
-			
-			g.setAdapter(new ImageAdapter(this));
-			g.setSpacing(10);
-			g.setOnItemClickListener(this);
+		for (ModelInterface temp : imagesFromDB) {
+			PictureModel p = (PictureModel) temp;
+			BitmapFactory.Options ops = new BitmapFactory.Options();
+			ops.inSampleSize = 2;
+
+			bitmap = BitmapFactory.decodeByteArray(p.getPicture(), 0,
+					p.getPicture().length, ops);
+			images.add(bitmap);
+		}
+
+		Gallery g = (Gallery) findViewById(R.id.Gallery);
+		g.setAdapter(new ImageAdapter(this));
+		g.setSpacing(10);
+		g.setOnItemClickListener(this);
 	}
-	
-	private void setPictureId(int i){
-		currentPic = i;
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
 	}
 
 	public class ImageAdapter extends BaseAdapter {
@@ -99,7 +94,6 @@ public class Album extends Activity implements OnItemClickListener {
 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ImageView i = new ImageView(this.myContext);
-			i.setBackgroundColor(Color.BLACK);
 			i.setImageBitmap(images.get(position));
 			/* Image should be scaled as width/height are set. */
 			i.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -118,29 +112,7 @@ public class Album extends Activity implements OnItemClickListener {
 			long arg3) {
 	}
 
-	public class Gallery1 extends Gallery {
-		public Gallery1(Context context) {
-			super(context);
-		}
-
-		public Gallery1(Context context, AttributeSet attrs, int defStyle) {
-			super(context, attrs, defStyle);
-		}
-
-		public Gallery1(Context context, AttributeSet attrs) {
-			super(context, attrs);
-		}
-
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-				float velocityY) {
-			return false;
-		}
-
-	}
-
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		System.out.println("CLICKED");
 		currentPictureId = arg2;
 		switch (callingActivity) {
 		case ActivityConstants.CAMERA:
@@ -150,7 +122,7 @@ public class Album extends Activity implements OnItemClickListener {
 			Intent intent = new Intent(Album.this, AddAssignment.class);
 			intent.putExtra("calling-activity",
 					ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-			intent.putExtra(pic, imagesToAssignment.get(currentPictureId));
+			intent.putExtra(pic, images.get(currentPictureId));
 			setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
 			finish();
 			break;
