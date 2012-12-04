@@ -31,7 +31,6 @@ import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
-import camera.Album;
 
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
@@ -118,8 +117,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	}
 
 	private void fromCamera(Intent intent) {
-		int id = intent.getIntExtra(Album.pic, 0);
-		System.out.println(id + "fromcamera");
+		int id = intent.getIntExtra("pic", 0);
 		bitmap = getPic(id);
 		adapter.textToItem(5, "Bifogad bild");
 		runOnUiThread(new Runnable() {
@@ -176,7 +174,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 					currentUser, isExternalMission, temp.get(2), temp.get(3),
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
-					temp.get(5), checkPrioString(temp.get(6)));
+					temp.get(4), checkPrioString(temp.get(6)));
 
 			String tempUnseparated = temp.get(7);
 			if (tempUnseparated == null) {
@@ -199,7 +197,10 @@ public class AddAssignment extends SecureActivity implements Serializable {
 							+ temp.get(3) + AssignmentStatus.NOT_STARTED
 							+ "byteArray" + temp.get(4) + temp.get(5));
 
-
+			newAssignment.setGlobalID(currentUser);
+			
+			Log.e("FEL","saveToDB i AddAssignment");
+			
 			db.addToDB(newAssignment, getContentResolver());
 			SocketConnection connection = new SocketConnection();
 			connection.sendModel(newAssignment);
@@ -222,13 +223,10 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			newAssignment.setAssignmentStatus(AssignmentStatus.STARTED);
 		}
 
-		Log.e("FEL", "Rätt split? ->" + newString);
-
 		List<String> items = new LinkedList<String>(Arrays.asList(newString
 				.split("\\s*,\\s*"))); // reguljära uttryck haxx
 
 		for (String string : items) {
-			Log.e("FEL", "Regexplittade agents: " + string);
 		}
 		List<ModelInterface> list = db.getAllFromDB(new Contact(),
 				getContentResolver());
@@ -274,6 +272,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	}
 
 	private Bitmap getPic(int id) {
+		System.out.println(id);
 		db = Database.getInstance(getApplicationContext());
 		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(),
 				getContentResolver());

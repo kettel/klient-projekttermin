@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
-import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -26,6 +25,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import assignment.AddAssignment;
 
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
@@ -41,13 +41,15 @@ public class Cam extends Activity implements SensorEventListener {
 	private ImageButton ibUse;
 	private Button ibCapture;
 	private int degrees = -1;
-
+	private int callingactivity;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_cam);
-
+		callingactivity = getIntent().getIntExtra("calling-activity", 0);
+		
 		ibUse = (ImageButton) findViewById(R.id.ibUse);
 		ibCapture = (Button) findViewById(R.id.ibCapture);
 
@@ -158,14 +160,11 @@ public class Cam extends Activity implements SensorEventListener {
 	private PictureCallback mPicture = new PictureCallback() {
 
 		public void onPictureTaken(byte[] data, Camera camera) {
-
+			
 			Database db = Database.getInstance(getApplicationContext());
 			int count = db.getDBCount(new PictureModel(), getContentResolver());
-			System.out.println(count);
 			if (count > 5) {
-				System.out.println("Count större än 5");
 				while (db.getDBCount(new PictureModel(), getContentResolver()) > 5) {
-					System.out.println("REMOEV");
 					System.out.println(db.getDBCount(new PictureModel(), getContentResolver()));
 					db.deleteFromDB(new PictureModel(), getContentResolver());
 				}
@@ -183,6 +182,20 @@ public class Cam extends Activity implements SensorEventListener {
 					.decodeByteArray(data, 0, data.length, ops);
 			Bitmap scaled = Bitmap.createScaledBitmap(bm, 50, 50, true);
 			ibUse.setImageBitmap(scaled);
+			switch (callingactivity) {
+			case ActivityConstants.CAMERA:
+				
+				break;
+			case ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT:
+				Intent intent = new Intent(Cam.this, AddAssignment.class);
+				//Senast tagna bild har id 5
+				intent.putExtra("pic", 5);
+				setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
+				finish();
+				break;
+			default:
+				break;
+			}
 		}
 	};
 

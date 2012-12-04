@@ -19,6 +19,8 @@ import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.klient_projekttermin.CommonUtilities;
 
@@ -60,6 +62,7 @@ public class SocketConnection extends Observable {
 		new Thread(new Runnable() {
 			public void run() {
 				sendJSON(gson.toJson(model));
+				Log.e("FEL", "Försöker skicka något från sendModel i socketconnection");
 			}
 		}).start();
 	}
@@ -113,7 +116,6 @@ public class SocketConnection extends Observable {
 	 */
 	private void loadNextServer() {
 		String[] server = iterator.next();
-		System.out.println("byter port: " + server[1]);
 		ip = server[0];
 		port = Integer.parseInt(server[1]);
 		CommonUtilities.SERVER_URL = "http://" + server[0] + ":" + server[2];
@@ -128,15 +130,12 @@ public class SocketConnection extends Observable {
 	private void sendAuthentication(String json) {
 
 		try {
-			System.out.println("Försöker autentisera mot " + ip + ":" + port);
 			Socket socket = new Socket();
 			socket.connect(new InetSocketAddress(ip, port), 10000);
-			System.out.println("Socketen lyckades ansluta");
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
 			bufferedWriter.write(json + "\nclose\n");
 			bufferedWriter.flush();
-			System.out.println("Socketen lyckades skriva");
 			BufferedReader bufferedReader = new BufferedReader(
 					new InputStreamReader(socket.getInputStream()));
 			StringBuilder sb = new StringBuilder();
@@ -147,7 +146,6 @@ public class SocketConnection extends Observable {
 			}
 			bufferedReader.close();
 			socket.close();
-			System.out.println("Socketen tog emot: " + sb.toString());
 			setChanged();
 			AuthenticationModel authenticationModel = gson.fromJson(
 					sb.toString(), AuthenticationModel.class);
@@ -171,14 +169,12 @@ public class SocketConnection extends Observable {
 			public void run() {
 				try {
 					Socket socket = new Socket(ip, port);
-					System.out.println("Socketen lyckades ansluta");
 					BufferedWriter bufferedWriter = new BufferedWriter(
 							new OutputStreamWriter(socket.getOutputStream()));
 					User user = User.getInstance();
 					String json = gson.toJson(user.getAuthenticationModel());
 					bufferedWriter.write(json + "\n" + "pull\nclose\n");
 					bufferedWriter.flush();
-					System.out.println("Socketen lyckades skriva");
 					BufferedReader bufferedReader = new BufferedReader(
 							new InputStreamReader(socket.getInputStream()));
 					String inputString;
@@ -204,8 +200,6 @@ public class SocketConnection extends Observable {
 						} else if (inputString
 								.contains("\"databaseRepresentation\":\"authentication\"")) {
 						} else {
-							System.out.println("Did not recognize model: "
-									+ inputString);
 						}
 					}
 					bufferedReader.close();
@@ -216,7 +210,6 @@ public class SocketConnection extends Observable {
 					}
 				} catch (IOException e) {
 					if (iterator.hasNext()) {
-						System.out.println("byter port");
 						loadNextServer();
 						pullFromServer();
 					} else {
@@ -235,14 +228,12 @@ public class SocketConnection extends Observable {
 			public void run() {
 				try {
 					Socket socket = new Socket(ip, port);
-					System.out.println("Socketen lyckades ansluta");
 					BufferedWriter bufferedWriter = new BufferedWriter(
 							new OutputStreamWriter(socket.getOutputStream()));
 					User user = User.getInstance();
 					String json = gson.toJson(user.getAuthenticationModel());
 					bufferedWriter.write(json + "\ngetAllContacts\nclose\n");
 					bufferedWriter.flush();
-					System.out.println("Socketen lyckades skriva");
 					BufferedReader bufferedReader = new BufferedReader(
 							new InputStreamReader(socket.getInputStream()));
 					String inputString;
@@ -257,8 +248,6 @@ public class SocketConnection extends Observable {
 								.contains("\"databaseRepresentation\":\"authentication\"")) {
 							// ska vara tom
 						} else {
-							System.out.println("Did not recognize model: "
-									+ inputString);
 						}
 					}
 					bufferedReader.close();

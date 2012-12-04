@@ -41,11 +41,9 @@ public class PullResponseHandler implements Observer {
 	}
 
 	public void update(Observable observable, Object data) {
-		System.out.println("notification");
 
 		notificationIntent = new Intent(context, MainActivity.class);
 		if (data == null && hasChanged) {
-			System.out.println("klar med pull");
 			showNotification();
 		} else {
 			if (data instanceof Contact) {
@@ -56,10 +54,13 @@ public class PullResponseHandler implements Observer {
 				hasChanged = true;
 			} else if (data instanceof Assignment) {
 				message = "Nytt uppdrag";
-				eraseTempAssignmentInDB((Assignment) data);
-				db.addToDB((Assignment) data, context.getContentResolver());
+				int update = db.updateModel((Assignment) data, context.getContentResolver());
+				if (update!=0) {
+					db.addToDB((Assignment) data, context.getContentResolver());
 				notificationIntent = new Intent(context,
 						AssignmentOverview.class);
+				}
+				
 				hasChanged = true;
 			} else if (data instanceof MessageModel) {
 				message = "Nytt meddelande";
@@ -71,27 +72,6 @@ public class PullResponseHandler implements Observer {
 
 	}
 
-	/**
-	 * Om uppdraget som kommer in är det som sidosparades (globalID -1) så ska
-	 * den ersätta globalID -1 -uppdraget.
-	 * 
-	 * @param assignment
-	 */
-	private void eraseTempAssignmentInDB(Assignment assignment) {
-
-		List<ModelInterface> list = db
-				.getAllFromDB((ModelInterface) new Assignment(),
-						context.getContentResolver());
-		
-		for (ModelInterface modelInterface : list) {
-			if (((Assignment) modelInterface).getGlobalID() == -1
-					&& ((Assignment) modelInterface).getName().equals(
-							assignment.getName())) {
-				db.deleteFromDB((ModelInterface) new Assignment(-1),
-						context.getContentResolver());
-			}
-		}
-	}
 
 	private void showNotification() {
 		String title = context.getString(R.string.app_name);

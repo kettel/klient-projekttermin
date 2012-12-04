@@ -97,7 +97,6 @@ public class PictureDB {
 	}
 
 	public void delete(ContentResolver contentResolver, PictureModel pic) {
-		System.out.println(pic.getId());
 		Cursor cursor = contentResolver.query(Pictures.CONTENT_URI, null,
 				Pictures.PICTURE_ID + " IS NOT null", null, null);
 		cursor.moveToFirst();
@@ -107,10 +106,8 @@ public class PictureDB {
 				id = cursor.getInt(i);
 			}
 		}
-		System.out.println(id);
 		contentResolver.delete(Pictures.CONTENT_URI, Pictures.PICTURE_ID
 				+ " = " + Long.toString(id), null);
-		System.out.println("I DELETE");
 	}
 
 	public void updateContact(ContentResolver contentResolver, PictureModel pic) {

@@ -49,7 +49,6 @@ public class AssignmentDetails extends SecureActivity {
 	private TextView textViewPriority;
 	private TextView textViewTime;
 	private TextView textViewSpot;
-	private TextView textViewStreetname;
 	private TextView textViewCoord;
 	private TextView agentCount;
 	private CheckBox checkboxAssign;
@@ -99,15 +98,12 @@ public class AssignmentDetails extends SecureActivity {
 		// klass.
 		setCurrentAssignmentToReach();
 		
-		Log.e("FEL", "global ID: " + currentAssignment.getGlobalID());
-		
 		// Hämtar textvyerna som ska sättas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
 		textViewDescription = (TextView) findViewById(R.id.assignment_description_set);
 		textViewPriority = (TextView) findViewById(R.id.assignment_prio_set);
 		textViewTime = (TextView) findViewById(R.id.assignment_time_set);
 		textViewSpot = (TextView) findViewById(R.id.assignment_spot_set);
-		textViewStreetname = (TextView) findViewById(R.id.assignment_streetname_set);
 		textViewCoord = (TextView) findViewById(R.id.assignment_coordinates_set);
 		agentCount = (TextView) findViewById(R.id.textView_agentCount);
 		checkboxAssign = (CheckBox) findViewById(R.id.checkBox_assign);
@@ -191,7 +187,6 @@ public class AssignmentDetails extends SecureActivity {
 		textViewPriority.setText(currentAssignment.getAssignmentPriorityToString());
 		textViewTime.setText(currentAssignment.getTimeSpan());
 		textViewSpot.setText(currentAssignment.getSiteName());
-		textViewStreetname.setText(currentAssignment.getStreetName());
 		currentAssignment.getRegion();
 		textViewCoord.setText(sb.toString());
 		textViewCoord.setOnClickListener(new OnClickListener() {
@@ -237,10 +232,10 @@ public class AssignmentDetails extends SecureActivity {
 								.setAssignmentStatus(AssignmentStatus.STARTED);
 						}
 						
-
 						// Uppdaterar Uppdraget med den nya kontakten.
 						db.updateModel(currentAssignment,
 								getContentResolver());
+						
 						SocketConnection connection=new SocketConnection();
 						connection.sendModel(currentAssignment);
 

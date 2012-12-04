@@ -29,6 +29,7 @@ public class AssignmentsDB {
 			Assignment assignment) {
 		
 		ContentValues values = new ContentValues();
+		values.put(Assignments.GLOBAL_ASSIGNMENT_ID, assignment.getGlobalID());
 		values.put(Assignments.NAME, assignment.getName());
 		values.put(Assignments.LAT, assignment.getLat());
 		values.put(Assignments.LON, assignment.getLon());
@@ -60,7 +61,7 @@ public class AssignmentsDB {
 			do {
 				String name = new String(), region = new String(), sender = new String(), description = new String(), timespan = new String(), streetname = new String(), sitename = new String();
 				long id = 0;
-				long globalid = 0;
+				String globalid = "";
 				Long timestamp = Long.valueOf("0");
 				double lon = 0, lat = 0;
 				boolean externalMission = false;
@@ -74,7 +75,7 @@ public class AssignmentsDB {
 					if (currentCol.equalsIgnoreCase(Assignments.ASSIGNMENT_ID)) {
 						id = cursor.getInt(i);
 					}else if (currentCol.equalsIgnoreCase(Assignments.GLOBAL_ASSIGNMENT_ID)) {
-						globalid = cursor.getInt(i);
+						globalid = cursor.getString(i);
 					}else if (currentCol.equalsIgnoreCase(Assignments.NAME)) {
 						name = cursor.getString(i);
 					} else if (currentCol.equalsIgnoreCase(Assignments.LAT)) {
@@ -166,7 +167,7 @@ public class AssignmentsDB {
 
 	}
 
-	public void updateAssignment(ContentResolver contentResolver,
+	public int updateAssignment(ContentResolver contentResolver,
 			Assignment assignment) {
 		ContentValues values = new ContentValues();
 		values.put(Assignments.NAME, assignment.getName());
@@ -191,8 +192,11 @@ public class AssignmentsDB {
 		int updated = contentResolver.update(
 				Assignments.CONTENT_URI,
 				values,
-				Assignments.GLOBAL_ASSIGNMENT_ID + " = "
-						+ Long.toString(assignment.getGlobalID()), null);
+				Assignments.ASSIGNMENT_ID + " = "
+						+  assignment.getId() , null);
+//				Assignments.GLOBAL_ASSIGNMENT_ID + " = "
+//						+ "\"" + assignment.getGlobalID() + "\"", null);
+		return updated;
 	}
 
 	public int getCount(ContentResolver contentResolver) {

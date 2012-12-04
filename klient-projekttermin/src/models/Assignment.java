@@ -14,7 +14,7 @@ public class Assignment implements ModelInterface {
 	// Id för modellen (Sätts av databasen så pilla inte)
 	private long id = -1;
 	//Globalt ID för uppdraget
-	private long globalID = -1;
+	private String globalID = "";
 	// Namnet på uppdraget
 	private String name;
 	// Latitud för uppdragspositionen
@@ -57,7 +57,7 @@ public class Assignment implements ModelInterface {
 	 * Används för remove
 	 * @param id
 	 */
-	public Assignment(long globalID) {
+	public Assignment(String globalID) {
 		this.globalID = globalID;
 	}
 
@@ -308,7 +308,7 @@ public class Assignment implements ModelInterface {
 	 * @param siteName
 	 * @param timeStamp
 	 */
-	public Assignment(long id, long globalID, String name, double lat, double lon,
+	public Assignment(long id, String globalID, String name, double lat, double lon,
 			String region, List<Contact> agents, String sender,
 			boolean externalMission, String assignmentDescription,
 			String timeSpan, AssignmentStatus assignmentStatus,
@@ -454,10 +454,10 @@ public class Assignment implements ModelInterface {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public long getGlobalID(){
+	public String getGlobalID(){
 		return globalID;
 	}
-	public void setGlobalID(long globalID){
-		this.globalID = globalID;
+	public void setGlobalID(String user){
+		this.globalID = user + assignmentTimeStamp.toString();
 	}
 }
