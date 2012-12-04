@@ -15,7 +15,6 @@ import qosManager.QoSInterface;
 import qosManager.QoSManager;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -27,7 +26,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import assignment.AssignmentOverview;
-import camera.Cam;
+import camera.CameraMenu;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.klient_projekttermin.R.id;
@@ -125,7 +124,6 @@ public class MainActivity extends SecureActivity {
 					break;
 				case 1:
 					if (qosManager.isAllowedToStartMessages()) {
-						System.out.println("Startar meddelanden");
 						myIntent = new Intent(MainActivity.this, Inbox.class);
 					} else {
 						unallowedStart.show();
@@ -141,7 +139,7 @@ public class MainActivity extends SecureActivity {
 					break;
 				case 3:
 					if (qosManager.isAllowedToStartCamera()) {
-						myIntent = new Intent(MainActivity.this, Camera.class);
+						myIntent = new Intent(MainActivity.this, CameraMenu.class);
 					} else {
 						unallowedStart.show();
 					}

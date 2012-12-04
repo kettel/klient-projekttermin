@@ -91,7 +91,6 @@ public class CreateMessage extends SecureActivity {
 	 */
 	public boolean sendMessage(MenuItem v) {
 		String recievingContact = reciever.getText().toString();
-		System.out.println("HEJSAN HOPPSAN " + recievingContact);
 		messageObject = new MessageModel(message.getText().toString(),
 				recievingContact, currentUser);
 

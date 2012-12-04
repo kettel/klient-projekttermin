@@ -34,7 +34,6 @@ public class logger {
 			outputStream = context.openFileOutput(FILENAME, Context.MODE_APPEND);
 		} catch (FileNotFoundException e) {
 			// Detta bör aldrig hända.
-			System.out.println("Error: creating logfile failed due to " + e.toString());
 		}
 	}
 	/**

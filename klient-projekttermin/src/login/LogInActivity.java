@@ -139,7 +139,6 @@ public class LogInActivity extends Activity implements Observer {
 				}
 			} else {
 				removeLastUserFromDB();
-//				tryOnlineLogin(loginInput);
 			}
 		}
 
@@ -192,7 +191,6 @@ public class LogInActivity extends Activity implements Observer {
 	public void removeLastUserFromDB() {
 		List list = database.getAllFromDB(new AuthenticationModel(),
 				getContentResolver());
-		System.out.println("DATABASSTORLEK: "+list.size());
 		database.deleteFromDB((AuthenticationModel) list.get(0),
 				getContentResolver());
 	}
@@ -227,7 +225,6 @@ public class LogInActivity extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
-		System.out.println("Skapar en ny ProgressDialog");
 		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
 	}
 

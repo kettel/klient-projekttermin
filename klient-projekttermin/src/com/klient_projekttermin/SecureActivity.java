@@ -73,7 +73,6 @@ public class SecureActivity extends Activity {
 		}
 	};
 	public void checkContactDatabase() {
-		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
 			socketConnection.getAllContactsReq();
 		}

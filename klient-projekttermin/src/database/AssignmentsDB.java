@@ -147,7 +147,6 @@ public class AssignmentsDB {
 
 
 	private String listToString(List<Contact> list) {
-		Log.e("FEL", "Det kommer in " + list.size() + " st  kontakter som ska uppdateras()AssignmentUpdate");
 		String ret = new String();
 		for (Contact m : list) {
 			ret = ret + m.getContactName() + "/";

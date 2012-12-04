@@ -28,8 +28,6 @@ public class AuthenticationDB {
 		values.put(Authentications.USERNAME, authentication.getUserName());
 		values.put(Authentications.PASSWORD, authentication.getPasswordHash());
 		values.put(Authentications.ISACCESSGRANTED, authentication.isAccessGranted());
-
-		System.out.println("Values: "+values.toString());
 		contentResolver.insert(Authentications.CONTENT_URI, values);
 	}
 

@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import assignment.AssignmentOverview;
 
+import com.klient_projekttermin.GCMIntentService;
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 
@@ -61,6 +62,7 @@ public class PullResponseHandler implements Observer {
 				db.addToDB((MessageModel) data, context.getContentResolver());
 				notificationIntent = new Intent(context, Inbox.class);
 				hasChanged = true;
+				GCMIntentService.sendMessage(context, "message");
 			}
 		}
 

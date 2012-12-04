@@ -1,5 +1,8 @@
 package messageFunction;
 
+import static com.klient_projekttermin.CommonUtilities.DISPLAY_MESSAGE_ACTION;
+import static com.klient_projekttermin.CommonUtilities.EXTRA_MESSAGE;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,8 +11,11 @@ import login.User;
 import models.MessageModel;
 import models.ModelInterface;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,8 +27,10 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.klient_projekttermin.SecureActivity;
+import com.google.android.gcm.GCMRegistrar;
 import com.klient_projekttermin.R;
+import com.klient_projekttermin.SecureActivity;
+import communicationModule.SocketConnection;
 
 import database.Database;
 
@@ -35,18 +43,42 @@ public class Inbox extends SecureActivity {
 	private Database dataBase;
 	// Sätter den som tom sträng för att undvika NULLPOINTER!
 	private String userName;
+	private User user = User.getInstance();
+	private SocketConnection socketConnection = new SocketConnection();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_inbox);
-		User user = User.getInstance();
 		userName = user.getAuthenticationModel().getUserName();
 
 		// Ropar på en metod som skapar en lista över alla kontakter som
 		// användaren har haft en konversation med.
 		loadListOfSenders();
+		registerReceiver(mHandleMessageReceiver, new IntentFilter(
+				DISPLAY_MESSAGE_ACTION));
 	}
+
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(mHandleMessageReceiver);
+		super.onDestroy();
+	}
+
+	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
+			if (newMessage.equals("message")) {
+				user.getAuthenticationModel()
+						.setGCMID(
+								GCMRegistrar
+										.getRegistrationId(getApplicationContext()));
+				socketConnection.pullFromServer();
+				checkContactDatabase();
+			} 
+		}
+	};
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
