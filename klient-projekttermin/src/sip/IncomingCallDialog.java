@@ -6,6 +6,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,7 +26,11 @@ public class IncomingCallDialog extends Activity {
 	private String timeInCall = new String();
 	private String caller = new String();
 	private Timer timer;
-
+	
+	// Hämta förvald ringsignal
+	Uri notification;
+	static Ringtone r;
+	
 	RegisterWithSipSingleton regSip;
 
 	@Override
@@ -54,22 +61,33 @@ public class IncomingCallDialog extends Activity {
 	@Override
 	protected void onStart(){
 		super.onStart();
-
+		notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+		r = RingtoneManager.getRingtone(getApplicationContext(), notification);
 		// Hämta regSip från MainActivity
 		// .. är det här som nyttan med en service börjar uppenbara sig?
-		
 		regSip = MainActivity.regSip;
 		// Hmm.. nedan verkar av någon konstig anledning lösa FATAL: Timer - X för timern.
 		Log.d("SIP/IncomingCallDialog/onStart","kör en onStart och hämtat regSip. Är isCallAnswered? " + ((regSip.isCallAnswered)?"sant":"falskt"));
 	}
+	@Override
+	public void onBackPressed(){
+	    finish();
+	}
 
 	@Override
 	protected void onDestroy(){
-		super.onDestroy();
+		// Om ringsignalen spelas, stoppa den
+		if(r.isPlaying()){
+			Log.d("SIP/IncomingDialer/onDestroy","Ska stoppa ringsignalen...");
+			r.stop();
+		}
 		// Döda timern när samtalsdialogen stängs
-		timer.cancel();
-		timer.purge();
+		if(timer != null){
+			timer.cancel();
+			timer.purge();
+		}
 		timeInCall = "";
+		super.onDestroy();
 	}
 
 	@Override
@@ -87,7 +105,7 @@ public class IncomingCallDialog extends Activity {
 		updateCaller("Ringer "+caller+"...");
 
 		// Starta timern
-		startCallTimer();
+		//startCallTimer();
 
 		// Sätt toggle-knappen till nedtryckt (det är ju vi som ringer...)
 		setToggleButtonChecked();
@@ -142,9 +160,17 @@ public class IncomingCallDialog extends Activity {
 
 		Log.d("SIP/IncomingCallDialog","Tagit emot samtal från " + caller);
 
-		startCallTimer();
+		//startCallTimer();
 		updateCaller(caller + " ringer...");
 		updateCallTime();
+		
+		// Dra igång ringsignalen
+		if(r==null){
+			notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+			r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+		}
+		r.play();
+		
 
 		// Lyssna efter om personen har svarat på påringningen
 		final class ObserverCallStatus implements Observer {
@@ -169,6 +195,8 @@ public class IncomingCallDialog extends Activity {
 					boolean isChecked) {
 				// Svara på samtal
 				if(buttonView.isChecked()){
+					// Stoppa ringsignalen
+					r.stop();
 					// Sätt true då samtalet är öppet
 					RegisterWithSipSingleton.callStatus.setStatus(true);
 					// Uppdatera samtalstexten
