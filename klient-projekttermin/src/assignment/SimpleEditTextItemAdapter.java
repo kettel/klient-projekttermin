@@ -70,7 +70,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	@Override
 	public int getItemViewType(int position) {
 		// TODO Auto-generated method stub
-		return position == 8 ? R.layout.autocomp_item : R.layout.textfield_item;
+		return position == 7 ? R.layout.autocomp_item : R.layout.textfield_item;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -83,7 +83,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 		final View v = super.getView(position, convertView, parent);
 		editText = (EditText) v.findViewById(R.id.text_item);
-		if (position == 8) {
+		if (position == 7) {
 			convertView = inflater.inflate(getItemViewType(position), null);
 
 			final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
@@ -109,7 +109,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 							
 							temp = temp + e.getText().toString() + ", ";
 
-							itemStrings.put(8, temp);
+							itemStrings.put(7, temp);
 							autoCompleteTextView.setHint(temp);
 							autoCompleteTextView.setText("");
 							// itemStrings.put(8, e.getText().toString());
@@ -130,7 +130,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			editText.setId(position);
 			editText.setOnFocusChangeListener(this);
 		}
-		if (position == 8) {
+		if (position == 7) {
 			return convertView;
 		} else
 			return v;
