@@ -116,13 +116,11 @@ public class LogInActivity extends Activity implements Observer {
 	public void tryOfflineLogin(AuthenticationModel loginInput)
 			throws NoSuchAlgorithmException {
 
-//		System.out.println("Saker i databasen: "
 //				+ database.getAllFromDB(loginInput, getContentResolver())
 //				.size());
 //
 //		if (database
 //				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
-//			System.out.println("Försöker logga in offline");
 //
 //			List modelList = database.getAllFromDB(loginInput,
 //					getContentResolver());
@@ -144,7 +142,6 @@ public class LogInActivity extends Activity implements Observer {
 //		}
 //
 //		else {
-			System.out.println("Försöker logga in online");
 			tryOnlineLogin(loginInput);
 //		}
 	}
@@ -192,7 +189,6 @@ public class LogInActivity extends Activity implements Observer {
 	public void removeLastUserFromDB() {
 		List list = database.getAllFromDB(new AuthenticationModel(),
 				getContentResolver());
-		System.out.println("DATABASSTORLEK: "+list.size());
 		database.deleteFromDB((AuthenticationModel) list.get(0),
 				getContentResolver());
 	}
@@ -227,7 +223,6 @@ public class LogInActivity extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
-		System.out.println("Skapar en ny ProgressDialog");
 		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
 	}
 

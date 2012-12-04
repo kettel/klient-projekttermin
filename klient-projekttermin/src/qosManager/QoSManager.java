@@ -69,13 +69,10 @@ public class QoSManager implements Observer {
 //		}
 //
 //		else if (batteryLevel < 30 && batteryLevel > 15) {
-//			System.out.println("Batterinivån är låg: " + batteryLevel + "%");
 //			adjustToLowBatteryLevel();
 //		}
 //
 //		else if (batteryLevel < 15) {
-//			System.out
-//					.println("Batterinivån är kritisk: " + batteryLevel + "%");
 //			adjustToCriticalBatteryLevel();
 //		}
 	}
@@ -173,8 +170,6 @@ public class QoSManager implements Observer {
 	 * Metoden stänger eller sätter igågng av WiFi-anslutning i enheten
 	 */
 	public void adjustNetworkStatus(Boolean wantToTurnOn) {
-		System.out
-				.println("Nätverksanslutningar är avstängda/startade i enheten");
 		WifiManager wifiManager = (WifiManager) applicationContext
 				.getSystemService(Context.WIFI_SERVICE);
 		wifiManager.setWifiEnabled(wantToTurnOn);
