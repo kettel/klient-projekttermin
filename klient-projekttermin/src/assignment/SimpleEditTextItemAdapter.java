@@ -307,10 +307,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		dialog.show();
 	}
 
-	public void agentAlternatives() {
-
-	}
-
 	public HashMap<Integer, String> getItemStrings() {
 		return itemStrings;
 	}

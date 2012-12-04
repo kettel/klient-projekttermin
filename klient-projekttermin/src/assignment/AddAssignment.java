@@ -5,8 +5,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 
 import logger.logger;
@@ -229,21 +231,22 @@ public class AddAssignment extends SecureActivity implements Serializable {
 		for (String string : items) {
 			Log.e("FEL", "Regexplittade agents: " + string);
 		}
-
 		List<ModelInterface> list = db.getAllFromDB(new Contact(),
-				getContentResolver());
+				getContentResolver());	
+		Set<String> noDoublicatesSet = new HashSet<String>(items);
 
-		for (String agent : items) {
+
+
+		for (String agent : noDoublicatesSet) {
 			for (ModelInterface modelInterface : list) {
 				Contact contact = (Contact) modelInterface;
 				if (contact.getContactName().equals(agent)) {
 					newAssignment.addAgents(new Contact(agent));
-					Log.e("FEL",
-							"Lägger till agenter i add assignment från cpadaptern, ska va 2: ");
 				}
 			}
 		}
 		items.clear();
+		noDoublicatesSet.clear();
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {
