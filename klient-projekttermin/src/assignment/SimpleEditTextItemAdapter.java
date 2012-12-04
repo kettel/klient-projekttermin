@@ -262,14 +262,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					((AddAssignment) context).startActivityForResult(intent, 0);
 					break;
 				case 1:
-					Intent intent2 = new Intent(context, MapActivity.class);
-					intent2.putExtra("calling-activity",
-							ActivityConstants.GET_GPS_LOCATION);
-					((AddAssignment) context)
-							.startActivityForResult(intent2, 0);
-					isCreatingCoordDialog = false;
-					// itemStrings.put(v.getId(), pos);
-					// ed1.setText(pos);
+					 itemStrings.put(v.getId(), pos);
+					 ed1.setText(pos);
 					break;
 				default:
 					isCreatingCoordDialog = false;
