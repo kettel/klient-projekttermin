@@ -195,13 +195,14 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
-				isCreatingDialog = false;
+				
 				switch (arg2) {
 				case 0:
 					Intent intent = new Intent(context, Album.class);
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 					((AddAssignment) context).startActivityForResult(intent, 1);
+					isCreatingDialog = false;
 					break;
 				case 1:
 					Intent intent2 = new Intent(context, Cam.class);
@@ -209,8 +210,10 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
 					((AddAssignment) context)
 							.startActivityForResult(intent2, 2);
+					isCreatingDialog = false;
 					break;
 				default:
+					isCreatingDialog = false;
 					break;
 				}
 			}
@@ -284,15 +287,17 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
-				isCreatingPrioDialog = false;
 				switch (arg2) {
 				case 0:
+					isCreatingPrioDialog = false;
 					v.setText("Hög prioritet");
 					break;
 				case 1:
+					isCreatingPrioDialog = false;
 					v.setText("Normal prioritet");
 					break;
 				case 2:
+					isCreatingPrioDialog = false;
 					v.setText("Låg prioritet");
 				default:
 					break;
