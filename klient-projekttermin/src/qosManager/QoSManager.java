@@ -12,10 +12,13 @@ import android.view.WindowManager;
 
 public class QoSManager implements Observer {
 	private Boolean permissionToStartMap = true;
+	private Boolean permissionToUseNetwork = true;
 	private Boolean permissionToStartCamera = true;
 	private Boolean permissionToStartMessages = true;
 	private Boolean permissionToStartAssignment = true;
-
+	private float screenBrightnesslevel = (float) 0.2;
+	private int lowBatteryLevel=20;
+	
 	private float screenBrightnesslevelOkay = (float) 0.3;
 	private Boolean permissionToStartMapOkay = true;
 	private Boolean permissionToUseNetworkOkay = true;
@@ -26,19 +29,8 @@ public class QoSManager implements Observer {
 	private Boolean BatterySaveModeIsActivated=false;
 	private Boolean okayBatterylevel = true;
 
-	private float screenBrightnesslevelLow = (float) 0.2;
-	private int lowBatteryLevel=20;
-	private Boolean permissionToStartMapLow = false;
-	private Boolean permissionToUseNetworkLow = false;
-	private Boolean permissionToStartCameraLow = false;
-	private Boolean permissionToStartMessagesLow = true;
-	private Boolean permissionToStartAssignmentLow = false;
-
 	private BatteryCheckingFunction batteryCheckingFunction;
 	private Context applicationContext;
-	private SharedPreferences settings;
-	private SharedPreferences.Editor editor = settings.edit();
-
 
 	private QoSManager() {
 	}
@@ -113,19 +105,14 @@ public class QoSManager implements Observer {
 	 */
 	public void adjustToLowBatteryLevel() {
 		BatterySaveModeIsActivated=true;
-		adjustScreenBrightness(screenBrightnesslevelLow);
-		adjustNetworkStatus(permissionToUseNetworkLow);
-		permissionToStartAssignment = permissionToStartAssignmentLow;
-		permissionToStartCamera = permissionToStartCameraLow;
-		permissionToStartMap = permissionToStartMapLow;
-		permissionToStartMessages = permissionToStartMessagesLow;
+		adjustScreenBrightness(screenBrightnesslevel);
+		adjustNetworkStatus(permissionToUseNetwork);
 	}
 
 	/**
 	 * Metoden justerar skärmljusstyrkan med hjälp av ett inkommande floatvärde
 	 * 
-	 * @param value
-	 *            kan vara ett valfritt float-värde mellan 0.0-1.0;
+	 * @param value kan vara ett valfritt float-värde mellan 0.0-1.0;
 	 */
 	public void adjustScreenBrightness(float brightnessValue) {
 		WindowManager.LayoutParams layout = ((Activity) applicationContext).getWindow().getAttributes();
@@ -137,8 +124,6 @@ public class QoSManager implements Observer {
 	 * Metoden stänger eller sätter igågng av WiFi-anslutning i enheten
 	 */
 	public void adjustNetworkStatus(Boolean wantToTurnOn) {
-		System.out
-		.println("Nätverksanslutningar är avstängda/startade i enheten");
 		WifiManager wifiManager = (WifiManager) applicationContext
 				.getSystemService(Context.WIFI_SERVICE);
 		wifiManager.setWifiEnabled(wantToTurnOn);
@@ -163,37 +148,47 @@ public class QoSManager implements Observer {
 	public boolean isAllowedToStartCamera() {
 		return permissionToStartCamera;
 	}
+	public boolean isAllowedToUseWiFi(){
+		return permissionToUseNetwork;
+	}
+	
+	public float getScreenBrightnessValue(){
+		return screenBrightnesslevel;
+	}
+	
+	public int getLowBatteryLevel(){
+		return lowBatteryLevel;
+	}
 	
 	/**
 	 * Metoden sätter ett värde på skärmljusstyrkan
 	 */
 	public void setScreenBrightnessValueLow(float screenBrightnessLevel){
-		screenBrightnesslevelLow = screenBrightnessLevel;
+		screenBrightnesslevel = screenBrightnessLevel;
 		if(BatterySaveModeIsActivated){
-			adjustScreenBrightness(screenBrightnesslevelLow);
+			adjustScreenBrightness(screenBrightnesslevel);
 		}
 	}
 
-	public void setPermissionToStartMessagesLow(Boolean permissionStartMessagesLow) {
-		permissionToStartMessagesLow = permissionStartMessagesLow;
+	public void setPermissionToStartMessages(Boolean permissionStartMessagesLow) {
+		permissionToStartMessages = permissionStartMessagesLow;
 	}
 
-	public void setPermissionToStartMapLow(Boolean permissionStartMapLow) {
-		permissionToStartMapLow = permissionStartMapLow;
+	public void setPermissionToStartMap(Boolean permissionStartMapLow) {
+		permissionToStartMap = permissionStartMapLow;
 	}
 
-	public void setPermissionToUseNetworkLow(Boolean permissionNetworkLow) {
-		permissionToUseNetworkLow = permissionNetworkLow;
-		System.out.println("Tillåtelse att använda nätveret: "+permissionNetworkLow);
+	public void setPermissionToUseNetwork(Boolean permissionNetworkLow) {
+		permissionToUseNetwork = permissionNetworkLow;
 	}
 
-	public void setPermissionToStartCameraLow(Boolean permissionStartCameraLow) {
-		permissionToStartCameraLow = permissionStartCameraLow;
+	public void setPermissionToStartCamera(Boolean permissionStartCameraLow) {
+		permissionToStartCamera = permissionStartCameraLow;
 	}
 
-	public void setPermissionToStartAssignmentLow(
+	public void setPermissionToStartAssignment(
 			Boolean permissionStartAssignmentLow) {
-		permissionToStartAssignmentLow = permissionStartAssignmentLow;
+		permissionToStartAssignment = permissionStartAssignmentLow;
 	}
 
 	public void setLowBatteryLevel(int batterylevel) {

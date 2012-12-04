@@ -6,7 +6,6 @@ import static com.klient_projekttermin.CommonUtilities.SERVER_URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import login.LogInActivity;
 import login.User;
 import map.MapActivity;
@@ -31,6 +30,8 @@ import assignment.AssignmentOverview;
 import camera.Cam;
 
 import com.google.android.gcm.GCMRegistrar;
+import com.klient_projekttermin.R.id;
+
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
@@ -213,8 +214,9 @@ public class MainActivity extends SecureActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		System.out.println("LOGOUT ID: "+item.getItemId());
-		if(item.getItemId()==2131165266){
+		int logOutId = findViewById(id.logout).getId();
+		
+		if(item.getItemId()==logOutId){
 		logout();
 		return false;
 		}
