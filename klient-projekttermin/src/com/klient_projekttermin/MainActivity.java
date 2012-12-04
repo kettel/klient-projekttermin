@@ -49,7 +49,7 @@ public class MainActivity extends InactivityListener {
 	private SocketConnection socketConnection;
 
 	// SIP-variabler
-	private RegisterWithSipSingleton sipReg;
+	public static RegisterWithSipSingleton regSip;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,10 +59,6 @@ public class MainActivity extends InactivityListener {
 
 		setContentView(R.layout.activity_main);
 		
-        // SIP: Registrera klienten hos SIP-servern
-		sipReg = RegisterWithSipSingleton.getInstance(getApplicationContext());
-        sipReg.initializeManager();
-        
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
 
@@ -175,11 +171,11 @@ public class MainActivity extends InactivityListener {
 	protected void onStart() {
 		super.onStart();
 		
-        // TODO: SIP: Registrera klienten hos SIP-servern 
-		if(sipReg == null){
-			sipReg = RegisterWithSipSingleton.getInstance(getApplicationContext());
+        // SIP: Registrera klienten hos SIP-servern 
+		if(regSip == null){
+			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
 		}
-        sipReg.initializeManager();
+        regSip.initializeManager();
 	}
 	
 	@Override
@@ -187,10 +183,10 @@ public class MainActivity extends InactivityListener {
 		super.onResume();
 		
         // TODO: SIP: Registrera klienten hos SIP-servern 
-		if(sipReg == null){
-			sipReg = RegisterWithSipSingleton.getInstance(getApplicationContext());
+		if(regSip == null){
+			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
 		}
-        sipReg.initializeManager();
+        regSip.initializeManager();
 	}
 	
 	@Override
@@ -203,9 +199,9 @@ public class MainActivity extends InactivityListener {
 		GCMRegistrar.onDestroy(getApplicationContext());
 		
 		// Avregistrera klienten från SIP-servern
-		if(sipReg != null){
+		if(regSip != null){
 			
-			sipReg.closeLocalProfile();
+			regSip.closeLocalProfile();
 		}
 		
 		super.onDestroy();

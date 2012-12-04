@@ -7,17 +7,11 @@ import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;
 import models.ModelInterface;
-import sip.OutgoingCallReceiver;
-import sip.RegisterWithSipServerService;
 import sip.RegisterWithSipSingleton;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -43,8 +37,7 @@ public class ContactsBookActivity extends InactivityListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
-		regSip.initializeManager();
+		
 
 		setContentView(R.layout.activity_contacts_book);
 		ListView lv = (ListView) findViewById(android.R.id.list);
@@ -66,7 +59,11 @@ public class ContactsBookActivity extends InactivityListener {
 	@Override
     protected void onStart() {
         super.onStart();
-
+        // SIP: Registrera klienten hos SIP-servern 
+        if(regSip == null){
+        	regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
+        }
+        regSip.initializeManager();
     }
 	
 	@Override

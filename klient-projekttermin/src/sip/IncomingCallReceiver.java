@@ -11,7 +11,7 @@ import android.util.Log;
 /*** Lyssnar efter inkommande SIP-samtal, fångar dem och ger dem till SipMain.
  */
 public class IncomingCallReceiver extends BroadcastReceiver {
-	static boolean answerCall = false;
+	
 	static SipAudioCall incomingCall = null;
 	static int callCounter = 0;
 	
@@ -34,8 +34,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 				@Override
 				public void onRinging(SipAudioCall call, SipProfile caller) {
 					try {
+//						regSip.setCall(call);
 						Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 						startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
+						startIncomingCallDialog.putExtra("outgoing",false);
 						startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						context.startActivity(startIncomingCallDialog);
 					} catch (Exception e) {
@@ -48,8 +50,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 			incomingCall = regSip.manager.takeAudioCall(intent, listener);
 			Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 			startIncomingCallDialog.putExtra("caller", incomingCall.getPeerProfile().getDisplayName());
+			startIncomingCallDialog.putExtra("outgoing",false);
 			startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			regSip.call = incomingCall;
+//			regSip.setCall(incomingCall);
+			StaticCall.call = incomingCall;
 			context.startActivity(startIncomingCallDialog);
 		} catch (Exception e) {
 			if (incomingCall != null) {
@@ -58,28 +62,6 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 				Log.d("SIP/IncomingCallReceiver","Fel: " + e.toString());
 				e.printStackTrace();
 			}
-		}
-	}
-	public static void answerCall(SipAudioCall call){
-		try {
-			call.answerCall(30);
-			call.startAudio();
-			call.setSpeakerMode(true);
-			if(call.isMuted()) {
-				call.toggleMute();
-			}
-		} catch (SipException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public static void dropCall(SipAudioCall call){
-		try {
-			call.endCall();
-		} catch (SipException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }

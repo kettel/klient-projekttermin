@@ -27,11 +27,14 @@ public class RegisterWithSipSingleton {
 	public SipProfile me = null;
 	public String sipAddress = null;
 
-	public ObservableCallStatus callStatus = new ObservableCallStatus();
+	public static ObservableCallStatus callStatus = new ObservableCallStatus();
+	
+	public boolean isCallAnswered = false;
 
 	// Variabler som jag inte vet vart de ska vara. Main? Service? Hjälpklass?
 	public IncomingCallReceiver callReceiver;
-	public SipAudioCall call = null;
+
+	private SipAudioCall call = null;
 
 	// Bör hämtas från databas i framtiden
 	public String username = "1001";
@@ -80,7 +83,7 @@ public class RegisterWithSipSingleton {
 			public void run()
 			{
 				if(!isRegistred){
-					Log.d("SIP/RegisterWithSipServer","Försöker mot SIP-server...");
+					Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile/Timer","Försöker mot SIP-server...");
 					if(manager == null) {
 						manager = SipManager.newInstance(context);
 					}
@@ -100,7 +103,7 @@ public class RegisterWithSipSingleton {
         if (me != null) {
         	closeLocalProfile();
         }
-        Log.d("SIP","Ska skapa profil..");
+        Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Ska skapa profil..");
         try {
         	
         	SipProfile.Builder builder = new SipProfile.Builder(username, domain);
@@ -117,28 +120,28 @@ public class RegisterWithSipSingleton {
         	// Sätt upp en lyssnare som lyssnar efter hur väl anslutningen har gått
         	manager.setRegistrationListener(me.getUriString(), new SipRegistrationListener() {
                 public void onRegistering(String localProfileUri) {
-                	Log.d("SIP","Registrerar mot SIP-server...");
+                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Registrerar mot SIP-server...");
                 	//isRegistred = false;
                 }
 
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                	Log.d("SIP","Redo");
+                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Redo");
                 	isRegistred = true;
                 	//initiateCall();
                 }
 
                 public void onRegistrationFailed(String localProfileUri, int errorCode,
                         String errorMessage) {
-                	Log.d("SIP","Misslyckades att registrera mot SIP-server. Försöker igen...");
+                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Misslyckades att registrera mot SIP-server. Försöker igen...");
                 	isRegistred = false;
                 }
             });
         } 
         catch (ParseException e) {
-        	Log.e("SIP","Parse error.. "+e);
+        	Log.e("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Parse error.. "+e);
         }
         catch (SipException e) {
-        	Log.e("SIP","Sip exceptionerror.. "+e);
+        	Log.e("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Sip exceptionerror.. "+e);
         }
 		
 	}
@@ -159,7 +162,7 @@ public class RegisterWithSipSingleton {
             	manager.close(me.getUriString());
             }
         } catch (Exception ee) {
-            Log.d("SIP", "Failed to close local profile.", ee);
+            Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Failed to close local profile.", ee);
         }
     }
     
@@ -177,6 +180,7 @@ public class RegisterWithSipSingleton {
                 @Override
                 public void onCallEstablished(SipAudioCall call) {
                 	//isInCall= true;
+                	Log.d("SIP/Singleton/InitCall","Den du ringt till har svarat");
                 	callStatus.setStatus(true);
                     call.startAudio();
                     call.setSpeakerMode(true);
@@ -186,25 +190,27 @@ public class RegisterWithSipSingleton {
                 @Override
                 public void onCallEnded(SipAudioCall call) {
                 	//isInCall = false;
+                	Log.d("SIP/Singleton/InitCall","Någon har lagt på");
                 	callStatus.setStatus(false);
                     //updateStatus("Ready.");
                 }
             };
-
+            if(manager == null){
+            	Log.d("SIP/RegisterWithSipSingleton/InitiateCall","Manager är null...");
+            }
             call = manager.makeAudioCall(me.getUriString(), sipAddress, listener, 30);
-            Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
-			startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
-			startIncomingCallDialog.putExtra("outgoing",true);
-			startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startActivity(startIncomingCallDialog);
+            Intent startIncoming = new Intent(context,IncomingCallDialog.class);
+            startIncoming.putExtra("outgoing",true);
+            startIncoming.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			context.startActivity(startIncoming);
         }
         catch (Exception e) {
-            Log.i("RegisterWithSipServerService/InitiateCall", "Error when trying to close manager.", e);
+            Log.i("SIP/RegisterWithSipSingleton/InitiateCall", "Error when trying to close manager.", e);
             if (me != null) {
                 try {
                 	manager.close(me.getUriString());
                 } catch (Exception ee) {
-                    Log.i("RegisterWithSipServerService/InitiateCall",
+                    Log.i("SIP/RegisterWithSipSingleton/InitiateCall",
                             "Error when trying to close manager.", ee);
                     ee.printStackTrace();
                 }
@@ -214,5 +220,13 @@ public class RegisterWithSipSingleton {
             }
         }
     }
+    
 
+	public SipAudioCall getCall() {
+		return call;
+	}
+
+	public void setCall(SipAudioCall call) {
+		this.call = call;
+	}
 }

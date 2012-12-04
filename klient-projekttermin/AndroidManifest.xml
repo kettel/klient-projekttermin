@@ -98,7 +98,7 @@
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
         <!-- SIP Service -->
-        <service android:name="sip.RegisterWithSipServerService" />
+<!--         <service android:name="sip.RegisterWithSipServerService" /> -->
         <!-- SIP Receiver -->
         <receiver android:name="sip.IncomingCallReceiver" />
 <!--         <receiver android:name="sip.OutgoingCallReceiver" > -->

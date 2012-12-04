@@ -12,6 +12,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 
 public class IncomingCallDialog extends Activity {
@@ -21,21 +22,31 @@ public class IncomingCallDialog extends Activity {
 	private String caller = new String();
 	private Timer timer;
 	
+	RegisterWithSipSingleton regSip;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d("SIP/IncomingCallDialog/OnCreate","Startar incomingcalldialog...");
 		setContentView(R.layout.activity_incoming_call_dialog);
 		Bundle extras = getIntent().getExtras();
 		boolean isOutgoing = extras.getBoolean("outgoing");
 		
 		if(isOutgoing){
-			caller = "ringer " + extras.getString("caller") + "...";
+			Log.d("SIP/IncomingCallDialog/OnCreate","Startar ett utgående samtal..");
+			if(extras.getString("caller") != null){
+				caller = "ringer " + extras.getString("caller") + "...";
+			}else{
+				caller = "ringer ...";
+			}
+			
 			startCallTimer();
+			updateCaller();
 			setToggleButtonChecked();
 			
 			// Lyssna efter om personen har svarat på påringningen
 			ObserverCallStatus observer = new ObserverCallStatus();
-			RegisterWithSipServerService.callStatus.addObserver(observer);
+			RegisterWithSipSingleton.callStatus.addObserver(observer);
 			
 			// Lyssna på toggle-knappen
 			ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
@@ -46,7 +57,7 @@ public class IncomingCallDialog extends Activity {
 					// Svara på samtal
 					if(buttonView.isChecked()){
 						// Samtal är besvarat
-						IncomingCallReceiver.answerCall = true;
+						regSip.isCallAnswered = true;
 						// Sätt aktuell tid till initialtid för samtalsstart
 						timeWhenCallStarted = System.currentTimeMillis();
 						// Besvara samtalet
@@ -55,9 +66,9 @@ public class IncomingCallDialog extends Activity {
 						updateCallTime();
 					}
 					// Lägg på samtal
-					if(!buttonView.isChecked() && IncomingCallReceiver.answerCall){
-						IncomingCallReceiver.answerCall = false;
-						IncomingCallReceiver.dropCall(RegisterWithSipServerService.call);
+					if(!buttonView.isChecked()){
+						regSip.isCallAnswered = false;
+						StaticCall.dropCall(StaticCall.call);
 						Log.d("SIP", "Samtal avslutat. Ska nu köra finish på aktivitet...");
 						finish();
 					}
@@ -70,7 +81,7 @@ public class IncomingCallDialog extends Activity {
 			Log.d("SIP/IncomingCallDialog","Tagit emot samtal från " + caller);
 
 			startCallTimer();
-
+			updateCaller();
 			
 
 			// Lyssna på toggle-knappen
@@ -81,18 +92,18 @@ public class IncomingCallDialog extends Activity {
 					// Svara på samtal
 					if(buttonView.isChecked()){
 						// Samtal är besvarat
-						IncomingCallReceiver.answerCall = true;
+						regSip.isCallAnswered = true;
 						// Sätt aktuell tid till initialtid för samtalsstart
 						timeWhenCallStarted = System.currentTimeMillis();
 						// Besvara samtalet
-						IncomingCallReceiver.answerCall(IncomingCallReceiver.incomingCall);
+						StaticCall.answerCall(StaticCall.call);
 						// Uppdatera tiden i textView
 						updateCallTime();
 					}
 					// Lägg på samtal
-					if(!buttonView.isChecked() && IncomingCallReceiver.answerCall){
-						IncomingCallReceiver.answerCall = false;
-						IncomingCallReceiver.dropCall(IncomingCallReceiver.incomingCall);
+					if(!buttonView.isChecked() && regSip.isCallAnswered){
+						regSip.isCallAnswered = false;
+						StaticCall.dropCall(StaticCall.call);
 						Log.d("SIP", "Samtal avslutat. Ska nu köra finish på aktivitet...");
 						finish();
 					}
@@ -101,6 +112,15 @@ public class IncomingCallDialog extends Activity {
 		}
 
 	}
+	@Override
+	protected void onStart(){
+		super.onStart();
+		
+		// Hämta regSip från MainActivity
+		// .. är det här som nyttan med en service börjar uppenbara sig?
+		regSip = MainActivity.regSip;
+	}
+	
 	@Override
 	protected void onDestroy(){
 		super.onDestroy();
@@ -135,7 +155,7 @@ public class IncomingCallDialog extends Activity {
 		{
 			public void run()
 			{
-				if(IncomingCallReceiver.answerCall){
+				if(regSip.isCallAnswered){
 					long millis = System.currentTimeMillis() - timeWhenCallStarted;
 					int seconds = (int) (millis / 1000);
 					int minutes = seconds / 60;
