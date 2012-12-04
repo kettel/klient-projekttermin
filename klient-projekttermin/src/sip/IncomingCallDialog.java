@@ -41,6 +41,11 @@ import com.klient_projekttermin.R;
  * TODO: Notera uppringt samtal
  * TODO: Visa samtalstid för ringda/mottagna samtal (om tid finns)
  * 
+ * Databas:
+ * TODO: Hämta SIP-profil från servern
+ * TODO: Hämta och lagra kontakters SIP-nummer (för samtal inom FM)
+ * TODO: Om behövs, lägg till SIP-nummer i kontaktmodellen
+ * 
  * @author kettel
  *
  */
