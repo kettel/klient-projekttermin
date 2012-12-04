@@ -25,7 +25,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context context, Intent intent) {
 		callCounter++;
-		Log.d("SIP","Ett inkommande samtal... Samtal nummer: "+callCounter);
+		Log.d("SIP/IncomingCallReceiver/onReceive","Ett inkommande samtal... Samtal nummer: "+callCounter);
 		regSip = RegisterWithSipSingleton.getInstance(context);
 		
 		try {
