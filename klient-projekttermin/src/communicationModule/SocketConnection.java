@@ -281,4 +281,8 @@ public class SocketConnection extends Observable {
 		}).start();
 	}
 
+	public void logout() {
+		
+	}
+
 }

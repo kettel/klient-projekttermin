@@ -15,7 +15,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Debug;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +43,9 @@ public class Album extends Activity implements OnItemClickListener {
 	private String[] pictureAlts = { "Skapa uppdrag med foto" };
 	private int currentPictureId;
 	private List<Bitmap> images = new ArrayList<Bitmap>();
+	private List<Bitmap> imagesToAssignment = new ArrayList<Bitmap>();
+	private Bitmap bitmap;
+	private int currentPic = 0;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -49,18 +54,30 @@ public class Album extends Activity implements OnItemClickListener {
 		setContentView(R.layout.activity_photo_gallery);
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		Gallery g = (Gallery) findViewById(R.id.Gallery);
-		Database db = Database.getInstance(getApplicationContext());
+		Database db = Database.getInstance(getApplicationContext());	
 		imagesFromDB = db
 				.getAllFromDB(new PictureModel(), getContentResolver());
 			for (ModelInterface temp : imagesFromDB) {
 				PictureModel p = (PictureModel) temp;
-				Bitmap bitmap = BitmapFactory.decodeByteArray(p.getPicture(),
-						0, p.getPicture().length);
+				BitmapFactory.Options ops = new BitmapFactory.Options();
+				ops.inSampleSize = 2;
+				
+				bitmap = BitmapFactory.decodeByteArray(p.getPicture(),
+						0, p.getPicture().length, ops);
 				images.add(bitmap);
+				ops.inSampleSize = 8;
+				Bitmap b = BitmapFactory.decodeByteArray(p.getPicture(),
+						0, p.getPicture().length, ops);
+				imagesToAssignment.add(b);
 			}
+			
 			g.setAdapter(new ImageAdapter(this));
 			g.setSpacing(10);
 			g.setOnItemClickListener(this);
+	}
+	
+	private void setPictureId(int i){
+		currentPic = i;
 	}
 
 	public class ImageAdapter extends BaseAdapter {
@@ -135,7 +152,7 @@ public class Album extends Activity implements OnItemClickListener {
 			Intent intent = new Intent(Album.this, AddAssignment.class);
 			intent.putExtra("calling-activity",
 					ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-			intent.putExtra(pic, images.get(currentPictureId));
+			intent.putExtra(pic, imagesToAssignment.get(currentPictureId));
 			setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
 			finish();
 		default:
@@ -172,8 +189,6 @@ public class Album extends Activity implements OnItemClickListener {
 
 	private void createAssignmentFromPicture() {
 		Intent i = new Intent(Album.this, AddAssignment.class);
-		System.out.println("pic: "+pic);
-		System.out.println("currentPictureId: "+currentPictureId);
 		i.putExtra(pic, currentPictureId);
 		i.putExtra("calling-activity",
 				ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);

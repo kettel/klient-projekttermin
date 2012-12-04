@@ -199,7 +199,6 @@ public class AddAssignment extends SecureActivity implements Serializable {
 				+ temp.get(5));
 
 		db.addToDB(newAssignment, getContentResolver());
-		
 		SocketConnection connection=new SocketConnection();
 		connection.sendModel(newAssignment);
 		finish();
@@ -278,9 +277,11 @@ public class AddAssignment extends SecureActivity implements Serializable {
 		db = Database.getInstance(getApplicationContext());
 		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(), getContentResolver());
 		PictureModel p = (PictureModel)pics.get(id);
+		BitmapFactory.Options ops = new BitmapFactory.Options();
+		ops.inSampleSize = 2;
 		Bitmap bitmap = BitmapFactory.decodeByteArray(
 				p.getPicture(), 0,
-				p.getPicture().length);
+				p.getPicture().length, ops);
 		return bitmap;
 	}
 }
