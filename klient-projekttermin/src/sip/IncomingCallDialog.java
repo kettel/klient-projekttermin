@@ -35,13 +35,14 @@ public class IncomingCallDialog extends Activity {
 		if(isOutgoing){
 			Log.d("SIP/IncomingCallDialog/OnCreate","Startar ett utgående samtal..");
 			if(extras.getString("caller") != null){
-				caller = "ringer " + extras.getString("caller") + "...";
+				caller = extras.getString("caller");
+				updateCaller("Ringer "+caller+"...");
 			}else{
-				caller = "ringer ...";
+				updateCaller("Ringer...");
 			}
 			
 			startCallTimer();
-			updateCaller();
+			
 			setToggleButtonChecked();
 			
 			// Lyssna efter om personen har svarat på påringningen
@@ -75,13 +76,14 @@ public class IncomingCallDialog extends Activity {
 				}
 			});
 			
-		}else{
-			
-			caller = extras.getString("caller") + " ringer...";
+		}
+		// Inkommande samtal
+		else{
+			caller = extras.getString("caller");
 			Log.d("SIP/IncomingCallDialog","Tagit emot samtal från " + caller);
 
 			startCallTimer();
-			updateCaller();
+			updateCaller(caller + " ringer...");
 			
 
 			// Lyssna på toggle-knappen
@@ -91,6 +93,8 @@ public class IncomingCallDialog extends Activity {
 						boolean isChecked) {
 					// Svara på samtal
 					if(buttonView.isChecked()){
+						// Uppdatera samtalstexten
+						updateCaller("I samtal med "+caller);
 						// Samtal är besvarat
 						regSip.isCallAnswered = true;
 						// Sätt aktuell tid till initialtid för samtalsstart
@@ -147,8 +151,8 @@ public class IncomingCallDialog extends Activity {
 	}
 	
 	private void startCallTimer(){
-		int delay = 5000; // delay for 5 sec.
-		int period = 1000; // repeat every sec.
+		int delay = 0; // Vänta inte innan timern ska starta
+		int period = 1000; // Upprepa varje sekund
 
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask()
@@ -159,7 +163,7 @@ public class IncomingCallDialog extends Activity {
 					long millis = System.currentTimeMillis() - timeWhenCallStarted;
 					int seconds = (int) (millis / 1000);
 					int minutes = seconds / 60;
-
+					seconds = seconds % 60;
 					if (seconds < 10) {
 						String time = "" + minutes + ":0" + seconds;
 						Log.d("SIP",time);
@@ -185,13 +189,13 @@ public class IncomingCallDialog extends Activity {
 			}
 		});
 	}
-	private void updateCaller(){
+	private void updateCaller(final String text){
 		// Sätt namn på vem som ringer i UI-tråden (Be a good citizen..)
 		this.runOnUiThread(new Runnable() {
 			public void run() {
 				// Sätt namnet på den som ringer
 				TextView callerView = (TextView) findViewById(R.id.textViewCaller);
-				callerView.setText(caller);
+				callerView.setText(text);
 				TextView timeView = (TextView) findViewById(R.id.textViewTimeInCall);
 				timeView.setText(timeInCall);
 			}
