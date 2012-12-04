@@ -30,7 +30,6 @@ import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
-import camera.Album;
 
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
@@ -117,8 +116,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	}
 
 	private void fromCamera(Intent intent) {
-		int id = intent.getIntExtra(Album.pic, 0);
-		System.out.println(id + "fromcamera");
+		int id = intent.getIntExtra("pic", 0);
 		bitmap = getPic(id);
 		adapter.textToItem(6, "Bifogad bild");
 		runOnUiThread(new Runnable() {
@@ -177,10 +175,6 @@ public class AddAssignment extends SecureActivity implements Serializable {
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
 					temp.get(5), checkPrioString(temp.get(7)));
 
-			Log.e("FEL",
-					"Det är ett externt uppdrag: "
-							+ newAssignment.isExternalMission());
-			System.out.println("temp8: " + temp.get(8));
 			String tempUnseparated = temp.get(8);
 
 			if (tempUnseparated == null) {
@@ -277,6 +271,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	}
 
 	private Bitmap getPic(int id) {
+		System.out.println(id);
 		db = Database.getInstance(getApplicationContext());
 		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(),
 				getContentResolver());

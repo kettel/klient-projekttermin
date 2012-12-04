@@ -32,8 +32,7 @@ import database.Database;
 public class Album extends Activity implements OnItemClickListener {
 	public boolean Visibility = true;
 
-	public List<ModelInterface> imagesFromDB;
-	public static String pic = "";
+	private List<ModelInterface> imagesFromDB;
 	private int callingActivity;
 	private String[] pictureAlts = { "Skapa uppdrag med foto" };
 	private int currentPictureId;
@@ -41,7 +40,6 @@ public class Album extends Activity implements OnItemClickListener {
 	private Bitmap bitmap;
 	private Database db;
 
-	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,7 +68,6 @@ public class Album extends Activity implements OnItemClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
 	}
 
 	public class ImageAdapter extends BaseAdapter {
@@ -119,16 +116,18 @@ public class Album extends Activity implements OnItemClickListener {
 			showPictureAlts();
 			break;
 		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
-			Intent intent = new Intent(Album.this, AddAssignment.class);
-			intent.putExtra("calling-activity",
-					ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-			intent.putExtra(pic, images.get(currentPictureId));
-			setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
-			finish();
+			addPicToAss();
 			break;
 		default:
 			break;
 		}
+	}
+	
+	private void addPicToAss(){
+		Intent intent = new Intent(Album.this, AddAssignment.class);
+		intent.putExtra("pic", currentPictureId);
+		setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
+		finish();
 	}
 
 	private void showPictureAlts() {
@@ -160,7 +159,7 @@ public class Album extends Activity implements OnItemClickListener {
 
 	private void createAssignmentFromPicture() {
 		Intent i = new Intent(Album.this, AddAssignment.class);
-		i.putExtra(pic, currentPictureId);
+		i.putExtra("pic", currentPictureId);
 		i.putExtra("calling-activity",
 				ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 		Album.this.startActivity(i);

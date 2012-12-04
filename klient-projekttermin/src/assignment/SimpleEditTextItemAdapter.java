@@ -28,19 +28,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-//<<<<<<< HEAD
-//import android.widget.TextView;
-//import camera.PhotoGallery;
-//=======
 import camera.Album;
-import camera.CameraMenu;
+import camera.Cam;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
-import com.nutiteq.location.providers.AndroidGPSProvider;
 
 import contacts.ContactsCursorAdapter;
 
@@ -111,8 +106,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 						public void onItemClick(AdapterView<?> arg0, View arg1,
 								int arg2, long arg3) {
 							TextView e = (TextView) arg1;
-							Log.e("FEL", e.getText().toString());
-
+							
 							temp = temp + e.getText().toString() + ", ";
 
 							itemStrings.put(8, temp);
@@ -171,13 +165,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				coordinateField(v);
 			}
 		}
-		if (hasFocus && v.getId() == 6 && itemStrings.get(v.getId()) == null) {
+		if (hasFocus && v.getId() == 5 && itemStrings.get(v.getId()) == null) {
 			if (!isCreatingDialog) {
 				isCreatingDialog = true;
 				pictureAlternatives();
 			}
 		}
-		if (hasFocus && v.getId() == 7 && itemStrings.get(v.getId()) == null) {
+		if (hasFocus && v.getId() == 6 && itemStrings.get(v.getId()) == null) {
 			if (!isCreatingPrioDialog) {
 				isCreatingPrioDialog = true;
 				priorityAlternatives((EditText) v);
@@ -210,7 +204,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					((AddAssignment) context).startActivityForResult(intent, 1);
 					break;
 				case 1:
-					Intent intent2 = new Intent(context, CameraMenu.class);
+					Intent intent2 = new Intent(context, Cam.class);
 					intent2.putExtra("calling-activity",
 							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
 					((AddAssignment) context)

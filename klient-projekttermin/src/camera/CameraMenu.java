@@ -13,6 +13,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.klient_projekttermin.SecureActivity;
 
@@ -39,6 +40,7 @@ public class CameraMenu extends SecureActivity {
 					break;
 				case 1:
 					Intent i = new Intent(CameraMenu.this, Album.class);
+					i.putExtra("calling-activity", ActivityConstants.CAMERA);
 					CameraMenu.this.startActivity(i);
 					break;
 				default:
