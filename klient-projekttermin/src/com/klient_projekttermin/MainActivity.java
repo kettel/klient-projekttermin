@@ -14,6 +14,7 @@ import login.User;
 import map.MapActivity;
 import messageFunction.Inbox;
 import models.Contact;
+import qosManager.QoSInterface;
 import qosManager.QoSManager;
 import alternativeCamera.Cam;
 import android.content.BroadcastReceiver;
@@ -241,9 +242,22 @@ public class MainActivity extends SecureActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		System.out.println("LOGOUT ID: "+item.getItemId());
+		if(item.getItemId()==2131165266){
 		logout();
 		return false;
+		}
+		else{
+			startQoSManager();
+			return false;
+		}
 	}
+	
+	public void startQoSManager(){
+		Intent intent = new Intent(MainActivity.this, QoSInterface.class);
+		this.startActivity(intent);
+	}
+	
 	public void logout(){
 		finish();
 		Intent intent = new Intent(MainActivity.this, LogInActivity.class);

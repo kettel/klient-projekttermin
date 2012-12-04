@@ -105,5 +105,6 @@
     <string name="manualActivationForBatterySaveModeText">Batterisparläge är: </string>
     <string name="denyWiFiConnection">Inaktivera WiFi</string>
     <string name="defaultButton">Återgå till standardinställningar</string>
+    <string name="QoS">QoS</string>
 
 </resources>

@@ -6,6 +6,7 @@ import java.util.Observer;
 import android.app.Activity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.view.WindowManager;
 
@@ -15,26 +16,29 @@ public class QoSManager implements Observer {
 	private Boolean permissionToStartMessages = true;
 	private Boolean permissionToStartAssignment = true;
 
-	private float screenBrightnesslevelDefault = (float) 0.3;
-	private Boolean permissionToStartMapDefault = false;
-	private Boolean permissionToUseNetworkDefault = false;
-	private Boolean permissionToStartCameraDefault = false;
-	private Boolean permissionToStartMessagesDefault = true;
-	private Boolean permissionToStartAssignmentDefault = true;
+	private float screenBrightnesslevelOkay = (float) 0.3;
+	private Boolean permissionToStartMapOkay = true;
+	private Boolean permissionToUseNetworkOkay = true;
+	private Boolean permissionToStartCameraOkay = true;
+	private Boolean permissionToStartMessagesOkay = true;
+	private Boolean permissionToStartAssignmentOkay = true;
 
 	private Boolean BatterySaveModeIsActivated=false;
 	private Boolean okayBatterylevel = true;
 
 	private float screenBrightnesslevelLow = (float) 0.2;
 	private int lowBatteryLevel=20;
-	private Boolean permissionToStartMapLow = true;
-	private Boolean permissionToUseNetworkLow = true;
-	private Boolean permissionToStartCameraLow = true;
+	private Boolean permissionToStartMapLow = false;
+	private Boolean permissionToUseNetworkLow = false;
+	private Boolean permissionToStartCameraLow = false;
 	private Boolean permissionToStartMessagesLow = true;
-	private Boolean permissionToStartAssignmentLow = true;
+	private Boolean permissionToStartAssignmentLow = false;
 
 	private BatteryCheckingFunction batteryCheckingFunction;
 	private Context applicationContext;
+	private SharedPreferences settings;
+	private SharedPreferences.Editor editor = settings.edit();
+
 
 	private QoSManager() {
 	}
@@ -62,6 +66,15 @@ public class QoSManager implements Observer {
 	public void stopBatteryCheckThread(){
 		batteryCheckingFunction.stopBatteryCheckFunction();
 	}
+	
+	public void adjustToCurrentBatteryMode(){
+		if(BatterySaveModeIsActivated){
+			adjustToLowBatteryLevel();
+		}
+		else{
+			adjustToOkayBatteryLevel();
+		}
+	}
 
 	/**
 	 * Denna metod anropas om batterinivån har ändrats då den undersöks i
@@ -86,12 +99,12 @@ public class QoSManager implements Observer {
 	 */
 	public void adjustToOkayBatteryLevel() {
 		BatterySaveModeIsActivated = false;
-		adjustScreenBrightness(screenBrightnesslevelDefault);
-		adjustNetworkStatus(permissionToUseNetworkDefault);
-		permissionToStartAssignment = permissionToStartAssignmentDefault;
-		permissionToStartCamera = permissionToStartCameraDefault;
-		permissionToStartMap = permissionToStartMapDefault;
-		permissionToStartMessages = permissionToStartMessagesDefault;
+		adjustScreenBrightness(screenBrightnesslevelOkay);
+		adjustNetworkStatus(permissionToUseNetworkOkay);
+		permissionToStartAssignment = permissionToStartAssignmentOkay;
+		permissionToStartCamera = permissionToStartCameraOkay;
+		permissionToStartMap = permissionToStartMapOkay;
+		permissionToStartMessages = permissionToStartMessagesOkay;
 	}
 
 	/**
@@ -106,17 +119,6 @@ public class QoSManager implements Observer {
 		permissionToStartCamera = permissionToStartCameraLow;
 		permissionToStartMap = permissionToStartMapLow;
 		permissionToStartMessages = permissionToStartMessagesLow;
-	}
-
-	/**
-	 * Metoden sätter ett värde på skärmljusstyrkan
-	 */
-	public void setScreenBrightnessValue(float screenBrightnessLevel){
-		screenBrightnesslevelLow = screenBrightnessLevel;
-		if(BatterySaveModeIsActivated){
-			adjustScreenBrightness(screenBrightnesslevelLow);
-		}
-		
 	}
 
 	/**
@@ -141,6 +143,10 @@ public class QoSManager implements Observer {
 				.getSystemService(Context.WIFI_SERVICE);
 		wifiManager.setWifiEnabled(wantToTurnOn);
 	}
+	
+	public Boolean isBatterySaveModeActivated(){
+		return BatterySaveModeIsActivated;
+	}
 
 	public boolean isAllowedToStartMap() {
 		return permissionToStartMap;
@@ -157,26 +163,37 @@ public class QoSManager implements Observer {
 	public boolean isAllowedToStartCamera() {
 		return permissionToStartCamera;
 	}
-
-	public void setPermissionToStartMessagesLow(Boolean permissionToStartMessagesLow) {
-		this.permissionToStartMessagesLow = permissionToStartMessagesLow;
+	
+	/**
+	 * Metoden sätter ett värde på skärmljusstyrkan
+	 */
+	public void setScreenBrightnessValueLow(float screenBrightnessLevel){
+		screenBrightnesslevelLow = screenBrightnessLevel;
+		if(BatterySaveModeIsActivated){
+			adjustScreenBrightness(screenBrightnesslevelLow);
+		}
 	}
 
-	public void setPermissionToStartMapLow(Boolean permissionToStartMapLow) {
-		this.permissionToStartMapLow = permissionToStartMapLow;
+	public void setPermissionToStartMessagesLow(Boolean permissionStartMessagesLow) {
+		permissionToStartMessagesLow = permissionStartMessagesLow;
 	}
 
-	public void setPermissionToUseNetworkLow(Boolean permissionToUseNetworkLow) {
-		this.permissionToUseNetworkLow = permissionToUseNetworkLow;
+	public void setPermissionToStartMapLow(Boolean permissionStartMapLow) {
+		permissionToStartMapLow = permissionStartMapLow;
 	}
 
-	public void setPermissionToStartCameraLow(Boolean permissionToStartCameraLow) {
-		this.permissionToStartCameraLow = permissionToStartCameraLow;
+	public void setPermissionToUseNetworkLow(Boolean permissionNetworkLow) {
+		permissionToUseNetworkLow = permissionNetworkLow;
+		System.out.println("Tillåtelse att använda nätveret: "+permissionNetworkLow);
+	}
+
+	public void setPermissionToStartCameraLow(Boolean permissionStartCameraLow) {
+		permissionToStartCameraLow = permissionStartCameraLow;
 	}
 
 	public void setPermissionToStartAssignmentLow(
-			Boolean permissionToStartAssignmentLow) {
-		this.permissionToStartAssignmentLow = permissionToStartAssignmentLow;
+			Boolean permissionStartAssignmentLow) {
+		permissionToStartAssignmentLow = permissionStartAssignmentLow;
 	}
 
 	public void setLowBatteryLevel(int batterylevel) {

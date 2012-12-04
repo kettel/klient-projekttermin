@@ -2,4 +2,7 @@
     <item android:id="@+id/logout"
         android:title="@string/logout"
         android:showAsAction="ifRoom|withText" />
+    <item android:id="@+id/QoSManager"
+        android:title="@string/QoS"
+        android:showAsAction="ifRoom|withText" />
 </menu>

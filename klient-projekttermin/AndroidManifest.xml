@@ -52,11 +52,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-              <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+           
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -106,6 +102,11 @@
         <activity
             android:name="login.LogInActivity"
             android:label="@string/title_activity_login_function" >
+             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="contacts.ContactsBookActivity"
@@ -119,7 +120,6 @@
             android:name="qosManager.QoSInterface"
             android:label="@string/title_activity_qo_sinterface"
             android:screenOrientation="portrait"  >
-          
         </activity>
         <!-- Database Content Providers -->
         <provider
