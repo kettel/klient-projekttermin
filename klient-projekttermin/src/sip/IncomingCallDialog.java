@@ -59,7 +59,8 @@ public class IncomingCallDialog extends Activity {
 		// .. är det här som nyttan med en service börjar uppenbara sig?
 		
 		regSip = MainActivity.regSip;
-		Log.d("SIP/IncomingCallDialog/onStart","kör en onStart och hämtat regSip. Null? " + ((regSip==null)?"sant":"falskt"));
+		// Hmm.. nedan verkar av någon konstig anledning lösa FATAL: Timer - X för timern.
+		Log.d("SIP/IncomingCallDialog/onStart","kör en onStart och hämtat regSip. Är isCallAnswered? " + ((regSip.isCallAnswered)?"sant":"falskt"));
 	}
 
 	@Override
