@@ -57,7 +57,6 @@ public class NutiteqRouteWaiter implements DirectionsWaiter {
 	 */
 	public void routeFound(Route route) {
 		if(mm.getLine() != null){
-			System.out.println("I IF");
 			map.removeLine(mm.getLine());
 		}
 		routeLine = route.getRouteLine();

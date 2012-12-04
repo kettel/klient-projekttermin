@@ -54,29 +54,14 @@ public class LogInActivity extends Activity implements Observer {
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    builder.setTitle("Title");
-	    builder.setMessage("Vill du logga ut?");
+	    builder.setMessage("Vill du avsluta ut?");
 	    builder.setPositiveButton("Ja", new OnClickListener() {
 	            public void onClick(DialogInterface dialog, int arg1) {
 	                dialog.dismiss();
 	                SocketConnection socketConnection=new SocketConnection();
 	                socketConnection.logout();
-	                /*
-	                 * Notify the system to finalize and collect all objects of the app
-	                 * on exit so that the virtual machine running the app can be killed
-	                 * by the system without causing issues. NOTE: If this is set to
-	                 * true then the virtual machine will not be killed until all of its
-	                 * threads have closed.
-	                 */
-	                System.runFinalization();
-
-	                /*
-	                 * Force the system to close the app down completely instead of
-	                 * retaining it in the background. The virtual machine that runs the
-	                 * app will be killed. The app will be completely created as a new
-	                 * app in a new virtual machine running in a new process if the user
-	                 * starts the app again.
-	                 */
-	                System.exit(0);
+	                setResult(RESULT_CANCELED);
+	                finish();
 	            }});
 	    builder.setNegativeButton("Nej", new OnClickListener() {
 	            public void onClick(DialogInterface dialog, int arg1) {
@@ -108,43 +93,42 @@ public class LogInActivity extends Activity implements Observer {
 		user = User.getInstance();
 		user.setAuthenticationModel(originalModel);
 
-		tryOfflineLogin(originalModel);
+		tryOnlineLogin(originalModel);
 	}
 
 	public void tryOfflineLogin(AuthenticationModel loginInput)
 			throws NoSuchAlgorithmException {
 
-//		System.out.println("Saker i databasen: "
-//				+ database.getAllFromDB(loginInput, getContentResolver())
-//				.size());
-//
-//		if (database
-//				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
-//			System.out.println("Försöker logga in offline");
-//
-//			List modelList = database.getAllFromDB(loginInput,
-//					getContentResolver());
-//			AuthenticationModel loadedModel = (AuthenticationModel) modelList
-//					.get(0);
-//
-//			if (loadedModel.getUserName().equals(loginInput.getUserName())) {
-//				if (loadedModel.getPasswordHash().equals(
-//						loginInput.getPasswordHash())
-//						&& loadedModel.isAccessGranted().equals("true")) {
-//					accessGranted();
-//				} else {
-//					incorrectLogIn();
-//				}
-//			} else {
-//				removeLastUserFromDB();
-//				tryOnlineLogin(loginInput);
-//			}
-//		}
-//
-//		else {
+		System.out.println("Saker i databasen: "
+				+ database.getAllFromDB(loginInput, getContentResolver())
+				.size());
+
+		if (database
+				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
+			System.out.println("Försöker logga in offline");
+
+			List modelList = database.getAllFromDB(loginInput,
+					getContentResolver());
+			AuthenticationModel loadedModel = (AuthenticationModel) modelList
+					.get(0);
+
+			if (loadedModel.getUserName().equals(loginInput.getUserName())) {
+				if (loadedModel.getPasswordHash().equals(
+						loginInput.getPasswordHash())
+						&& loadedModel.isAccessGranted().equals("true")) {
+					accessGranted();
+				} else {
+					incorrectLogIn();
+				}
+			} else {
+				removeLastUserFromDB();
+			}
+		}
+
+		else {
 			System.out.println("Försöker logga in online");
 			tryOnlineLogin(loginInput);
-//		}
+		}
 	}
 
 	/**
@@ -190,7 +174,6 @@ public class LogInActivity extends Activity implements Observer {
 	public void removeLastUserFromDB() {
 		List list = database.getAllFromDB(new AuthenticationModel(),
 				getContentResolver());
-		System.out.println("DATABASSTORLEK: "+list.size());
 		database.deleteFromDB((AuthenticationModel) list.get(0),
 				getContentResolver());
 	}
@@ -225,7 +208,6 @@ public class LogInActivity extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
-		System.out.println("Skapar en ny ProgressDialog");
 		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
 	}
 
@@ -240,6 +222,7 @@ public class LogInActivity extends Activity implements Observer {
 			break;
 		}
 		user.setLoggedIn(true);
+		setResult(RESULT_OK);
 		finish();
 	}
 
@@ -259,12 +242,19 @@ public class LogInActivity extends Activity implements Observer {
 				public void run() {
 					pd.dismiss();
 					Toast toast = Toast.makeText(getApplicationContext(),
-							"Det gick inte att ansluta till servern!",
+							"Det gick inte att ansluta till servern!, Försöker logga in offline",
 									Toast.LENGTH_LONG);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}
 			});
+			
+			try {
+				tryOfflineLogin(originalModel);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

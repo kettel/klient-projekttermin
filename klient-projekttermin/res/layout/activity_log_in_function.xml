@@ -4,26 +4,27 @@
     android:id="@+id/LogInFunction"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    
+
     <EditText
         android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/password"
-        android:hint="@string/userName"
         android:layout_centerHorizontal="true"
         android:ems="10"
-        android:inputType="textPersonName" >
-</EditText>
+        android:hint="@string/userName"
+        android:inputType="textPersonName"
+        android:lines="1" >
+    </EditText>
 
     <EditText
         android:id="@+id/password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:hint="@string/password"
         android:layout_centerVertical="true"
         android:ems="10"
+        android:hint="@string/password"
         android:inputType="textPassword" >
     </EditText>
 
@@ -33,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/password"
         android:layout_centerHorizontal="true"
-        android:text="@string/login"
-        android:onClick="logIn" />
+        android:onClick="logIn"
+        android:text="@string/login" />
 
 </RelativeLayout>

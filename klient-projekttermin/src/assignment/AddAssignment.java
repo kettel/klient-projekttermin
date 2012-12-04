@@ -130,8 +130,6 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private void fromMap(Intent intent) {
 		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
 		String name = intent.getStringExtra("name");
-		System.out.println(name);
-		System.out.println(jsonCoord);
 		adapter.textToItem(4, name);
 		adapter.textToItem(1, jsonCoord);
 		runOnUiThread(new Runnable() {
@@ -272,7 +270,6 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	}
 
 	private Bitmap getPic(int id) {
-		System.out.println(id);
 		db = Database.getInstance(getApplicationContext());
 		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(),
 				getContentResolver());

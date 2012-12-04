@@ -152,7 +152,6 @@ public class MapActivity extends SecureActivity implements Observer,
 		 */
 		this.searchSuggestions.addObserver(this);
 		haveNetworkConnection();
-		
 
 	}
 
@@ -163,7 +162,6 @@ public class MapActivity extends SecureActivity implements Observer,
 		// final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
 		final StoredMap sm = new StoredMap("OpenStreetMap", Environment
 				.getExternalStorageDirectory().getPath() + "/MGMapsCache", true);
-		// System.out.println(Environment.getExternalStorageDirectory().getPath()
 		// + "/MGMapsCache");
 
 		this.mapComponent.setFileSystem(new AndroidFileSystem());
@@ -263,21 +261,6 @@ public class MapActivity extends SecureActivity implements Observer,
 		}
 	}
 
-	/**
-	 * Hämtar alla uppdrag från databasen och markerar ut dessa på kartan
-	 */
-	public void getDatabaseInformation() {
-		Assignment a = new Assignment();
-		Database db = Database.getInstance(getApplicationContext());
-		List<ModelInterface> list = db.getAllFromDB(a, getContentResolver());
-		System.out
-				.println("database " + db.getDBCount(a, getContentResolver()));
-		for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
-			a = (Assignment) list.get(i);
-			// addInterestPoint(a.getRegion());
-		}
-	}
-
 	public void getDatabaseRegionInformation() {
 		Assignment a = new Assignment();
 		Database db = Database.getInstance(getApplicationContext());
@@ -347,9 +330,9 @@ public class MapActivity extends SecureActivity implements Observer,
 				});
 			}
 		});
-		View v = (View)menu.findItem(R.id.menu_search).getActionView();
+		View v = (View) menu.findItem(R.id.menu_search).getActionView();
 		this.sp = (ProgressBar) v.findViewById(R.id.spinner);
-		this.searchItem = (MenuItem)menu.findItem(R.id.menu_search);
+		this.searchItem = (MenuItem) menu.findItem(R.id.menu_search);
 		this.clearSearch = (Button) v.findViewById(R.id.clearSearch);
 		this.clearSearch.setOnClickListener(new OnClickListener() {
 
@@ -513,7 +496,7 @@ public class MapActivity extends SecureActivity implements Observer,
 		else {
 			m.setTitle("Markera region");
 			if (!points.isEmpty()) {
-				WgsPoint[] p = (WgsPoint[])(points)
+				WgsPoint[] p = (WgsPoint[]) (points)
 						.toArray(new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
 			}
@@ -521,7 +504,7 @@ public class MapActivity extends SecureActivity implements Observer,
 			 * Tar bort punkterna från kartan
 			 */
 			if (!regionCorners.isEmpty()) {
-				Place[] corners = (Place[])regionCorners
+				Place[] corners = (Place[]) regionCorners
 						.toArray(new Place[regionCorners.size()]);
 				mapComponent.removePlaces(corners);
 			}
@@ -553,7 +536,6 @@ public class MapActivity extends SecureActivity implements Observer,
 	 * ändrats
 	 */
 	public void update(Observable observable, Object data) {
-		System.out.println("UPDATE");
 		runOnUiThread(this);
 	}
 
@@ -591,10 +573,9 @@ public class MapActivity extends SecureActivity implements Observer,
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Lägg till punkt");
 		ListView modeList = new ListView(this);
-		String[] s = {"Lägg till plats till uppdrag" };
+		String[] s = { "Lägg till plats till uppdrag" };
 		CustomAdapter modeAdapter = new CustomAdapter(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1,
-				s);
+				android.R.layout.simple_list_item_1, android.R.id.text1, s);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
@@ -652,7 +633,7 @@ public class MapActivity extends SecureActivity implements Observer,
 					break;
 				case 1:
 					addInterestPoint(wgs[0], "");
-				break;
+					break;
 				default:
 					break;
 				}
@@ -669,7 +650,6 @@ public class MapActivity extends SecureActivity implements Observer,
 		sm.clear();
 		for (KmlPlace temp : searchSuggestions.getList()) {
 			sm.addAll(temp.getName());
-			System.out.println("LIST ALLT" + temp.getName());
 		}
 		sm.notifyDataSetChanged();
 		sp.setVisibility(View.GONE);
@@ -718,7 +698,6 @@ public class MapActivity extends SecureActivity implements Observer,
 						ActivityConstants.MAP_ACTIVITY);
 				intent.putExtra(contents, content);
 				intent.putExtra(coordinates, gson.toJson(coords, type));
-				System.out.println("JSON I MAP " + gson.toJson(coords, type));
 				setResult(ActivityConstants.RESULT_FROM_MAP, intent);
 				finish();
 			}
@@ -763,8 +742,8 @@ public class MapActivity extends SecureActivity implements Observer,
 				case 2:
 					WgsPoint[] coords = { searchSuggestions.getList()
 							.get(choice).getPlace().getWgs() };
-					String name = searchSuggestions.getList()
-					.get(choice).getPlace().getName();
+					String name = searchSuggestions.getList().get(choice)
+							.getPlace().getName();
 					createAssignment(coords, name);
 					break;
 				default:
@@ -884,9 +863,6 @@ public class MapActivity extends SecureActivity implements Observer,
 							getContentResolver());
 					for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
 						a = (Assignment) list.get(i);
-						System.out.println("ASS NAME" + a.getName());
-						System.out.println("label name "
-								+ label.getLabel().toString());
 						if (a.getName().equals(label.getLabel().toString())) {
 							Intent intent = new Intent(MapActivity.this,
 									AssignmentDetails.class);

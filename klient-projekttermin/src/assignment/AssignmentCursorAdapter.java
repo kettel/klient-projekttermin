@@ -74,7 +74,6 @@ public class AssignmentCursorAdapter extends CursorAdapter {
 
 	@Override
 	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-		System.out.println("DETTA KOMMER ALDRIG ATT SYNAS");
 		if (getFilterQueryProvider() != null) {
 			return getFilterQueryProvider().runQuery(constraint);
 		}

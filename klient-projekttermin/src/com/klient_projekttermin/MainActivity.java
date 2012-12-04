@@ -1,24 +1,20 @@
 package com.klient_projekttermin;
 
-import static com.klient_projekttermin.CommonUtilities.DISPLAY_MESSAGE_ACTION;
-import static com.klient_projekttermin.CommonUtilities.EXTRA_MESSAGE;
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
 import static com.klient_projekttermin.CommonUtilities.SERVER_URL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import login.LogInActivity;
 import login.User;
 import map.MapActivity;
 import messageFunction.Inbox;
-import models.Contact;
+
+import qosManager.QoSInterface;
 import qosManager.QoSManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -33,6 +29,8 @@ import assignment.AssignmentOverview;
 import camera.CameraMenu;
 
 import com.google.android.gcm.GCMRegistrar;
+import com.klient_projekttermin.R.id;
+
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
@@ -45,30 +43,17 @@ public class MainActivity extends SecureActivity {
 
 	private QoSManager qosManager;
 	private Database database;
-	private String userName;
 	private SocketConnection socketConnection=new SocketConnection();
-	private User user = User.getInstance();
+	private User user;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
-		Database database=Database.getInstance(getApplicationContext());
-//		database.addToDB(new Contact("eric"), getContentResolver());
-//		database.addToDB(new Contact("erica"), getContentResolver());
-		
-		
-//		// Communication model
-//		Intent intent = new Intent(this.getApplicationContext(),
-//				CommunicationService.class);
-//		bindService(intent, communicationServiceConnection,
-//				Context.BIND_AUTO_CREATE);
-
-			
-			userName = user.getAuthenticationModel().getUserName();
-
-		
 		qosManager = QoSManager.getInstance();
+		qosManager.startBatteryCheckingThread(this);
+
+		user=User.getInstance();
 		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 		setContentView(R.layout.activity_main);
 
@@ -82,15 +67,13 @@ public class MainActivity extends SecureActivity {
 		// Make sure the manifest was properly set - comment out this line
 		// while developing the app, then uncomment it when it's ready.
 		GCMRegistrar.checkManifest(this);
-		registerReceiver(mHandleMessageReceiver, new IntentFilter(
-				DISPLAY_MESSAGE_ACTION));
 		final String regId = GCMRegistrar.getRegistrationId(this);
 		if (regId.equals("")) {
 			// Automatically registers application on startup.
 			GCMRegistrar.register(getApplicationContext(), SENDER_ID);
 		} else {
 			// Device is already registered on GCM, check server.
-			if (GCMRegistrar.isRegisteredOnServer(this)) {
+			if (GCMRegistrar.isRegisteredOnServer(this)&&user.isLoggedIn()) {
 				// Skips registration.
 				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
 				socketConnection.pullFromServer();
@@ -131,7 +114,7 @@ public class MainActivity extends SecureActivity {
 				// för dessa här.
 				switch (arg2) {
 				case 0:
-					if (qosManager.allowedToStartMap()) {
+					if (qosManager.isAllowedToStartMap()) {
 						myIntent = new Intent(MainActivity.this,
 								MapActivity.class);
 						myIntent.putExtra("calling-activity", ActivityConstants.MAIN_ACTIVITY);
@@ -140,14 +123,14 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 1:
-					if (qosManager.allowedToStartMessages()) {
+					if (qosManager.isAllowedToStartMessages()) {
 						myIntent = new Intent(MainActivity.this, Inbox.class);
 					} else {
 						unallowedStart.show();
 					}
 					break;
 				case 2:
-					if (qosManager.allowedToStartAssignment()) {
+					if (qosManager.isAllowedToStartAssignment()) {
 						myIntent = new Intent(MainActivity.this,
 								AssignmentOverview.class);
 					} else {
@@ -155,7 +138,7 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 3:
-					if (qosManager.allowedToStartCamera()) {
+					if (qosManager.isAllowedToStartCamera()) {
 						myIntent = new Intent(MainActivity.this, CameraMenu.class);
 					} else {
 						unallowedStart.show();
@@ -173,13 +156,6 @@ public class MainActivity extends SecureActivity {
 				}
 			}
 		});
-	}
-
-	public void checkContactDatabase() {
-		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
-		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
-			socketConnection.getAllContactsReq();
-		}
 	}
 
 	private void initiateDB(Context context) {
@@ -200,7 +176,7 @@ public class MainActivity extends SecureActivity {
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
 				"Kamera", "Kontakter"};
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" };
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter"};
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -223,7 +199,6 @@ public class MainActivity extends SecureActivity {
 		if (mRegisterTask != null) {
 			mRegisterTask.cancel(true);
 		}
-		unregisterReceiver(mHandleMessageReceiver);
 		GCMRegistrar.onDestroy(getApplicationContext());
 		super.onDestroy();
 	}
@@ -235,23 +210,25 @@ public class MainActivity extends SecureActivity {
 		}
 	}
 
-	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
-			if (newMessage.contains("registered")) {
-				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
-				socketConnection.pullFromServer();
-				checkContactDatabase();
-			}
-		}
-	};
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		int logOutId = findViewById(id.logout).getId();
+		
+		if(item.getItemId()==logOutId){
 		logout();
 		return false;
+		}
+		else{
+			startQoSManager();
+			return false;
+		}
 	}
+	
+	public void startQoSManager(){
+		Intent intent = new Intent(MainActivity.this, QoSInterface.class);
+		this.startActivity(intent);
+	}
+	
 	public void logout(){
 		finish();
 		Intent intent = new Intent(MainActivity.this, LogInActivity.class);

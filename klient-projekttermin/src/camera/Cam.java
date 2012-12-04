@@ -165,7 +165,6 @@ public class Cam extends Activity implements SensorEventListener {
 			int count = db.getDBCount(new PictureModel(), getContentResolver());
 			if (count > 5) {
 				while (db.getDBCount(new PictureModel(), getContentResolver()) > 5) {
-					System.out.println(db.getDBCount(new PictureModel(), getContentResolver()));
 					db.deleteFromDB(new PictureModel(), getContentResolver());
 				}
 				db.addToDB(new PictureModel(data), getContentResolver());
