@@ -29,6 +29,8 @@ import com.klient_projekttermin.R;
  * TODO: Lös buggar med ringsignalen.. [DONE]
  * TODO: Vibrera vid inkommande samtal [DONE]
  * TODO: Tänd displayen vid inkommande samtal [DONE]
+ * TODO: Lås skärmen när telefonen förs mot örat
+ * TODO: Lås upp skärmen när telefonen tas bort från örat
  * TODO: Timern
  * 
  * Utgående: 
