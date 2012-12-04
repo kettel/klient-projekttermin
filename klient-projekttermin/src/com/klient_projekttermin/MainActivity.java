@@ -54,7 +54,7 @@ public class MainActivity extends SecureActivity {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
-
+		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 		setContentView(R.layout.activity_main);
 
 		// used to replace listview functionality
@@ -78,7 +78,6 @@ public class MainActivity extends SecureActivity {
 			if (GCMRegistrar.isRegisteredOnServer(this)) {
 				// Skips registration.
 				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
-				socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
@@ -169,7 +168,6 @@ public class MainActivity extends SecureActivity {
 	public void checkContactDatabase() {
 		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
-			socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 			socketConnection.getAllContactsReq();
 		}
 	}
@@ -233,7 +231,6 @@ public class MainActivity extends SecureActivity {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
 			if (newMessage.contains("registered")) {
 				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
-				socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 				socketConnection.pullFromServer();
 				checkContactDatabase();
 			}
