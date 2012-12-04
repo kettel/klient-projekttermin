@@ -19,7 +19,31 @@ import android.widget.ToggleButton;
 
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
-
+/**
+ * Inkommande
+ * TODO: Lös buggar med ringsignalen..
+ * TODO: Vibrera vid inkommande samtal
+ * TODO: Tänd displayen vid inkommande samtal
+ * TODO: Timern
+ * 
+ * Utgående:
+ * Fånga/hantera att mottagaren: 
+ * TODO: - svarar
+ * TODO: - inte svarar
+ * TODO: - Lägger på
+ * TODO: - Är upptagen
+ * TODO: Visa kontaktnamn
+ * TODO: Timern
+ * 
+ * Samtalslogg:
+ * TODO: Notera missat samtal
+ * TODO: Notera mottaget samtal
+ * TODO: Notera uppringt samtal
+ * TODO: Visa samtalstid för ringda/mottagna samtal (om tid finns)
+ * 
+ * @author kettel
+ *
+ */
 public class IncomingCallDialog extends Activity {
 
 	private long timeWhenCallStarted = 0;
