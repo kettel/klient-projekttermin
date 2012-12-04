@@ -39,11 +39,9 @@ public class PullResponseHandler implements Observer {
 	}
 
 	public void update(Observable observable, Object data) {
-		System.out.println("notification");
 
 		notificationIntent = new Intent(context, MainActivity.class);
 		if (data == null && hasChanged) {
-			System.out.println("klar med pull");
 			showNotification();
 		} else {
 			if (data instanceof Contact) {

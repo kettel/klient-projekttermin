@@ -1,7 +1,5 @@
 package com.klient_projekttermin;
 
-import static com.klient_projekttermin.CommonUtilities.DISPLAY_MESSAGE_ACTION;
-import static com.klient_projekttermin.CommonUtilities.EXTRA_MESSAGE;
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
 import static com.klient_projekttermin.CommonUtilities.SERVER_URL;
 
@@ -13,14 +11,12 @@ import login.LogInActivity;
 import login.User;
 import map.MapActivity;
 import messageFunction.Inbox;
-import models.Contact;
+
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
-import alternativeCamera.Cam;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -32,7 +28,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import assignment.AssignmentOverview;
-import camera.Camera;
+import camera.Cam;
 
 import com.google.android.gcm.GCMRegistrar;
 import communicationModule.PullResponseHandler;
@@ -48,7 +44,7 @@ public class MainActivity extends SecureActivity {
 	private QoSManager qosManager;
 	private Database database;
 	private SocketConnection socketConnection=new SocketConnection();
-	private User user=User.getInstance();
+	private User user;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +53,7 @@ public class MainActivity extends SecureActivity {
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
 
+		user=User.getInstance();
 		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 		setContentView(R.layout.activity_main);
 
@@ -70,15 +67,13 @@ public class MainActivity extends SecureActivity {
 		// Make sure the manifest was properly set - comment out this line
 		// while developing the app, then uncomment it when it's ready.
 		GCMRegistrar.checkManifest(this);
-		registerReceiver(mHandleMessageReceiver, new IntentFilter(
-				DISPLAY_MESSAGE_ACTION));
 		final String regId = GCMRegistrar.getRegistrationId(this);
 		if (regId.equals("")) {
 			// Automatically registers application on startup.
 			GCMRegistrar.register(getApplicationContext(), SENDER_ID);
 		} else {
 			// Device is already registered on GCM, check server.
-			if (GCMRegistrar.isRegisteredOnServer(this)) {
+			if (GCMRegistrar.isRegisteredOnServer(this)&&user.isLoggedIn()) {
 				// Skips registration.
 				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
 				socketConnection.pullFromServer();
@@ -168,13 +163,6 @@ public class MainActivity extends SecureActivity {
 		});
 	}
 
-	public void checkContactDatabase() {
-		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
-		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
-			socketConnection.getAllContactsReq();
-		}
-	}
-
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
 		database = Database.getInstance(context);
@@ -216,7 +204,6 @@ public class MainActivity extends SecureActivity {
 		if (mRegisterTask != null) {
 			mRegisterTask.cancel(true);
 		}
-		unregisterReceiver(mHandleMessageReceiver);
 		GCMRegistrar.onDestroy(getApplicationContext());
 		super.onDestroy();
 	}
@@ -227,18 +214,6 @@ public class MainActivity extends SecureActivity {
 			// getString(R.string.error_config, name));
 		}
 	}
-
-	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
-			if (newMessage.contains("registered")) {
-				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
-				socketConnection.pullFromServer();
-				checkContactDatabase();
-			}
-		}
-	};
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

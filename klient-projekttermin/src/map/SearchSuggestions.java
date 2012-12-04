@@ -54,4 +54,5 @@ public class SearchSuggestions extends Observable implements
 	public ArrayList<KmlPlace> getList() {
 		return list;
 	}
+	
 }

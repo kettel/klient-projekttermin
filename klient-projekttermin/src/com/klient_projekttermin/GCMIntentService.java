@@ -26,12 +26,16 @@ import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
 
+import communicationModule.PullResponseHandler;
+import communicationModule.SocketConnection;
+
 /**
  * IntentService responsible for handling GCM messages.
  */
 public class GCMIntentService extends GCMBaseIntentService {
 
 	private static final String TAG = "GCMIntentService";
+
 	public GCMIntentService() {
 		super(SENDER_ID);
 	}
@@ -52,18 +56,21 @@ public class GCMIntentService extends GCMBaseIntentService {
 
 	@Override
 	protected void onMessage(Context context, Intent intent) {
-		System.out.println("message");
-		if (intent.getExtras().containsKey("logout")&&intent.getExtras().get("logout").equals("true")) {
-			System.out.println("logga ut");
-			User user=User.getInstance();
-			user.setLoggedIn(false);
-			Intent i = new Intent(this, LogInActivity.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(i);
-		}else{
-			Log.i(TAG, "Received message");
-			String message = getString(R.string.gcm_message);
-			displayMessage(context, message);
+		Log.i(TAG, "Received message");
+		String message;
+		if (intent.getExtras().containsKey("logout")) {
+			message = "logout";
+		} else {
+			message = getString(R.string.gcm_message);
+		}
+
+		displayMessage(context, message);
+		if (intent.getExtras().containsKey("action")) {
+			if (intent.getExtras().get("action").equals("pull")) {
+				SocketConnection connection = new SocketConnection();
+				connection.addObserver(new PullResponseHandler(context));
+				connection.pullFromServer();
+			}
 		}
 	}
 

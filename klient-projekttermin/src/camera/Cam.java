@@ -1,18 +1,11 @@
-package alternativeCamera;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+package camera;
 
 import models.PictureModel;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -22,18 +15,19 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.ExifInterface;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import assignment.AddAssignment;
 
+import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 
 import database.Database;
@@ -43,33 +37,21 @@ public class Cam extends Activity implements SensorEventListener {
 	private CameraPreview mPreview;
 	private SensorManager sensorManager = null;
 	private int orientation;
-	private ExifInterface exif;
 	private int deviceHeight;
-	private Button ibRetake;
-	private Button ibUse;
+	private ImageButton ibUse;
 	private Button ibCapture;
-	private FrameLayout flBtnContainer;
-	private File sdRoot;
-	private String dir;
-	private String fileName;
-	private ImageView rotatingImage;
 	private int degrees = -1;
-
+	private int callingactivity;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_cam);
-
-		// Setting all the path for the image
-		sdRoot = Environment.getExternalStorageDirectory();
-		dir = "/DCIM/Camera/";
-
-		// Getting all the needed elements from the layout
-		rotatingImage = (ImageView) findViewById(R.id.imageView1);
-		ibRetake = (Button) findViewById(R.id.ibRetake);
-		ibUse = (Button) findViewById(R.id.ibUse);
+		callingactivity = getIntent().getIntExtra("calling-activity", 0);
+		
+		ibUse = (ImageButton) findViewById(R.id.ibUse);
 		ibCapture = (Button) findViewById(R.id.ibCapture);
-		flBtnContainer = (FrameLayout) findViewById(R.id.flBtnContainer);
 
 		// Getting the sensor service.
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -84,23 +66,7 @@ public class Cam extends Activity implements SensorEventListener {
 		ibCapture.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				mCamera.takePicture(null, null, mPicture);
-			}
-		});
-
-		// Add a listener to the Retake button
-		ibRetake.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				// Deleting the image from the SD card/
-				File discardedPhoto = new File(sdRoot, dir + fileName);
-				discardedPhoto.delete();
-
-				// Restart the camera preview.
-				mCamera.startPreview();
-
-				// Reorganize the buttons on the screen
-				flBtnContainer.setVisibility(LinearLayout.VISIBLE);
-				ibRetake.setVisibility(LinearLayout.GONE);
-				ibUse.setVisibility(LinearLayout.GONE);
+				mPreview = new CameraPreview(getApplicationContext(), mCamera);
 			}
 		});
 
@@ -108,7 +74,10 @@ public class Cam extends Activity implements SensorEventListener {
 		ibUse.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				// Everything is saved so we can quit the app.
+				Intent intent = new Intent(Cam.this, Album.class);
+				intent.putExtra("calling-activity", ActivityConstants.CAMERA);
 				finish();
+				Cam.this.startActivity(intent);
 			}
 		});
 	}
@@ -119,9 +88,11 @@ public class Cam extends Activity implements SensorEventListener {
 
 		// Setting the right parameters in the camera
 		Camera.Parameters params = mCamera.getParameters();
-		params.setPictureSize(1600, 1200);
+		// HÄlften av va de va
+		params.setPictureSize(800, 600);
 		params.setPictureFormat(PixelFormat.JPEG);
 		params.setJpegQuality(85);
+
 		mCamera.setParameters(params);
 
 		// Create our Preview view and set it as the content of our activity.
@@ -136,7 +107,7 @@ public class Cam extends Activity implements SensorEventListener {
 		// approach is not 100% perfect because on devices with a really small
 		// screen the the image will still be distorted - there is place for
 		// improvment.
-		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
 				width, deviceHeight);
 		preview.setLayoutParams(layoutParams);
 
@@ -177,92 +148,54 @@ public class Cam extends Activity implements SensorEventListener {
 		}
 	}
 
-	/** Check if this device has a camera */
-	private boolean checkCameraHardware(Context context) {
-		if (context.getPackageManager().hasSystemFeature(
-				PackageManager.FEATURE_CAMERA)) {
-			// this device has a camera
-			return true;
-		} else {
-			// no camera on this device
-			return false;
-		}
-	}
-
-	private boolean checkSDCard() {
-		boolean state = false;
-
-		String sd = Environment.getExternalStorageState();
-		if (Environment.MEDIA_MOUNTED.equals(sd)) {
-			state = true;
-		}
-
-		return state;
-	}
-
-	/**
-	 * A safe way to get an instance of the Camera object.
-	 */
 	public static Camera getCameraInstance() {
 		Camera c = null;
 		try {
-			// attempt to get a Camera instance
 			c = Camera.open();
 		} catch (Exception e) {
-			// Camera is not available (in use or does not exist)
 		}
-
-		// returns null if camera is unavailable
 		return c;
 	}
 
 	private PictureCallback mPicture = new PictureCallback() {
 
 		public void onPictureTaken(byte[] data, Camera camera) {
-
-			Database db = Database.getInstance(getApplicationContext());
-			db.addToDB(new PictureModel(data),
-					getContentResolver());
 			
-			// Replacing the button after a photho was taken.
-			flBtnContainer.setVisibility(View.GONE);
-			ibRetake.setVisibility(View.VISIBLE);
-			ibUse.setVisibility(View.VISIBLE);
+			Database db = Database.getInstance(getApplicationContext());
+			int count = db.getDBCount(new PictureModel(), getContentResolver());
+			if (count > 5) {
+				while (db.getDBCount(new PictureModel(), getContentResolver()) > 5) {
+					System.out.println(db.getDBCount(new PictureModel(), getContentResolver()));
+					db.deleteFromDB(new PictureModel(), getContentResolver());
+				}
+				db.addToDB(new PictureModel(data), getContentResolver());
+			} else {
+				db.addToDB(new PictureModel(data), getContentResolver());
+			}
 
-//			// File name of the image that we just took.
-//			fileName = "IMG_"
-//					+ new SimpleDateFormat("yyyyMMdd_HHmmss")
-//							.format(new Date()).toString() + ".jpg";
-//
-//			// Creating the directory where to save the image. Sadly in older
-//			// version of Android we can not get the Media catalog name
-//			File mkDir = new File(sdRoot, dir);
-//			mkDir.mkdirs();
-//
-//			// Main file where to save the data that we recive from the camera
-//			File pictureFile = new File(sdRoot, dir + fileName);
-//
-//			try {
-//				FileOutputStream purge = new FileOutputStream(pictureFile);
-//				purge.write(data);
-//				purge.close();
-//			} catch (FileNotFoundException e) {
-//				Log.d("DG_DEBUG", "File not found: " + e.getMessage());
-//			} catch (IOException e) {
-//				Log.d("DG_DEBUG", "Error accessing file: " + e.getMessage());
-//			}
-//
-//			// Adding Exif data for the orientation. For some strange reason the
-//			// ExifInterface class takes a string instead of a file.
-//			try {
-//				exif = new ExifInterface("/sdcard/" + dir + fileName);
-//				exif.setAttribute(ExifInterface.TAG_ORIENTATION, ""
-//						+ orientation);
-//				exif.saveAttributes();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
+			camera.startPreview();
 
+			BitmapFactory.Options ops = new BitmapFactory.Options();
+			ops.inSampleSize = 2;
+
+			Bitmap bm = BitmapFactory
+					.decodeByteArray(data, 0, data.length, ops);
+			Bitmap scaled = Bitmap.createScaledBitmap(bm, 50, 50, true);
+			ibUse.setImageBitmap(scaled);
+			switch (callingactivity) {
+			case ActivityConstants.CAMERA:
+				
+				break;
+			case ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT:
+				Intent intent = new Intent(Cam.this, AddAssignment.class);
+				//Senast tagna bild har id 5
+				intent.putExtra("pic", 5);
+				setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
+				finish();
+				break;
+			default:
+				break;
+			}
 		}
 	};
 
@@ -304,7 +237,9 @@ public class Cam extends Activity implements SensorEventListener {
 					}
 				}
 				if (animation != null) {
-					rotatingImage.startAnimation(animation);
+					// rotatingImage.startAnimation(animation);
+					ibCapture.startAnimation(animation);
+					ibUse.startAnimation(animation);
 				}
 			}
 

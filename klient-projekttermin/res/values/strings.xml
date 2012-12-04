@@ -106,5 +106,7 @@
     <string name="denyWiFiConnection">Inaktivera WiFi</string>
     <string name="defaultButton">Återgå till standardinställningar</string>
     <string name="QoS">QoS</string>
+    <string name="discard">Discard</string>
+    <string name="use">Save</string>
 
 </resources>

@@ -763,7 +763,9 @@ public class MapActivity extends SecureActivity implements Observer,
 				case 2:
 					WgsPoint[] coords = { searchSuggestions.getList()
 							.get(choice).getPlace().getWgs() };
-					createAssignment(coords);
+					String name = searchSuggestions.getList()
+					.get(choice).getPlace().getName();
+					createAssignment(coords, name);
 					break;
 				default:
 					break;
@@ -773,11 +775,12 @@ public class MapActivity extends SecureActivity implements Observer,
 		dialog.show();
 	}
 
-	public void createAssignment(WgsPoint[] coords) {
+	public void createAssignment(WgsPoint[] coords, String name) {
 		Gson gson = new Gson();
 		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
 		Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
+		intent.putExtra("name", name);
 		intent.putExtra(coordinates, gson.toJson(coords, type));
 		intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
 		MapActivity.this.startActivity(intent);

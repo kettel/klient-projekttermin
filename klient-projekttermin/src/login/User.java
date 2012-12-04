@@ -23,7 +23,7 @@ public class User {
 		this.authenticationModel = authenticationModel;
 	}
 
-	public boolean isLogged() {
+	public boolean isLoggedIn() {
 		return loggedIn;
 	}
 	public void setLoggedIn(boolean b){
