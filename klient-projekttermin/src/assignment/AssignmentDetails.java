@@ -99,7 +99,8 @@ public class AssignmentDetails extends SecureActivity {
 		// klass.
 		setCurrentAssignmentToReach();
 		
-
+		Log.e("FEL", "global ID: " + currentAssignment.getGlobalID());
+		
 		// Hämtar textvyerna som ska sättas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
 		textViewDescription = (TextView) findViewById(R.id.assignment_description_set);

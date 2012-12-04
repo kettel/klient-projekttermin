@@ -13,10 +13,8 @@ import login.LogInActivity;
 import login.User;
 import map.MapActivity;
 import messageFunction.Inbox;
-import models.AuthenticationModel;
 import models.Contact;
 import qosManager.QoSManager;
-import alternativeCamera.Cam;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +30,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import assignment.AssignmentOverview;
-import camera.Camera;
+import camera.CameraMenu;
 
 import com.google.android.gcm.GCMRegistrar;
 import communicationModule.PullResponseHandler;
@@ -143,7 +141,6 @@ public class MainActivity extends SecureActivity {
 					break;
 				case 1:
 					if (qosManager.allowedToStartMessages()) {
-						System.out.println("Startar meddelanden");
 						myIntent = new Intent(MainActivity.this, Inbox.class);
 					} else {
 						unallowedStart.show();
@@ -159,7 +156,7 @@ public class MainActivity extends SecureActivity {
 					break;
 				case 3:
 					if (qosManager.allowedToStartCamera()) {
-						myIntent = new Intent(MainActivity.this, Camera.class);
+						myIntent = new Intent(MainActivity.this, CameraMenu.class);
 					} else {
 						unallowedStart.show();
 					}
@@ -167,10 +164,6 @@ public class MainActivity extends SecureActivity {
 				case 4:
 					myIntent = new Intent(MainActivity.this,
 							ContactsBookActivity.class);
-					break;
-				case 5:
-					myIntent = new Intent(MainActivity.this,
-							Cam.class);
 					break;
 				default:
 					break;
@@ -205,9 +198,9 @@ public class MainActivity extends SecureActivity {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera", "Kontakter" , "cam"};
+				"Kamera", "Kontakter"};
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter", "cam" };
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" };
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();

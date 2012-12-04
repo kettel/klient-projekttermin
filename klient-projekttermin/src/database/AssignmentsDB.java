@@ -151,12 +151,10 @@ public class AssignmentsDB {
 
 
 	private String listToString(List<Contact> list) {
-		Log.e("FEL", "Det kommer in " + list.size() + " st  kontakter som ska uppdateras()AssignmentUpdate");
 		String ret = new String();
 		for (Contact m : list) {
 			ret = ret + m.getContactName() + "/";
 		}
-		Log.e("FEL", ret);
 		return ret;
 	}
 
@@ -195,7 +193,6 @@ public class AssignmentsDB {
 				values,
 				Assignments.GLOBAL_ASSIGNMENT_ID + " = "
 						+ Long.toString(assignment.getGlobalID()), null);
-		Log.d("DB", "Uppdaterade " + updated + " assignments.");
 	}
 
 	public int getCount(ContentResolver contentResolver) {

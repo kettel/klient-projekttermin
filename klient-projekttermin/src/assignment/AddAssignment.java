@@ -34,8 +34,8 @@ import android.widget.Toast;
 import camera.Album;
 
 import com.klient_projekttermin.ActivityConstants;
-import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
+import com.klient_projekttermin.SecureActivity;
 import communicationModule.SocketConnection;
 
 import database.Database;
@@ -48,8 +48,8 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private String jsonCoord = null;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Uppdragsnamn", "Koordinater",
-			"Uppdragsbeskrivning", "Uppskattad tid", "Gatuadress",
-			"Uppdragsplats", "Bild", "Prioritet", "Lägg till agenter" };
+			"Uppdragsbeskrivning", "Uppskattad tid", "Uppdragsplats", "Bild",
+			"Prioritet", "Lägg till agenter" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.text_item };
@@ -121,7 +121,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 		int id = intent.getIntExtra(Album.pic, 0);
 		System.out.println(id + "fromcamera");
 		bitmap = getPic(id);
-		adapter.textToItem(6, "Bifogad bild");
+		adapter.textToItem(5, "Bifogad bild");
 		runOnUiThread(new Runnable() {
 			public void run() {
 				adapter.notifyDataSetChanged();
@@ -131,7 +131,10 @@ public class AddAssignment extends SecureActivity implements Serializable {
 
 	private void fromMap(Intent intent) {
 		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
+		String name = intent.getStringExtra("name");
+		System.out.println(name);
 		System.out.println(jsonCoord);
+		adapter.textToItem(4, name);
 		adapter.textToItem(1, jsonCoord);
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -173,14 +176,9 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 					currentUser, isExternalMission, temp.get(2), temp.get(3),
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
-					temp.get(5), checkPrioString(temp.get(7)));
+					temp.get(5), checkPrioString(temp.get(6)));
 
-			Log.e("FEL",
-					"Det är ett externt uppdrag: "
-							+ newAssignment.isExternalMission());
-			System.out.println("temp8: " + temp.get(8));
-			String tempUnseparated = temp.get(8);
-
+			String tempUnseparated = temp.get(7);
 			if (tempUnseparated == null) {
 				tempUnseparated = "";
 			}
@@ -201,7 +199,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 							+ temp.get(3) + AssignmentStatus.NOT_STARTED
 							+ "byteArray" + temp.get(4) + temp.get(5));
 
-			
+
 			db.addToDB(newAssignment, getContentResolver());
 			SocketConnection connection = new SocketConnection();
 			connection.sendModel(newAssignment);

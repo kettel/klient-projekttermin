@@ -71,7 +71,7 @@
             android:label="DisplayOfConversation" >
         </activity>
         <activity
-            android:name="camera.Camera"
+            android:name="camera.CameraMenu"
             android:label="Camera" >
         </activity>
         <activity
@@ -92,7 +92,8 @@
         <activity
             android:name="assignment.AddAssignment"
             android:label="@string/addAssignment"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan" 
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="assignment.AssignmentDetails"
@@ -101,7 +102,7 @@
         <activity
             android:name="login.LogInActivity"
             android:label="@string/title_activity_login_function" >
-            <intent-filter>
+             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -133,8 +134,11 @@
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
         <activity
-            android:name="alternativeCamera.Cam"
-            android:label="@string/title_activity_cam" >
+            android:name="camera.Cam"
+            android:label="@string/title_activity_cam" 
+            android:screenOrientation="landscape" 
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+           
         </activity>
         <service android:name="com.klient_projekttermin.GCMIntentService" />
     </application>

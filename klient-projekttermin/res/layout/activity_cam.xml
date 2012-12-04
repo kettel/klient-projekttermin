@@ -1,59 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal" >
 
     <FrameLayout
         android:id="@+id/camera_preview"
-        android:layout_width="412dp"
-        android:layout_height="fill_parent" >
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true" >
     </FrameLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/linearLayout1"
-        android:layout_width="fill_parent"
+        android:layout_width="50dp"
         android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
         android:gravity="center"
         android:orientation="vertical" >
 
-        <FrameLayout
-            android:id="@+id/flBtnContainer"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" >
-
-            <Button
-                android:id="@+id/ibCapture"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="50dip"
-                android:layout_height="50dip"
-                android:layout_gravity="center"
-                android:src="@drawable/loggakrona" />
-
-        </FrameLayout>
-
         <Button
-            android:id="@+id/ibRetake"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Retake"
-            android:visibility="gone" />
+            android:id="@+id/ibCapture"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:background="@android:drawable/ic_menu_camera" />
 
-        <Button
+        <ImageButton
             android:id="@+id/ibUse"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Use"
-            android:visibility="gone" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="50dp"
+            android:alpha="1"/>
+    </RelativeLayout>
 
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
