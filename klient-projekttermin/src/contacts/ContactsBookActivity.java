@@ -9,6 +9,7 @@ import models.Contact;
 import models.ModelInterface;
 import sip.OutgoingCallReceiver;
 import sip.RegisterWithSipServerService;
+import sip.RegisterWithSipSingleton;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -30,8 +31,7 @@ import com.klient_projekttermin.R;
 import database.Database;
 
 public class ContactsBookActivity extends InactivityListener {
-	// Hämta instans av SipServicen
-	public RegisterWithSipServerService s;
+	private RegisterWithSipSingleton regSip;
 	
 	private String[] contacts;
 	private Database db;
@@ -43,7 +43,8 @@ public class ContactsBookActivity extends InactivityListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
+		regSip.initializeManager();
 
 		setContentView(R.layout.activity_contacts_book);
 		ListView lv = (ListView) findViewById(android.R.id.list);
@@ -65,32 +66,14 @@ public class ContactsBookActivity extends InactivityListener {
 	@Override
     protected void onStart() {
         super.onStart();
-        // Bind to LocalService
-        Intent intent = new Intent(this, RegisterWithSipServerService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
     }
 	
-	/**
-	 * Skapa en ServiceConnection till SipService
-	 */
-	private ServiceConnection mConnection = new ServiceConnection() {
-
-	    public void onServiceConnected(ComponentName className, IBinder binder) {
-	      s = ((RegisterWithSipServerService.MyBinder) binder).getService();
-	    }
-	    public void onServiceDisconnected(ComponentName className) {
-	      s = null;
-	    }
-	  };
-	/**
-	 * Bind med SipService
-	 */
-	void doBindService() {
-		bindService(new Intent(this, RegisterWithSipServerService.class), mConnection,
-				Context.BIND_AUTO_CREATE);
+	@Override
+	protected void onDestroy(){
+		super.onDestroy();
+		regSip.closeLocalProfile();
 	}
-	
-	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,7 +124,7 @@ public class ContactsBookActivity extends InactivityListener {
 //					getApplicationContext().sendBroadcast(i);
 					//RegisterWithSipServerService.initiateCall();
 					Log.d("SIP/ContactBookActivity","Ska starta ett utgående samtal...");
-					s.initiateCall();
+					regSip.initiateCall();
 					break;
 				default:
 					break;

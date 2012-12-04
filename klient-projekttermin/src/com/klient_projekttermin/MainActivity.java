@@ -16,16 +16,13 @@ import map.MapActivity;
 import messageFunction.Inbox;
 import models.Contact;
 import qosManager.QoSManager;
-import sip.RegisterWithSipServerService;
+import sip.RegisterWithSipSingleton;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,7 +49,7 @@ public class MainActivity extends InactivityListener {
 	private SocketConnection socketConnection;
 
 	// SIP-variabler
-    private RegisterWithSipServerService s;
+	private RegisterWithSipSingleton sipReg;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -62,10 +59,9 @@ public class MainActivity extends InactivityListener {
 
 		setContentView(R.layout.activity_main);
 		
-        // SIP: Registrera klienten hos SIP-servern 
-        // TODO: Skriv om till service..
-        //initializeManager();
-        doBindService();
+        // SIP: Registrera klienten hos SIP-servern
+		sipReg = RegisterWithSipSingleton.getInstance(getApplicationContext());
+        sipReg.initializeManager();
         
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
@@ -179,39 +175,42 @@ public class MainActivity extends InactivityListener {
 	protected void onStart() {
 		super.onStart();
 		
-        // SIP: Registrera klienten hos SIP-servern 
-        // TODO: Skriv om till service..
-        //s.initializeManager();
+        // TODO: SIP: Registrera klienten hos SIP-servern 
+		if(sipReg == null){
+			sipReg = RegisterWithSipSingleton.getInstance(getApplicationContext());
+		}
+        sipReg.initializeManager();
 	}
 	
 	@Override
-	public void onResume(){
+	protected void onResume(){
 		super.onResume();
 		
-        // SIP: Registrera klienten hos SIP-servern 
-        // TODO: Skriv om till service..
-        //s.initializeManager(getApplicationContext());
+        // TODO: SIP: Registrera klienten hos SIP-servern 
+		if(sipReg == null){
+			sipReg = RegisterWithSipSingleton.getInstance(getApplicationContext());
+		}
+        sipReg.initializeManager();
 	}
 	
-	/**
-	 * Skapa en ServiceConnection till SipService
-	 */
-	private ServiceConnection mConnection = new ServiceConnection() {
+	@Override
+	protected void onDestroy() {
 
-	    public void onServiceConnected(ComponentName className, IBinder binder) {
-	      s = ((RegisterWithSipServerService.MyBinder) binder).getService();
-	    }
-	    public void onServiceDisconnected(ComponentName className) {
-	      s = null;
-	    }
-	  };
-	/**
-	 * Bind med SipService
-	 */
-	void doBindService() {
-		bindService(new Intent(this, RegisterWithSipServerService.class), mConnection,
-				Context.BIND_AUTO_CREATE);
+		if (mRegisterTask != null) {
+			mRegisterTask.cancel(true);
+		}
+		unregisterReceiver(mHandleMessageReceiver);
+		GCMRegistrar.onDestroy(getApplicationContext());
+		
+		// Avregistrera klienten från SIP-servern
+		if(sipReg != null){
+			
+			sipReg.closeLocalProfile();
+		}
+		
+		super.onDestroy();
 	}
+
 	
 	public void checkContactDatabase() {
 		System.out.println(database.getDBCount(new Contact(), getContentResolver()));
@@ -253,21 +252,6 @@ public class MainActivity extends InactivityListener {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
-	}
-
-	@Override
-	protected void onDestroy() {
-
-		if (mRegisterTask != null) {
-			mRegisterTask.cancel(true);
-		}
-		unregisterReceiver(mHandleMessageReceiver);
-		GCMRegistrar.onDestroy(getApplicationContext());
-		
-		// Avregistrera klienten från SIP-servern
-		//s.closeLocalProfile();
-		
-		super.onDestroy();
 	}
 
 	private void checkNotNull(Object reference, String name) {
