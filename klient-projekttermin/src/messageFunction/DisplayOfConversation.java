@@ -9,7 +9,6 @@ import java.util.List;
 import login.User;
 import models.MessageModel;
 import models.ModelInterface;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -25,8 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
+import com.klient_projekttermin.SecureActivity;
 import communicationModule.SocketConnection;
 
 import database.Database;
@@ -42,9 +41,7 @@ public class DisplayOfConversation extends SecureActivity {
 	private Database dataBase;
 	private String currentUser;
 	private MessageModel messageObject;
-	private String[] options = {"AVBRYT","RADERA","VIDAREBEFORDRA"};
-	private boolean communicationBond = false;
-	//	private CommunicationModule communicationModule = new CommunicationModule();
+	private String[] options = {"Avbryt","Radera","Vidarebofordra"};
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -210,7 +207,7 @@ public class DisplayOfConversation extends SecureActivity {
 		//Hämtar en lista med alla messagemodels som finns i databasen.
 		listOfMassageModels = dataBase.getAllFromDB(new MessageModel(),getContentResolver());
 
-		MessageModel a = (MessageModel) listOfMassageModels.get(0);
+//		MessageModel a = (MessageModel) listOfMassageModels.get(0);
 
 		//		Den listview som kontakterna kommerpresenteras i
 		listViewOfConversationInputs = (ListView) findViewById(R.id.displayOfConversation);
