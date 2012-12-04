@@ -20,6 +20,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 
 import database.Database;
@@ -59,11 +60,10 @@ public class ContactsBookActivity extends InactivityListener {
 	@Override
     protected void onStart() {
         super.onStart();
-        // SIP: Registrera klienten hos SIP-servern 
-        if(regSip == null){
-        	regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
-        }
-        regSip.initializeManager();
+        
+        // Hämta regSip från MainActivity
+        // .. är det här som nyttan med en service börjar uppenbara sig?
+        regSip = MainActivity.regSip;
     }
 	
 	@Override

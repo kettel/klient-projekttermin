@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.sip.SipAudioCall;
-import android.net.sip.SipException;
 import android.net.sip.SipProfile;
 import android.util.Log;
 
