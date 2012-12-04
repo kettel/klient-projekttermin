@@ -145,10 +145,6 @@ public class MainActivity extends SecureActivity {
 					myIntent = new Intent(MainActivity.this,
 							ContactsBookActivity.class);
 					break;
-				case 5:
-					myIntent = new Intent(MainActivity.this,
-							Cam.class);
-					break;
 				default:
 					break;
 				}
@@ -175,9 +171,9 @@ public class MainActivity extends SecureActivity {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera", "Kontakter" , "cam"};
+				"Kamera", "Kontakter"};
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter", "cam" };
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter"};
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
