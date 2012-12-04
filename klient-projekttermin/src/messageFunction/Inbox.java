@@ -140,9 +140,9 @@ public class Inbox extends SecureActivity {
 		final int conversationNumber = position;
 
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-		alertDialog.setTitle("RADERA?");
+		alertDialog.setTitle("Radera?");
 		alertDialog.setMessage("Vill du ta bort konversation?");
-		alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "JA",
+		alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Ja",
 				new DialogInterface.OnClickListener() {
 
 					// Om användaren trycker på ja så körs metoden
@@ -151,7 +151,7 @@ public class Inbox extends SecureActivity {
 						eraseConversation(peopleIveBeenTalkingTo[conversationNumber]);
 					}
 				});
-		alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "AVBRYT",
+		alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Avbryt",
 				new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog, int which) {
@@ -176,6 +176,9 @@ public class Inbox extends SecureActivity {
 					.get(i);
 
 			if (messageModelInList.getReciever().toString().equals(contact)) {
+				dataBase.deleteFromDB(messageModelInList, getContentResolver());
+			} 
+			if (messageModelInList.getSender().toString().equals(contact)) {
 				dataBase.deleteFromDB(messageModelInList, getContentResolver());
 			}
 		}
