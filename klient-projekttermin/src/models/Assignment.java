@@ -13,6 +13,8 @@ public class Assignment implements ModelInterface {
 	private String databaseRepresentation = "assignment";
 	// Id för modellen (Sätts av databasen så pilla inte)
 	private long id = -1;
+	//Globalt ID för uppdraget
+	private long globalID = -1;
 	// Namnet på uppdraget
 	private String name;
 	// Latitud för uppdragspositionen
@@ -50,6 +52,13 @@ public class Assignment implements ModelInterface {
 	 * Tom konstruktor. Används bland annat för att hämta från databasen.
 	 */
 	public Assignment() {
+	}
+	/**
+	 * Används för remove
+	 * @param id
+	 */
+	public Assignment(long globalID) {
+		this.globalID = globalID;
 	}
 
 	/**
@@ -284,6 +293,7 @@ public class Assignment implements ModelInterface {
 	 * sätta dess id.
 	 * 
 	 * @param id
+	 * @param globalID
 	 * @param name
 	 * @param lat
 	 * @param lon
@@ -298,13 +308,14 @@ public class Assignment implements ModelInterface {
 	 * @param siteName
 	 * @param timeStamp
 	 */
-	public Assignment(long id, String name, double lat, double lon,
+	public Assignment(long id, long globalID, String name, double lat, double lon,
 			String region, List<Contact> agents, String sender,
 			boolean externalMission, String assignmentDescription,
 			String timeSpan, AssignmentStatus assignmentStatus,
 			byte[] cameraImage, String streetName, String siteName,
 			Long timeStamp, AssignmentPriority assignmentPrio) {
 		this.id = id;
+		this.globalID = globalID;
 		this.name = name;
 		this.lat = lat;
 		this.lon = lon;
@@ -442,5 +453,11 @@ public class Assignment implements ModelInterface {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+	public long getGlobalID(){
+		return globalID;
+	}
+	public void setGlobalID(long globalID){
+		this.globalID = globalID;
 	}
 }

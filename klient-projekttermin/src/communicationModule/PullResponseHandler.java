@@ -1,5 +1,6 @@
 package communicationModule;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -7,6 +8,7 @@ import messageFunction.Inbox;
 import models.Assignment;
 import models.Contact;
 import models.MessageModel;
+import models.ModelInterface;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -29,7 +31,7 @@ public class PullResponseHandler implements Observer {
 	private Context context;
 	private Database db;
 	private Intent notificationIntent;
-	private boolean hasChanged=false;
+	private boolean hasChanged = false;
 	private String message = "";
 
 	public PullResponseHandler(Context context) {
@@ -54,6 +56,7 @@ public class PullResponseHandler implements Observer {
 				hasChanged = true;
 			} else if (data instanceof Assignment) {
 				message = "Nytt uppdrag";
+				eraseTempAssignmentInDB((Assignment) data);
 				db.addToDB((Assignment) data, context.getContentResolver());
 				notificationIntent = new Intent(context,
 						AssignmentOverview.class);
@@ -66,6 +69,28 @@ public class PullResponseHandler implements Observer {
 			}
 		}
 
+	}
+
+	/**
+	 * Om uppdraget som kommer in är det som sidosparades (globalID -1) så ska
+	 * den ersätta globalID -1 -uppdraget.
+	 * 
+	 * @param assignment
+	 */
+	private void eraseTempAssignmentInDB(Assignment assignment) {
+
+		List<ModelInterface> list = db
+				.getAllFromDB((ModelInterface) new Assignment(),
+						context.getContentResolver());
+		
+		for (ModelInterface modelInterface : list) {
+			if (((Assignment) modelInterface).getGlobalID() == -1
+					&& ((Assignment) modelInterface).getName().equals(
+							assignment.getName())) {
+				db.deleteFromDB((ModelInterface) new Assignment(-1),
+						context.getContentResolver());
+			}
+		}
 	}
 
 	private void showNotification() {

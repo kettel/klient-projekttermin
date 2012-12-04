@@ -119,7 +119,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				itemStrings.put(8, temp);
 				autoCompleteTextView.setHint(temp);
 				autoCompleteTextView.setText("");
-				//itemStrings.put(8, e.getText().toString());
 			}
 		});
 
