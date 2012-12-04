@@ -1,4 +1,4 @@
-package alternativeCamera;
+package camera;
 
 import java.io.IOException;
 

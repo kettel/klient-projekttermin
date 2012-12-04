@@ -33,7 +33,7 @@ import android.widget.TextView;
 //import camera.PhotoGallery;
 //=======
 import camera.Album;
-import camera.Camera;
+import camera.CameraMenu;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -83,63 +83,63 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
+
 		convertView = null;
 
 		final View v = super.getView(position, convertView, parent);
 		editText = (EditText) v.findViewById(R.id.text_item);
 		if (position == 8) {
 			convertView = inflater.inflate(getItemViewType(position), null);
-	
-	final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
-			.findViewById(R.id.autoText_item);
-	
-	
-	
-	autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
-			context, null, true));
-		
-		autoCompleteTextView.setHint(((HashMap<String, String>) this
-				.getItem(position)).get("line1"));
-		if (itemStrings.get(position) != null && !itemStrings.get(position).equals("")) {
-			autoCompleteTextView.setHint(itemStrings.get(position));
-		}
-		
-		
-		//Snygghax.. för att få tag i auto-vyns text.
-		autoCompleteTextView.setOnItemClickListener(new OnItemClickListener() {
 
-			public void onItemClick(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				TextView e = (TextView)arg1;
-				Log.e("FEL", e.getText().toString());
-				
-				temp = temp + e.getText().toString()+ ", ";
-				
-				itemStrings.put(8, temp);
-				autoCompleteTextView.setHint(temp);
-				autoCompleteTextView.setText("");
-				//itemStrings.put(8, e.getText().toString());
+			final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
+					.findViewById(R.id.autoText_item);
+
+			autoCompleteTextView.setAdapter(new ContactsCursorAdapter(context,
+					null, true));
+
+			autoCompleteTextView.setHint(((HashMap<String, String>) this
+					.getItem(position)).get("line1"));
+			if (itemStrings.get(position) != null
+					&& !itemStrings.get(position).equals("")) {
+				autoCompleteTextView.setHint(itemStrings.get(position));
 			}
-		});
 
-}
-		else if (editText != null) {
-		if (itemStrings.get(position) != null) {
-		editText.setText(itemStrings.get(position));
-		} else {
-		editText.setText(null);
-		}
-		editText.setHint(((HashMap<String, String>) this.getItem(position))
-		.get("line1"));
-		editText.setId(position);
-		editText.setOnFocusChangeListener(this);
+			// Snygghax.. för att få tag i auto-vyns text.
+			autoCompleteTextView
+					.setOnItemClickListener(new OnItemClickListener() {
+
+						public void onItemClick(AdapterView<?> arg0, View arg1,
+								int arg2, long arg3) {
+							TextView e = (TextView) arg1;
+							Log.e("FEL", e.getText().toString());
+
+							temp = temp + e.getText().toString() + ", ";
+
+							itemStrings.put(8, temp);
+							autoCompleteTextView.setHint(temp);
+							autoCompleteTextView.setText("");
+							// itemStrings.put(8, e.getText().toString());
+						}
+					});
+
+		} else if (editText != null) {
+			if (itemStrings.get(position) != null) {
+				editText.setText(itemStrings.get(position));
+			} else {
+				editText.setText(null);
+			}
+			if (position == 2) {
+				editText.setSingleLine(false);
+			}
+			editText.setHint(((HashMap<String, String>) this.getItem(position))
+					.get("line1"));
+			editText.setId(position);
+			editText.setOnFocusChangeListener(this);
 		}
 		if (position == 8) {
 			return convertView;
-		}
-		else
-		return v;
+		} else
+			return v;
 
 	}
 
@@ -178,7 +178,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			}
 		}
 		if (hasFocus && v.getId() == 7 && itemStrings.get(v.getId()) == null) {
-			if (!isCreatingPrioDialog ) {
+			if (!isCreatingPrioDialog) {
 				isCreatingPrioDialog = true;
 				priorityAlternatives((EditText) v);
 			}
@@ -210,7 +210,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					((AddAssignment) context).startActivityForResult(intent, 1);
 					break;
 				case 1:
-					Intent intent2 = new Intent(context, Camera.class);
+					Intent intent2 = new Intent(context, CameraMenu.class);
 					intent2.putExtra("calling-activity",
 							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
 					((AddAssignment) context)
@@ -227,7 +227,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private void coordinateField(final View v) {
 		final EditText ed1 = (EditText) v;
 
-		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		LocationManager manager = (LocationManager) context
+				.getSystemService(Context.LOCATION_SERVICE);
 		String provider = manager.getBestProvider(new Criteria(), true);
 		Location location = manager.getLastKnownLocation(provider);
 		Gson gson = new Gson();
@@ -235,9 +236,9 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		}.getType();
 		WgsPoint[] wgs = new WgsPoint[1];
 		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
-		
+
 		final String pos = gson.toJson(wgs, type);
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
 		ListView modeList = new ListView(context);
@@ -262,8 +263,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					((AddAssignment) context).startActivityForResult(intent, 0);
 					break;
 				case 1:
-					 itemStrings.put(v.getId(), pos);
-					 ed1.setText(pos);
+					itemStrings.put(v.getId(), pos);
+					ed1.setText(pos);
 					break;
 				default:
 					isCreatingCoordDialog = false;

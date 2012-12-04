@@ -1,4 +1,4 @@
-package alternativeCamera;
+package camera;
 
 import models.PictureModel;
 import android.app.Activity;
@@ -26,7 +26,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import camera.Album;
 
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;

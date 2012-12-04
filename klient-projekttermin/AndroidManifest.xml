@@ -71,7 +71,7 @@
             android:label="DisplayOfConversation" >
         </activity>
         <activity
-            android:name="camera.Camera"
+            android:name="camera.CameraMenu"
             android:label="Camera" >
         </activity>
         <activity
@@ -92,7 +92,8 @@
         <activity
             android:name="assignment.AddAssignment"
             android:label="@string/addAssignment"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan" 
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="assignment.AssignmentDetails"
@@ -133,7 +134,7 @@
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
         <activity
-            android:name="alternativeCamera.Cam"
+            android:name="camera.Cam"
             android:label="@string/title_activity_cam" 
             android:screenOrientation="landscape" 
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">

@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-
-import logger.logger;
 import login.User;
 import map.MapActivity;
 import models.Assignment;
@@ -35,8 +33,8 @@ import android.widget.Toast;
 import camera.Album;
 
 import com.klient_projekttermin.ActivityConstants;
-import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
+import com.klient_projekttermin.SecureActivity;
 import communicationModule.SocketConnection;
 
 import database.Database;
@@ -49,8 +47,8 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private String jsonCoord = null;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Uppdragsnamn", "Koordinater",
-			"Uppdragsbeskrivning", "Uppskattad tid", "Gatuadress",
-			"Uppdragsplats", "Bild", "Prioritet", "Lägg till agenter" };
+			"Uppdragsbeskrivning", "Uppskattad tid", "Uppdragsplats", "Bild",
+			"Prioritet", "Lägg till agenter" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.text_item };
@@ -77,10 +75,10 @@ public class AddAssignment extends SecureActivity implements Serializable {
 
 		Intent i = getIntent();
 		callingActivity = i.getIntExtra("calling-activity", 0);
-		
+
 		User user = User.getInstance();
 		currentUser = user.getAuthenticationModel().getUserName();
-		
+
 		switch (callingActivity) {
 		case ActivityConstants.MAP_ACTIVITY:
 			fromMap(i);
@@ -132,7 +130,10 @@ public class AddAssignment extends SecureActivity implements Serializable {
 
 	private void fromMap(Intent intent) {
 		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
+		String name = intent.getStringExtra("name");
+		System.out.println(name);
 		System.out.println(jsonCoord);
+		adapter.textToItem(4, name);
 		adapter.textToItem(1, jsonCoord);
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -158,71 +159,72 @@ public class AddAssignment extends SecureActivity implements Serializable {
 
 	private void saveToDB() {
 		db = Database.getInstance(getApplicationContext());
-		
-		//------Kollar om det är ett externt uppdrag;
+
+		// ------Kollar om det är ett externt uppdrag;
 		toOutsiders = (CheckBox) findViewById(R.id.checkBox_to_outsider);
 		if (toOutsiders.isChecked()) {
 			isExternalMission = true;
-		}
-		else
+		} else
 			isExternalMission = false;
-		//-----End
-		
+		// -----End
 
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv
 				.getAdapter()).getItemStrings();
 
-		if(temp.get(0) != null){
-		Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
-				currentUser, isExternalMission, temp.get(2), temp.get(3),
-				AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
-				temp.get(5), checkPrioString(temp.get(7)));
+		if (temp.get(0) != null) {
+			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
+					currentUser, isExternalMission, temp.get(2), temp.get(3),
+					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
+					temp.get(5), checkPrioString(temp.get(7)));
 
-		Log.e("FEL", "Det är ett externt uppdrag: " + newAssignment.isExternalMission());
-		System.out.println("temp8: " + temp.get(8));
-		String tempUnseparated = temp.get(8);
+			Log.e("FEL",
+					"Det är ett externt uppdrag: "
+							+ newAssignment.isExternalMission());
+			System.out.println("temp8: " + temp.get(8));
+			String tempUnseparated = temp.get(8);
 
-		if (tempUnseparated == null) {
-			tempUnseparated = "";
-		}
+			if (tempUnseparated == null) {
+				tempUnseparated = "";
+			}
 
-		addAgentsFromList(tempUnseparated, newAssignment); // temp(8) är en
-															// sträng
-															// med agenter som
-															// ska
-															// separeras med
-															// ",".
+			addAgentsFromList(tempUnseparated, newAssignment); // temp(8) är en
+																// sträng
+																// med agenter
+																// som
+																// ska
+																// separeras med
+																// ",".
 
-		tempUnseparated = ""; // Nolla strängen
+			tempUnseparated = ""; // Nolla strängen
 
-		Log.d("Assignment", "Ska nu lägga till ett uppdrag " + temp.get(0)
-				+ temp.get(1) + currentUser + false + temp.get(2) + temp.get(3)
-				+ AssignmentStatus.NOT_STARTED + "byteArray" + temp.get(4)
-				+ temp.get(5));
+			Log.d("Assignment",
+					"Ska nu lägga till ett uppdrag " + temp.get(0)
+							+ temp.get(1) + currentUser + false + temp.get(2)
+							+ temp.get(3) + AssignmentStatus.NOT_STARTED
+							+ "byteArray" + temp.get(4) + temp.get(5));
 
-		db.addToDB(newAssignment, getContentResolver());
-		SocketConnection connection=new SocketConnection();
-		connection.sendModel(newAssignment);
-		finish();
+			db.addToDB(newAssignment, getContentResolver());
+			SocketConnection connection = new SocketConnection();
+			connection.sendModel(newAssignment);
+			finish();
 		} else {
 			Toast toast = Toast.makeText(getApplicationContext(),
-					"Kan inte skapa uppdrag utan namn",
-					Toast.LENGTH_LONG);
+					"Kan inte skapa uppdrag utan namn", Toast.LENGTH_LONG);
 			toast.setGravity(Gravity.CENTER_VERTICAL, 0, 50);
 			toast.show();
 		}
-		
+
 	}
 
 	private void addAgentsFromList(String agents, Assignment newAssignment) {
 
 		String newString = "";
-		
+
 		if (!agents.equals("")) {
 			newString = agents.substring(9);
 			newAssignment.setAssignmentStatus(AssignmentStatus.STARTED);
 		}
-		
+
 		Log.e("FEL", "Rätt split? ->" + newString);
 
 		List<String> items = new LinkedList<String>(Arrays.asList(newString
@@ -232,10 +234,8 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			Log.e("FEL", "Regexplittade agents: " + string);
 		}
 		List<ModelInterface> list = db.getAllFromDB(new Contact(),
-				getContentResolver());	
+				getContentResolver());
 		Set<String> noDoublicatesSet = new HashSet<String>(items);
-
-
 
 		for (String agent : noDoublicatesSet) {
 			for (ModelInterface modelInterface : list) {
@@ -275,15 +275,15 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			return new byte[2];
 		}
 	}
-	
-	private Bitmap getPic(int id){
+
+	private Bitmap getPic(int id) {
 		db = Database.getInstance(getApplicationContext());
-		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(), getContentResolver());
-		PictureModel p = (PictureModel)pics.get(id);
+		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(),
+				getContentResolver());
+		PictureModel p = (PictureModel) pics.get(id);
 		BitmapFactory.Options ops = new BitmapFactory.Options();
 		ops.inSampleSize = 2;
-		Bitmap bitmap = BitmapFactory.decodeByteArray(
-				p.getPicture(), 0,
+		Bitmap bitmap = BitmapFactory.decodeByteArray(p.getPicture(), 0,
 				p.getPicture().length, ops);
 		return bitmap;
 	}
