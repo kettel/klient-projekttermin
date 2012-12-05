@@ -4,7 +4,10 @@ import com.klient_projekttermin.R;
 import com.klient_projekttermin.R.id;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.view.Menu;
 import android.view.View;
 import android.widget.CheckBox;
