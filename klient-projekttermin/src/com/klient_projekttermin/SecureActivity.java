@@ -2,11 +2,6 @@ package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.DISPLAY_MESSAGE_ACTION;
 import static com.klient_projekttermin.CommonUtilities.EXTRA_MESSAGE;
-
-import com.google.android.gcm.GCMRegistrar;
-import communicationModule.SocketConnection;
-import database.Database;
-
 import login.LogInActivity;
 import login.User;
 import models.Contact;
@@ -20,6 +15,11 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
+import com.google.android.gcm.GCMRegistrar;
+import communicationModule.SocketConnection;
+
+import database.Database;
 
 /**
  * Bas aktivitet för alla aktiviteter. Alla aktiviteter extendar denna.
@@ -44,14 +44,13 @@ public class SecureActivity extends Activity {
 				DISPLAY_MESSAGE_ACTION));
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
-
+		qosManager.adjustToCurrentBatteryMode();
 		if (!user.isLoggedIn()) {
 			Intent myIntent = new Intent(SecureActivity.this,
 					LogInActivity.class);
 			this.startActivityForResult(myIntent, LOGIN_REQUEST);
 		}
 	}
-
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(mHandleMessageReceiver);

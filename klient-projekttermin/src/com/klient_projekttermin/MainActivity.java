@@ -6,14 +6,18 @@ import static com.klient_projekttermin.CommonUtilities.SERVER_URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import login.LogInActivity;
 import login.User;
 import map.MapActivity;
 import messageFunction.Inbox;
+
+import qosManager.QoSInterface;
 import qosManager.QoSManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -28,6 +32,8 @@ import assignment.AssignmentOverview;
 import camera.CameraMenu;
 
 import com.google.android.gcm.GCMRegistrar;
+import com.klient_projekttermin.R.id;
+
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
@@ -48,6 +54,7 @@ public class MainActivity extends SecureActivity {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
+
 		user=User.getInstance();
 		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 		setContentView(R.layout.activity_main);
@@ -109,7 +116,7 @@ public class MainActivity extends SecureActivity {
 				// för dessa här.
 				switch (arg2) {
 				case 0:
-					if (qosManager.allowedToStartMap()) {
+					if (qosManager.isAllowedToStartMap()) {
 						myIntent = new Intent(MainActivity.this,
 								MapActivity.class);
 						myIntent.putExtra("calling-activity", ActivityConstants.MAIN_ACTIVITY);
@@ -118,14 +125,14 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 1:
-					if (qosManager.allowedToStartMessages()) {
+					if (qosManager.isAllowedToStartMessages()) {
 						myIntent = new Intent(MainActivity.this, Inbox.class);
 					} else {
 						unallowedStart.show();
 					}
 					break;
 				case 2:
-					if (qosManager.allowedToStartAssignment()) {
+					if (qosManager.isAllowedToStartAssignment()) {
 						myIntent = new Intent(MainActivity.this,
 								AssignmentOverview.class);
 					} else {
@@ -133,7 +140,7 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 3:
-					if (qosManager.allowedToStartCamera()) {
+					if (qosManager.isAllowedToStartCamera()) {
 						myIntent = new Intent(MainActivity.this, CameraMenu.class);
 					} else {
 						unallowedStart.show();
@@ -151,6 +158,27 @@ public class MainActivity extends SecureActivity {
 				}
 			}
 		});
+	}
+	
+	@Override
+	public void onBackPressed() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setTitle("Avsluta");
+	    builder.setMessage("Vill du avsluta ut?");
+	    builder.setPositiveButton("Ja", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	                SocketConnection socketConnection=new SocketConnection();
+	                socketConnection.logout();
+	                setResult(RESULT_CANCELED);
+	                finish();
+	            }});
+	    builder.setNegativeButton("Nej", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	            }});
+	    builder.setCancelable(false);
+	    builder.create().show();
 	}
 
 	private void initiateDB(Context context) {
@@ -207,9 +235,23 @@ public class MainActivity extends SecureActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		int logOutId = findViewById(id.logout).getId();
+		
+		if(item.getItemId()==logOutId){
 		logout();
 		return false;
+		}
+		else{
+			startQoSManager();
+			return false;
+		}
 	}
+	
+	public void startQoSManager(){
+		Intent intent = new Intent(MainActivity.this, QoSInterface.class);
+		this.startActivity(intent);
+	}
+	
 	public void logout(){
 		finish();
 		Intent intent = new Intent(MainActivity.this, LogInActivity.class);

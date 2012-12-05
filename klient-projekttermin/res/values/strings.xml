@@ -91,6 +91,21 @@
     <string name="title_activity_take_pictures">TakePicturesActivity</string>
     <string name="title_activity_album">Album</string>
     <string name="title_activity_cam">Cam</string>
+    <string name="title_activity_qo_sinterface">Inställningar för batterisparläge</string>
+    <string name="automaticQoS">Automatiskt QoS-läge</string>
+    <string name="automaticBatterySaveModeText">Automatisk aktivering av batterisparläge är: </string>
+    <string name="batterySaveOptions">Alternativ för batterisparläge:</string>
+    <string name="denyMapFunction">Inaktivera Kartfunktion</string>
+    <string name="denyMessageFunction">Inaktivera Meddelandefunktion</string>
+    <string name="denyAssignmentFunction">Inaktivera Uppdragsfunktionen</string>
+    <string name="denyCameraFunction">Inaktivera Kamerafunktionen</string>
+    <string name="batterySaveOptionDetails">De val du fyller i här kommer att tillämpas då enheten försätts i batterisparläge</string>
+    <string name="screenBrightness">Skärmstyrka</string>
+    <string name="lowBatteryLevel">Nivå för lågt batteri</string>
+    <string name="manualActivationForBatterySaveModeText">Batterisparläge är: </string>
+    <string name="denyWiFiConnection">Inaktivera WiFi</string>
+    <string name="defaultButton">Återgå till standardinställningar</string>
+    <string name="QoS">QoS</string>
     <string name="discard">Discard</string>
     <string name="use">Save</string>
 

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import qosManager.QoSManager;
+
 import models.AuthenticationModel;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
+
 import communicationModule.SocketConnection;
 
 import database.Database;
@@ -40,6 +43,7 @@ public class LogInActivity extends Activity implements Observer {
 	private ProgressDialog pd;
 	private User user;
 	private int callingactivity;
+	private QoSManager qosManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,26 +53,6 @@ public class LogInActivity extends Activity implements Observer {
 		Intent intent = getIntent();
 		callingactivity = intent.getIntExtra("calling-activity", 0);
 		
-	}
-	@Override
-	public void onBackPressed() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setTitle("Title");
-	    builder.setMessage("Vill du avsluta ut?");
-	    builder.setPositiveButton("Ja", new OnClickListener() {
-	            public void onClick(DialogInterface dialog, int arg1) {
-	                dialog.dismiss();
-	                SocketConnection socketConnection=new SocketConnection();
-	                socketConnection.logout();
-	                setResult(RESULT_CANCELED);
-	                finish();
-	            }});
-	    builder.setNegativeButton("Nej", new OnClickListener() {
-	            public void onClick(DialogInterface dialog, int arg1) {
-	                dialog.dismiss();
-	            }});
-	    builder.setCancelable(false);
-	    builder.create().show();
 	}
 
 	@Override
@@ -93,40 +77,38 @@ public class LogInActivity extends Activity implements Observer {
 		user = User.getInstance();
 		user.setAuthenticationModel(originalModel);
 
-		tryOfflineLogin(originalModel);
+		tryOnlineLogin(originalModel);
 	}
 
 	public void tryOfflineLogin(AuthenticationModel loginInput)
 			throws NoSuchAlgorithmException {
 
-//				+ database.getAllFromDB(loginInput, getContentResolver())
-//				.size());
-//
-//		if (database
-//				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
-//
-//			List modelList = database.getAllFromDB(loginInput,
-//					getContentResolver());
-//			AuthenticationModel loadedModel = (AuthenticationModel) modelList
-//					.get(0);
-//
-//			if (loadedModel.getUserName().equals(loginInput.getUserName())) {
-//				if (loadedModel.getPasswordHash().equals(
-//						loginInput.getPasswordHash())
-//						&& loadedModel.isAccessGranted().equals("true")) {
-//					accessGranted();
-//				} else {
-//					incorrectLogIn();
-//				}
-//			} else {
-//				removeLastUserFromDB();
-//				tryOnlineLogin(loginInput);
-//			}
-//		}
-//
-//		else {
+		if (database
+				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
+			System.out.println("Försöker logga in offline");
+
+			List modelList = database.getAllFromDB(loginInput,
+					getContentResolver());
+			AuthenticationModel loadedModel = (AuthenticationModel) modelList
+					.get(0);
+
+			if (loadedModel.getUserName().equals(loginInput.getUserName())) {
+				if (loadedModel.getPasswordHash().equals(
+						loginInput.getPasswordHash())
+						&& loadedModel.isAccessGranted().equals("true")) {
+					accessGranted();
+				} else {
+					incorrectLogIn();
+				}
+			} else {
+				removeLastUserFromDB();
+			}
+		}
+
+		else {
+			System.out.println("Försöker logga in online");
 			tryOnlineLogin(loginInput);
-//		}
+		}
 	}
 
 	/**
@@ -206,10 +188,12 @@ public class LogInActivity extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
+		
 		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
 	}
 
 	public void accessGranted() {
+
 		switch (callingactivity) {
 		case ActivityConstants.INACTIVITY:
 			break;
@@ -240,12 +224,19 @@ public class LogInActivity extends Activity implements Observer {
 				public void run() {
 					pd.dismiss();
 					Toast toast = Toast.makeText(getApplicationContext(),
-							"Det gick inte att ansluta till servern!",
+							"Det gick inte att ansluta till servern! Försöker logga in offline",
 									Toast.LENGTH_LONG);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}
 			});
+			
+			try {
+				tryOfflineLogin(originalModel);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

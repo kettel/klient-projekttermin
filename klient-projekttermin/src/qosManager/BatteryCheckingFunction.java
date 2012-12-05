@@ -11,30 +11,31 @@ import android.util.Log;
 public class BatteryCheckingFunction extends Observable {
 
 	private int batteryLevel = 0;
+	private Thread batteryCheckThread;
 
 	public BatteryCheckingFunction(Context context) {
 		startCheckThread(context);
 	}
 
 	public void startCheckThread(final Context context) {
-		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-		final Intent batteryStatus = context.registerReceiver(null, ifilter);
+			IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+			final Intent batteryStatus = context.registerReceiver(null, ifilter);
 
-		new Thread(new Runnable() {
+			batteryCheckThread = new Thread(new Runnable() {
 
-			public void run() {
-				while (true) {
-					int level = batteryStatus.getIntExtra(
-							BatteryManager.EXTRA_LEVEL, -1);
+				public void run() {
+					while (true) {
+						int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 
-					if (level != batteryLevel) {
-						batteryLevel = level;
-						sendNotification(level);
+						if (level != batteryLevel) {
+							batteryLevel = level;
+							sendNotification(level);
+						}
+						timeToWait();
 					}
-					timeToWait();
 				}
-			}
-		}).start();
+			});
+			batteryCheckThread.start();
 	}
 
 	private synchronized void timeToWait() {
@@ -49,5 +50,13 @@ public class BatteryCheckingFunction extends Observable {
 	private void sendNotification(int level) {
 		setChanged();
 		notifyObservers(level);
+	}
+
+	public void stopBatteryCheckFunction(){
+		batteryCheckThread.interrupt();
+	}
+
+	public synchronized Boolean isBatteryBeingChecked(){
+		return batteryCheckThread.isAlive();
 	}
 }

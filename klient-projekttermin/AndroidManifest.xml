@@ -52,6 +52,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
+           
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -115,6 +116,11 @@
         <activity
             android:name="camera.Album"
             android:label="@string/title_activity_album" >
+        </activity>
+         <activity
+            android:name="qosManager.QoSInterface"
+            android:label="@string/title_activity_qo_sinterface"
+            android:screenOrientation="portrait"  >
         </activity>
         <!-- Database Content Providers -->
         <provider

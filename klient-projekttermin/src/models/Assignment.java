@@ -1,5 +1,6 @@
 package models;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,6 +8,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.nutiteq.components.WgsPoint;
 
 public class Assignment implements ModelInterface {
 	// Typen av model
@@ -324,7 +329,12 @@ public class Assignment implements ModelInterface {
 
 	public String getRegion() {
 		if (region == null) {
-			region = "[{\"Lat\":0,\"Lon\":0}]";
+			Gson gson = new Gson();
+			WgsPoint[] p = new WgsPoint[1];
+			p[0] = new WgsPoint(0, 0);
+			Type type = new TypeToken<WgsPoint[]>() {
+			}.getType();
+			region = gson.toJson(p, type);
 		}
 		return region;
 	}
