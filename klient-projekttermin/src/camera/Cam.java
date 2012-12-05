@@ -172,6 +172,7 @@ public class Cam extends Activity implements SensorEventListener {
 				db.addToDB(new PictureModel(data), getContentResolver());
 			}
 
+			count = db.getDBCount(new PictureModel(), getContentResolver());
 			camera.startPreview();
 
 			BitmapFactory.Options ops = new BitmapFactory.Options();
@@ -188,7 +189,7 @@ public class Cam extends Activity implements SensorEventListener {
 			case ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT:
 				Intent intent = new Intent(Cam.this, AddAssignment.class);
 				//Senast tagna bild har id 5
-				intent.putExtra("pic", 5);
+				intent.putExtra("pic", count-1);
 				setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
 				finish();
 				break;
