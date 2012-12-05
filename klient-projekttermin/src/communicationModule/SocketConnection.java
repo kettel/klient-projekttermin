@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
-
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -31,7 +29,6 @@ public class SocketConnection extends Observable {
 	private String ip = "94.254.72.38";
 	private int port = 17234;
 	private ArrayList<String[]> servers = new ArrayList<String[]>();
-	private BufferedReader bufferedReader;
 	Iterator<String[]> iterator;
 
 	/**
