@@ -8,9 +8,12 @@ import login.User;
 import android.app.Activity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
@@ -23,7 +26,7 @@ public class QoSManager implements Observer {
 	private Boolean permissionToStartAssignment = false;
 	private float screenBrightnesslevel = (float) 0.2;
 
-	private float screenBrightnesslevelOkay = (float) 0.3;
+	private float screenBrightnesslevelOkay = (float) 0.5;
 	private Boolean permissionToStartMapOkay = true;
 	private Boolean permissionToUseWiFiOkay = true;
 	private Boolean permissionToStartCameraOkay = true;
