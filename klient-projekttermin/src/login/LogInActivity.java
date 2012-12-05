@@ -52,13 +52,18 @@ public class LogInActivity extends Activity implements Observer {
 		database = Database.getInstance(getApplicationContext());
 		Intent intent = getIntent();
 		callingactivity = intent.getIntExtra("calling-activity", 0);
-		
+
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_log_in_function, menu);
 		return true;
+	}
+
+	@Override
+	public void onBackPressed() {
+		finish();
 	}
 
 	/*
@@ -80,8 +85,26 @@ public class LogInActivity extends Activity implements Observer {
 		tryOnlineLogin(originalModel);
 	}
 
-	public void tryOfflineLogin(AuthenticationModel loginInput)
-			throws NoSuchAlgorithmException {
+	/**
+	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som
+	 * finns i databasen först och om så inte är fallet försöker den hämta
+	 * informationen från servern.
+	 */
+	private void checkAuthenticity(AuthenticationModel authenticationModel) {
+		System.out
+				.println("AUTHENTICATION FROM SERVER: " + authenticationModel);
+		if (authenticationModel.getUserName().equals(
+				originalModel.getUserName())
+				&& authenticationModel.isAccessGranted().equals("true")) {
+			database.addToDB(authenticationModel, getContentResolver());
+			accessGranted();
+
+		} else {
+			incorrectLogIn();
+		}
+	}
+
+	public void tryOfflineLogin(AuthenticationModel loginInput) {
 
 		if (database
 				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
@@ -111,28 +134,11 @@ public class LogInActivity extends Activity implements Observer {
 		}
 	}
 
-	/**
-	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som
-	 * finns i databasen först och om så inte är fallet försöker den hämta
-	 * informationen från servern.
-	 */
-	private void checkAuthenticity(AuthenticationModel authenticationModel) {
-		if (authenticationModel.getUserName().equals(
-				originalModel.getUserName())
-				&& authenticationModel.isAccessGranted().equals("true")) {
-			database.addToDB(authenticationModel, getContentResolver());
-			accessGranted();
-
-		} else {
-			incorrectLogIn();
-		}
-
-	}
-
 	public void incorrectLogIn() {
 		numberOfLoginTries--;
 		if (numberOfLoginTries == 0) {
-			if(database.getDBCount(new AuthenticationModel(), getContentResolver())!=0){
+			if (database.getDBCount(new AuthenticationModel(),
+					getContentResolver()) != 0) {
 				removeLastUserFromDB();
 			}
 			finish();
@@ -143,7 +149,7 @@ public class LogInActivity extends Activity implements Observer {
 					Toast toast = Toast.makeText(getApplicationContext(),
 							"Felaktigt användarnamn eller lösenord! "
 									+ numberOfLoginTries + " försök kvar!",
-									Toast.LENGTH_LONG);
+							Toast.LENGTH_LONG);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}
@@ -188,8 +194,9 @@ public class LogInActivity extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
-		
-		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
+
+		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,
+				true);
 	}
 
 	public void accessGranted() {
@@ -210,6 +217,7 @@ public class LogInActivity extends Activity implements Observer {
 
 	public void update(Observable observable, Object data) {
 		if (data instanceof AuthenticationModel) {
+			user.setOnlineConnection(true);
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -217,26 +225,23 @@ public class LogInActivity extends Activity implements Observer {
 				}
 			});
 			checkAuthenticity((AuthenticationModel) data);
-		}
-		else if(data instanceof String) {
-			this.runOnUiThread(new Runnable() {
+		} else if (data instanceof String) {
+			user.setOnlineConnection(false);
+			runOnUiThread(new Runnable() {
 
 				public void run() {
 					pd.dismiss();
-					Toast toast = Toast.makeText(getApplicationContext(),
-							"Det gick inte att ansluta till servern! Försöker logga in offline",
+					Toast toast = Toast
+							.makeText(
+									getApplicationContext(),
+									"Det gick inte att ansluta till servern! Försöker logga in offline",
 									Toast.LENGTH_LONG);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}
 			});
-			
-			try {
-				tryOfflineLogin(originalModel);
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			tryOfflineLogin(originalModel);
+
 		}
 	}
 }
