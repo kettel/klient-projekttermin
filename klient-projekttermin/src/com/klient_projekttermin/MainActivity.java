@@ -6,19 +6,18 @@ import static com.klient_projekttermin.CommonUtilities.SERVER_URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import login.LogInActivity;
 import login.User;
 import map.MapActivity;
 import messageFunction.Inbox;
-
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
 import android.app.AlertDialog;
-import android.content.ClipData.Item;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -34,7 +33,6 @@ import camera.CameraMenu;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.klient_projekttermin.R.id;
-
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
@@ -46,10 +44,10 @@ public class MainActivity extends SecureActivity {
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	private QoSManager qosManager;
-	private View onlineMarker;
-	private View offlineMarker;
+	private MenuItem onlineMarker;
+	private MenuItem offlineMarker;
 	private Database database;
-	private SocketConnection socketConnection=new SocketConnection();
+	private SocketConnection socketConnection = new SocketConnection();
 	private User user;
 
 	@Override
@@ -57,23 +55,11 @@ public class MainActivity extends SecureActivity {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
-
-		user=User.getInstance();
-
-		onlineMarker = findViewById(id.OnlineMarker);
-//		offlineMarker = findViewById(id.OfflineMarker);
-		
-//		if(user.isLoggedIn()){
-//		onlineMarker.setVisibility(View.VISIBLE);
-//		offlineMarker.setVisibility(View.GONE);
-//		}
-//		else{
-//			onlineMarker.setVisibility(View.GONE);
-//			offlineMarker.setVisibility(View.VISIBLE);
-//		}
-		
-		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 		setContentView(R.layout.activity_main);
+		user = User.getInstance();
+
+		socketConnection.addObserver(new PullResponseHandler(
+				getApplicationContext()));
 
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
@@ -91,9 +77,12 @@ public class MainActivity extends SecureActivity {
 			GCMRegistrar.register(getApplicationContext(), SENDER_ID);
 		} else {
 			// Device is already registered on GCM, check server.
-			if (GCMRegistrar.isRegisteredOnServer(this)&&user.isLoggedIn()) {
+			if (GCMRegistrar.isRegisteredOnServer(this) && user.isLoggedIn()) {
 				// Skips registration.
-				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
+				user.getAuthenticationModel()
+				.setGCMID(
+						GCMRegistrar
+						.getRegistrationId(getApplicationContext()));
 				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
@@ -135,7 +124,8 @@ public class MainActivity extends SecureActivity {
 					if (qosManager.isAllowedToStartMap()) {
 						myIntent = new Intent(MainActivity.this,
 								MapActivity.class);
-						myIntent.putExtra("calling-activity", ActivityConstants.MAIN_ACTIVITY);
+						myIntent.putExtra("calling-activity",
+								ActivityConstants.MAIN_ACTIVITY);
 					} else {
 						unallowedStart.show();
 					}
@@ -157,7 +147,8 @@ public class MainActivity extends SecureActivity {
 					break;
 				case 3:
 					if (qosManager.isAllowedToStartCamera()) {
-						myIntent = new Intent(MainActivity.this, CameraMenu.class);
+						myIntent = new Intent(MainActivity.this,
+								CameraMenu.class);
 					} else {
 						unallowedStart.show();
 					}
@@ -175,28 +166,28 @@ public class MainActivity extends SecureActivity {
 			}
 		});
 	}
-	
-	
-	
+
 	@Override
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setTitle("Avsluta");
-	    builder.setMessage("Vill du avsluta ut?");
-	    builder.setPositiveButton("Ja", new OnClickListener() {
-	            public void onClick(DialogInterface dialog, int arg1) {
-	                dialog.dismiss();
-	                SocketConnection socketConnection=new SocketConnection();
-	                socketConnection.logout();
-	                setResult(RESULT_CANCELED);
-	                finish();
-	            }});
-	    builder.setNegativeButton("Nej", new OnClickListener() {
-	            public void onClick(DialogInterface dialog, int arg1) {
-	                dialog.dismiss();
-	            }});
-	    builder.setCancelable(false);
-	    builder.create().show();
+		builder.setTitle("Avsluta");
+		builder.setMessage("Vill du avsluta?");
+		builder.setPositiveButton("Ja", new OnClickListener() {
+			public void onClick(DialogInterface dialog, int arg1) {
+				dialog.dismiss();
+				SocketConnection socketConnection = new SocketConnection();
+				socketConnection.logout();
+				setResult(RESULT_CANCELED);
+				finish();
+			}
+		});
+		builder.setNegativeButton("Nej", new OnClickListener() {
+			public void onClick(DialogInterface dialog, int arg1) {
+				dialog.dismiss();
+			}
+		});
+		builder.setCancelable(false);
+		builder.create().show();
 	}
 
 	private void initiateDB(Context context) {
@@ -215,9 +206,9 @@ public class MainActivity extends SecureActivity {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera", "Kontakter"};
+				"Kamera", "Kontakter" };
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter"};
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" };
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -231,6 +222,19 @@ public class MainActivity extends SecureActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+
+		onlineMarker = menu.findItem(R.id.OnlineMarker);
+		offlineMarker = menu.findItem(R.id.OfflineMarker);
+
+		System.out.println("ÄR JAG ANSLUTEN TILL SERVERN: "+user.isLoggedIn());
+		if(user.gotInlineConnection()){
+			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		}
+		else{
+			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		}
 		return true;
 	}
 
@@ -255,26 +259,24 @@ public class MainActivity extends SecureActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int logOutId = findViewById(id.logout).getId();
 		int qosId = findViewById(id.QoSManager).getId();
-		
-		if(item.getItemId()==logOutId){
-		logout();
-		return false;
-		}
-		else if (item.getItemId()==qosId){
+
+		if (item.getItemId() == logOutId) {
+			logout();
+			return false;
+		} else if (item.getItemId() == qosId) {
 			startQoSManager();
 			return false;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
-	
-	public void startQoSManager(){
+
+	public void startQoSManager() {
 		Intent intent = new Intent(MainActivity.this, QoSInterface.class);
 		this.startActivity(intent);
 	}
-	
-	public void logout(){
+
+	public void logout() {
 		finish();
 		Intent intent = new Intent(MainActivity.this, LogInActivity.class);
 		user.setLoggedIn(false);
