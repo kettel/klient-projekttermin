@@ -45,12 +45,12 @@ import com.klient_projekttermin.R;
  * 
  * Utgående: 
  * Fånga/hantera att mottagaren: 
- * TODO: - svarar 
- * TODO: - inte svarar
- * TODO: - Lägger på 
- * TODO: - Är upptagen 
- * TODO: Visa kontaktnamn 
- * TODO: Timern
+ * TODO: - svarar [PARTIALLY DONE]
+ * TODO: - inte svarar [DONE]
+ * TODO: - Lägger på [DONE]
+ * TODO: - Är upptagen [DONE]
+ * TODO: Visa kontaktnamn [PARTIALLY DONE]
+ * TODO: Timern [DONE]
  * 
  * Samtalslogg: 
  * TODO: Notera missat samtal 
@@ -61,10 +61,12 @@ import com.klient_projekttermin.R;
  * Databas: 
  * TODO: Hämta SIP-profil från servern 
  * TODO: Hämta och lagra kontakters SIP-nummer (för samtal inom FM) 
- * TODO: Om behövs, lägg till SIP-nummer i kontaktmodellen
+ * TODO: Om behövs, lägg till SIP-nummer i kontaktmodellen 
  * 
  * Buggar:
  * TODO: Samtal ska överleva en skärmrotation
+ * TODO: Registrera att mottagaren av samtalet har svarat vid utgående samtal. Väldigt märkligt då kopplingssignaler
+ * 		 spelas tills andra änden svarar...
  * 
  * @author kettel
  * 

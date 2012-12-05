@@ -13,6 +13,7 @@ import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
+import android.net.sip.SipSession;
 import android.util.Log;
 
 public class RegisterWithSipSingleton {
@@ -178,20 +179,38 @@ public class RegisterWithSipSingleton {
                 // happen via listeners.  Even making an outgoing call, don't
                 // forget to set up a listener to set things up once the call is established.
                 @Override
-                public void onCallEstablished(SipAudioCall call) {
-                	//isInCall= true;
-                	Log.d("SIP/Singleton/InitCall","Den du ringt till har svarat");
-                	callStatus.setStatus(true);
-                    call.startAudio();
-                    call.setSpeakerMode(true);
-                    //call.toggleMute();
+                public void onCallBusy(SipAudioCall call) {
+                	Log.d("SIP/Singleton/InitCall","Den du ringt till är upptagen");
                 }
-
+            	@Override
+            	public void onCalling(SipAudioCall call){
+            		Log.d("SIP/Singleton/InitCall","onCalling");
+            	}
+            	@Override
+                public void onCallEstablished(SipAudioCall call) {
+                	Log.d("SIP/Singleton/InitCall","onCallEstablished");
+                	callStatus.setStatus(true);
+                	call.startAudio();
+                    call.setSpeakerMode(true);
+                }
+            	
+            	@Override
+                public void onRingingBack (SipAudioCall call){
+            		Log.d("SIP/Singleton/InitCall","onRingingBack");
+            	}
+                
+                
                 @Override
                 public void onCallEnded(SipAudioCall call) {
                 	//isInCall = false;
-                	Log.d("SIP/Singleton/InitCall","Någon har lagt på");
+                	Log.d("SIP/Singleton/InitCall","onCallEnded");
                 	callStatus.setStatus(false);
+                	try {
+						call.endCall();
+					} catch (SipException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
                     //updateStatus("Ready.");
                 }
             };
@@ -202,6 +221,7 @@ public class RegisterWithSipSingleton {
             Intent startIncoming = new Intent(context,IncomingCallDialog.class);
             startIncoming.putExtra("outgoing",true);
             startIncoming.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            StaticCall.call = call;
 			context.startActivity(startIncoming);
         }
         catch (Exception e) {

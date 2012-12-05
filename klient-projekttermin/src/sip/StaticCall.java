@@ -26,7 +26,9 @@ public class StaticCall {
 
 	public static void dropCall(SipAudioCall call){
 		try {
-			call.endCall();
+			if(call != null){
+				call.endCall();
+			}
 		} catch (SipException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
