@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import assignment.AssignmentOverview;
 
 import com.klient_projekttermin.GCMIntentService;
@@ -56,7 +57,9 @@ public class PullResponseHandler implements Observer {
 			} else if (data instanceof Assignment) {
 				message = "Nytt uppdrag";
 				int update = db.updateModel((Assignment) data, context.getContentResolver());
-				if (update!=0) {
+				Log.e("FEL", "Tar upp ett uppdrag och uppdaterar: " + Integer.toString(update));
+				if (update==0) {
+					Log.e("FEL", "Kunde inte uppdatera. Lägger därför till uppdraget till DB");
 					db.addToDB((Assignment) data, context.getContentResolver());
 				notificationIntent = new Intent(context,
 						AssignmentOverview.class);

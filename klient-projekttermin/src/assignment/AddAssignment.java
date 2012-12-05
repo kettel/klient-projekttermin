@@ -234,7 +234,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			for (ModelInterface modelInterface : list) {
 				Contact contact = (Contact) modelInterface;
 				if (contact.getContactName().equals(agent)) {
-					newAssignment.addAgents(new Contact(agent));
+					newAssignment.addAgents(contact); // new Contact(agent)
 				}
 			}
 		}

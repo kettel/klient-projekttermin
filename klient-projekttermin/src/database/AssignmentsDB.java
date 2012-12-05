@@ -192,10 +192,11 @@ public class AssignmentsDB {
 		int updated = contentResolver.update(
 				Assignments.CONTENT_URI,
 				values,
-				Assignments.ASSIGNMENT_ID + " = "
-						+  assignment.getId() , null);
-//				Assignments.GLOBAL_ASSIGNMENT_ID + " = "
-//						+ "\"" + assignment.getGlobalID() + "\"", null);
+				Assignments.GLOBAL_ASSIGNMENT_ID + " = "
+						+ "\"" + assignment.getGlobalID() + "\"", null);
+//				Assignments.ASSIGNMENT_ID + " = "
+//						+  assignment.getId() , null);
+
 		return updated;
 	}
 
