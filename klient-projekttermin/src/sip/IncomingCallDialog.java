@@ -247,7 +247,7 @@ public class IncomingCallDialog extends Activity {
 		updateCaller("Ringer " + caller + "...");
 
 		// Starta timern
-		// startCallTimer();
+		startCallTimer();
 
 		// Sätt toggle-knappen till nedtryckt (det är ju vi som ringer...)
 		setToggleButtonChecked();
@@ -263,6 +263,18 @@ public class IncomingCallDialog extends Activity {
 							"Andra änden la visst på...");
 					finish();
 				}
+				// Om den andra änden svarar
+				else if(RegisterWithSipSingleton.callStatus.getStatus()){
+					Log.d("SIP/SipSingleton/Outgoingcall/ObserverCallStatus",
+							"Andra änden svarade...");
+					regSip.isCallAnswered = true;
+					// Sätt tiden till när samtalet besvaras
+					timeWhenCallStarted = System.currentTimeMillis();
+					
+					// Uppdatera texten för vem du pratar med
+					updateCaller("I samtal...");
+					//RegisterWithSipSingleton.callStatus.setStatus(true);
+				}
 			}
 		}
 		ObserverCallStatus observer = new ObserverCallStatus();
@@ -276,15 +288,8 @@ public class IncomingCallDialog extends Activity {
 					boolean isChecked) {
 				// Svara på samtal
 				if (buttonView.isChecked()) {
-					// Samtal är besvarat
-					regSip.isCallAnswered = true;
-					RegisterWithSipSingleton.callStatus.setStatus(true);
-					// Sätt aktuell tid till initialtid för samtalsstart
-					timeWhenCallStarted = System.currentTimeMillis();
-					// Besvara samtalet
-					// IncomingCallReceiver.answerCall(IncomingCallReceiver.incomingCall);
-					// Uppdatera tiden i textView
-					updateCallTime();
+					// Standardläge, väntar på att andra änden ska svara
+					
 				}
 				// Lägg på samtal
 				if (!buttonView.isChecked()) {
