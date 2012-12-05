@@ -224,7 +224,7 @@ public class LogInActivity extends Activity implements Observer {
 		finish();
 	}
 
-	public void update(Observable observable, Object data) {		
+	public void update(Observable observable, Object data) {
 		if (data instanceof AuthenticationModel) {
 			this.runOnUiThread(new Runnable() {
 
@@ -234,7 +234,7 @@ public class LogInActivity extends Activity implements Observer {
 			});
 			checkAuthenticity((AuthenticationModel) data);
 		}
-		else {
+		else if(data instanceof String) {
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {

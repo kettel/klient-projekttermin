@@ -5,6 +5,7 @@ import java.util.Observer;
 
 import messageFunction.Inbox;
 import models.Assignment;
+import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import android.app.Notification;
@@ -63,6 +64,8 @@ public class PullResponseHandler implements Observer {
 				notificationIntent = new Intent(context, Inbox.class);
 				hasChanged = true;
 				GCMIntentService.sendMessage(context, "message");
+			}else if (data instanceof AuthenticationModel) {
+				
 			}
 		}
 
