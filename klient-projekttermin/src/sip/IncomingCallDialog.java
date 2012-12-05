@@ -18,6 +18,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.util.Log;
@@ -38,9 +39,9 @@ import com.klient_projekttermin.R;
  * TODO: Lös buggar med ringsignalen.. [DONE]
  * TODO: Vibrera vid inkommande samtal [DONE]
  * TODO: Tänd displayen vid inkommande samtal [DONE]
- * TODO: Lås skärmen när telefonen förs mot örat
- * TODO: Lås upp skärmen när telefonen tas bort från örat
- * TODO: Timern
+ * TODO: Lås skärmen när telefonen förs mot örat [DONE]
+ * TODO: Lås upp skärmen när telefonen tas bort från örat [DONE]
+ * TODO: Timern [DONE]
  * 
  * Utgående: 
  * Fånga/hantera att mottagaren: 
@@ -71,9 +72,10 @@ import com.klient_projekttermin.R;
 public class IncomingCallDialog extends Activity {
 
 	private long timeWhenCallStarted = 0;
-	private String timeInCall = new String();
+	private String timeInCall = new String("");
 	private String caller = new String();
-	private Timer timer;
+	private Handler handler;
+	private Runnable runnable;
 
 	// Boolean för att hålla reda på om telefonen ringer
 	// True om ringsignal spelas, false annars.
@@ -113,7 +115,10 @@ public class IncomingCallDialog extends Activity {
 		setContentView(R.layout.activity_incoming_call_dialog);
 		Bundle extras = getIntent().getExtras();
 		boolean isOutgoing = extras.getBoolean("outgoing");
-
+		
+		// Nollställ callTime
+		timeInCall = "";
+		
 		// Sätt text i dialogfönstret
 		if (extras.getString("caller") != null) {
 			caller = extras.getString("caller");
@@ -301,7 +306,7 @@ public class IncomingCallDialog extends Activity {
 		Log.d("SIP/IncomingCallDialog/incomingCall", "Tagit emot samtal från "
 				+ caller);
 
-		// startCallTimer();
+		startCallTimer();
 		updateCaller(caller + " ringer...");
 		updateCallTime();
 
@@ -377,10 +382,11 @@ public class IncomingCallDialog extends Activity {
 
 	private void startCallTimer() {
 		int delay = 0; // Vänta inte innan timern ska starta
-		int period = 1000; // Upprepa varje sekund
+		final int period = 1000; // Upprepa varje sekund
 
-		timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
+		handler = new Handler();
+		
+		runnable = new Runnable(){
 			public void run() {
 				if (regSip.isCallAnswered) {
 					long millis = System.currentTimeMillis()
@@ -400,8 +406,13 @@ public class IncomingCallDialog extends Activity {
 					// Uppdatera samtalstiden
 					updateCallTime();
 				}
+				// Kör runnable igen
+				handler.postDelayed(this, period);
 			}
-		}, delay, period);
+		};
+		
+		handler.postDelayed(runnable, delay);
+		
 	}
 
 	private void updateCallTime() {
@@ -410,6 +421,7 @@ public class IncomingCallDialog extends Activity {
 				// Sätt namnet på den som ringer
 				TextView timeView = (TextView) findViewById(R.id.textViewTimeInCall);
 				timeView.setText(timeInCall);
+				Log.d("SIP/IncomingCallDialog/UpdateCallTime","Satt callTime till: " + timeInCall + " med textlängd: " + timeInCall.length());
 			}
 		});
 	}
@@ -436,6 +448,7 @@ public class IncomingCallDialog extends Activity {
 	 */
 	private void killEssentials() {
 		// Avsluta ev pågående samtal
+		regSip.isCallAnswered = false;
 		endCall();
 		
 		// Avregistrera närhetssensorlyssnaren
@@ -448,13 +461,14 @@ public class IncomingCallDialog extends Activity {
 		stopRingTone();
 		
 		// Döda timern när samtalsdialogen stängs
-		if (timer != null) {
+		if (handler != null) {
 			Log.d("SIP/IncomingDialer/killEssentials", "Ska döda timern...");
-			timer.cancel();
-			timer.purge();
+			handler.removeCallbacks(runnable);
 			Log.d("SIP/IncomingDialer/killEssentials", "Timern dödad.");
 		}
+		// Töm samtalstidslabeln när samtalet stängs
 		timeInCall = "";
+		updateCallTime();
 	}
 	private void unlockScreen() {
 		Log.d("SIP/IncomingCallDialog/unLockScreen","Ska tända skärmen...");
