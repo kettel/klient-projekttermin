@@ -14,10 +14,14 @@ import messageFunction.Inbox;
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -49,6 +53,8 @@ public class MainActivity extends SecureActivity {
 	private Database database;
 	private SocketConnection socketConnection = new SocketConnection();
 	private User user;
+	private Boolean haveConnectedWifi= true;
+	private Boolean haveConnectedMobile = true;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -222,19 +228,31 @@ public class MainActivity extends SecureActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
-
+	
 		onlineMarker = menu.findItem(R.id.OnlineMarker);
 		offlineMarker = menu.findItem(R.id.OfflineMarker);
 
-		System.out.println("ÄR JAG ANSLUTEN TILL SERVERN: "+user.isLoggedIn());
-		if(user.gotInlineConnection()){
-			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-		}
-		else{
-			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		}
+		registerReceiver(new BroadcastReceiver() {      
+		        public void onReceive(Context context, Intent intent) {
+		        	  ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		        	    NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+		        	    for (NetworkInfo ni : netInfo) {
+		        	        if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+		        	            if (ni.isConnected()){
+		        	                haveConnectedWifi = true;
+		        	            }else{
+		        	            	haveConnectedWifi = false;
+		        	            }
+		        	        if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+		        	            if (ni.isConnected()){
+		        	                haveConnectedMobile = true;
+		        	            }else{
+		        	            	haveConnectedMobile = false;
+		        	            }
+		        	    }
+		        	qosManager.checkConnectivity(onlineMarker, offlineMarker, haveConnectedWifi, haveConnectedMobile);
+		        }}, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		
 		return true;
 	}
 

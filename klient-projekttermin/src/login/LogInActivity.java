@@ -215,9 +215,7 @@ public class LogInActivity extends Activity implements Observer {
 
 	public void update(Observable observable, Object data) {		
 		if (data instanceof AuthenticationModel) {
-			System.out.println("Inne i if");
 			user.setOnlineConnection(true);
-			System.out.println("Precis satt till: "+user.isLoggedIn());
 
 			this.runOnUiThread(new Runnable() {
 
@@ -228,9 +226,7 @@ public class LogInActivity extends Activity implements Observer {
 			checkAuthenticity((AuthenticationModel) data);
 		}
 		else {
-			System.out.println("Inne i else");
 			user.setOnlineConnection(false);
-			System.out.println("Precis satt till: "+user.isLoggedIn());
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
