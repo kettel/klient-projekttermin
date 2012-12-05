@@ -101,12 +101,17 @@
 <!--         <service android:name="sip.RegisterWithSipServerService" /> -->
         <!-- SIP Receiver -->
         <receiver android:name="sip.IncomingCallReceiver" />
-<!--         <receiver android:name="sip.OutgoingCallReceiver" > -->
-<!--         	<intent-filter > -->
-<!--         	    <action android:name="com.klient_projekttermin.action.OUTGOING_CALL" /> -->
-<!--         	</intent-filter> -->
-<!--         </receiver> -->
-        
+		<receiver
+            android:name="sip.Darclass"
+            android:permission="android.permission.BIND_DEVICE_ADMIN" >
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/my_admin" />
+
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>        
 		<!-- GCM Receiver -->
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"

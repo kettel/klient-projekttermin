@@ -6,7 +6,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,6 +18,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
@@ -58,6 +62,9 @@ import com.klient_projekttermin.R;
  * TODO: Hämta och lagra kontakters SIP-nummer (för samtal inom FM) 
  * TODO: Om behövs, lägg till SIP-nummer i kontaktmodellen
  * 
+ * Buggar:
+ * TODO: Samtal ska överleva en skärmrotation
+ * 
  * @author kettel
  * 
  */
@@ -83,6 +90,18 @@ public class IncomingCallDialog extends Activity {
 	// Närhetssensor
 	private SensorManager mSensorManager;
 	private Sensor mProximitySensor;
+	private SensorEventListener proximitySensorEventListener;
+	
+	// Hämta engergihanterare för att hämta status på skärm
+	private PowerManager pm;
+	
+	// DevicePolicyManager för att kunna låsa skärmen
+	protected static final int REQUEST_ENABLE = 0;
+    private DevicePolicyManager devicePolicyManager;
+    private ComponentName adminComponent;
+	
+	// Om skärmen är tänd
+	private boolean isScreenOn;
 
 	RegisterWithSipSingleton regSip;
 
@@ -111,12 +130,25 @@ public class IncomingCallDialog extends Activity {
 		// Initiera vibratorn
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		
+		// Se efter om skärmen är tänd
+		pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		isScreenOn = pm.isScreenOn();
+		
+		// Initiera policyManager så skärmen kan låsas
+		
+		Log.d("SIP/IncomingCallDialog/onCreate","Skärmen är nu: " + (isScreenOn?"på":"av"));
+		
+		// Tänd skärmen om släckt
+		if(!isScreenOn){
+			unlockScreen();
+		}
+		
 		// Initiera närhetssensorn
 		mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		mProximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 		
 		// Skapa en lyssnare för närhetssensorn
-		SensorEventListener proximitySensorEventListener = new SensorEventListener(){
+		proximitySensorEventListener = new SensorEventListener(){
 
 			public void onAccuracyChanged(Sensor sensor, int accuracy) {
 				// TODO Auto-generated method stub
@@ -124,32 +156,37 @@ public class IncomingCallDialog extends Activity {
 
 			public void onSensorChanged(SensorEvent event) {
 				if(event.sensor.getType()==Sensor.TYPE_PROXIMITY){
-					// Telefonen förs mot örat, lås skärmen
+					// Telefonen förs mot örat
 					if(event.values[0] == 0.0){
-						lockScreen();
+						// Om skärmen är tänd, släck skärmen
+						if(isScreenOn){
+							Log.d("SIP/IncomingCallDialog/onCreate","Användaren har telefonen mot örat. Släcker skärmen...");
+							lockScreen();
+						}
 					}
-					// Telefonen tas bort från örat, lås upp skärmen
+					// Telefonen tas bort från örat
 					else if(event.values[0] == 1.0){
-						unlockScreen();
+						Log.d("SIP/IncomingCallDialog/onCreate","Proximity: "+event.values[0]);
+						Log.d("SIP/IncomingCallDialog/onCreate","Skärmen är nu: " + (isScreenOn?"på":"av"));
+						// Om skärmen är släckt, lås upp skärmen
+						if(!isScreenOn){
+							Log.d("SIP/IncomingCallDialog/onCreate","Användaren har inte telefonen vid örat. Tänder skärmen...");
+							unlockScreen();
+						}
 					}
 				}
 			}
 		};
 		
+		// Registrera närhetssensorlyssnaren
 		if (mProximitySensor == null){
 			Log.d("SIP/IncomingCallDialog/onCreate","Det finns ingen närhetssensor!");
 		}
 		else{
-			Log.d("SIP/IncomingCallDialog/onCreate","Namn på närhetssensor: " + mProximitySensor.getName());
-			Log.d("SIP/IncomingCallDialog/onCreate","Max räckvidd på närhetssensor: "
-					+ String.valueOf(mProximitySensor.getMaximumRange()));
 			mSensorManager.registerListener(proximitySensorEventListener,
 					mProximitySensor,
 					SensorManager.SENSOR_DELAY_NORMAL);
 		}
-		
-		// Tänd skärmen
-		unlockScreen();
 		
 		// Utgående samtal
 		if (isOutgoing) {
@@ -236,6 +273,7 @@ public class IncomingCallDialog extends Activity {
 				if (buttonView.isChecked()) {
 					// Samtal är besvarat
 					regSip.isCallAnswered = true;
+					RegisterWithSipSingleton.callStatus.setStatus(true);
 					// Sätt aktuell tid till initialtid för samtalsstart
 					timeWhenCallStarted = System.currentTimeMillis();
 					// Besvara samtalet
@@ -246,10 +284,10 @@ public class IncomingCallDialog extends Activity {
 				// Lägg på samtal
 				if (!buttonView.isChecked()) {
 					regSip.isCallAnswered = false;
-					StaticCall.dropCall(StaticCall.call);
-					Log.d("SIP",
+					RegisterWithSipSingleton.callStatus.setStatus(false);
+					Log.d("SIP/IncomingCallDialog/OutgoingCall",
 							"Samtal avslutat. Ska nu köra finish på aktivitet...");
-					finish();
+//					finish();
 				}
 			}
 		});
@@ -279,13 +317,10 @@ public class IncomingCallDialog extends Activity {
 		// Lyssna efter om personen har svarat på påringningen
 		final class ObserverCallStatus implements Observer {
 			public void update(Observable arg0, Object arg1) {
-				Log.d("SIP/SipSingleton/incomingCall/ObserverCallStatus",
-						"Nu har visst användaren gjort något..");
 				// Om något har avbrutit samtalet så callStatus är false
 				if (!RegisterWithSipSingleton.callStatus.getStatus()) {
 					Log.d("SIP/SipSingleton/incomingCall/ObserverCallStatus",
-							"Andra änden la visst på...");
-					killEssentials();
+							"Någon la visst på...");
 					finish();
 				}
 			}
@@ -319,12 +354,10 @@ public class IncomingCallDialog extends Activity {
 				// Lägg på samtal
 				if (!buttonView.isChecked() && regSip.isCallAnswered) {
 					regSip.isCallAnswered = false;
+					// Underrätta lyssnare om att samtalet är slut
 					RegisterWithSipSingleton.callStatus.setStatus(false);
-					StaticCall.dropCall(StaticCall.call);
 					Log.d("SIP/IncomingCallDialog/incomingCall/onCheckedListener",
 							"Samtal avslutat. Ska nu köra finish på aktivitet...");
-					killEssentials();
-					finish();
 				}
 			}
 		});
@@ -394,6 +427,7 @@ public class IncomingCallDialog extends Activity {
 
 	public static void endCall() {
 		RegisterWithSipSingleton.callStatus.setStatus(false);
+		StaticCall.dropCall(StaticCall.call);
 	}
 
 	/**
@@ -401,11 +435,18 @@ public class IncomingCallDialog extends Activity {
 	 * vare sig ringsignal eller timer
 	 */
 	private void killEssentials() {
-		// Döda låset på att tända skärmen så den kan släckas
-		//wl.release();
+		// Avsluta ev pågående samtal
+		endCall();
+		
+		// Avregistrera närhetssensorlyssnaren
+		if(mSensorManager != null){
+			mSensorManager.unregisterListener(proximitySensorEventListener,mProximitySensor);
+			mSensorManager = null;
+		}
 		
 		// Stoppa ringsignalen (om på)
 		stopRingTone();
+		
 		// Döda timern när samtalsdialogen stängs
 		if (timer != null) {
 			Log.d("SIP/IncomingDialer/killEssentials", "Ska döda timern...");
@@ -416,22 +457,52 @@ public class IncomingCallDialog extends Activity {
 		timeInCall = "";
 	}
 	private void unlockScreen() {
+		Log.d("SIP/IncomingCallDialog/unLockScreen","Ska tända skärmen...");
+		
         Window window = this.getWindow();
         window.addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);
         window.addFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         window.addFlags(LayoutParams.FLAG_TURN_SCREEN_ON);
-//		WindowManager.LayoutParams params = getWindow().getAttributes(); 
-//		params.flags |= LayoutParams.FLAG_KEEP_SCREEN_ON; 
-//		params.screenBrightness = 1; 
-//		getWindow().setAttributes(params);
+        isScreenOn = true;
+		Log.d("SIP/IncomingCallDialog/unLockScreen","Skärmen är nu: " + (isScreenOn?"på":"av"));
     }
 	
 	private void lockScreen() {
-		WindowManager.LayoutParams params = getWindow().getAttributes(); 
-		params.flags |= LayoutParams.FLAG_KEEP_SCREEN_ON; 
-		params.screenBrightness = 0; 
-		getWindow().setAttributes(params);
+		// Börja med att rensa alla flaggor så skärmen får låsas
+		Window window = this.getWindow();
+		window.clearFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);
+        window.clearFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        window.clearFlags(LayoutParams.FLAG_TURN_SCREEN_ON);
+        
+        // Släcker skärmen men tänder den inte igen sen...
+//        WindowManager.LayoutParams layoutParam = getWindow().getAttributes();
+//        layoutParam.screenBrightness = 0; 
+//        layoutParam.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+//        getWindow().setAttributes(layoutParam);
+//        
+        // Hämta sedan adminrättigheter för att få låsa skärmen
+        adminComponent = new ComponentName(IncomingCallDialog.this, Darclass.class);
+        devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        
+        // Om device-rättigheter inte är instansierade, hämta dem genom en JÄTTEIRRITERANDE ruta..
+        // TODO: Autoacceptera rutan..
+        if (!devicePolicyManager.isAdminActive(adminComponent)) {
+            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
+            startActivityForResult(intent, REQUEST_ENABLE);
+        } 
+        // Med instansierade device-rättigheter, trigga skärmlås
+        else {
+            devicePolicyManager.lockNow();
+        }
+        
+        // Sätt sedan skärmflaggan till falsk
+        isScreenOn = false;
+        
+		Log.d("SIP/IncomingCallDialog/lockScreen","Skärmen är nu: " + (isScreenOn?"på":"av"));
     }
+	
+	
 	private void startRingTone() {
 		if (ringtone != null) {
 			Log.d("SIP/IncomingCallDialog/startRingTone", "Ska starta ringsignal...");
