@@ -6,14 +6,10 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import qosManager.QoSManager;
-
 import models.AuthenticationModel;
+import qosManager.QoSManager;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -25,7 +21,6 @@ import android.widget.Toast;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
-
 import communicationModule.SocketConnection;
 
 import database.Database;
@@ -217,7 +212,10 @@ public class LogInActivity extends Activity implements Observer {
 
 	public void update(Observable observable, Object data) {
 		if (data instanceof AuthenticationModel) {
+			System.out.println("Inne i if");
 			user.setOnlineConnection(true);
+			System.out.println("Precis satt till: "+user.isLoggedIn());
+
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -227,7 +225,8 @@ public class LogInActivity extends Activity implements Observer {
 			checkAuthenticity((AuthenticationModel) data);
 		} else if (data instanceof String) {
 			user.setOnlineConnection(false);
-			runOnUiThread(new Runnable() {
+			user.setOnlineConnection(false);
+			this.runOnUiThread(new Runnable() {
 
 				public void run() {
 					pd.dismiss();

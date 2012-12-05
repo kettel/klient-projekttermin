@@ -44,8 +44,8 @@ public class MainActivity extends SecureActivity {
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	private QoSManager qosManager;
-	private View onlineMarker;
-	private View offlineMarker;
+	private MenuItem onlineMarker;
+	private MenuItem offlineMarker;
 	private Database database;
 	private SocketConnection socketConnection = new SocketConnection();
 	private User user;
@@ -55,24 +55,15 @@ public class MainActivity extends SecureActivity {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
-
 		user = User.getInstance();
-
-		onlineMarker = findViewById(id.OnlineMarker);
-		// offlineMarker = findViewById(id.OfflineMarker);
-
-		// if(user.isLoggedIn()){
-		// onlineMarker.setVisibility(View.VISIBLE);
-		// offlineMarker.setVisibility(View.GONE);
-		// }
-		// else{
-		// onlineMarker.setVisibility(View.GONE);
-		// offlineMarker.setVisibility(View.VISIBLE);
-		// }
 
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
 		setContentView(R.layout.activity_main);
+		user = User.getInstance();
+
+		socketConnection.addObserver(new PullResponseHandler(
+				getApplicationContext()));
 
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
@@ -184,7 +175,7 @@ public class MainActivity extends SecureActivity {
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Avsluta");
-		builder.setMessage("Vill du avsluta ut?");
+		builder.setMessage("Vill du avsluta?");
 		builder.setPositiveButton("Ja", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int arg1) {
 				dialog.dismiss();
@@ -235,6 +226,19 @@ public class MainActivity extends SecureActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+
+		onlineMarker = menu.findItem(R.id.OnlineMarker);
+		offlineMarker = menu.findItem(R.id.OfflineMarker);
+
+		System.out
+				.println("ÄR JAG ANSLUTEN TILL SERVERN: " + user.isLoggedIn());
+		if (user.gotInlineConnection()) {
+			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		} else {
+			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		}
 		return true;
 	}
 
@@ -280,7 +284,7 @@ public class MainActivity extends SecureActivity {
 		finish();
 		Intent intent = new Intent(MainActivity.this, LogInActivity.class);
 		user.setLoggedIn(false);
-		SocketConnection connection=new SocketConnection();
+		SocketConnection connection = new SocketConnection();
 		connection.logout();
 		this.startActivity(intent);
 	}

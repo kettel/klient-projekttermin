@@ -63,7 +63,7 @@ public class QoSManager implements Observer {
 			adjustToLowBatteryLevel();
 		}
 		else{
-			adjustToOkayBatteryLevel();
+//			adjustToOkayBatteryLevel();
 		}
 	}
 
