@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.util.Log;
 import models.Assignment;
 import models.AuthenticationModel;
 import models.Contact;
@@ -47,6 +48,7 @@ public class Database {
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			assignmentsDB.addAssignment(contentResolver, (Assignment) m);
+			Log.e("FEL", "Sparar ner ett assignment i Database.java");
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			contactsDB.addContact(contentResolver, (Contact) m);
@@ -123,10 +125,10 @@ public class Database {
 		return returnList;
 	}
 
-	public void updateModel(ModelInterface m, ContentResolver contentResolver){
+	public int updateModel(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			assignmentsDB.updateAssignment(contentResolver, (Assignment) m);
+			return assignmentsDB.updateAssignment(contentResolver, (Assignment) m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			contactsDB.updateContact(contentResolver, (Contact) m);
@@ -137,5 +139,6 @@ public class Database {
 		else if(dbRep.equalsIgnoreCase("authentication")){
 			authenticationDB.updateAuthentication(contentResolver, (AuthenticationModel) m);
 		}
+		return 0;
 	}
 }

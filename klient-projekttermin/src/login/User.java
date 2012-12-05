@@ -6,6 +6,7 @@ public class User {
 
 	private AuthenticationModel authenticationModel;
 	private boolean loggedIn=false;
+	private boolean onlineConnection = false;
 
 	private User(){}
 
@@ -22,7 +23,15 @@ public class User {
 	public void setAuthenticationModel(AuthenticationModel authenticationModel) {
 		this.authenticationModel = authenticationModel;
 	}
-
+	
+	public boolean gotInlineConnection(){
+		return onlineConnection;
+	}
+	
+	public void setOnlineConnection(Boolean bol){
+		onlineConnection = bol;
+	}
+	
 	public boolean isLoggedIn() {
 		return loggedIn;
 	}
