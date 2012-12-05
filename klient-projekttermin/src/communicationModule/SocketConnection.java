@@ -108,11 +108,22 @@ public class SocketConnection extends Observable {
 	 * index 0, port på index 1 och jettyport på index 2
 	 */
 	private void loadNextServer() {
-		String[] server = iterator.next();
-		System.out.println("byter port: " + server[1]);
-		ip = server[0];
-		port = Integer.parseInt(server[1]);
-		CommonUtilities.SERVER_URL = "http://" + server[0] + ":" + server[2];
+		if (iterator.hasNext()) {
+			String[] server = iterator.next();
+			System.out.println("byter port: " + server[1]);
+			ip = server[0];
+			port = Integer.parseInt(server[1]);
+			CommonUtilities.SERVER_URL = "http://" + server[0] + ":" + server[2];
+		}else{
+			try {
+				wait(100);
+				iterator=servers.iterator();
+			} catch (InterruptedException e) {
+				System.out.println("Omladdning av serverlistan i loadNextServer i SocketConnection sket sig");
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	/**
@@ -225,21 +236,22 @@ public class SocketConnection extends Observable {
 
 	private Socket createSocket() {
 		Socket socket = null;
-		try {
-			socket = new Socket(ip, port);
-			System.out.println("Socketen lyckades ansluta");
-		} catch (UnknownHostException e) {
-			if (iterator.hasNext()) {
-				loadNextServer();
-				return createSocket();
-			}
+		do {
+			try {
+				socket = new Socket(ip, port);
+				System.out.println("Socketen lyckades ansluta");
+			} catch (UnknownHostException e) {
+				if (iterator.hasNext()) {
+					loadNextServer();
+				}
 
-		} catch (IOException e) {
-			if (iterator.hasNext()) {
-				loadNextServer();
-				return createSocket();
+			} catch (IOException e) {
+				if (iterator.hasNext()) {
+					loadNextServer();
+				}
 			}
-		}
+		} while (socket==null&&iterator.hasNext());
+		
 		return socket;
 	}
 

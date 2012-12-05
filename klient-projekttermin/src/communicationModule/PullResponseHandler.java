@@ -47,18 +47,21 @@ public class PullResponseHandler implements Observer {
 			showNotification();
 		} else {
 			if (data instanceof Contact) {
+				System.out.println("Ny kontakt");
 				message = "Ny kontakt";
 				db.addToDB((Contact) data, context.getContentResolver());
 				notificationIntent = new Intent(context,
 						ContactsBookActivity.class);
 				hasChanged = true;
 			} else if (data instanceof Assignment) {
+				System.out.println("Nytt uppdrag");
 				message = "Nytt uppdrag";
 				db.addToDB((Assignment) data, context.getContentResolver());
 				notificationIntent = new Intent(context,
 						AssignmentOverview.class);
 				hasChanged = true;
 			} else if (data instanceof MessageModel) {
+				System.out.println("Nytt meddelande");
 				message = "Nytt meddelande";
 				db.addToDB((MessageModel) data, context.getContentResolver());
 				notificationIntent = new Intent(context, Inbox.class);

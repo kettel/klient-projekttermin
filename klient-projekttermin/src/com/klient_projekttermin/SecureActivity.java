@@ -33,43 +33,50 @@ public class SecureActivity extends Activity {
 	public static String inactivity;
 	public static int LOGIN_REQUEST = 1;
 	private User user = User.getInstance();
-	private SocketConnection socketConnection=new SocketConnection();
+	private SocketConnection socketConnection = new SocketConnection();
 	private Database database;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		database=Database.getInstance(getApplicationContext());
+		database = Database.getInstance(getApplicationContext());
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(
 				DISPLAY_MESSAGE_ACTION));
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
-		
+
 		if (!user.isLoggedIn()) {
 			Intent myIntent = new Intent(SecureActivity.this,
 					LogInActivity.class);
 			this.startActivityForResult(myIntent, LOGIN_REQUEST);
 		}
 	}
+
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(mHandleMessageReceiver);
 		super.onDestroy();
 	}
+
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
 			if (newMessage.contains("registered")) {
-				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
-				
+				System.out.println("Registrerad, pullar från server");
+				user.getAuthenticationModel()
+						.setGCMID(
+								GCMRegistrar
+										.getRegistrationId(getApplicationContext()));
 				socketConnection.pullFromServer();
 				checkContactDatabase();
-			}else if (newMessage.equals("logout")) {
+			} else if (newMessage.equals("logout")) {
 				socketConnection.logout();
 				finish();
 			}
 		}
 	};
+
 	public void checkContactDatabase() {
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
 			socketConnection.getAllContactsReq();
