@@ -54,26 +54,6 @@ public class LogInActivity extends Activity implements Observer {
 		callingactivity = intent.getIntExtra("calling-activity", 0);
 		
 	}
-	@Override
-	public void onBackPressed() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setTitle("Title");
-	    builder.setMessage("Vill du avsluta ut?");
-	    builder.setPositiveButton("Ja", new OnClickListener() {
-	            public void onClick(DialogInterface dialog, int arg1) {
-	                dialog.dismiss();
-	                SocketConnection socketConnection=new SocketConnection();
-	                socketConnection.logout();
-	                setResult(RESULT_CANCELED);
-	                finish();
-	            }});
-	    builder.setNegativeButton("Nej", new OnClickListener() {
-	            public void onClick(DialogInterface dialog, int arg1) {
-	                dialog.dismiss();
-	            }});
-	    builder.setCancelable(false);
-	    builder.create().show();
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -208,13 +188,11 @@ public class LogInActivity extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
+		
 		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
 	}
 
 	public void accessGranted() {
-//		qosManager = QoSManager.getInstance();
-//		qosManager.setContext(this);
-//		qosManager.adjustToCurrentBatteryMode();
 
 		switch (callingactivity) {
 		case ActivityConstants.INACTIVITY:

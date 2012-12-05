@@ -43,15 +43,10 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		batterylevelBar = (SeekBar) findViewById(id.lowBatteyLevelSeekBar);
 		batterylevelBar.setOnSeekBarChangeListener(this);
 		mapPermission = (CheckBox) findViewById(id.mapFunctionCheckBox);
-		mapPermission.setOnCheckedChangeListener(this);
 		messagePermission = (CheckBox) findViewById(id.messageFunctionCheckBox);
-		messagePermission.setOnCheckedChangeListener(this);
 		assignmentPermission = (CheckBox) findViewById(id.assignmentFunctionCheckBox);
-		assignmentPermission.setOnCheckedChangeListener(this);
 		cameraPermission = (CheckBox) findViewById(id.cameraFunctionCheckBox);
-		cameraPermission.setOnCheckedChangeListener(this);
 		wifiPermission = (CheckBox) findViewById(id.WiFiConnectionCheckBox);
-		wifiPermission.setOnCheckedChangeListener(this);
 		lowBatteryLevelText = (TextView) findViewById(id.lowBatteryValue);
 		screenBrightnessLevelText = (TextView) findViewById(id.lowScreenBrightnessValue);
 
@@ -61,6 +56,12 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		}
 
 		setCurrentValues();
+
+		mapPermission.setOnCheckedChangeListener(this);
+		wifiPermission.setOnCheckedChangeListener(this);
+		cameraPermission.setOnCheckedChangeListener(this);
+		messagePermission.setOnCheckedChangeListener(this);
+		assignmentPermission.setOnCheckedChangeListener(this);
 	}
 
 	@Override
@@ -162,42 +163,12 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	}
 
 	private void setCurrentValues() {
-		System.out.println("Nu uppdateras current values");
 
-		if(!qosManager.isAllowedToStartMap()){
-			mapPermission.setChecked(true);
-		}
-		else{
-			mapPermission.setChecked(false);
-		}
-		if(!qosManager.isAllowedToStartMessages()){
-			System.out.println("Message sätts till checked");
-			messagePermission.setChecked(true);
-		}
-		else{
-			System.out.println("Message sätts till unchecked");
-			messagePermission.setChecked(false);
-		}
-		if(!qosManager.isAllowedToStartAssignment()){
-			System.out.println("Uppdrag sätts till checked");
-			assignmentPermission.setChecked(true);
-		}
-		else{
-			System.out.println("Uppdrag sätts till unchecked");
-			assignmentPermission.setChecked(false);
-		}
-		if(!qosManager.isAllowedToStartCamera()){
-			cameraPermission.setChecked(true);
-		}
-		else{
-			cameraPermission.setChecked(false);
-		}
-		if(!qosManager.isAllowedToUseWiFi()){
-			wifiPermission.setChecked(true);
-		}
-		else{
-			wifiPermission.setChecked(false);
-		}
+		mapPermission.setChecked(!qosManager.getPermissionToStartMap());
+		messagePermission.setChecked(!qosManager.getPermissionToStartMessages());
+		assignmentPermission.setChecked(!qosManager.getPermissionToStartAssignment());
+		cameraPermission.setChecked(!qosManager.getPermissionToStartCamera());
+		wifiPermission.setChecked(!qosManager.getPermissionToUseWiFi());
 		screenBrightnessBar.setProgress((int) (qosManager.getScreenBrightnessValue()*100));
 		batterylevelBar.setProgress(qosManager.getLowBatteryLevel());
 	}
@@ -206,7 +177,6 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			boolean fromUser) {
 
 		if(seekBar.equals(screenBrightnessBar)){
-			System.out.println("Nu hände det något med ljusstyrkan");
 			float value = ((float) progress/100);
 
 			if(value<=0.1){
@@ -216,7 +186,6 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			qosManager.setScreenBrightnessValueLow(value);
 		}
 		else{
-			System.out.println("Nu hände det något med baterinivån");
 			lowBatteryLevelText.setText(progress+" %");
 			qosManager.setLowBatteryLevel(progress);
 		}
@@ -233,6 +202,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	}
 
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		System.out.println("NU TRYCKTE DU PÅ EN CHECKBOX");
 		int mapChkId = mapPermission.getId();
 		int messageChkId = messagePermission.getId();
 		int assignmentChkId = assignmentPermission.getId();
@@ -243,11 +213,9 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			setMapPermission(buttonView);
 		}
 		else if(messageChkId==buttonView.getId()){
-			System.out.println("DU TRYCKTE PÅ MESSAGE");
 			setMessagePermission(buttonView);
 		}
 		else if(assignmentChkId==buttonView.getId()){
-			System.out.println("DU TRYCKTE PÅ ASSIGNMENT");
 			setAssignmentPermission(buttonView);
 		}
 		else if(cameraChkId==buttonView.getId()){

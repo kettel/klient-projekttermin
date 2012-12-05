@@ -51,6 +51,7 @@ public class SecureActivity extends Activity {
 			this.startActivityForResult(myIntent, LOGIN_REQUEST);
 		}
 	}
+	
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(mHandleMessageReceiver);
