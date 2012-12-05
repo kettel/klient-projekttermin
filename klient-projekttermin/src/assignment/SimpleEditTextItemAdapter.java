@@ -368,6 +368,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			sb.append(contact.getContactName() + ", ");
 		}
 		itemStrings.put(7, sb.toString());
+		b7.setText(sb.toString());
 	}
 	
 	public void setItemStrings(HashMap<Integer, String> itemStrings) {

@@ -122,9 +122,11 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	}
 	
 	private void fromContact(Intent i){
+		System.out.println("intent " + i);
 		Gson gson = new Gson();
 		Type type = new TypeToken<List<Contact>>() {
 		}.getType();
+		System.out.println(i.getStringExtra("agents"));
 		agents  = gson.fromJson(i.getStringExtra("agents"), type);
 		adapter.setAgents(agents);
 	}

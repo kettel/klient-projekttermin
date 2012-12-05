@@ -87,9 +87,12 @@ public class ContactsBookActivity extends SecureActivity {
 				Type type = new TypeToken<List<Contact>>() {
 				}.getType();
 				getContactsForAssignment();
+				System.out.println("ANTAL KONTAKTER SELEAFER"
+						+ contactsToAssignment.size());
 				intentAssignment.putExtra("agents",
 						gson.toJson(contactsToAssignment, type));
-				setResult(ActivityConstants.RESULT_FROM_CONTACTS);
+				setResult(ActivityConstants.RESULT_FROM_CONTACTS,
+						intentAssignment);
 				finish();
 				return false;
 			}
@@ -117,23 +120,35 @@ public class ContactsBookActivity extends SecureActivity {
 
 	private void getContactsForAssignment() {
 		int[] sel = getAllSelected();
+		int cId = 0;
+		HashMap<Integer, Contact> hs = new HashMap<Integer, Contact>();
 		for (ModelInterface temp : db.getAllFromDB(new Contact(),
 				getContentResolver())) {
 			Contact c = (Contact) temp;
-			for (int i = 0; i < sel.length; i++) {
-				if (c.getId() == sel[i]) {
-					contactsToAssignment.add(c);
-				}
-			}
+			hs.put(cId, c);
+			cId++;
+		}
+		System.out.println(sel.length+ " LÄÄNGD");
+		for (int i = 0; i < sel.length; i++) {
+			System.out.println(sel[i] + " SEL ");
+			contactsToAssignment.add(hs.get(sel[i]));
 		}
 	}
 
 	private int[] getAllSelected() {
 		h = ca.getSelected();
-		int[] selectedContacs = new int[h.size()];
+		int k = 0;
+		for (boolean b : h.values()) {
+			if(b){
+				k++;
+			}
+		}
+		int[] selectedContacs = new int[k];
 		int j = 0;
 		for (int i : h.keySet()) {
+			System.out.println(i + " VALUE " + h.get(i));
 			if (h.get(i)) {
+				System.out.println("Denna lägger vi till " + i);
 				selectedContacs[j] = i;
 				j++;
 			}

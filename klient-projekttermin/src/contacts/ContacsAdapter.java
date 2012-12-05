@@ -23,6 +23,13 @@ public class ContacsAdapter extends ArrayAdapter<String> {
 		super(activity, textViewResourceId, objects);
 		this.activity = activity;
 		this.callingActivity = callingActivity;
+		initializeHash(objects.length);
+	}
+	
+	private void initializeHash(int i){
+		for (int j = 0; j < i; j++) {
+			selected.put(j, false);
+		}
 	}
 
 	@Override
@@ -34,11 +41,12 @@ public class ContacsAdapter extends ArrayAdapter<String> {
 
 			public void onClick(View v) {
 				if (callingActivity == ActivityConstants.ADD_AGENTS) {
-					if (v.getBackground().equals(Color.rgb(0x80, 0x80, 0xFF))) {
+					if (isSelected(v.getId())) {
+						setSelected(v.getId(), false);
 						v.setBackgroundColor(Color.TRANSPARENT);
 					} else {
 						setSelected(v.getId(), true);
-						v.setBackgroundColor(Color.rgb(0x80, 0x80, 0xFF));
+						v.setBackgroundColor(Color.LTGRAY);
 					}
 				}
 				((ContactsBookActivity) activity).contactOptions(v);
@@ -49,9 +57,14 @@ public class ContacsAdapter extends ArrayAdapter<String> {
 
 	public void setSelected(int id, boolean selected) {
 		this.selected.put(id, selected);
+		System.out.println("Sätter selected " + id + " TILL " + selected);
 	}
 
 	public HashMap<Integer, Boolean> getSelected() {
 		return selected;
+	}
+	
+	private boolean isSelected(int i){
+		return selected.get(i);
 	}
 }
