@@ -3,10 +3,15 @@ package qosManager;
 import java.util.Observable;
 import java.util.Observer;
 
+import login.User;
+
 import android.app.Activity;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.view.MenuItem;
 import android.view.WindowManager;
 
 public class QoSManager implements Observer {
@@ -30,8 +35,10 @@ public class QoSManager implements Observer {
 
 	private BatteryCheckingFunction batteryCheckingFunction;
 	private Context applicationContext;
+	private User user;
 
 	private QoSManager() {
+		user = User.getInstance();
 	}
 
 	private static QoSManager instance = new QoSManager();
@@ -63,7 +70,7 @@ public class QoSManager implements Observer {
 			adjustToLowBatteryLevel();
 		}
 		else{
-			adjustToOkayBatteryLevel();
+			//			adjustToOkayBatteryLevel();
 		}
 	}
 
@@ -122,6 +129,19 @@ public class QoSManager implements Observer {
 		WifiManager wifiManager = (WifiManager) applicationContext
 				.getSystemService(Context.WIFI_SERVICE);
 		wifiManager.setWifiEnabled(wantToTurnOn);
+	}
+
+	public void checkConnectivity(MenuItem onlineMarker, MenuItem offlineMarker,Boolean haveWifiConnection,Boolean haveMobileConnection){
+
+		if(haveWifiConnection||haveMobileConnection){
+			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		}
+		else{
+			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		}
+
 	}
 
 	public Boolean batterySaveModeIsActivated(){

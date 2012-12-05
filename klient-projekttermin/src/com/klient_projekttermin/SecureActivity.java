@@ -2,11 +2,6 @@ package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.DISPLAY_MESSAGE_ACTION;
 import static com.klient_projekttermin.CommonUtilities.EXTRA_MESSAGE;
-
-import com.google.android.gcm.GCMRegistrar;
-import communicationModule.SocketConnection;
-import database.Database;
-
 import login.LogInActivity;
 import login.User;
 import models.Contact;
@@ -21,6 +16,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.google.android.gcm.GCMRegistrar;
+
+import communicationModule.PullResponseHandler;
+import communicationModule.SocketConnection;
+
+import database.Database;
+
 /**
  * Bas aktivitet för alla aktiviteter. Alla aktiviteter extendar denna.
  * 
@@ -33,45 +35,48 @@ public class SecureActivity extends Activity {
 	public static String inactivity;
 	public static int LOGIN_REQUEST = 1;
 	private User user = User.getInstance();
-	private SocketConnection socketConnection=new SocketConnection();
+	private SocketConnection socketConnection = new SocketConnection();
 	private Database database;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		database=Database.getInstance(getApplicationContext());
+		database = Database.getInstance(getApplicationContext());
 		registerReceiver(mHandleMessageReceiver, new IntentFilter(
 				DISPLAY_MESSAGE_ACTION));
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
 		qosManager.adjustToCurrentBatteryMode();
-		
+		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 		if (!user.isLoggedIn()) {
-			Intent myIntent = new Intent(SecureActivity.this,
-					LogInActivity.class);
-			this.startActivityForResult(myIntent, LOGIN_REQUEST);
+			finish();
 		}
 	}
-	
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(mHandleMessageReceiver);
 		super.onDestroy();
 	}
+
 	private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
 			if (newMessage.contains("registered")) {
-				user.getAuthenticationModel().setGCMID(GCMRegistrar.getRegistrationId(getApplicationContext()));
-				
+				System.out.println("Registrerad, pullar från server");
+				user.getAuthenticationModel()
+						.setGCMID(
+								GCMRegistrar
+										.getRegistrationId(getApplicationContext()));
 				socketConnection.pullFromServer();
 				checkContactDatabase();
-			}else if (newMessage.equals("logout")) {
+			} else if (newMessage.equals("logout")) {
 				socketConnection.logout();
 				finish();
 			}
 		}
 	};
+
 	public void checkContactDatabase() {
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
 			socketConnection.getAllContactsReq();

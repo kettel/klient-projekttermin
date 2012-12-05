@@ -6,6 +6,7 @@ import java.util.Observer;
 
 import messageFunction.Inbox;
 import models.Assignment;
+import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
@@ -49,34 +50,42 @@ public class PullResponseHandler implements Observer {
 			showNotification();
 		} else {
 			if (data instanceof Contact) {
+				System.out.println("Ny kontakt");
 				message = "Ny kontakt";
 				db.addToDB((Contact) data, context.getContentResolver());
 				notificationIntent = new Intent(context,
 						ContactsBookActivity.class);
 				hasChanged = true;
 			} else if (data instanceof Assignment) {
+				System.out.println("Nytt uppdrag");
 				message = "Nytt uppdrag";
-				int update = db.updateModel((Assignment) data, context.getContentResolver());
-				Log.e("FEL", "Tar upp ett uppdrag och uppdaterar: " + Integer.toString(update));
-				if (update==0) {
-					Log.e("FEL", "Kunde inte uppdatera. Lägger därför till uppdraget till DB");
+				/**
+				 * Om update blir en etta har uppdrag uppdateras och således
+				 * behöver det inte läggas till som nytt. Annars lägger man till
+				 * det som ett nytt uppdrag.
+				 */
+				int update = db.updateModel((Assignment) data,
+						context.getContentResolver());
+				if (update == 0) {
 					db.addToDB((Assignment) data, context.getContentResolver());
-				notificationIntent = new Intent(context,
-						AssignmentOverview.class);
+					notificationIntent = new Intent(context,
+							AssignmentOverview.class);
 				}
-				
+
 				hasChanged = true;
 			} else if (data instanceof MessageModel) {
+				System.out.println("Nytt meddelande");
 				message = "Nytt meddelande";
 				db.addToDB((MessageModel) data, context.getContentResolver());
 				notificationIntent = new Intent(context, Inbox.class);
 				hasChanged = true;
 				GCMIntentService.sendMessage(context, "message");
+			} else if (data instanceof AuthenticationModel) {
+
 			}
 		}
 
 	}
-
 
 	private void showNotification() {
 		String title = context.getString(R.string.app_name);

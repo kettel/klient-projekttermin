@@ -1,6 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/OfflineMarker"
+        android:icon="@android:drawable/presence_offline"
+        android:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/OnlineMarker"
+        android:icon="@android:drawable/presence_online"
+        android:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/logout"
         android:showAsAction="ifRoom|withText"
         android:title="@string/logout"/>
@@ -8,10 +16,5 @@
         android:id="@+id/QoSManager"
         android:showAsAction="ifRoom|withText"
         android:title="@string/QoS"/>
-    
-    <item
-        android:id="@+id/OnlineMarker"
-        android:icon="@android:drawable/presence_online"
-        android:showAsAction="ifRoom"/>
 
 </menu>
