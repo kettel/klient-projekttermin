@@ -179,13 +179,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 				tempUnseparated = "";
 			}
 
-			addAgentsFromList(tempUnseparated, newAssignment); // temp(8) är en
-																// sträng
-																// med agenter
-																// som
-																// ska
-																// separeras med
-																// ",".
+			addAgentsFromList(tempUnseparated, newAssignment); 
 
 			tempUnseparated = ""; // Nolla strängen
 
