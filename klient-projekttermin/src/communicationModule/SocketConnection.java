@@ -62,7 +62,6 @@ public class SocketConnection extends Observable {
 		new Thread(new Runnable() {
 			public void run() {
 				sendJSON(gson.toJson(model));
-				Log.e("FEL", "Försöker skicka något från sendModel i socketconnection");
 			}
 		}).start();
 	}
@@ -151,7 +150,7 @@ public class SocketConnection extends Observable {
 				if (socket != null) {
 					User user = User.getInstance();
 					String json = gson.toJson(user.getAuthenticationModel());
-					writeToSocket(socket, json + "\n" + "pull\nclose\n");
+					writeToSocket(socket, json + "\npull\nclose\n");
 					readSocket(socket);
 					closeSocket(socket);
 				}
@@ -167,6 +166,7 @@ public class SocketConnection extends Observable {
 
 				Socket socket = createSocket();
 				if (socket != null) {
+					System.out.println("contacs");
 					User user = User.getInstance();
 					String json = gson.toJson(user.getAuthenticationModel());
 					writeToSocket(socket, json + "\ngetAllContacts\nclose\n");
@@ -183,6 +183,7 @@ public class SocketConnection extends Observable {
 					new InputStreamReader(socket.getInputStream()));
 			String inputString;
 			while ((inputString = bufferedReader.readLine()) != null) {
+				System.out.println("Läser "+inputString);
 				if (inputString
 						.contains("\"databaseRepresentation\":\"message\"")) {
 					MessageModel message = gson.fromJson(inputString,

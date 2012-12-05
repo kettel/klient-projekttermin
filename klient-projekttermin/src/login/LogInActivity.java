@@ -214,7 +214,7 @@ public class LogInActivity extends Activity implements Observer {
 		if (data instanceof AuthenticationModel) {
 			System.out.println("Inne i if");
 			user.setOnlineConnection(true);
-			System.out.println("Precis satt till: "+user.isLoggedIn());
+			System.out.println("Precis satt till: " + user.isLoggedIn());
 
 			this.runOnUiThread(new Runnable() {
 

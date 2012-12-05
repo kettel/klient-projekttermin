@@ -17,6 +17,8 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.google.android.gcm.GCMRegistrar;
+
+import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
 import database.Database;
@@ -45,6 +47,7 @@ public class SecureActivity extends Activity {
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
 		qosManager.adjustToCurrentBatteryMode();
+		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 		if (!user.isLoggedIn()) {
 			finish();
 		}

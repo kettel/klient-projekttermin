@@ -60,10 +60,6 @@ public class MainActivity extends SecureActivity {
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
 		setContentView(R.layout.activity_main);
-		user = User.getInstance();
-
-		socketConnection.addObserver(new PullResponseHandler(
-				getApplicationContext()));
 
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
