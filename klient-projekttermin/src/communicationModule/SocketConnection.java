@@ -183,7 +183,6 @@ public class SocketConnection extends Observable {
 					new InputStreamReader(socket.getInputStream()));
 			String inputString;
 			while ((inputString = bufferedReader.readLine()) != null) {
-				System.out.println("Läser "+inputString);
 				if (inputString
 						.contains("\"databaseRepresentation\":\"message\"")) {
 					MessageModel message = gson.fromJson(inputString,
