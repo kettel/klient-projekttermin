@@ -52,7 +52,9 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-           
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -93,8 +95,8 @@
         <activity
             android:name="assignment.AddAssignment"
             android:label="@string/addAssignment"
-            android:windowSoftInputMode="adjustPan" 
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="assignment.AssignmentDetails"
@@ -103,7 +105,7 @@
         <activity
             android:name="login.LogInActivity"
             android:label="@string/title_activity_login_function" >
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -117,10 +119,10 @@
             android:name="camera.Album"
             android:label="@string/title_activity_album" >
         </activity>
-         <activity
+        <activity
             android:name="qosManager.QoSInterface"
             android:label="@string/title_activity_qo_sinterface"
-            android:screenOrientation="portrait"  >
+            android:screenOrientation="portrait" >
         </activity>
         <!-- Database Content Providers -->
         <provider
@@ -141,11 +143,11 @@
         <!-- GCM service -->
         <activity
             android:name="camera.Cam"
-            android:label="@string/title_activity_cam" 
-            android:screenOrientation="landscape" 
-            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
-           
+            android:label="@string/title_activity_cam"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
         </activity>
+
         <service android:name="com.klient_projekttermin.GCMIntentService" />
     </application>
 
