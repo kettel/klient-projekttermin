@@ -61,6 +61,11 @@ public class LogInActivity extends Activity implements Observer {
 		return true;
 	}
 
+	@Override
+	public void onBackPressed() {
+		finish();
+	}
+	
 	/*
 	 * Metoden hämtar data från textfälten i inloggningsfönstret
 	 */
@@ -80,6 +85,36 @@ public class LogInActivity extends Activity implements Observer {
 		tryOnlineLogin(originalModel);
 	}
 
+	/*
+	 * Metoden skickar iväg autenticeringsförfrågan till servern
+	 */
+	public void tryOnlineLogin(AuthenticationModel authenticationModel) {
+
+		SocketConnection connection = new SocketConnection();
+		connection.addObserver(this);
+		connection.authenticate(authenticationModel);
+		
+		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
+	}
+
+	/**
+	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som
+	 * finns i databasen först och om så inte är fallet försöker den hämta
+	 * informationen från servern.
+	 */
+	private void checkAuthenticity(AuthenticationModel authenticationModel) {
+		System.out.println("AUTHENTICATION FROM SERVER: "+authenticationModel);
+		if (authenticationModel.getUserName().equals(
+				originalModel.getUserName())
+				&& authenticationModel.isAccessGranted().equals("true")) {
+			database.addToDB(authenticationModel, getContentResolver());
+			accessGranted();
+
+		} else {
+			incorrectLogIn();
+		}
+	}
+	
 	public void tryOfflineLogin(AuthenticationModel loginInput)
 			throws NoSuchAlgorithmException {
 
@@ -111,22 +146,20 @@ public class LogInActivity extends Activity implements Observer {
 		}
 	}
 
-	/**
-	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som
-	 * finns i databasen först och om så inte är fallet försöker den hämta
-	 * informationen från servern.
-	 */
-	private void checkAuthenticity(AuthenticationModel authenticationModel) {
-		if (authenticationModel.getUserName().equals(
-				originalModel.getUserName())
-				&& authenticationModel.isAccessGranted().equals("true")) {
-			database.addToDB(authenticationModel, getContentResolver());
-			accessGranted();
+	public void accessGranted() {
 
-		} else {
-			incorrectLogIn();
+		switch (callingactivity) {
+		case ActivityConstants.INACTIVITY:
+			break;
+		default:
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.putExtra("USER", userName);
+			startActivity(intent);
+			break;
 		}
-
+		user.setLoggedIn(true);
+		setResult(RESULT_OK);
+		finish();
 	}
 
 	public void incorrectLogIn() {
@@ -150,7 +183,7 @@ public class LogInActivity extends Activity implements Observer {
 			});
 		}
 	}
-
+	
 	public void removeLastUserFromDB() {
 		List list = database.getAllFromDB(new AuthenticationModel(),
 				getContentResolver());
@@ -180,36 +213,9 @@ public class LogInActivity extends Activity implements Observer {
 		return hexString.toString();
 	}
 
-	/*
-	 * Metoden skickar iväg autenticeringsförfrågan till servern
-	 */
-	public void tryOnlineLogin(AuthenticationModel authenticationModel) {
-
-		SocketConnection connection = new SocketConnection();
-		connection.addObserver(this);
-		connection.authenticate(authenticationModel);
-		
-		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,true);
-	}
-
-	public void accessGranted() {
-
-		switch (callingactivity) {
-		case ActivityConstants.INACTIVITY:
-			break;
-		default:
-			Intent intent = new Intent(this, MainActivity.class);
-			intent.putExtra("USER", userName);
-			startActivity(intent);
-			break;
-		}
-		user.setLoggedIn(true);
-		setResult(RESULT_OK);
-		finish();
-	}
-
 	public void update(Observable observable, Object data) {		
 		if (data instanceof AuthenticationModel) {
+			user.setOnlineConnection(true);
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -219,6 +225,7 @@ public class LogInActivity extends Activity implements Observer {
 			checkAuthenticity((AuthenticationModel) data);
 		}
 		else {
+			user.setOnlineConnection(false);
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
