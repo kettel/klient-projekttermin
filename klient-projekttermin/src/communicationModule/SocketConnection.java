@@ -20,6 +20,8 @@ import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.klient_projekttermin.CommonUtilities;
@@ -63,6 +65,7 @@ public class SocketConnection extends Observable {
 		new Thread(new Runnable() {
 			public void run() {
 				sendJSON(gson.toJson(model));
+				Log.e("FEL", "Försöker skicka något från sendModel i socketconnection");
 			}
 		}).start();
 	}

@@ -98,18 +98,22 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		if (position == 7) {
 			convertView = inflater.inflate(getItemViewType(position), null);
 
-			final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
-					.findViewById(R.id.autoText_item);
+	
+	final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
+			.findViewById(R.id.autoText_item);
+	
+	
+	
+	autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
+			context, null, true));
+		
+		autoCompleteTextView.setHint(((HashMap<String, String>) this
+				.getItem(position)).get("line1"));
+		if (itemStrings.get(position) != null && !itemStrings.get(position).equals("")) {
+			autoCompleteTextView.setHint(itemStrings.get(position));
+		}
 
-			autoCompleteTextView.setAdapter(new ContactsCursorAdapter(context,
-					null, true));
-
-			autoCompleteTextView.setHint(((HashMap<String, String>) this
-					.getItem(position)).get("line1"));
-			if (itemStrings.get(position) != null
-					&& !itemStrings.get(position).equals("")) {
-				autoCompleteTextView.setHint(itemStrings.get(position));
-			}
+			
 
 			// Snygghax.. för att få tag i auto-vyns text.
 			autoCompleteTextView
