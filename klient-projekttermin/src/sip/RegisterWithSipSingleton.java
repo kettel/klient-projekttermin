@@ -241,7 +241,16 @@ public class RegisterWithSipSingleton {
         }
     }
     
-
+    public void dropCall(){
+    	try {
+			call.endCall();
+		} catch (SipException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    
 	public SipAudioCall getCall() {
 		return call;
 	}

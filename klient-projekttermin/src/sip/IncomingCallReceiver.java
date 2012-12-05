@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.sip.SipAudioCall;
+import android.net.sip.SipException;
 import android.net.sip.SipProfile;
 import android.util.Log;
 
@@ -47,6 +48,12 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 				public void onCallEnded(SipAudioCall call){
 					Log.d("SIP/IncomingCallRec/onCallEnded","Samtalet avslutades...");
 					RegisterWithSipSingleton.callStatus.setStatus(false);
+					try {
+						call.endCall();
+					} catch (SipException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			};
 			// TODO: Problem i Static-land här då manager antagligen inte riktigt finns..
@@ -56,7 +63,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 			startIncomingCallDialog.putExtra("caller", incomingCall.getPeerProfile().getDisplayName());
 			startIncomingCallDialog.putExtra("outgoing",false);
 			startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//			regSip.setCall(incomingCall);
+			regSip.setCall(incomingCall);
 			StaticCall.call = incomingCall;
 			context.startActivity(startIncomingCallDialog);
 		} catch (Exception e) {

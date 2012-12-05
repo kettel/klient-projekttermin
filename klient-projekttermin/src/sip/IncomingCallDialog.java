@@ -17,6 +17,7 @@ import android.hardware.SensorManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.net.sip.SipException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -366,6 +367,12 @@ public class IncomingCallDialog extends Activity {
 				// Lägg på samtal
 				if (!buttonView.isChecked() && regSip.isCallAnswered) {
 					regSip.isCallAnswered = false;
+					try {
+						IncomingCallReceiver.incomingCall.endCall();
+					} catch (SipException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					// Underrätta lyssnare om att samtalet är slut
 					RegisterWithSipSingleton.callStatus.setStatus(false);
 					Log.d("SIP/IncomingCallDialog/incomingCall/onCheckedListener",
@@ -456,6 +463,7 @@ public class IncomingCallDialog extends Activity {
 	private void killEssentials() {
 		// Avsluta ev pågående samtal
 		regSip.isCallAnswered = false;
+		regSip.dropCall();
 		endCall();
 		
 		// Avregistrera närhetssensorlyssnaren
