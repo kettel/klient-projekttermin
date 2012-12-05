@@ -61,6 +61,10 @@ public class MainActivity extends SecureActivity {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
+		user = User.getInstance();
+
+		socketConnection.addObserver(new PullResponseHandler(
+				getApplicationContext()));
 		setContentView(R.layout.activity_main);
 		user = User.getInstance();
 
@@ -86,9 +90,9 @@ public class MainActivity extends SecureActivity {
 			if (GCMRegistrar.isRegisteredOnServer(this) && user.isLoggedIn()) {
 				// Skips registration.
 				user.getAuthenticationModel()
-				.setGCMID(
-						GCMRegistrar
-						.getRegistrationId(getApplicationContext()));
+						.setGCMID(
+								GCMRegistrar
+										.getRegistrationId(getApplicationContext()));
 				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
@@ -298,6 +302,8 @@ public class MainActivity extends SecureActivity {
 		finish();
 		Intent intent = new Intent(MainActivity.this, LogInActivity.class);
 		user.setLoggedIn(false);
+		SocketConnection connection = new SocketConnection();
+		connection.logout();
 		this.startActivity(intent);
 	}
 }
