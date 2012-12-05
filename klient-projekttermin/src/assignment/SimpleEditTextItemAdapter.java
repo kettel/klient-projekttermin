@@ -7,6 +7,7 @@ import java.util.Map;
 
 import map.CustomAdapter;
 import map.MapActivity;
+import models.Contact;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -23,15 +24,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import camera.Album;
 import camera.Cam;
 
@@ -41,7 +39,7 @@ import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
 
-import contacts.ContactsCursorAdapter;
+import contacts.ContactsBookActivity;
 
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
@@ -52,6 +50,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private Button b1;
 	private Button b5;
 	private Button b3;
+	private Button b7;
 	public static String items;
 	private String temp = "Agenter: ";
 
@@ -79,7 +78,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		case 3:
 			return R.layout.button_item;
 		case 7:
-			return R.layout.autocomp_item;
+			return R.layout.button_item;
 		default:
 			return R.layout.textfield_item;
 		}
@@ -97,46 +96,27 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		editText = (EditText) v.findViewById(R.id.text_item);
 		if (position == 7) {
 			convertView = inflater.inflate(getItemViewType(position), null);
+			b7 = (Button) convertView.findViewById(R.id.button_item);
+			System.out.println(b7 + " bfak  " + this.getItem(position));
+			b7.setHint(((HashMap<String, String>) this.getItem(position))
+					.get("line1"));
+			if (itemStrings.get(position) != null
+					&& !itemStrings.get(position).equals("")) {
+				b7.setText(itemStrings.get(position));
+			}
+			b7.setOnClickListener(new OnClickListener() {
 
-	
-	final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
-			.findViewById(R.id.autoText_item);
-	
-	
-	
-	autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
-			context, null, true));
-		
-		autoCompleteTextView.setHint(((HashMap<String, String>) this
-				.getItem(position)).get("line1"));
-		if (itemStrings.get(position) != null && !itemStrings.get(position).equals("")) {
-			autoCompleteTextView.setHint(itemStrings.get(position));
-		}
+				public void onClick(View v) {
+					agentsAlternatives(b7);
+				}
 
-			
+			});
 
-			// Snygghax.. för att få tag i auto-vyns text.
-			autoCompleteTextView
-					.setOnItemClickListener(new OnItemClickListener() {
-
-						public void onItemClick(AdapterView<?> arg0, View arg1,
-								int arg2, long arg3) {
-							TextView e = (TextView) arg1;
-							
-							temp = temp + e.getText().toString() + ", ";
-
-							itemStrings.put(7, temp);
-							autoCompleteTextView.setHint(temp);
-							autoCompleteTextView.setText("");
-							// itemStrings.put(8, e.getText().toString());
-						}
-					});
-
-		}else if(position == 3){
+		} else if (position == 3) {
 			convertView = inflater.inflate(getItemViewType(position), null);
 			b3 = (Button) convertView.findViewById(R.id.button_item);
-			b3.setHint(((HashMap<String, String>) this
-					.getItem(position)).get("line1"));
+			b3.setHint(((HashMap<String, String>) this.getItem(position))
+					.get("line1"));
 			if (itemStrings.get(position) != null
 					&& !itemStrings.get(position).equals("")) {
 				b3.setText(itemStrings.get(position));
@@ -146,13 +126,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				public void onClick(View v) {
 					priorityAlternatives(b3);
 				}
-				
+
 			});
-		} else if(position == 5){
+		} else if (position == 5) {
 			convertView = inflater.inflate(getItemViewType(position), null);
 			b5 = (Button) convertView.findViewById(R.id.button_item);
-			b5.setHint(((HashMap<String, String>) this
-					.getItem(position)).get("line1"));
+			b5.setHint(((HashMap<String, String>) this.getItem(position))
+					.get("line1"));
 			if (itemStrings.get(position) != null
 					&& !itemStrings.get(position).equals("")) {
 				b5.setText(itemStrings.get(position));
@@ -162,13 +142,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				public void onClick(View v) {
 					pictureAlternatives();
 				}
-				
+
 			});
-		}else if(position == 1){
+		} else if (position == 1) {
 			convertView = inflater.inflate(getItemViewType(position), null);
 			b1 = (Button) convertView.findViewById(R.id.button_item);
-			b1.setHint(((HashMap<String, String>) this
-					.getItem(position)).get("line1"));
+			b1.setHint(((HashMap<String, String>) this.getItem(position))
+					.get("line1"));
 			if (itemStrings.get(position) != null
 					&& !itemStrings.get(position).equals("")) {
 				b1.setText("Hämtade koordinater");
@@ -178,9 +158,9 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				public void onClick(View v) {
 					coordinateField(b1);
 				}
-				
+
 			});
-		}else if (editText != null) {
+		} else if (editText != null) {
 			if (itemStrings.get(position) != null) {
 				editText.setText(itemStrings.get(position));
 			} else {
@@ -191,35 +171,35 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			editText.setId(position);
 			editText.setOnFocusChangeListener(this);
 			editText.setOnKeyListener(new OnKeyListener() {
-				
-				public boolean onKey(View v, int keyCode, KeyEvent event)
-			    {
-			        if (event.getAction() == KeyEvent.ACTION_DOWN)
-			        {
-			            switch (keyCode)
-			            {
-			                case KeyEvent.KEYCODE_DPAD_CENTER:
-			                case KeyEvent.KEYCODE_ENTER:
-			                    switch (position) {
-								case 0:
-									coordinateField(b1);
-									break;
-								case 4:
-									pictureAlternatives();
-									break;
-								case 2:
-									priorityAlternatives(b3);
-									break;
-								default:
-									break;
-								}
-			                    return true;
-			                default:
-			                    break;
-			            }
-			        }
-			        return false;
-			    }
+
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+					if (event.getAction() == KeyEvent.ACTION_DOWN) {
+						switch (keyCode) {
+						case KeyEvent.KEYCODE_DPAD_CENTER:
+						case KeyEvent.KEYCODE_ENTER:
+							switch (position) {
+							case 0:
+								coordinateField(b1);
+								break;
+							case 4:
+								pictureAlternatives();
+								break;
+							case 2:
+								priorityAlternatives(b3);
+								break;
+							case 6:
+								agentsAlternatives(b7);
+								break;
+							default:
+								break;
+							}
+							return true;
+						default:
+							break;
+						}
+					}
+					return false;
+				}
 			});
 		}
 		if (position == 7 || position == 3 || position == 5 || position == 1) {
@@ -238,7 +218,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-					itemStrings.put(v.getId(), s.toString());
+				itemStrings.put(v.getId(), s.toString());
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -248,6 +228,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void afterTextChanged(Editable s) {
 			}
 		});
+	}
+
+	private void agentsAlternatives(Button b) {
+		Intent intent = new Intent(context, ContactsBookActivity.class);
+		intent.putExtra("calling-activity",
+				ActivityConstants.ADD_AGENTS);
+		((AddAssignment) context).startActivityForResult(intent, 1);
 	}
 
 	private void pictureAlternatives() {
@@ -265,7 +252,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
-				
+
 				switch (arg2) {
 				case 0:
 					Intent intent = new Intent(context, Album.class);
@@ -352,17 +339,17 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				case 0:
 					itemStrings.put(3, "Hög prioritet");
 					b.setText(itemStrings.get(3));
-//					v.setText("Hög prioritet");
+					// v.setText("Hög prioritet");
 					break;
 				case 1:
 					itemStrings.put(3, "Normal prioritet");
 					b.setText(itemStrings.get(3));
-//					v.setText("Normal prioritet");
+					// v.setText("Normal prioritet");
 					break;
 				case 2:
 					itemStrings.put(3, "Låg prioritet");
 					b.setText(itemStrings.get(3));
-//					v.setText("Låg prioritet");
+					// v.setText("Låg prioritet");
 				default:
 					break;
 				}
@@ -375,6 +362,14 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		return itemStrings;
 	}
 
+	public void setAgents(List<Contact> l){
+		StringBuilder sb = new StringBuilder();
+		for (Contact contact : l) {
+			sb.append(contact.getContactName() + ", ");
+		}
+		itemStrings.put(7, sb.toString());
+	}
+	
 	public void setItemStrings(HashMap<Integer, String> itemStrings) {
 		this.itemStrings = itemStrings;
 	}

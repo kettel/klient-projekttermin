@@ -2,6 +2,7 @@ package assignment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import logger.logger;
 import login.User;
 import map.MapActivity;
 import models.Assignment;
@@ -20,10 +20,7 @@ import models.Contact;
 import models.ModelInterface;
 import models.PictureModel;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -31,12 +28,12 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.klient_projekttermin.SecureActivity;
@@ -65,6 +62,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private int callingActivity;
 	private CheckBox toOutsiders;
 	private boolean isExternalMission;
+	private List<Contact> agents = new ArrayList<Contact>();
 
 	@Override
 	@SuppressLint("UseSparseArrays")
@@ -109,6 +107,8 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			fromMap(data);
 		} else if (resultCode == ActivityConstants.RESULT_FROM_CAMERA) {
 			fromCamera(data);
+		} else if (resultCode == ActivityConstants.RESULT_FROM_CONTACTS) {
+			fromContact(data);
 		}
 	}
 
@@ -119,6 +119,14 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			temp.put(from[0], s);
 			data.add(temp);
 		}
+	}
+	
+	private void fromContact(Intent i){
+		Gson gson = new Gson();
+		Type type = new TypeToken<List<Contact>>() {
+		}.getType();
+		agents  = gson.fromJson(i.getStringExtra("agents"), type);
+		adapter.setAgents(agents);
 	}
 
 	private void fromCamera(Intent intent) {
@@ -184,7 +192,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 				tempUnseparated = "";
 			}
 
-			addAgentsFromList(tempUnseparated, newAssignment); 
+			addAgentsFromList(tempUnseparated, newAssignment);
 
 			tempUnseparated = ""; // Nolla strängen
 
@@ -195,9 +203,9 @@ public class AddAssignment extends SecureActivity implements Serializable {
 							+ "byteArray" + temp.get(4) + temp.get(5));
 
 			newAssignment.setGlobalID(currentUser);
-			
-			Log.e("FEL","saveToDB i AddAssignment");
-			
+
+			Log.e("FEL", "saveToDB i AddAssignment");
+
 			db.addToDB(newAssignment, getContentResolver());
 			SocketConnection connection = new SocketConnection();
 			connection.sendModel(newAssignment);
@@ -223,8 +231,6 @@ public class AddAssignment extends SecureActivity implements Serializable {
 		List<String> items = new LinkedList<String>(Arrays.asList(newString
 				.split("\\s*,\\s*"))); // reguljära uttryck haxx
 
-		for (String string : items) {
-		}
 		List<ModelInterface> list = db.getAllFromDB(new Contact(),
 				getContentResolver());
 		Set<String> noDoublicatesSet = new HashSet<String>(items);

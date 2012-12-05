@@ -1,8 +1,11 @@
 package contacts;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;
@@ -12,11 +15,16 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import assignment.AddAssignment;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.klient_projekttermin.SecureActivity;
@@ -30,36 +38,62 @@ public class ContactsBookActivity extends SecureActivity {
 	private String[] contactAlts = { "Skicka meddelande till kontakt",
 			"Ring kontakt" };
 	public static String contact;
+	private int callingActivity;
+	private List<Contact> contactsToAssignment = new ArrayList<Contact>();
+	private MenuItem useContacts;
+	private ContacsAdapter ca;
+	private HashMap<Integer, Boolean> h = new HashMap<Integer, Boolean>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contacts_book);
+		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		ListView lv = (ListView) findViewById(android.R.id.list);
 		db = Database.getInstance(this);
 		List<ModelInterface> lista = db.getAllFromDB(new Contact(),
 				getContentResolver());
 		contacts = new String[lista.size()];
-		
 		List<String> sortedContact = new ArrayList<String>();
 		for (ModelInterface m : lista) {
 			Contact c = (Contact) m;
 			sortedContact.add(c.getContactName());
 		}
-		
+
 		int i = 0;
 		Collections.sort(sortedContact);
 		for (String string : sortedContact) {
 			contacts[i] = string;
 			i++;
 		}
-		lv.setAdapter(new ContacsAdapter(this,
-				android.R.layout.simple_list_item_1, contacts));
+		ca = new ContacsAdapter(this, android.R.layout.simple_list_item_1,
+				contacts, callingActivity);
+		lv.setAdapter(ca);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_contacts_book, menu);
+		useContacts = menu.findItem(R.id.useContact);
+		if (callingActivity == ActivityConstants.ADD_AGENTS) {
+			useContacts.setVisible(true);
+		}
+		useContacts.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+			public boolean onMenuItemClick(MenuItem item) {
+				Intent intentAssignment = new Intent(ContactsBookActivity.this,
+						AddAssignment.class);
+				Gson gson = new Gson();
+				Type type = new TypeToken<List<Contact>>() {
+				}.getType();
+				getContactsForAssignment();
+				intentAssignment.putExtra("agents",
+						gson.toJson(contactsToAssignment, type));
+				setResult(ActivityConstants.RESULT_FROM_CONTACTS);
+				finish();
+				return false;
+			}
+		});
 		return true;
 	}
 
@@ -68,9 +102,43 @@ public class ContactsBookActivity extends SecureActivity {
 				getContentResolver())) {
 			Contact c = (Contact) temp;
 			if (c.getContactName().equals(contacts[v.getId()])) {
+				switch (callingActivity) {
+				case ActivityConstants.ADD_AGENTS:
+
+					break;
+				default:
 					showAlertDialog(c);
+					break;
+				}
+
 			}
 		}
+	}
+
+	private void getContactsForAssignment() {
+		int[] sel = getAllSelected();
+		for (ModelInterface temp : db.getAllFromDB(new Contact(),
+				getContentResolver())) {
+			Contact c = (Contact) temp;
+			for (int i = 0; i < sel.length; i++) {
+				if (c.getId() == sel[i]) {
+					contactsToAssignment.add(c);
+				}
+			}
+		}
+	}
+
+	private int[] getAllSelected() {
+		h = ca.getSelected();
+		int[] selectedContacs = new int[h.size()];
+		int j = 0;
+		for (int i : h.keySet()) {
+			if (h.get(i)) {
+				selectedContacs[j] = i;
+				j++;
+			}
+		}
+		return selectedContacs;
 	}
 
 	private void showAlertDialog(Contact c) {
@@ -99,7 +167,7 @@ public class ContactsBookActivity extends SecureActivity {
 					finish();
 					break;
 				case 1:
-
+					// STarta samtal aktivitet
 					break;
 				default:
 					break;
