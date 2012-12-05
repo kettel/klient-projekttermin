@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import logger.logger;
 import login.User;
 import map.MapActivity;
 import models.Assignment;
@@ -179,7 +180,6 @@ public class AddAssignment extends SecureActivity implements Serializable {
 					temp.get(4), checkPrioString(temp.get(3)));
 
 			String tempUnseparated = temp.get(7);
-
 			if (tempUnseparated == null) {
 				tempUnseparated = "";
 			}
@@ -194,6 +194,10 @@ public class AddAssignment extends SecureActivity implements Serializable {
 							+ temp.get(3) + AssignmentStatus.NOT_STARTED
 							+ "byteArray" + temp.get(4) + temp.get(5));
 
+			newAssignment.setGlobalID(currentUser);
+			
+			Log.e("FEL","saveToDB i AddAssignment");
+			
 			db.addToDB(newAssignment, getContentResolver());
 			SocketConnection connection = new SocketConnection();
 			connection.sendModel(newAssignment);
@@ -229,7 +233,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			for (ModelInterface modelInterface : list) {
 				Contact contact = (Contact) modelInterface;
 				if (contact.getContactName().equals(agent)) {
-					newAssignment.addAgents(contact	);
+					newAssignment.addAgents(contact);
 				}
 			}
 		}

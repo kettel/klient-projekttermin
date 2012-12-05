@@ -98,7 +98,6 @@ public class AssignmentDetails extends SecureActivity {
 		// klass.
 		setCurrentAssignmentToReach();
 		
-
 		// Hämtar textvyerna som ska sättas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
 		textViewDescription = (TextView) findViewById(R.id.assignment_description_set);
@@ -231,10 +230,10 @@ public class AssignmentDetails extends SecureActivity {
 								.setAssignmentStatus(AssignmentStatus.STARTED);
 						}
 						
-
 						// Uppdaterar Uppdraget med den nya kontakten.
 						db.updateModel(currentAssignment,
 								getContentResolver());
+						
 						SocketConnection connection=new SocketConnection();
 						connection.sendModel(currentAssignment);
 

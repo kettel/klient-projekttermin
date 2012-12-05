@@ -20,6 +20,7 @@ public class AssignmentTable {
 		public static final String TABLE_NAME = "assignments";
 
 		// Kolumnnamn i databasen
+		public static final String GLOBAL_ASSIGNMENT_ID = "global_id";
 		public static final String NAME = "name";
 		public static final String LAT = "lat";
 		public static final String LON = "lon";
