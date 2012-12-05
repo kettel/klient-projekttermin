@@ -29,6 +29,7 @@ public class AssignmentsDB {
 			Assignment assignment) {
 		
 		ContentValues values = new ContentValues();
+		values.put(Assignments.GLOBAL_ASSIGNMENT_ID, assignment.getGlobalID());
 		values.put(Assignments.NAME, assignment.getName());
 		values.put(Assignments.LAT, assignment.getLat());
 		values.put(Assignments.LON, assignment.getLon());
@@ -60,6 +61,7 @@ public class AssignmentsDB {
 			do {
 				String name = new String(), region = new String(), sender = new String(), description = new String(), timespan = new String(), streetname = new String(), sitename = new String();
 				long id = 0;
+				String globalid = "";
 				Long timestamp = Long.valueOf("0");
 				double lon = 0, lat = 0;
 				boolean externalMission = false;
@@ -72,7 +74,9 @@ public class AssignmentsDB {
 					String currentCol = cursor.getColumnName(i);
 					if (currentCol.equalsIgnoreCase(Assignments.ASSIGNMENT_ID)) {
 						id = cursor.getInt(i);
-					} else if (currentCol.equalsIgnoreCase(Assignments.NAME)) {
+					}else if (currentCol.equalsIgnoreCase(Assignments.GLOBAL_ASSIGNMENT_ID)) {
+						globalid = cursor.getString(i);
+					}else if (currentCol.equalsIgnoreCase(Assignments.NAME)) {
 						name = cursor.getString(i);
 					} else if (currentCol.equalsIgnoreCase(Assignments.LAT)) {
 						lat = Double.valueOf(cursor.getString(i));
@@ -121,6 +125,7 @@ public class AssignmentsDB {
 					}
 				}
 				Assignment assignment = new Assignment(id, // id från DB
+						globalid, // global id
 						name, // name
 						lat, // lat
 						lon, // lon
@@ -149,7 +154,7 @@ public class AssignmentsDB {
 	private String listToString(List<Contact> list) {
 		String ret = new String();
 		for (Contact m : list) {
-			ret += ret + m.getContactName() + "/";
+			ret = ret + m.getContactName() + "/";
 		}
 		return ret;
 	}
@@ -162,7 +167,7 @@ public class AssignmentsDB {
 
 	}
 
-	public void updateAssignment(ContentResolver contentResolver,
+	public int updateAssignment(ContentResolver contentResolver,
 			Assignment assignment) {
 		ContentValues values = new ContentValues();
 		values.put(Assignments.NAME, assignment.getName());
@@ -187,9 +192,12 @@ public class AssignmentsDB {
 		int updated = contentResolver.update(
 				Assignments.CONTENT_URI,
 				values,
-				Assignments.ASSIGNMENT_ID + " = "
-						+ Long.toString(assignment.getId()), null);
-		Log.d("DB", "Uppdaterade " + updated + " assignments.");
+				Assignments.GLOBAL_ASSIGNMENT_ID + " = "
+						+ "\"" + assignment.getGlobalID() + "\"", null);
+//				Assignments.ASSIGNMENT_ID + " = "
+//						+  assignment.getId() , null);
+
+		return updated;
 	}
 
 	public int getCount(ContentResolver contentResolver) {

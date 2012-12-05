@@ -6,43 +6,39 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
-import android.os.Looper;
-import android.sax.StartElementListener;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-public class BatteryCheckingFunction extends Observable{
+public class BatteryCheckingFunction extends Observable {
 
 	private int batteryLevel = 0;
-	
-	public BatteryCheckingFunction(Context context){
-		System.out.println("Tjena");
+	private Thread batteryCheckThread;
+
+	public BatteryCheckingFunction(Context context) {
 		startCheckThread(context);
 	}
 
 	public void startCheckThread(final Context context) {
-		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-		final Intent batteryStatus = context.registerReceiver(null, ifilter);
-		
-		System.out.println("KÖR startCheckThread");
-		new Thread(new Runnable() {
+			IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+			final Intent batteryStatus = context.registerReceiver(null, ifilter);
 
-			public void run() {
-				while(true){
-					int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+			batteryCheckThread = new Thread(new Runnable() {
 
-					if(level!=batteryLevel){
-						batteryLevel = level;
-						sendNotification(level);
+				public void run() {
+					while (true) {
+						int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+
+						if (level != batteryLevel) {
+							batteryLevel = level;
+							sendNotification(level);
+						}
+						timeToWait();
 					}
-					timeToWait();
 				}
-			}
-		}).start();
+			});
+			batteryCheckThread.start();
 	}
 
-	private synchronized void timeToWait(){
+	private synchronized void timeToWait() {
 		int waitTime = 1800000;
 		try {
 			Thread.sleep(waitTime);
@@ -50,9 +46,17 @@ public class BatteryCheckingFunction extends Observable{
 			Log.e("Thread", "Wating error: " + e.toString());
 		}
 	}
-		
-	private void sendNotification(int level){
+
+	private void sendNotification(int level) {
 		setChanged();
 		notifyObservers(level);
+	}
+
+	public void stopBatteryCheckFunction(){
+		batteryCheckThread.interrupt();
+	}
+
+	public synchronized Boolean isBatteryBeingChecked(){
+		return batteryCheckThread.isAlive();
 	}
 }

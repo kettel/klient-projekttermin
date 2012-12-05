@@ -1,5 +1,6 @@
 package models;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -8,11 +9,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.nutiteq.components.WgsPoint;
+
 public class Assignment implements ModelInterface {
 	// Typen av model
 	private String databaseRepresentation = "assignment";
 	// Id för modellen (Sätts av databasen så pilla inte)
 	private long id = -1;
+	//Globalt ID för uppdraget
+	private String globalID = "";
 	// Namnet på uppdraget
 	private String name;
 	// Latitud för uppdragspositionen
@@ -50,6 +57,13 @@ public class Assignment implements ModelInterface {
 	 * Tom konstruktor. Används bland annat för att hämta från databasen.
 	 */
 	public Assignment() {
+	}
+	/**
+	 * Används för remove
+	 * @param id
+	 */
+	public Assignment(String globalID) {
+		this.globalID = globalID;
 	}
 
 	/**
@@ -284,6 +298,7 @@ public class Assignment implements ModelInterface {
 	 * sätta dess id.
 	 * 
 	 * @param id
+	 * @param globalID
 	 * @param name
 	 * @param lat
 	 * @param lon
@@ -298,13 +313,14 @@ public class Assignment implements ModelInterface {
 	 * @param siteName
 	 * @param timeStamp
 	 */
-	public Assignment(long id, String name, double lat, double lon,
+	public Assignment(long id, String globalID, String name, double lat, double lon,
 			String region, List<Contact> agents, String sender,
 			boolean externalMission, String assignmentDescription,
 			String timeSpan, AssignmentStatus assignmentStatus,
 			byte[] cameraImage, String streetName, String siteName,
 			Long timeStamp, AssignmentPriority assignmentPrio) {
 		this.id = id;
+		this.globalID = globalID;
 		this.name = name;
 		this.lat = lat;
 		this.lon = lon;
@@ -324,7 +340,12 @@ public class Assignment implements ModelInterface {
 
 	public String getRegion() {
 		if (region == null) {
-			region = "[{\"Lat\":0,\"Lon\":0}]";
+			Gson gson = new Gson();
+			WgsPoint[] p = new WgsPoint[1];
+			p[0] = new WgsPoint(0, 0);
+			Type type = new TypeToken<WgsPoint[]>() {
+			}.getType();
+			region = gson.toJson(p, type);
 		}
 		return region;
 	}
@@ -442,5 +463,11 @@ public class Assignment implements ModelInterface {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+	public String getGlobalID(){
+		return globalID;
+	}
+	public void setGlobalID(String user){
+		this.globalID = user + assignmentTimeStamp.toString();
 	}
 }

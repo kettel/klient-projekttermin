@@ -71,7 +71,6 @@ public class ContactsDB {
     // erases all entries in the database
     public void refreshCache(ContentResolver contentResolver) {
         int delete = contentResolver.delete(Contacts.CONTENT_URI, null, null);
-        System.out.println("DELETED " + delete + " RECORDS FROM CONTACTS DB");
     }
 
 	public List<ModelInterface> getAllContacts(ContentResolver contentResolver) {

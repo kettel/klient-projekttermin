@@ -48,6 +48,7 @@ public class Database {
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
 			assignmentsDB.addAssignment(contentResolver, (Assignment) m);
+			Log.e("FEL", "Sparar ner ett assignment i Database.java");
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			contactsDB.addContact(contentResolver, (Contact) m);
@@ -59,7 +60,6 @@ public class Database {
 			authenticationDB.addAuthenticationContent(contentResolver, (AuthenticationModel) m);
 		}
 		else if(dbRep.equalsIgnoreCase("picture")){
-			System.out.println("ADD TO DB TO PICTURE");
 			pictureDB.addPicture(contentResolver, (PictureModel) m);
 		}
 	}
@@ -79,6 +79,9 @@ public class Database {
 		else if(dbRep.equalsIgnoreCase("authentication")){
 			returnCount = authenticationDB.getCount(contentResolver);
 		}
+		else if(dbRep.equalsIgnoreCase("picture")){
+			returnCount = pictureDB.getCount(contentResolver);
+		}
 		return returnCount;
 	}
 
@@ -95,6 +98,9 @@ public class Database {
 		}
 		else if(dbRep.equalsIgnoreCase("authentication")){
 			authenticationDB.delete(contentResolver, (AuthenticationModel)m);
+		}
+		else if(dbRep.equalsIgnoreCase("picture")){
+			pictureDB.delete(contentResolver, (PictureModel)m);
 		}
 	}
 
@@ -119,10 +125,10 @@ public class Database {
 		return returnList;
 	}
 
-	public void updateModel(ModelInterface m, ContentResolver contentResolver){
+	public int updateModel(ModelInterface m, ContentResolver contentResolver){
 		String dbRep = m.getDatabaseRepresentation();
 		if (dbRep.equalsIgnoreCase("assignment")) {
-			assignmentsDB.updateAssignment(contentResolver, (Assignment) m);
+			return assignmentsDB.updateAssignment(contentResolver, (Assignment) m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
 			contactsDB.updateContact(contentResolver, (Contact) m);
@@ -133,5 +139,6 @@ public class Database {
 		else if(dbRep.equalsIgnoreCase("authentication")){
 			authenticationDB.updateAuthentication(contentResolver, (AuthenticationModel) m);
 		}
+		return 0;
 	}
 }

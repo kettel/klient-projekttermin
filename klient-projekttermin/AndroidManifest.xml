@@ -2,7 +2,7 @@
     package="com.klient_projekttermin"
     android:versionCode="1"
     android:versionName="1.0" >
-    
+
     <application
         android:name="android.app.Application"
         android:icon="@drawable/loggakrona"
@@ -12,6 +12,9 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
         </activity>
         <activity
             android:name="map.MapActivity"
@@ -31,7 +34,7 @@
             android:label="DisplayOfConversation" >
         </activity>
         <activity
-            android:name="camera.Camera"
+            android:name="camera.CameraMenu"
             android:label="Camera" >
         </activity>
         <activity
@@ -60,6 +63,7 @@
         <activity
             android:name="assignment.AddAssignment"
             android:label="@string/addAssignment"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
@@ -71,13 +75,22 @@
             android:label="@string/title_activity_incoming_call_dialog" >
         </activity>
         <activity
-            android:name="loginFunction.LogInFunction"
+            android:name="login.LogInActivity"
             android:label="@string/title_activity_login_function" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="camera.Album"
+            android:label="@string/title_activity_album" >
+        </activity>
+        <activity
+            android:name="qosManager.QoSInterface"
+            android:label="@string/title_activity_qo_sinterface"
+            android:screenOrientation="portrait" >
         </activity>
         <!-- Database Content Providers -->
         <provider
@@ -97,8 +110,6 @@
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
         <service android:name=".GCMIntentService" />
-        <!-- SIP Service -->
-<!--         <service android:name="sip.RegisterWithSipServerService" /> -->
         <!-- SIP Receiver -->
         <receiver android:name="sip.IncomingCallReceiver" />
 		<receiver
@@ -123,6 +134,14 @@
                 <category android:name="com.klient_projekttermin" />
             </intent-filter>
         </receiver>
+        <activity
+            android:name="camera.Cam"
+            android:label="@string/title_activity_cam"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+        </activity>
+
+        <service android:name="com.klient_projekttermin.GCMIntentService" />
     </application>
     
     <uses-sdk

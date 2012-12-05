@@ -17,15 +17,23 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import camera.Album;
-import camera.Camera;
+import camera.Cam;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,20 +41,26 @@ import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
 
+import contacts.ContactsCursorAdapter;
+
 public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		android.view.View.OnFocusChangeListener {
 
 	@SuppressLint({ "UseSparseArrays", "UseSparseArrays" })
 	private HashMap<Integer, String> itemStrings = new HashMap<Integer, String>();
 	private Context context;
-	private boolean isCreatingDialog = false;
-	private boolean isCreatingCoordDialog = false;
+	private Button b1;
+	private Button b5;
+	private Button b3;
+	public static String items;
+	private String temp = "Agenter: ";
+
 	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
 	private EditText editText;
-	private boolean isCreatingPrioDialog = false;
-	private static String[] pictureAlts = { "Bifoga bild", "Ta bild" , "Ingen bild"};
-	private static String[] coordsAlts = { "Bifoga koordinater från karta" , "Använd GPS position" , "Inga koordinater" };
-
+	private static String[] pictureAlts = { "Bifoga bild", "Ta bild",
+			"Ingen bild" };
+	private static String[] coordsAlts = { "Bifoga koordinater från karta",
+			"Använd GPS position", "Inga koordinater" };
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -55,15 +69,118 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		this.context = context;
 	}
 
+	@Override
+	public int getItemViewType(int position) {
+		switch (position) {
+		case 1:
+			return R.layout.button_item;
+		case 5:
+			return R.layout.button_item;
+		case 3:
+			return R.layout.button_item;
+		case 7:
+			return R.layout.autocomp_item;
+		default:
+			return R.layout.textfield_item;
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
+		LayoutInflater inflater = (LayoutInflater) context
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 		convertView = null;
 
 		final View v = super.getView(position, convertView, parent);
 		editText = (EditText) v.findViewById(R.id.text_item);
+		if (position == 7) {
+			convertView = inflater.inflate(getItemViewType(position), null);
 
-		if (editText != null) {
+	
+	final AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) convertView
+			.findViewById(R.id.autoText_item);
+	
+	
+	
+	autoCompleteTextView.setAdapter(new ContactsCursorAdapter(
+			context, null, true));
+		
+		autoCompleteTextView.setHint(((HashMap<String, String>) this
+				.getItem(position)).get("line1"));
+		if (itemStrings.get(position) != null && !itemStrings.get(position).equals("")) {
+			autoCompleteTextView.setHint(itemStrings.get(position));
+		}
+
+			
+
+			// Snygghax.. för att få tag i auto-vyns text.
+			autoCompleteTextView
+					.setOnItemClickListener(new OnItemClickListener() {
+
+						public void onItemClick(AdapterView<?> arg0, View arg1,
+								int arg2, long arg3) {
+							TextView e = (TextView) arg1;
+							
+							temp = temp + e.getText().toString() + ", ";
+
+							itemStrings.put(7, temp);
+							autoCompleteTextView.setHint(temp);
+							autoCompleteTextView.setText("");
+							// itemStrings.put(8, e.getText().toString());
+						}
+					});
+
+		}else if(position == 3){
+			convertView = inflater.inflate(getItemViewType(position), null);
+			b3 = (Button) convertView.findViewById(R.id.button_item);
+			b3.setHint(((HashMap<String, String>) this
+					.getItem(position)).get("line1"));
+			if (itemStrings.get(position) != null
+					&& !itemStrings.get(position).equals("")) {
+				b3.setText(itemStrings.get(position));
+			}
+			b3.setOnClickListener(new OnClickListener() {
+
+				public void onClick(View v) {
+					priorityAlternatives(b3);
+				}
+				
+			});
+		} else if(position == 5){
+			convertView = inflater.inflate(getItemViewType(position), null);
+			b5 = (Button) convertView.findViewById(R.id.button_item);
+			b5.setHint(((HashMap<String, String>) this
+					.getItem(position)).get("line1"));
+			if (itemStrings.get(position) != null
+					&& !itemStrings.get(position).equals("")) {
+				b5.setText(itemStrings.get(position));
+			}
+			b5.setOnClickListener(new OnClickListener() {
+
+				public void onClick(View v) {
+					pictureAlternatives();
+				}
+				
+			});
+		}else if(position == 1){
+			convertView = inflater.inflate(getItemViewType(position), null);
+			b1 = (Button) convertView.findViewById(R.id.button_item);
+			b1.setHint(((HashMap<String, String>) this
+					.getItem(position)).get("line1"));
+			if (itemStrings.get(position) != null
+					&& !itemStrings.get(position).equals("")) {
+				b1.setText("Hämtade koordinater");
+			}
+			b1.setOnClickListener(new OnClickListener() {
+
+				public void onClick(View v) {
+					coordinateField(b1);
+				}
+				
+			});
+		}else if (editText != null) {
 			if (itemStrings.get(position) != null) {
 				editText.setText(itemStrings.get(position));
 			} else {
@@ -73,8 +190,43 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					.get("line1"));
 			editText.setId(position);
 			editText.setOnFocusChangeListener(this);
+			editText.setOnKeyListener(new OnKeyListener() {
+				
+				public boolean onKey(View v, int keyCode, KeyEvent event)
+			    {
+			        if (event.getAction() == KeyEvent.ACTION_DOWN)
+			        {
+			            switch (keyCode)
+			            {
+			                case KeyEvent.KEYCODE_DPAD_CENTER:
+			                case KeyEvent.KEYCODE_ENTER:
+			                    switch (position) {
+								case 0:
+									coordinateField(b1);
+									break;
+								case 4:
+									pictureAlternatives();
+									break;
+								case 2:
+									priorityAlternatives(b3);
+									break;
+								default:
+									break;
+								}
+			                    return true;
+			                default:
+			                    break;
+			            }
+			        }
+			        return false;
+			    }
+			});
 		}
-		return v;
+		if (position == 7 || position == 3 || position == 5 || position == 1) {
+			return convertView;
+		} else
+			return v;
+
 	}
 
 	public void textToItem(int position, String s) {
@@ -86,9 +238,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-				if (v.getId() != 1 && v.getId() != 6) {
 					itemStrings.put(v.getId(), s.toString());
-				}
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -98,24 +248,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			public void afterTextChanged(Editable s) {
 			}
 		});
-		if (hasFocus && v.getId() == 1 && itemStrings.get(v.getId()) == null) {
-			if (!isCreatingCoordDialog) {
-				isCreatingCoordDialog = true;
-				coordinateField(v);
-			}
-		}
-		if (hasFocus && v.getId() == 6 && itemStrings.get(v.getId()) == null) {
-			if (!isCreatingDialog) {
-				isCreatingDialog = true;
-				pictureAlternatives();
-			}
-		}
-		if (hasFocus && v.getId() == 7 && itemStrings.get(v.getId()) == null) {
-			if (!isCreatingPrioDialog ) {
-				isCreatingPrioDialog = true;
-				priorityAlternatives((EditText)v);
-			}
-		}
 	}
 
 	private void pictureAlternatives() {
@@ -127,14 +259,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				pictureAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
-		
+
 		final Dialog dialog = builder.create();
-		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
-				isCreatingDialog = false;
+				
 				switch (arg2) {
 				case 0:
 					Intent intent = new Intent(context, Album.class);
@@ -143,7 +274,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					((AddAssignment) context).startActivityForResult(intent, 1);
 					break;
 				case 1:
-					Intent intent2 = new Intent(context, Camera.class);
+					Intent intent2 = new Intent(context, Cam.class);
 					intent2.putExtra("calling-activity",
 							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
 					((AddAssignment) context)
@@ -157,9 +288,9 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		dialog.show();
 	}
 
-	private void coordinateField(final View v) {
-		final EditText ed1 = (EditText) v;
-		LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+	private void coordinateField(final Button b) {
+		LocationManager manager = (LocationManager) context
+				.getSystemService(Context.LOCATION_SERVICE);
 		String provider = manager.getBestProvider(new Criteria(), true);
 		Location location = manager.getLastKnownLocation(provider);
 		Gson gson = new Gson();
@@ -167,9 +298,9 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		}.getType();
 		WgsPoint[] wgs = new WgsPoint[1];
 		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
-		
+
 		final String pos = gson.toJson(wgs, type);
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Koordinater");
 		ListView modeList = new ListView(context);
@@ -178,16 +309,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				coordsAlts);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
-		
 		final Dialog dialog = builder.create();
-		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
 				switch (arg2) {
 				case 0:
-					isCreatingCoordDialog = false;
 					dialog.dismiss();
 					Intent intent = new Intent(context, MapActivity.class);
 					intent.putExtra("calling-activity",
@@ -195,12 +323,10 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 					((AddAssignment) context).startActivityForResult(intent, 0);
 					break;
 				case 1:
-					isCreatingCoordDialog = false;
-					itemStrings.put(v.getId(), pos);
-					ed1.setText(pos);
+					itemStrings.put(1, pos);
+					b.setText("Hämtade koordinater");
 					break;
 				default:
-					isCreatingCoordDialog = false;
 					break;
 				}
 			}
@@ -208,7 +334,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		dialog.show();
 	}
 
-	private void priorityAlternatives(final EditText v) {
+	private void priorityAlternatives(final Button b) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Välj uppdragets prioritet");
 		ListView modeList = new ListView(context);
@@ -218,21 +344,25 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
-		dialog.setCancelable(false);
 		modeList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				dialog.dismiss();
-				isCreatingPrioDialog = false;
 				switch (arg2) {
 				case 0:
-					v.setText("Hög prioritet");
+					itemStrings.put(3, "Hög prioritet");
+					b.setText(itemStrings.get(3));
+//					v.setText("Hög prioritet");
 					break;
 				case 1:
-					v.setText("Normal prioritet");
+					itemStrings.put(3, "Normal prioritet");
+					b.setText(itemStrings.get(3));
+//					v.setText("Normal prioritet");
 					break;
 				case 2:
-					v.setText("Låg prioritet");
+					itemStrings.put(3, "Låg prioritet");
+					b.setText(itemStrings.get(3));
+//					v.setText("Låg prioritet");
 				default:
 					break;
 				}

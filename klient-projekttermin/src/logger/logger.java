@@ -31,10 +31,9 @@ public class logger {
 		this.context = context;
 		this.FILENAME = logName;
 		try {
-			outputStream = context.openFileOutput(FILENAME, context.MODE_APPEND);
+			outputStream = context.openFileOutput(FILENAME, Context.MODE_APPEND);
 		} catch (FileNotFoundException e) {
 			// Detta bör aldrig hända.
-			System.out.println("Error: creating logfile failed due to " + e.toString());
 		}
 	}
 	/**
@@ -92,7 +91,7 @@ public class logger {
 		try {
 			outputStream.close();
 			context.deleteFile(FILENAME);
-			outputStream = context.openFileOutput(FILENAME, context.MODE_APPEND);
+			outputStream = context.openFileOutput(FILENAME, Context.MODE_APPEND);
 		} catch (Exception e) {
 		}	
 	}

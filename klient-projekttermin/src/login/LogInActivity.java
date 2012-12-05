@@ -1,4 +1,4 @@
-package loginFunction;
+package login;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,7 +7,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import models.AuthenticationModel;
-
+import qosManager.QoSManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -25,7 +25,7 @@ import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class LogInFunction extends Activity implements Observer {
+public class LogInActivity extends Activity implements Observer {
 	private TextView userNameView;
 	private TextView passwordView;
 	private String userName;
@@ -38,6 +38,7 @@ public class LogInFunction extends Activity implements Observer {
 	private ProgressDialog pd;
 	private User user;
 	private int callingactivity;
+	private QoSManager qosManager;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,13 +47,18 @@ public class LogInFunction extends Activity implements Observer {
 		database = Database.getInstance(getApplicationContext());
 		Intent intent = getIntent();
 		callingactivity = intent.getIntExtra("calling-activity", 0);
-		
+
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_log_in_function, menu);
 		return true;
+	}
+
+	@Override
+	public void onBackPressed() {
+		finish();
 	}
 
 	/*
@@ -71,15 +77,29 @@ public class LogInFunction extends Activity implements Observer {
 		user = User.getInstance();
 		user.setAuthenticationModel(originalModel);
 
-		tryOfflineLogin(originalModel);
+		tryOnlineLogin(originalModel);
 	}
 
-	public void tryOfflineLogin(AuthenticationModel loginInput)
-			throws NoSuchAlgorithmException {
+	/**
+	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som
+	 * finns i databasen först och om så inte är fallet försöker den hämta
+	 * informationen från servern.
+	 */
+	private void checkAuthenticity(AuthenticationModel authenticationModel) {
+		System.out
+				.println("AUTHENTICATION FROM SERVER: " + authenticationModel);
+		if (authenticationModel.getUserName().equals(
+				originalModel.getUserName())
+				&& authenticationModel.isAccessGranted().equals("true")) {
+			database.addToDB(authenticationModel, getContentResolver());
+			accessGranted();
 
-		System.out.println("Saker i databasen: "
-				+ database.getAllFromDB(loginInput, getContentResolver())
-				.size());
+		} else {
+			incorrectLogIn();
+		}
+	}
+
+	public void tryOfflineLogin(AuthenticationModel loginInput) {
 
 		if (database
 				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
@@ -100,7 +120,6 @@ public class LogInFunction extends Activity implements Observer {
 				}
 			} else {
 				removeLastUserFromDB();
-				tryOnlineLogin(loginInput);
 			}
 		}
 
@@ -110,44 +129,22 @@ public class LogInFunction extends Activity implements Observer {
 		}
 	}
 
-	/**
-	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som
-	 * finns i databasen först och om så inte är fallet försöker den hämta
-	 * informationen från servern.
-	 */
-	private void checkAuthenticity(AuthenticationModel authenticationModel) {
-		System.out.println("INNE I CHECK AUTHENTICITY");
-		if (authenticationModel.getUserName().equals(
-				originalModel.getUserName())
-				&& authenticationModel.isAccessGranted().equals("true")) {
-			System.out.println("DOM KOM IN!");
-			database.addToDB(authenticationModel, getContentResolver());
-			accessGranted();
-
-		} else {
-			System.out.println("INNE I ELSE");
-			incorrectLogIn();
-		}
-
-	}
-
 	public void incorrectLogIn() {
-		System.out.println("INNE I INCORRECTLOGIN");
 		numberOfLoginTries--;
 		if (numberOfLoginTries == 0) {
-			if(database.getDBCount(new AuthenticationModel(), getContentResolver())!=0){
+			if (database.getDBCount(new AuthenticationModel(),
+					getContentResolver()) != 0) {
 				removeLastUserFromDB();
 			}
 			finish();
 		} else {
-			System.out.println("INNE I ELSE I INCORRECTLOGIN");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
 					Toast toast = Toast.makeText(getApplicationContext(),
 							"Felaktigt användarnamn eller lösenord! "
 									+ numberOfLoginTries + " försök kvar!",
-									Toast.LENGTH_LONG);
+							Toast.LENGTH_LONG);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}
@@ -156,10 +153,8 @@ public class LogInFunction extends Activity implements Observer {
 	}
 
 	public void removeLastUserFromDB() {
-		System.out.println("NU TAS NÅGOT BORT");
 		List list = database.getAllFromDB(new AuthenticationModel(),
 				getContentResolver());
-		System.out.println("DATABASSTORLEK: "+list.size());
 		database.deleteFromDB((AuthenticationModel) list.get(0),
 				getContentResolver());
 	}
@@ -194,12 +189,13 @@ public class LogInFunction extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
-		System.out.println("Skapar en ny ProgressDialog");
-		pd = ProgressDialog.show(LogInFunction.this, "", "Loggar in...", true,
+
+		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,
 				true);
 	}
 
 	public void accessGranted() {
+
 		switch (callingactivity) {
 		case ActivityConstants.INACTIVITY:
 			break;
@@ -209,15 +205,15 @@ public class LogInFunction extends Activity implements Observer {
 			startActivity(intent);
 			break;
 		}
+		user.setLoggedIn(true);
+		setResult(RESULT_OK);
 		finish();
 	}
 
 	public void update(Observable observable, Object data) {
-		System.out.println("Inne i update");
-		
 		if (data instanceof AuthenticationModel) {
-			System.out.println("Inne i instance of AuthenticationModel");
-			System.out.println("tar bort en Progress dialog");
+			user.setOnlineConnection(true);
+
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -225,21 +221,25 @@ public class LogInFunction extends Activity implements Observer {
 				}
 			});
 			checkAuthenticity((AuthenticationModel) data);
-		}
-		else {
-			System.out.println("inne i instance of String ");
-			System.out.println("tar bort en Progress dialog");
+
+		} else if (data instanceof String) {
+			user.setOnlineConnection(false);
+			user.setOnlineConnection(false);
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
 					pd.dismiss();
-					Toast toast = Toast.makeText(getApplicationContext(),
-							"Det gick inte att ansluta till servern!",
+					Toast toast = Toast
+							.makeText(
+									getApplicationContext(),
+									"Det gick inte att ansluta till servern! Försöker logga in offline",
 									Toast.LENGTH_LONG);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}
 			});
+			tryOfflineLogin(originalModel);
+
 		}
 	}
 }

@@ -18,11 +18,15 @@ package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
 import static com.klient_projekttermin.CommonUtilities.displayMessage;
+import login.LogInActivity;
+import login.User;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
+
+import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
 /**
@@ -31,6 +35,7 @@ import communicationModule.SocketConnection;
 public class GCMIntentService extends GCMBaseIntentService {
 
 	private static final String TAG = "GCMIntentService";
+
 	public GCMIntentService() {
 		super(SENDER_ID);
 	}
@@ -52,10 +57,21 @@ public class GCMIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onMessage(Context context, Intent intent) {
 		Log.i(TAG, "Received message");
-		String message = getString(R.string.gcm_message);
+		String message;
+		if (intent.getExtras().containsKey("logout")) {
+			message = "logout";
+		} else {
+			message = getString(R.string.gcm_message);
+		}
+
 		displayMessage(context, message);
-		// notifies user
-		generateNotification(context, message);
+		if (intent.getExtras().containsKey("action")) {
+			if (intent.getExtras().get("action").equals("pull")) {
+				SocketConnection connection = new SocketConnection();
+				connection.addObserver(new PullResponseHandler(context));
+				connection.pullFromServer();
+			}
+		}
 	}
 
 	@Override
@@ -63,8 +79,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 		Log.i(TAG, "Received deleted messages notification");
 		String message = getString(R.string.gcm_deleted, total);
 		displayMessage(context, message);
-		// notifies user
-		generateNotification(context, message);
 	}
 
 	@Override
@@ -81,14 +95,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 				getString(R.string.gcm_recoverable_error, errorId));
 		return super.onRecoverableError(context, errorId);
 	}
-
-	/**
-	 * Issues a notification to inform the user that server has sent a message.
-	 */
-	private void generateNotification(Context context, String message) {
-		SocketConnection connection=new SocketConnection();
-		connection.addObserver(new PullRequestHandler(context));
-		connection.pullFromServer();
+	public static void sendMessage(Context context,String message){
+		displayMessage(context,message);
 	}
-
 }

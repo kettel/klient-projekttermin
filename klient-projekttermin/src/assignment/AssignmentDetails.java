@@ -3,8 +3,7 @@ package assignment;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import loginFunction.InactivityListener;
-import loginFunction.User;
+import login.User;
 import map.CustomAdapter;
 import map.MapActivity;
 import models.Assignment;
@@ -17,6 +16,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,13 +33,14 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
+import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
 import com.nutiteq.components.WgsPoint;
 import communicationModule.SocketConnection;
 
 import database.Database;
 
-public class AssignmentDetails extends InactivityListener {
+public class AssignmentDetails extends SecureActivity {
 
 	private Database db;
 	private long assignmentID;
@@ -47,7 +49,6 @@ public class AssignmentDetails extends InactivityListener {
 	private TextView textViewPriority;
 	private TextView textViewTime;
 	private TextView textViewSpot;
-	private TextView textViewStreetname;
 	private TextView textViewCoord;
 	private TextView agentCount;
 	private CheckBox checkboxAssign;
@@ -55,6 +56,7 @@ public class AssignmentDetails extends InactivityListener {
 	private List<ModelInterface> listAssignments;
 	private Assignment currentAssignment;
 	private String currentUser;
+	private boolean needToListen;
 	public static String assignment;
 	private String[] coordAlts = { "Gå till uppdraget på kartan" };
 
@@ -63,6 +65,9 @@ public class AssignmentDetails extends InactivityListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_uppdrag);
 		db = Database.getInstance(getApplicationContext());
+		needToListen = true;
+		
+
 
 		User user = User.getInstance();
 		currentUser = user.getAuthenticationModel().getUserName();
@@ -88,17 +93,17 @@ public class AssignmentDetails extends InactivityListener {
 		listAssignments = db.getAllFromDB(new Assignment(),
 				getContentResolver());
 
+
 		// Hittar rätt assignment i databasen och sätter den tillgänglig i denna
 		// klass.
 		setCurrentAssignmentToReach();
-
+		
 		// Hämtar textvyerna som ska sättas.
 		textViewAssName = (TextView) findViewById(R.id.assignment_name_set);
 		textViewDescription = (TextView) findViewById(R.id.assignment_description_set);
 		textViewPriority = (TextView) findViewById(R.id.assignment_prio_set);
 		textViewTime = (TextView) findViewById(R.id.assignment_time_set);
 		textViewSpot = (TextView) findViewById(R.id.assignment_spot_set);
-		textViewStreetname = (TextView) findViewById(R.id.assignment_streetname_set);
 		textViewCoord = (TextView) findViewById(R.id.assignment_coordinates_set);
 		agentCount = (TextView) findViewById(R.id.textView_agentCount);
 		checkboxAssign = (CheckBox) findViewById(R.id.checkBox_assign);
@@ -108,8 +113,10 @@ public class AssignmentDetails extends InactivityListener {
 		// det.
 		setCheckedIfAssigned();
 
-		// Lyssnar den efter klick i checkrutan
-		setCheckboxCheckedListener();
+		if (needToListen) {
+			// Lyssnar den efter klick i checkrutan
+			setCheckboxCheckedListener();
+		}
 
 		// Sätter texten som ska visas i uppdragsvyn.
 		setAssignmentToView();
@@ -138,10 +145,9 @@ public class AssignmentDetails extends InactivityListener {
 				// Klicka i låådan checkboxchecked
 				checkboxAssign.setChecked(true);
 				checkboxAssign.setEnabled(false);
+				needToListen = false;
 			}
-
 		}
-
 	}
 
 	public void setCurrentAssignmentToReach() {
@@ -166,8 +172,6 @@ public class AssignmentDetails extends InactivityListener {
 		Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
 		StringBuilder sb = new StringBuilder();
-		System.out.println(currentAssignment.getRegion());
-		System.out.println("HÄR: "+gson.fromJson(currentAssignment.getRegion(), type));
 		
 		WgsPoint[] cords = gson.fromJson(currentAssignment.getRegion(), type);
 		if (cords != null) {
@@ -181,7 +185,6 @@ public class AssignmentDetails extends InactivityListener {
 		textViewPriority.setText(currentAssignment.getAssignmentPriorityToString());
 		textViewTime.setText(currentAssignment.getTimeSpan());
 		textViewSpot.setText(currentAssignment.getSiteName());
-		textViewStreetname.setText(currentAssignment.getStreetName());
 		currentAssignment.getRegion();
 		textViewCoord.setText(sb.toString());
 		textViewCoord.setOnClickListener(new OnClickListener() {
@@ -202,7 +205,7 @@ public class AssignmentDetails extends InactivityListener {
 					+ ", ";
 		}
 		agentCount.setText(" Antal: " + currentAssignment.getAgents().size()
-				+ "(" + temp + ")");
+				+ "(" + temp + ")\n");
 	}
 
 	/**
@@ -222,12 +225,15 @@ public class AssignmentDetails extends InactivityListener {
 						currentAssignment.addAgents(new Contact(currentUser));
 
 						// Sätter status för att uppdraget är påbörjat.
-						currentAssignment
+						if (currentAssignment.getAssignmentStatus() == AssignmentStatus.NOT_STARTED) {
+							currentAssignment
 								.setAssignmentStatus(AssignmentStatus.STARTED);
-
+						}
+						
 						// Uppdaterar Uppdraget med den nya kontakten.
-						db.updateModel((ModelInterface) currentAssignment,
+						db.updateModel(currentAssignment,
 								getContentResolver());
+						
 						SocketConnection connection=new SocketConnection();
 						connection.sendModel(currentAssignment);
 
