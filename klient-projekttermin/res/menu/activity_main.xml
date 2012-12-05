@@ -1,8 +1,17 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/logout"
-        android:title="@string/logout"
-        android:showAsAction="ifRoom|withText" />
-    <item android:id="@+id/QoSManager"
-        android:title="@string/QoS"
-        android:showAsAction="ifRoom|withText" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/logout"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/logout"/>
+    <item
+        android:id="@+id/QoSManager"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/QoS"/>
+    
+    <item
+        android:id="@+id/OnlineMarker"
+        android:icon="@android:drawable/presence_online"
+        android:showAsAction="ifRoom"/>
+
 </menu>

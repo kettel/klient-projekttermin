@@ -20,7 +20,10 @@ import models.Contact;
 import models.ModelInterface;
 import models.PictureModel;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -28,6 +31,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -47,8 +52,8 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private String jsonCoord = null;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Uppdragsnamn", "Koordinater",
-			"Uppdragsbeskrivning", "Uppskattad tid", "Uppdragsplats", "Bild",
-			"Prioritet", "Lägg till agenter" };
+			"Uppdragsbeskrivning", "Prioritet", "Uppdragsplats", "Bild",
+			"Uppskattad tid", "Lägg till agenter" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.text_item };
@@ -170,22 +175,16 @@ public class AddAssignment extends SecureActivity implements Serializable {
 
 		if (temp.get(0) != null) {
 			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
-					currentUser, isExternalMission, temp.get(2), temp.get(3),
+					currentUser, isExternalMission, temp.get(2), temp.get(6),
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
-					temp.get(4), checkPrioString(temp.get(6)));
+					temp.get(4), checkPrioString(temp.get(3)));
 
 			String tempUnseparated = temp.get(7);
 			if (tempUnseparated == null) {
 				tempUnseparated = "";
 			}
 
-			addAgentsFromList(tempUnseparated, newAssignment); // temp(8) är en
-																// sträng
-																// med agenter
-																// som
-																// ska
-																// separeras med
-																// ",".
+			addAgentsFromList(tempUnseparated, newAssignment); 
 
 			tempUnseparated = ""; // Nolla strängen
 
@@ -234,7 +233,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			for (ModelInterface modelInterface : list) {
 				Contact contact = (Contact) modelInterface;
 				if (contact.getContactName().equals(agent)) {
-					newAssignment.addAgents(contact); // new Contact(agent)
+					newAssignment.addAgents(contact);
 				}
 			}
 		}

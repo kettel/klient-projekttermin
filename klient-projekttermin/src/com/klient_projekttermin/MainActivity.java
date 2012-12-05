@@ -13,8 +13,12 @@ import messageFunction.Inbox;
 
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
+import android.app.AlertDialog;
+import android.content.ClipData.Item;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -42,6 +46,8 @@ public class MainActivity extends SecureActivity {
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	private QoSManager qosManager;
+	private View onlineMarker;
+	private View offlineMarker;
 	private Database database;
 	private SocketConnection socketConnection=new SocketConnection();
 	private User user;
@@ -51,9 +57,21 @@ public class MainActivity extends SecureActivity {
 		super.onCreate(savedInstanceState);
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
-		qosManager.startBatteryCheckingThread(this);
 
 		user=User.getInstance();
+
+		onlineMarker = findViewById(id.OnlineMarker);
+//		offlineMarker = findViewById(id.OfflineMarker);
+		
+//		if(user.isLoggedIn()){
+//		onlineMarker.setVisibility(View.VISIBLE);
+//		offlineMarker.setVisibility(View.GONE);
+//		}
+//		else{
+//			onlineMarker.setVisibility(View.GONE);
+//			offlineMarker.setVisibility(View.VISIBLE);
+//		}
+		
 		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
 		setContentView(R.layout.activity_main);
 
@@ -157,6 +175,29 @@ public class MainActivity extends SecureActivity {
 			}
 		});
 	}
+	
+	
+	
+	@Override
+	public void onBackPressed() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setTitle("Avsluta");
+	    builder.setMessage("Vill du avsluta ut?");
+	    builder.setPositiveButton("Ja", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	                SocketConnection socketConnection=new SocketConnection();
+	                socketConnection.logout();
+	                setResult(RESULT_CANCELED);
+	                finish();
+	            }});
+	    builder.setNegativeButton("Nej", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	            }});
+	    builder.setCancelable(false);
+	    builder.create().show();
+	}
 
 	private void initiateDB(Context context) {
 		// Tvinga in SQLCipher-biblioteken. För säkerhetsskull...
@@ -213,13 +254,17 @@ public class MainActivity extends SecureActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int logOutId = findViewById(id.logout).getId();
+		int qosId = findViewById(id.QoSManager).getId();
 		
 		if(item.getItemId()==logOutId){
 		logout();
 		return false;
 		}
-		else{
+		else if (item.getItemId()==qosId){
 			startQoSManager();
+			return false;
+		}
+		else{
 			return false;
 		}
 	}
