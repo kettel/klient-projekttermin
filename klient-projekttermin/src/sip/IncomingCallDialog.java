@@ -7,6 +7,10 @@ import java.util.TimerTask;
 
 import android.app.Activity;
 import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -15,6 +19,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -67,11 +72,17 @@ public class IncomingCallDialog extends Activity {
 	// True om ringsignal spelas, false annars.
 	private boolean isRinging = false;
 
-	// Hämta förvald ringsignal
+	// Variabler för ringsignal
 	private Uri notification;
 	private Ringtone ringtone;
 	private RingtoneManager mRingtoneManager;
+	
+	// Vibrator
 	private Vibrator vibrator;
+	
+	// Närhetssensor
+	private SensorManager mSensorManager;
+	private Sensor mProximitySensor;
 
 	RegisterWithSipSingleton regSip;
 
@@ -96,7 +107,46 @@ public class IncomingCallDialog extends Activity {
 		// stoppa om det ligger i onStart().
 		mRingtoneManager = new RingtoneManager(this);
 		ringtone = mRingtoneManager.getRingtone(-1);
+		
+		// Initiera vibratorn
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		
+		// Initiera närhetssensorn
+		mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+		mProximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+		
+		// Skapa en lyssnare för närhetssensorn
+		SensorEventListener proximitySensorEventListener = new SensorEventListener(){
+
+			public void onAccuracyChanged(Sensor sensor, int accuracy) {
+				// TODO Auto-generated method stub
+			}
+
+			public void onSensorChanged(SensorEvent event) {
+				if(event.sensor.getType()==Sensor.TYPE_PROXIMITY){
+					// Telefonen förs mot örat, lås skärmen
+					if(event.values[0] == 0.0){
+						lockScreen();
+					}
+					// Telefonen tas bort från örat, lås upp skärmen
+					else if(event.values[0] == 1.0){
+						unlockScreen();
+					}
+				}
+			}
+		};
+		
+		if (mProximitySensor == null){
+			Log.d("SIP/IncomingCallDialog/onCreate","Det finns ingen närhetssensor!");
+		}
+		else{
+			Log.d("SIP/IncomingCallDialog/onCreate","Namn på närhetssensor: " + mProximitySensor.getName());
+			Log.d("SIP/IncomingCallDialog/onCreate","Max räckvidd på närhetssensor: "
+					+ String.valueOf(mProximitySensor.getMaximumRange()));
+			mSensorManager.registerListener(proximitySensorEventListener,
+					mProximitySensor,
+					SensorManager.SENSOR_DELAY_NORMAL);
+		}
 		
 		// Tänd skärmen
 		unlockScreen();
@@ -370,6 +420,17 @@ public class IncomingCallDialog extends Activity {
         window.addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);
         window.addFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         window.addFlags(LayoutParams.FLAG_TURN_SCREEN_ON);
+//		WindowManager.LayoutParams params = getWindow().getAttributes(); 
+//		params.flags |= LayoutParams.FLAG_KEEP_SCREEN_ON; 
+//		params.screenBrightness = 1; 
+//		getWindow().setAttributes(params);
+    }
+	
+	private void lockScreen() {
+		WindowManager.LayoutParams params = getWindow().getAttributes(); 
+		params.flags |= LayoutParams.FLAG_KEEP_SCREEN_ON; 
+		params.screenBrightness = 0; 
+		getWindow().setAttributes(params);
     }
 	private void startRingTone() {
 		if (ringtone != null) {
