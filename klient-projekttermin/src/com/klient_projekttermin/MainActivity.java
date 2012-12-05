@@ -13,8 +13,11 @@ import messageFunction.Inbox;
 
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -155,6 +158,27 @@ public class MainActivity extends SecureActivity {
 				}
 			}
 		});
+	}
+	
+	@Override
+	public void onBackPressed() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setTitle("Avsluta");
+	    builder.setMessage("Vill du avsluta ut?");
+	    builder.setPositiveButton("Ja", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	                SocketConnection socketConnection=new SocketConnection();
+	                socketConnection.logout();
+	                setResult(RESULT_CANCELED);
+	                finish();
+	            }});
+	    builder.setNegativeButton("Nej", new OnClickListener() {
+	            public void onClick(DialogInterface dialog, int arg1) {
+	                dialog.dismiss();
+	            }});
+	    builder.setCancelable(false);
+	    builder.create().show();
 	}
 
 	private void initiateDB(Context context) {
