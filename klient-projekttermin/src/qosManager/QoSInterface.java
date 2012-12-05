@@ -51,7 +51,6 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		screenBrightnessLevelText = (TextView) findViewById(id.lowScreenBrightnessValue);
 
 		if(qosManager.batterySaveModeIsActivated()){
-			System.out.println("Batterisparläge är aktiverat");
 			batterySaveToggle.setChecked(true);
 		}
 
@@ -202,7 +201,6 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	}
 
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		System.out.println("NU TRYCKTE DU PÅ EN CHECKBOX");
 		int mapChkId = mapPermission.getId();
 		int messageChkId = messagePermission.getId();
 		int assignmentChkId = assignmentPermission.getId();

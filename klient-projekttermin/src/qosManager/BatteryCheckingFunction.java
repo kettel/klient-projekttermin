@@ -18,23 +18,16 @@ public class BatteryCheckingFunction extends Observable {
 	}
 
 	public void startCheckThread(final Context context) {
-//		if(!isBatteryBeingChecked()){
-			System.out.println("Nu startas en ny batterikontrolltråd");
 			IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-			System.out.println("Efter iFilter");
 			final Intent batteryStatus = context.registerReceiver(null, ifilter);
-			System.out.println("efter Intent");
 
 			batteryCheckThread = new Thread(new Runnable() {
 
 				public void run() {
-					System.out.println("Precis innan while");
 					while (true) {
-						System.out.println("Inne i while");
 						int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 
 						if (level != batteryLevel) {
-							System.out.println("Inne i if-satsen");
 							batteryLevel = level;
 							sendNotification(level);
 						}
@@ -43,7 +36,6 @@ public class BatteryCheckingFunction extends Observable {
 				}
 			});
 			batteryCheckThread.start();
-//		}
 	}
 
 	private synchronized void timeToWait() {
@@ -56,9 +48,7 @@ public class BatteryCheckingFunction extends Observable {
 	}
 
 	private void sendNotification(int level) {
-		System.out.println("Inne i sendNotification");
 		setChanged();
-		System.out.println("Notifyar");
 		notifyObservers(level);
 	}
 

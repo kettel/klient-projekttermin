@@ -210,7 +210,6 @@ public class LogInActivity extends Activity implements Observer {
 
 	public void update(Observable observable, Object data) {		
 		if (data instanceof AuthenticationModel) {
-			System.out.println("DET KOMMER NÅGOT FRÅN SERVERN");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {

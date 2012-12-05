@@ -63,7 +63,6 @@ public class QoSManager implements Observer {
 			adjustToLowBatteryLevel();
 		}
 		else{
-			System.out.println("Här är det nog");
 			adjustToOkayBatteryLevel();
 		}
 	}
@@ -74,15 +73,12 @@ public class QoSManager implements Observer {
 	 */
 	public void update(Observable observable, Object data) {
 		int batteryLevel = (Integer) data;
-		System.out.println("Kör en update");
 
 		if(batteryLevel<=lowBatteryLevel&&okayBatterylevel){
-			System.out.println("Justerar för lågt batteri");
 			okayBatterylevel=false;
 			adjustToLowBatteryLevel();
 		}
 		else if(batteryLevel>lowBatteryLevel&&!okayBatterylevel){
-			System.out.println("Justerar för okej batterinivå");
 			okayBatterylevel = true;
 			adjustToOkayBatteryLevel();
 		}
