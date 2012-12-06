@@ -14,12 +14,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import assignment.AddAssignment;
@@ -39,12 +42,29 @@ public class Album extends Activity implements OnItemClickListener {
 	private List<Bitmap> images = new ArrayList<Bitmap>();
 	private Bitmap bitmap;
 	private Database db;
+	private ImageView selectedImage;
+	private ImageView stepLeftImage;
+	private ImageView stepRightImage;
+	Gallery g;
+	private int changePosition = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo_gallery);
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
+
+		// När man markerat en bild i galerisnurran ska den man valt visas i en
+		// större imageView.
+		selectedImage = (ImageView) findViewById(R.id.imageView_selectedPic);
+		stepLeftImage = (ImageView) findViewById(R.id.imageView_stepLeft);
+		stepRightImage = (ImageView) findViewById(R.id.imageView_stepRight);
+		scaleUpView(stepLeftImage);
+		scaleUpView(stepRightImage);
+
+		setSelectedImageOnClickListener();
+		setStepLeftImageOnClickListener();
+		setStepRightImageOnClickListener();
 
 		db = Database.getInstance(getApplicationContext());
 		imagesFromDB = db
@@ -53,13 +73,12 @@ public class Album extends Activity implements OnItemClickListener {
 			PictureModel p = (PictureModel) temp;
 			BitmapFactory.Options ops = new BitmapFactory.Options();
 			ops.inSampleSize = 2;
-
 			bitmap = BitmapFactory.decodeByteArray(p.getPicture(), 0,
 					p.getPicture().length, ops);
 			images.add(bitmap);
 		}
 
-		Gallery g = (Gallery) findViewById(R.id.Gallery);
+		g = (Gallery) findViewById(R.id.Gallery);
 		g.setAdapter(new ImageAdapter(this));
 		g.setSpacing(10);
 		g.setOnItemClickListener(this);
@@ -68,6 +87,11 @@ public class Album extends Activity implements OnItemClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+	}
+
+	public void scaleUpView(ImageView image) {
+		image.setScaleX((float) 1.8);
+		image.setScaleY((float) 1.8);
 	}
 
 	public class ImageAdapter extends BaseAdapter {
@@ -91,11 +115,15 @@ public class Album extends Activity implements OnItemClickListener {
 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ImageView i = new ImageView(this.myContext);
-			i.setImageBitmap(images.get(position));
+			if (!imagesFromDB.isEmpty()) {
+				i.setImageBitmap(images.get(changePosition));
+			}
+			
 			/* Image should be scaled as width/height are set. */
 			i.setScaleType(ImageView.ScaleType.FIT_XY);
 			/* Set the Width/Height of the ImageView. */
-			i.setLayoutParams(new Gallery.LayoutParams(700, 400));
+			i.setLayoutParams(new Gallery.LayoutParams(200, 200));
+			//changePosition = position;
 			return i;
 		}
 
@@ -105,25 +133,63 @@ public class Album extends Activity implements OnItemClickListener {
 		}
 	}
 
+	private void setSelectedImageOnClickListener() {
+		selectedImage.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				// currentPictureId = arg2;
+				switch (callingActivity) {
+				case ActivityConstants.CAMERA:
+					showPictureAlts();
+					break;
+				case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
+					addPicToAss();
+					break;
+				default:
+					break;
+				}
+			}
+		});
+	}
+
+	private void setStepLeftImageOnClickListener() {
+		stepLeftImage.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				if (changePosition != 0) {
+					changePosition--;
+				}
+				selectedImage.setImageBitmap(getPic(changePosition));
+				g.setSelection(changePosition, true);
+			}
+		});
+	}
+
+	private void setStepRightImageOnClickListener() {
+		stepRightImage.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				if (changePosition != g.getCount() - 1) {
+					changePosition++;
+				}
+				selectedImage.setImageBitmap(getPic(changePosition));
+				g.setSelection(changePosition, true);
+			}
+		});
+	}
+
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
 			long arg3) {
+		currentPictureId = arg2;
+		selectedImage.setImageBitmap(getPic(currentPictureId));
 	}
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		currentPictureId = arg2;
-		switch (callingActivity) {
-		case ActivityConstants.CAMERA:
-			showPictureAlts();
-			break;
-		case ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT:
-			addPicToAss();
-			break;
-		default:
-			break;
-		}
+		selectedImage.setImageBitmap(getPic(currentPictureId));
 	}
-	
-	private void addPicToAss(){
+
+	private void addPicToAss() {
 		Intent intent = new Intent(Album.this, AddAssignment.class);
 		intent.putExtra("pic", currentPictureId);
 		setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
@@ -163,5 +229,17 @@ public class Album extends Activity implements OnItemClickListener {
 		i.putExtra("calling-activity",
 				ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
 		Album.this.startActivity(i);
+	}
+
+	private Bitmap getPic(int id) {
+		db = Database.getInstance(getApplicationContext());
+		List<ModelInterface> pics = db.getAllFromDB(new PictureModel(),
+				getContentResolver());
+		PictureModel p = (PictureModel) pics.get(id);
+		BitmapFactory.Options ops = new BitmapFactory.Options();
+		ops.inSampleSize = 2;
+		Bitmap bitmap = BitmapFactory.decodeByteArray(p.getPicture(), 0,
+				p.getPicture().length, ops);
+		return bitmap;
 	}
 }
