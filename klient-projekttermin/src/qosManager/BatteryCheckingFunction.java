@@ -56,7 +56,7 @@ public class BatteryCheckingFunction extends Observable {
 		batteryCheckThread.interrupt();
 	}
 
-	public synchronized Boolean isBatteryBeingChecked(){
+	public boolean isBatteryBeingChecked(){
 		return batteryCheckThread.isAlive();
 	}
 }

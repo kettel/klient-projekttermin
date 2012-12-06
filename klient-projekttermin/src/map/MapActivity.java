@@ -162,11 +162,9 @@ public class MapActivity extends SecureActivity implements Observer,
 		// final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
 		final StoredMap sm = new StoredMap("OpenStreetMap", Environment
 				.getExternalStorageDirectory().getPath() + "/MGMapsCache", true);
-		// + "/MGMapsCache");
-
 		this.mapComponent.setFileSystem(new AndroidFileSystem());
+//		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setMap(sm);
-		// this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
 		this.mapComponent.setMapListener(this);
@@ -220,7 +218,7 @@ public class MapActivity extends SecureActivity implements Observer,
 		alert.show();
 	}
 
-	private void haveNetworkConnection() {
+	private boolean haveNetworkConnection() {
 		boolean haveConnectedWifi = false;
 		boolean haveConnectedMobile = false;
 
@@ -258,6 +256,19 @@ public class MapActivity extends SecureActivity implements Observer,
 							});
 			final AlertDialog alert = builder.create();
 			alert.show();
+		}
+		for (NetworkInfo ni : netInfo) {
+			if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+				if (ni.isConnected())
+					haveConnectedWifi = true;
+			if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+				if (ni.isConnected())
+					haveConnectedMobile = true;
+		}
+		if (haveConnectedMobile) {
+			return haveConnectedMobile;
+		} else {
+			return haveConnectedWifi;
 		}
 	}
 
@@ -422,11 +433,12 @@ public class MapActivity extends SecureActivity implements Observer,
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.equals(this.searchItem)) {
-			this.mapComponent.setMap(OpenStreetMap.MAPNIK);
-			this.haveNetworkConnection();
-			actv.requestFocus();
-			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+			if (this.haveNetworkConnection()) {
+				this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+				actv.requestFocus();
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+			}
 		}
 		return true;
 	}

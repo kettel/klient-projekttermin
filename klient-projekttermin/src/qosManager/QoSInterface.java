@@ -89,9 +89,12 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	 */
 	public void startAutomaticAdjustments(View v){
 		if(automaticSaveModeToggel.isChecked()){
+			System.out.println(" ischecked");
 			if(!qosManager.isBatteryCheckThreadStarted()){
+				System.out.println("isBatteryCheckThreadStarted är false");
 				qosManager.startBatteryCheckingThread(getApplicationContext());
 			}
+			System.out.println("HEJ Jopp");
 		}
 		else{
 			qosManager.stopBatteryCheckThread();

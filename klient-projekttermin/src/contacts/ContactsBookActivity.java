@@ -87,8 +87,6 @@ public class ContactsBookActivity extends SecureActivity {
 				Type type = new TypeToken<List<Contact>>() {
 				}.getType();
 				getContactsForAssignment();
-				System.out.println("ANTAL KONTAKTER SELEAFER"
-						+ contactsToAssignment.size());
 				intentAssignment.putExtra("agents",
 						gson.toJson(contactsToAssignment, type));
 				setResult(ActivityConstants.RESULT_FROM_CONTACTS,
@@ -128,9 +126,7 @@ public class ContactsBookActivity extends SecureActivity {
 			hs.put(cId, c);
 			cId++;
 		}
-		System.out.println(sel.length+ " LÄÄNGD");
 		for (int i = 0; i < sel.length; i++) {
-			System.out.println(sel[i] + " SEL ");
 			contactsToAssignment.add(hs.get(sel[i]));
 		}
 	}
@@ -146,9 +142,7 @@ public class ContactsBookActivity extends SecureActivity {
 		int[] selectedContacs = new int[k];
 		int j = 0;
 		for (int i : h.keySet()) {
-			System.out.println(i + " VALUE " + h.get(i));
 			if (h.get(i)) {
-				System.out.println("Denna lägger vi till " + i);
 				selectedContacs[j] = i;
 				j++;
 			}

@@ -139,7 +139,6 @@ public class SocketConnection extends Observable {
 			readSocket(socket);
 			closeSocket(socket);
 		}
-
 	}
 
 	public void pullFromServer() {
@@ -266,7 +265,6 @@ public class SocketConnection extends Observable {
 
 	public void logout() {
 		new Thread(new Runnable() {
-
 			public void run() {
 				Socket socket = createSocket();
 				if (socket != null) {
