@@ -132,7 +132,6 @@ public class QoSManager implements Observer {
 
 	public void checkConnectivity(MenuItem connectionMarker,Boolean haveWifiConnection,Boolean haveMobileConnection){
 
-
 		if(haveWifiConnection||haveMobileConnection){
 			SocketConnection connection = new SocketConnection();	
 			connection.addObserver(new PullResponseHandler(applicationContext));

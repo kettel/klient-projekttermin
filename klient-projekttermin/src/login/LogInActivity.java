@@ -47,6 +47,8 @@ public class LogInActivity extends Activity implements Observer {
 		database = Database.getInstance(getApplicationContext());
 		Intent intent = getIntent();
 		callingactivity = intent.getIntExtra("calling-activity", 0);
+		qosManager =QoSManager.getInstance();
+		qosManager.setContext(getApplicationContext());
 
 	}
 
@@ -78,34 +80,6 @@ public class LogInActivity extends Activity implements Observer {
 		user.setAuthenticationModel(originalModel);
 
 		tryOnlineLogin(originalModel);
-	}
-	
-	/*
-	 * Metoden skickar iväg autenticeringsförfrågan till servern
-	 */
-	public void tryOnlineLogin(AuthenticationModel authenticationModel) {
-
-		SocketConnection connection = new SocketConnection();
-		connection.addObserver(this);
-		connection.authenticate(authenticationModel);
-
-		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,
-				true);
-	}
-
-	public void accessGranted() {
-
-		switch (callingactivity) {
-		case ActivityConstants.INACTIVITY:
-			break;
-		default:
-			Intent intent = new Intent(this, MainActivity.class);
-			startActivity(intent);
-			break;
-		}
-		user.setLoggedIn(true);
-		setResult(RESULT_OK);
-		finish();
 	}
 
 	/**
@@ -149,11 +123,20 @@ public class LogInActivity extends Activity implements Observer {
 			} else {
 				removeLastUserFromDB();
 			}
-		}
+		}else{
+			this.runOnUiThread(new Runnable() {
 
-		else {
-			System.out.println("Försöker logga in online");
-			tryOnlineLogin(loginInput);
+				public void run() {
+					pd.dismiss();
+					Toast toast = Toast
+							.makeText(
+									getApplicationContext(),
+									"Misslyckades med att logga in offline, inget i databasen",
+									Toast.LENGTH_LONG);
+					toast.setGravity(Gravity.TOP, 0, 300);
+					toast.show();
+				}
+			});
 		}
 	}
 
@@ -209,6 +192,40 @@ public class LogInActivity extends Activity implements Observer {
 		return hexString.toString();
 	}
 
+
+	/*
+	 * Metoden skickar iväg autenticeringsförfrågan till servern
+	 */
+	public void tryOnlineLogin(AuthenticationModel authenticationModel) {
+
+		SocketConnection connection = new SocketConnection();
+		connection.addObserver(this);
+		connection.authenticate(authenticationModel);
+		runOnUiThread(new Runnable() {
+
+			public void run() {
+				pd = ProgressDialog.show(LogInActivity.this, "",
+						"Loggar in...", true, true);
+			}
+		});
+	}
+
+	public void accessGranted() {
+
+		switch (callingactivity) {
+		case ActivityConstants.INACTIVITY:
+			break;
+		default:
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.putExtra("USER", userName);
+			startActivity(intent);
+			break;
+		}
+		user.setLoggedIn(true);
+		setResult(RESULT_OK);
+		finish();
+	}
+
 	public void update(Observable observable, Object data) {
 		if (data instanceof AuthenticationModel) {
 			user.setOnlineConnection(true);
@@ -222,7 +239,6 @@ public class LogInActivity extends Activity implements Observer {
 			checkAuthenticity((AuthenticationModel) data);
 
 		} else if (data instanceof String) {
-			user.setOnlineConnection(false);
 			user.setOnlineConnection(false);
 			this.runOnUiThread(new Runnable() {
 
