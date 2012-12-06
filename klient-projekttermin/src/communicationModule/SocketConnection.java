@@ -138,6 +138,9 @@ public class SocketConnection extends Observable {
 			writeToSocket(socket, json + "\nclose\n");
 			readSocket(socket);
 			closeSocket(socket);
+		} else {
+			setChanged();
+			notifyObservers(json);
 		}
 	}
 

@@ -61,7 +61,7 @@ public class AssignmentCursorAdapter extends CursorAdapter {
 	public void bindView(View arg0, Context arg1, Cursor arg2) {
 		final String text = convertToString(arg2);
 		((TextView) arg0).setText(text);
-		((TextView) arg0).setTextColor(Color.BLACK);
+//		((TextView) arg0).setTextColor(Color.BLACK);
 	}
 
 	@Override
