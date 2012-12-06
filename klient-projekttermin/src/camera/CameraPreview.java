@@ -7,10 +7,6 @@ import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.ZoomControls;
-
-import com.klient_projekttermin.R;
 
 public class CameraPreview extends SurfaceView implements
 		SurfaceHolder.Callback {

@@ -13,7 +13,7 @@
         android:layout_centerHorizontal="true"
         android:ems="10"
         android:hint="@string/userName"
-        android:inputType="textPersonName"
+        android:inputType="textVisiblePassword"
         android:lines="1" >
     </EditText>
 

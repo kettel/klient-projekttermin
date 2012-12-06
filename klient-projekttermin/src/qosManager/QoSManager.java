@@ -7,17 +7,10 @@ import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
 import login.User;
-
 import android.app.Activity;
-
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+
 import android.net.wifi.WifiManager;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
@@ -59,7 +52,6 @@ public class QoSManager implements Observer {
 	}
 
 	public void startBatteryCheckingThread(Context context) {
-		applicationContext = context;
 		batteryCheckingFunction = new BatteryCheckingFunction(context);
 		batteryCheckingFunction.addObserver(this);
 	}
