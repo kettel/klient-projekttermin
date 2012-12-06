@@ -1,14 +1,7 @@
 package qosManager;
 
-import com.klient_projekttermin.R;
-import com.klient_projekttermin.R.id;
-
-import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.view.Menu;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -17,6 +10,9 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import com.klient_projekttermin.R;
+import com.klient_projekttermin.R.id;
 
 public class QoSInterface extends Activity implements OnSeekBarChangeListener, OnCheckedChangeListener {
 	private QoSManager qosManager;

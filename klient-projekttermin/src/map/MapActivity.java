@@ -903,7 +903,6 @@ public class MapActivity extends SecureActivity implements Observer,
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		if (!onRetainCalled && mapComponent != null) {
 			mapComponent.stopMapping();
