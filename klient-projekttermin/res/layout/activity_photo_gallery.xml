@@ -2,18 +2,70 @@
     android:id="@+id/LinearLayout01"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#000000"
     android:orientation="vertical" >
 
-    <Gallery
+    <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/Gallery"
+        android:id="@+id/LinearLayout02"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_weight="10"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/imageView_stepLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
+            android:clickable="True"
+            android:src="@android:drawable/ic_media_previous" />
+
+        <Gallery
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/Gallery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="8" />
+
+        <ImageView
+            android:id="@+id/imageView_stepRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp"
+            android:clickable="True"
+            android:src="@android:drawable/ic_media_next" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+        
+        <ImageView
+        android:id="@+id/imageView_selectedPic_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="True"
+        android:src="@android:drawable/arrow_up_float" />
+        
+    </RelativeLayout>
+
+    
 
     <ImageView
-        android:id="@+id/ImageView"
+        android:id="@+id/imageView_selectedPic"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" 
-        android:scaleType="fitXY"/>
+        android:layout_height="fill_parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_weight="80"
+        android:clickable="True"
+        android:src="@android:drawable/ic_menu_camera" />
 
 </LinearLayout>
