@@ -18,7 +18,6 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -149,8 +148,10 @@ public class SocketConnection extends Observable {
 			writeToSocket(socket, json + "\nclose\n");
 			readSocket(socket);
 			closeSocket(socket);
+		} else {
+			setChanged();
+			notifyObservers(json);
 		}
-
 	}
 
 	public void pullFromServer() {
@@ -271,7 +272,6 @@ public class SocketConnection extends Observable {
 
 	public void logout() {
 		new Thread(new Runnable() {
-
 			public void run() {
 				Socket socket = createSocket();
 				if (socket != null) {

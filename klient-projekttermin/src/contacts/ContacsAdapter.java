@@ -1,9 +1,6 @@
 package contacts;
 
 import java.util.HashMap;
-import java.util.List;
-
-import com.klient_projekttermin.ActivityConstants;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -11,6 +8,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+
+import com.klient_projekttermin.ActivityConstants;
 
 public class ContacsAdapter extends ArrayAdapter<String> {
 

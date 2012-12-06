@@ -251,7 +251,6 @@ public class LogInActivity extends Activity implements Observer {
 				}
 			});
 			tryOfflineLogin(originalModel);
-
 		}
 	}
 }
