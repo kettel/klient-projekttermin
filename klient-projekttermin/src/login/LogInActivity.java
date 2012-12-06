@@ -79,6 +79,34 @@ public class LogInActivity extends Activity implements Observer {
 
 		tryOnlineLogin(originalModel);
 	}
+	
+	/*
+	 * Metoden skickar iväg autenticeringsförfrågan till servern
+	 */
+	public void tryOnlineLogin(AuthenticationModel authenticationModel) {
+
+		SocketConnection connection = new SocketConnection();
+		connection.addObserver(this);
+		connection.authenticate(authenticationModel);
+
+		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,
+				true);
+	}
+
+	public void accessGranted() {
+
+		switch (callingactivity) {
+		case ActivityConstants.INACTIVITY:
+			break;
+		default:
+			Intent intent = new Intent(this, MainActivity.class);
+			startActivity(intent);
+			break;
+		}
+		user.setLoggedIn(true);
+		setResult(RESULT_OK);
+		finish();
+	}
 
 	/**
 	 * Metoden matchar inloggninguppgifterna mot de godkända kombinationerna som
@@ -179,35 +207,6 @@ public class LogInActivity extends Activity implements Observer {
 			hexString.append(hex);
 		}
 		return hexString.toString();
-	}
-
-	/*
-	 * Metoden skickar iväg autenticeringsförfrågan till servern
-	 */
-	public void tryOnlineLogin(AuthenticationModel authenticationModel) {
-
-		SocketConnection connection = new SocketConnection();
-		connection.addObserver(this);
-		connection.authenticate(authenticationModel);
-
-		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,
-				true);
-	}
-
-	public void accessGranted() {
-
-		switch (callingactivity) {
-		case ActivityConstants.INACTIVITY:
-			break;
-		default:
-			Intent intent = new Intent(this, MainActivity.class);
-			intent.putExtra("USER", userName);
-			startActivity(intent);
-			break;
-		}
-		user.setLoggedIn(true);
-		setResult(RESULT_OK);
-		finish();
 	}
 
 	public void update(Observable observable, Object data) {

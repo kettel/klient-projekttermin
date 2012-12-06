@@ -3,6 +3,9 @@ package qosManager;
 import java.util.Observable;
 import java.util.Observer;
 
+import communicationModule.PullResponseHandler;
+import communicationModule.SocketConnection;
+
 import login.User;
 
 import android.app.Activity;
@@ -10,6 +13,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
@@ -134,17 +138,18 @@ public class QoSManager implements Observer {
 		wifiManager.setWifiEnabled(wantToTurnOn);
 	}
 
-	public void checkConnectivity(MenuItem onlineMarker, MenuItem offlineMarker,Boolean haveWifiConnection,Boolean haveMobileConnection){
+	public void checkConnectivity(MenuItem connectionMarker,Boolean haveWifiConnection,Boolean haveMobileConnection){
+
 
 		if(haveWifiConnection||haveMobileConnection){
-			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+			SocketConnection connection = new SocketConnection();	
+			connection.addObserver(new PullResponseHandler(applicationContext));
+			connection.pullFromServer();
+			connectionMarker.setIcon(android.R.drawable.presence_online);
 		}
 		else{
-			onlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-			offlineMarker.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			connectionMarker.setIcon(android.R.drawable.presence_offline);
 		}
-
 	}
 
 	public Boolean batterySaveModeIsActivated(){
