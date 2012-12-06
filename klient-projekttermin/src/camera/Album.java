@@ -61,14 +61,18 @@ public class Album extends Activity implements OnItemClickListener {
 		stepRightImage = (ImageView) findViewById(R.id.imageView_stepRight);
 		scaleUpView(stepLeftImage);
 		scaleUpView(stepRightImage);
-
-		setSelectedImageOnClickListener();
-		setStepLeftImageOnClickListener();
-		setStepRightImageOnClickListener();
-
+		
 		db = Database.getInstance(getApplicationContext());
 		imagesFromDB = db
 				.getAllFromDB(new PictureModel(), getContentResolver());
+		
+		if (!imagesFromDB.isEmpty()) {
+			setSelectedImageOnClickListener();
+		}
+		
+		setStepLeftImageOnClickListener();
+		setStepRightImageOnClickListener();
+
 		for (ModelInterface temp : imagesFromDB) {
 			PictureModel p = (PictureModel) temp;
 			BitmapFactory.Options ops = new BitmapFactory.Options();
@@ -118,12 +122,13 @@ public class Album extends Activity implements OnItemClickListener {
 			if (!imagesFromDB.isEmpty()) {
 				i.setImageBitmap(images.get(changePosition));
 			}
-			
+
 			/* Image should be scaled as width/height are set. */
 			i.setScaleType(ImageView.ScaleType.FIT_XY);
 			/* Set the Width/Height of the ImageView. */
 			i.setLayoutParams(new Gallery.LayoutParams(200, 200));
-			//changePosition = position;
+			// changePosition = position;
+			Log.e("FEL", Boolean.toString(imagesFromDB.isEmpty()));
 			return i;
 		}
 
@@ -158,9 +163,12 @@ public class Album extends Activity implements OnItemClickListener {
 			public void onClick(View v) {
 				if (changePosition != 0) {
 					changePosition--;
+					Log.e("FEL", "MINUS");
 				}
-				selectedImage.setImageBitmap(getPic(changePosition));
-				g.setSelection(changePosition, true);
+				if (!imagesFromDB.isEmpty()) {
+					selectedImage.setImageBitmap(getPic(changePosition));
+					g.setSelection(changePosition, true);
+				}
 			}
 		});
 	}
@@ -169,11 +177,15 @@ public class Album extends Activity implements OnItemClickListener {
 		stepRightImage.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				if (changePosition != g.getCount() - 1) {
+				if (changePosition != g.getCount() - 1 && !imagesFromDB.isEmpty()) {
 					changePosition++;
+					Log.e("FEL", "PLUS");
 				}
-				selectedImage.setImageBitmap(getPic(changePosition));
-				g.setSelection(changePosition, true);
+				
+				if (!imagesFromDB.isEmpty()) {
+					selectedImage.setImageBitmap(getPic(changePosition));
+					g.setSelection(changePosition, true);
+				}
 			}
 		});
 	}
@@ -181,12 +193,16 @@ public class Album extends Activity implements OnItemClickListener {
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
 			long arg3) {
 		currentPictureId = arg2;
-		selectedImage.setImageBitmap(getPic(currentPictureId));
+		if (!imagesFromDB.isEmpty()) {
+			selectedImage.setImageBitmap(getPic(currentPictureId));
+		}
 	}
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		currentPictureId = arg2;
-		selectedImage.setImageBitmap(getPic(currentPictureId));
+		if (!imagesFromDB.isEmpty()) {
+			selectedImage.setImageBitmap(getPic(currentPictureId));
+		}
 	}
 
 	private void addPicToAss() {
