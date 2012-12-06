@@ -1,6 +1,5 @@
 package communicationModule;
 
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,7 +8,6 @@ import models.Assignment;
 import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
-import models.ModelInterface;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,7 +17,6 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import assignment.AssignmentOverview;
 
 import com.klient_projekttermin.GCMIntentService;
@@ -44,8 +41,9 @@ public class PullResponseHandler implements Observer {
 	}
 
 	public void update(Observable observable, Object data) {
-
-		notificationIntent = new Intent(context, MainActivity.class);
+		if (notificationIntent == null) {
+			notificationIntent = new Intent(context, MainActivity.class);
+		}
 		if (data == null && hasChanged) {
 			showNotification();
 		} else {

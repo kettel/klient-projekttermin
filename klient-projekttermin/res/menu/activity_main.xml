@@ -1,11 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/OfflineMarker"
-        android:icon="@android:drawable/presence_offline"
-        android:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/OnlineMarker"
+        android:id="@+id/connectionMarker"
         android:icon="@android:drawable/presence_online"
         android:showAsAction="ifRoom"/>
     <item

@@ -47,6 +47,8 @@ public class LogInActivity extends Activity implements Observer {
 		database = Database.getInstance(getApplicationContext());
 		Intent intent = getIntent();
 		callingactivity = intent.getIntExtra("calling-activity", 0);
+		qosManager =QoSManager.getInstance();
+		qosManager.setContext(getApplicationContext());
 
 	}
 
@@ -121,11 +123,20 @@ public class LogInActivity extends Activity implements Observer {
 			} else {
 				removeLastUserFromDB();
 			}
-		}
+		}else{
+			this.runOnUiThread(new Runnable() {
 
-		else {
-			System.out.println("Försöker logga in online");
-			tryOnlineLogin(loginInput);
+				public void run() {
+					pd.dismiss();
+					Toast toast = Toast
+							.makeText(
+									getApplicationContext(),
+									"Misslyckades med att logga in offline, inget i databasen",
+									Toast.LENGTH_LONG);
+					toast.setGravity(Gravity.TOP, 0, 300);
+					toast.show();
+				}
+			});
 		}
 	}
 
@@ -181,6 +192,7 @@ public class LogInActivity extends Activity implements Observer {
 		return hexString.toString();
 	}
 
+
 	/*
 	 * Metoden skickar iväg autenticeringsförfrågan till servern
 	 */
@@ -189,9 +201,13 @@ public class LogInActivity extends Activity implements Observer {
 		SocketConnection connection = new SocketConnection();
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
+		runOnUiThread(new Runnable() {
 
-		pd = ProgressDialog.show(LogInActivity.this, "", "Loggar in...", true,
-				true);
+			public void run() {
+				pd = ProgressDialog.show(LogInActivity.this, "",
+						"Loggar in...", true, true);
+			}
+		});
 	}
 
 	public void accessGranted() {
@@ -224,7 +240,6 @@ public class LogInActivity extends Activity implements Observer {
 
 		} else if (data instanceof String) {
 			user.setOnlineConnection(false);
-			user.setOnlineConnection(false);
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
@@ -239,7 +254,6 @@ public class LogInActivity extends Activity implements Observer {
 				}
 			});
 			tryOfflineLogin(originalModel);
-
 		}
 	}
 }

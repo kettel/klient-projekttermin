@@ -49,8 +49,9 @@ public class MainActivity extends SecureActivity {
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	private QoSManager qosManager;
-	private MenuItem onlineMarker;
-	private MenuItem offlineMarker;
+	private MenuItem connectionMarker;
+	private MenuItem logout;
+	private MenuItem qosItem;
 	private Database database;
 	private SocketConnection socketConnection = new SocketConnection();
 	private User user;
@@ -74,8 +75,8 @@ public class MainActivity extends SecureActivity {
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
 
-		checkNotNull(SERVER_URL, "SERVER_URL");
-		checkNotNull(SENDER_ID, "SENDER_ID");
+//		checkNotNull(SERVER_URL, "SERVER_URL");
+//		checkNotNull(SENDER_ID, "SENDER_ID");
 		// Make sure the device has the proper dependencies.
 		GCMRegistrar.checkDevice(this);
 		// Make sure the manifest was properly set - comment out this line
@@ -263,10 +264,27 @@ public class MainActivity extends SecureActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
-	
-		onlineMarker = menu.findItem(R.id.OnlineMarker);
-		offlineMarker = menu.findItem(R.id.OfflineMarker);
+		
+		logout = menu.findItem(R.id.logout);
+		logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+			
+			public boolean onMenuItemClick(MenuItem item) {
+				logout();
+				return false;
+			}
+		}); 
+		qosItem = menu.findItem(R.id.QoSManager);
+		qosItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+			
+			public boolean onMenuItemClick(MenuItem item) {
+			startQoSManager();	
+				return false;
+			}
+		});
+		connectionMarker = menu.findItem(R.id.connectionMarker);
 
+		
+		
 		registerReceiver(new BroadcastReceiver() {      
 		        public void onReceive(Context context, Intent intent) {
 		        	  ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -285,7 +303,7 @@ public class MainActivity extends SecureActivity {
 		        	            	haveConnectedMobile = false;
 		        	            }
 		        	    }
-		        	qosManager.checkConnectivity(onlineMarker, offlineMarker, haveConnectedWifi, haveConnectedMobile);
+		        	qosManager.checkConnectivity(connectionMarker, haveConnectedWifi, haveConnectedMobile);
 		        }}, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		
 		return true;
@@ -305,29 +323,6 @@ public class MainActivity extends SecureActivity {
 		}
 		
 		super.onDestroy();
-	}
-
-	private void checkNotNull(Object reference, String name) {
-		if (reference == null) {
-			// throw new NullPointerException(
-			// getString(R.string.error_config, name));
-		}
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int logOutId = findViewById(id.logout).getId();
-		int qosId = findViewById(id.QoSManager).getId();
-
-		if (item.getItemId() == logOutId) {
-			logout();
-			return false;
-		} else if (item.getItemId() == qosId) {
-			startQoSManager();
-			return false;
-		} else {
-			return false;
-		}
 	}
 
 	public void startQoSManager() {

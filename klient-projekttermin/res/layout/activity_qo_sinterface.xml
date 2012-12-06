@@ -1,261 +1,267 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <ToggleButton
-        android:id="@+id/toggleForManualActivationOfBatterySaveMode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/manualActivationOfBatterySaveModeText"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:onClick="manualStartBatterySaveMode" />
-
-    <TextView
-        android:id="@+id/manualActivationOfBatterySaveModeText"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/automaticQos"
-        android:ems="10"
-        android:gravity="center"
-        android:text="@string/manualActivationForBatterySaveModeText"
-        android:textSize="19dp" >
-    </TextView>
+        android:layout_height="wrap_content" >
 
-    <ToggleButton
-        android:id="@+id/automaticQos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/turnOnQosText"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/toggleForManualActivationOfBatterySaveMode"
-        android:layout_marginTop="10dp"
-        android:onClick="startAutomaticAdjustments"
-        android:checked="true" />
+        <ToggleButton
+            android:id="@+id/toggleForManualActivationOfBatterySaveMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/manualActivationOfBatterySaveModeText"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:onClick="manualStartBatterySaveMode" />
 
-    <TextView
-        android:id="@+id/turnOnQosText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/manualActivationOfBatterySaveModeText"
-        android:layout_marginTop="30dp"
-        android:layout_toLeftOf="@+id/automaticQos"
-        android:ems="10"
-        android:gravity="center"
-        android:text="@string/automaticBatterySaveModeText"
-        android:textSize="19dp" >
-    </TextView>
+        <TextView
+            android:id="@+id/manualActivationOfBatterySaveModeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/automaticQos"
+            android:ems="10"
+            android:gravity="center"
+            android:text="@string/manualActivationForBatterySaveModeText"
+            android:textSize="19dp" >
+        </TextView>
 
-    <TextView
-        android:id="@+id/batterySaveOptions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/turnOnQosText"
-        android:layout_marginTop="10dp"
-        android:ems="10"
-        android:gravity="center"
-        android:lines="1"
-        android:text="@string/batterySaveOptions"
-        android:textSize="20dp" >
-    </TextView>
+        <ToggleButton
+            android:id="@+id/automaticQos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/turnOnQosText"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/toggleForManualActivationOfBatterySaveMode"
+            android:layout_marginTop="10dp"
+            android:checked="true"
+            android:onClick="startAutomaticAdjustments" />
 
-    <TextView
-        android:id="@+id/batterySaveOptionsDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/batterySaveOptions"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="3dp"
-        android:ems="25"
-        android:gravity="center"
-        android:lines="2"
-        android:text="@string/batterySaveOptionDetails"
-        android:textSize="14dp" >
-    </TextView>
+        <TextView
+            android:id="@+id/turnOnQosText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/manualActivationOfBatterySaveModeText"
+            android:layout_marginTop="30dp"
+            android:layout_toLeftOf="@+id/automaticQos"
+            android:ems="10"
+            android:gravity="center"
+            android:text="@string/automaticBatterySaveModeText"
+            android:textSize="19dp" >
+        </TextView>
 
-    <TextView
-        android:id="@+id/lowBatteryLevel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/batterySaveOptionsDetails"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_alignParentLeft="true"
-        android:ems="10"
-        android:lines="1"
-        android:text="@string/lowBatteryLevel"
-        android:textSize="18dp" >
-    </TextView>
+        <TextView
+            android:id="@+id/batterySaveOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/turnOnQosText"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:gravity="center"
+            android:lines="1"
+            android:text="@string/batterySaveOptions"
+            android:textSize="20dp" >
+        </TextView>
 
-    <TextView
-        android:id="@+id/lowBatteryValue"
-      android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/lowBatteryLevel"
-        android:layout_toRightOf="@+id/lowBatteryLevel"
-        android:ems="10">
-    </TextView>
+        <TextView
+            android:id="@+id/batterySaveOptionsDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/batterySaveOptions"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp"
+            android:ems="25"
+            android:gravity="center"
+            android:lines="2"
+            android:text="@string/batterySaveOptionDetails"
+            android:textSize="14dp" >
+        </TextView>
 
-    <SeekBar
-        android:id="@+id/lowBatteyLevelSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lowBatteryLevel"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:max="50"/>
+        <TextView
+            android:id="@+id/lowBatteryLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/batterySaveOptionsDetails"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:lines="1"
+            android:text="@string/lowBatteryLevel"
+            android:textSize="18dp" >
+        </TextView>
 
-    <TextView
-        android:id="@+id/screenBrightness"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lowBatteyLevelSeekBar"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:ems="10"
-        android:lines="1"
-        android:text="@string/screenBrightness"
-        android:textSize="18dp" >
-    </TextView>
+        <TextView
+            android:id="@+id/lowBatteryValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/lowBatteryLevel"
+            android:layout_toRightOf="@+id/lowBatteryLevel"
+            android:ems="10" >
+        </TextView>
 
-    <TextView
-        android:id="@+id/lowScreenBrightnessValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/screenBrightness"
-        android:layout_toRightOf="@+id/screenBrightness"
-        android:ems="10">
-    </TextView>
+        <SeekBar
+            android:id="@+id/lowBatteyLevelSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lowBatteryLevel"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:max="50" />
 
-    <SeekBar
-        android:id="@+id/screenBrihgtnessSeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/screenBrightness"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"/>
+        <TextView
+            android:id="@+id/screenBrightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lowBatteyLevelSeekBar"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:lines="1"
+            android:text="@string/screenBrightness"
+            android:textSize="18dp" >
+        </TextView>
 
-    <TextView
-        android:id="@+id/denyMapFunction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/screenBrihgtnessSeekBar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:ems="10"
-        android:lines="1"
-        android:text="@string/denyMapFunction"
-        android:textSize="18dp" >
-    </TextView>
+        <TextView
+            android:id="@+id/lowScreenBrightnessValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/screenBrightness"
+            android:layout_toRightOf="@+id/screenBrightness"
+            android:ems="10" >
+        </TextView>
 
-    <CheckBox
-        android:id="@+id/mapFunctionCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/denyMapFunction"
-        android:layout_alignParentRight="true" />
+        <SeekBar
+            android:id="@+id/screenBrihgtnessSeekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/screenBrightness"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp" />
 
-    <TextView
-        android:id="@+id/denyMessageFunction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/denyMapFunction"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/messageFunctionCheckBox"
-        android:ems="10"
-        android:lines="1"
-        android:text="@string/denyMessageFunction"
-        android:textSize="18dp" >
-    </TextView>
+        <TextView
+            android:id="@+id/denyMapFunction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/screenBrihgtnessSeekBar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:lines="1"
+            android:text="@string/denyMapFunction"
+            android:textSize="18dp" >
+        </TextView>
 
-    <CheckBox
-        android:id="@+id/messageFunctionCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/denyMessageFunction"
-        android:layout_alignParentRight="true"/>
+        <CheckBox
+            android:id="@+id/mapFunctionCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/denyMapFunction"
+            android:layout_alignParentRight="true" />
 
-    <TextView
-        android:id="@+id/denyAssignmentFunction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/denyMessageFunction"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/assignmentFunctionCheckBox"
-        android:ems="10"
-        android:lines="1"
-        android:text="@string/denyAssignmentFunction"
-        android:textSize="18dp" >
-    </TextView>
+        <TextView
+            android:id="@+id/denyMessageFunction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/denyMapFunction"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/messageFunctionCheckBox"
+            android:ems="10"
+            android:lines="1"
+            android:text="@string/denyMessageFunction"
+            android:textSize="18dp" >
+        </TextView>
 
-    <CheckBox
-        android:id="@+id/assignmentFunctionCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/denyAssignmentFunction"
-        android:layout_alignParentRight="true"/>
+        <CheckBox
+            android:id="@+id/messageFunctionCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/denyMessageFunction"
+            android:layout_alignParentRight="true" />
 
-    <TextView
-        android:id="@+id/denyCameraFunction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/denyAssignmentFunction"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/cameraFunctionCheckBox"
-        android:ems="10"
-        android:lines="1"
-        android:text="@string/denyCameraFunction"
-        android:textSize="18dp" >
-    </TextView>
+        <TextView
+            android:id="@+id/denyAssignmentFunction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/denyMessageFunction"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/assignmentFunctionCheckBox"
+            android:ems="10"
+            android:lines="1"
+            android:text="@string/denyAssignmentFunction"
+            android:textSize="18dp" >
+        </TextView>
 
-    <CheckBox
-        android:id="@+id/cameraFunctionCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/denyCameraFunction"
-        android:layout_alignParentRight="true"/>
+        <CheckBox
+            android:id="@+id/assignmentFunctionCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/denyAssignmentFunction"
+            android:layout_alignParentRight="true" />
 
-    <TextView
-        android:id="@+id/denyWiFiConnection"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/denyCameraFunction"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/WiFiConnectionCheckBox"
-        android:ems="10"
-        android:lines="1"
-        android:text="@string/denyWiFiConnection"
-        android:textSize="18dp" >
-    </TextView>
+        <TextView
+            android:id="@+id/denyCameraFunction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/denyAssignmentFunction"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/cameraFunctionCheckBox"
+            android:ems="10"
+            android:lines="1"
+            android:text="@string/denyCameraFunction"
+            android:textSize="18dp" >
+        </TextView>
 
-    <CheckBox
-        android:id="@+id/WiFiConnectionCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/denyWiFiConnection"
-        android:layout_alignParentRight="true" />
+        <CheckBox
+            android:id="@+id/cameraFunctionCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/denyCameraFunction"
+            android:layout_alignParentRight="true" />
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/denyWiFiConnection"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/defaultButton"
-        android:onClick="setDefaultValues" />
+        <TextView
+            android:id="@+id/denyWiFiConnection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/denyCameraFunction"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/WiFiConnectionCheckBox"
+            android:ems="10"
+            android:lines="1"
+            android:text="@string/denyWiFiConnection"
+            android:textSize="18dp" >
+        </TextView>
 
-</RelativeLayout>
+        <CheckBox
+            android:id="@+id/WiFiConnectionCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/denyWiFiConnection"
+            android:layout_alignParentRight="true" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/denyWiFiConnection"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:onClick="setDefaultValues"
+            android:text="@string/defaultButton" />
+    </RelativeLayout>
+
+</ScrollView>

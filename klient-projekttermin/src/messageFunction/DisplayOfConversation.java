@@ -48,11 +48,13 @@ public class DisplayOfConversation extends SecureActivity {
 	private MessageModel messageObject;
 	private String[] options = { "Avbryt", "Radera", "Vidarebofordra" };
 	private ArrayAdapter<String> adapter;
+	private User user;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_of_conversation);
+		user = User.getInstance();
 
 		message = (TextView) this.findViewById(R.id.messageBox);
 
@@ -84,7 +86,6 @@ public class DisplayOfConversation extends SecureActivity {
 		public void onReceive(Context context, Intent intent) {
 			String newMessage = intent.getExtras().getString(EXTRA_MESSAGE);
 			if (newMessage.equals("message")) {
-				System.out.println("Conversation data change");
 				loadConversation(chosenContact);
 				adapter.notifyDataSetChanged();
 
@@ -257,7 +258,21 @@ public class DisplayOfConversation extends SecureActivity {
 			messageModel = (MessageModel) listOfMassageModels.get(i);
 
 			if (messageModel.getReciever().toString().equals(Contact)
-					|| messageModel.getSender().toString().equals(Contact)) {
+					&& messageModel.getSender().toString().equals(user.getAuthenticationModel().getUserName())) {
+				listOfConversations.add(messageModel.getSender().toString()
+						+ " ["
+						+ understandableTimeStamp(messageModel
+								.getMessageTimeStamp()) + "] " + "\n"
+						+ messageModel.getMessageContent().toString());
+				messageAndIdMap.put(
+						messageModel.getSender().toString()
+								+ " ["
+								+ understandableTimeStamp(messageModel
+										.getMessageTimeStamp()) + "] " + "\n"
+								+ messageModel.getMessageContent().toString(),
+						messageModel.getId());
+			} else if (messageModel.getSender().toString().equals(Contact)
+					&& messageModel.getReciever().toString().equals(user.getAuthenticationModel().getUserName())){
 				listOfConversations.add(messageModel.getSender().toString()
 						+ " ["
 						+ understandableTimeStamp(messageModel

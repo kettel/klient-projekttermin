@@ -18,7 +18,6 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -30,6 +29,8 @@ public class SocketConnection extends Observable {
 	private int port = 17234;
 	private ArrayList<String[]> servers = new ArrayList<String[]>();
 	Iterator<String[]> iterator;
+	private int tries = 0;
+	private boolean failedToConnect = false;
 
 	/**
 	 * Konstruktor som även initierar serverlistan.
@@ -83,7 +84,6 @@ public class SocketConnection extends Observable {
 	}
 
 	public HashMap<String, int[]> getServer() {
-
 		return null;
 	}
 
@@ -112,17 +112,28 @@ public class SocketConnection extends Observable {
 			System.out.println("byter port: " + server[1]);
 			ip = server[0];
 			port = Integer.parseInt(server[1]);
-			CommonUtilities.SERVER_URL = "http://" + server[0] + ":" + server[2];
-		}else{
+			CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
+					+ server[2];
+		} else {
 			try {
-				wait(100);
-				iterator=servers.iterator();
+				if (tries < 5) {
+					System.out.println("reload servers");
+					tries++;
+					Thread.sleep(1000);
+					iterator = servers.iterator();
+					System.out.println(iterator.hasNext());
+				} else {
+					failedToConnect = true;
+					setChanged();
+					notifyObservers("failed");
+				}
 			} catch (InterruptedException e) {
-				System.out.println("Omladdning av serverlistan i loadNextServer i SocketConnection sket sig");
+				System.out
+						.println("Omladdning av serverlistan i loadNextServer i SocketConnection sket sig");
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	/**
@@ -132,14 +143,15 @@ public class SocketConnection extends Observable {
 	 *            - Strängen
 	 */
 	private void sendAuthentication(String json) {
-
 		Socket socket = createSocket();
 		if (socket != null) {
 			writeToSocket(socket, json + "\nclose\n");
 			readSocket(socket);
 			closeSocket(socket);
+		} else {
+			setChanged();
+			notifyObservers(json);
 		}
-
 	}
 
 	public void pullFromServer() {
@@ -166,7 +178,6 @@ public class SocketConnection extends Observable {
 
 				Socket socket = createSocket();
 				if (socket != null) {
-					System.out.println("contacs");
 					User user = User.getInstance();
 					String json = gson.toJson(user.getAuthenticationModel());
 					writeToSocket(socket, json + "\ngetAllContacts\nclose\n");
@@ -183,7 +194,6 @@ public class SocketConnection extends Observable {
 					new InputStreamReader(socket.getInputStream()));
 			String inputString;
 			while ((inputString = bufferedReader.readLine()) != null) {
-				System.out.println("Läser "+inputString);
 				if (inputString
 						.contains("\"databaseRepresentation\":\"message\"")) {
 					MessageModel message = gson.fromJson(inputString,
@@ -242,17 +252,12 @@ public class SocketConnection extends Observable {
 				socket = new Socket(ip, port);
 				System.out.println("Socketen lyckades ansluta");
 			} catch (UnknownHostException e) {
-				if (iterator.hasNext()) {
-					loadNextServer();
-				}
+				loadNextServer();
 
 			} catch (IOException e) {
-				if (iterator.hasNext()) {
-					loadNextServer();
-				}
+				loadNextServer();
 			}
-		} while (socket==null&&iterator.hasNext());
-		
+		} while (socket == null && !failedToConnect);
 		return socket;
 	}
 
@@ -267,7 +272,6 @@ public class SocketConnection extends Observable {
 
 	public void logout() {
 		new Thread(new Runnable() {
-
 			public void run() {
 				Socket socket = createSocket();
 				if (socket != null) {

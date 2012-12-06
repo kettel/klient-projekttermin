@@ -4,6 +4,9 @@ import java.text.ParseException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import login.User;
+import models.AuthenticationModel;
+
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -37,16 +40,21 @@ public class RegisterWithSipSingleton {
 
 	private SipAudioCall call = null;
 
-	// Bör hämtas från databas i framtiden
-	public String username = "1001";
+	// Hämta aktuell användare med lösenhash
+	User currentUser = User.getInstance();
+	public String username = currentUser.getAuthenticationModel().getUserName();
 	public String domain = "94.254.72.38";
-	public String password = "1001";
+	public String password = currentUser.getAuthenticationModel().getPasswordHash();
 
+	
+	
+	
 	private static RegisterWithSipSingleton instance = new RegisterWithSipSingleton();
 
 	private RegisterWithSipSingleton(){}
 
 	public static RegisterWithSipSingleton getInstance(Context c){
+		
 		// Det här borde bara köras när första instansen instansierar...
 		if(context != c){
 			Log.d("SIP/Singletonklassen","Kontexterna är inte samma...");
@@ -105,6 +113,7 @@ public class RegisterWithSipSingleton {
         	closeLocalProfile();
         }
         Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Ska skapa profil..");
+        Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Användarnamn: " + username);
         try {
         	
         	SipProfile.Builder builder = new SipProfile.Builder(username, domain);
@@ -170,8 +179,8 @@ public class RegisterWithSipSingleton {
     /**
      * Make an outgoing call.
      */
-    public void initiateCall() {
-    	sipAddress = "sip:1003@94.254.72.38";
+    public void initiateCall(String nameToCall) {
+    	sipAddress = "sip:"+nameToCall+"@94.254.72.38";
 
         try {
             SipAudioCall.Listener listener = new SipAudioCall.Listener() {
