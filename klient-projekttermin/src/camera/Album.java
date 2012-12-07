@@ -38,7 +38,7 @@ public class Album extends Activity implements OnItemClickListener {
 	private List<ModelInterface> imagesFromDB;
 	private int callingActivity;
 	private String[] pictureAlts = { "Skapa uppdrag med foto" };
-	private int currentPictureId;
+	private int currentPictureId = 0;
 	private List<Bitmap> images = new ArrayList<Bitmap>();
 	private Bitmap bitmap;
 	private Database db;
@@ -67,6 +67,7 @@ public class Album extends Activity implements OnItemClickListener {
 				.getAllFromDB(new PictureModel(), getContentResolver());
 		
 		if (!imagesFromDB.isEmpty()) {
+			selectedImage.setImageBitmap(getPic(currentPictureId));
 			setSelectedImageOnClickListener();
 		}
 		
@@ -120,7 +121,7 @@ public class Album extends Activity implements OnItemClickListener {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ImageView i = new ImageView(this.myContext);
 			if (!imagesFromDB.isEmpty()) {
-				i.setImageBitmap(images.get(changePosition));
+				i.setImageBitmap(images.get(position));
 			}
 
 			/* Image should be scaled as width/height are set. */
@@ -128,7 +129,6 @@ public class Album extends Activity implements OnItemClickListener {
 			/* Set the Width/Height of the ImageView. */
 			i.setLayoutParams(new Gallery.LayoutParams(200, 200));
 			// changePosition = position;
-			Log.e("FEL", Boolean.toString(imagesFromDB.isEmpty()));
 			return i;
 		}
 
@@ -163,7 +163,6 @@ public class Album extends Activity implements OnItemClickListener {
 			public void onClick(View v) {
 				if (changePosition != 0) {
 					changePosition--;
-					Log.e("FEL", "MINUS");
 				}
 				if (!imagesFromDB.isEmpty()) {
 					selectedImage.setImageBitmap(getPic(changePosition));
@@ -179,7 +178,6 @@ public class Album extends Activity implements OnItemClickListener {
 			public void onClick(View v) {
 				if (changePosition != g.getCount() - 1 && !imagesFromDB.isEmpty()) {
 					changePosition++;
-					Log.e("FEL", "PLUS");
 				}
 				
 				if (!imagesFromDB.isEmpty()) {

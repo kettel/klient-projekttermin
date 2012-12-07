@@ -17,6 +17,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -355,6 +356,7 @@ public class MapActivity extends SecureActivity implements Observer,
 		this.actv = (EditText) v.findViewById(R.id.ab_Search);
 		this.lv = (ListView) findViewById(R.id.mylist);
 		this.lv.setOnItemClickListener(this);
+		this.lv.setBackgroundColor(Color.BLACK);
 		this.actv.addTextChangedListener(new TextWatcher() {
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {

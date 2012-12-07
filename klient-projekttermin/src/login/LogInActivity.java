@@ -53,12 +53,6 @@ public class LogInActivity extends Activity implements Observer {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_log_in_function, menu);
-		return true;
-	}
-
-	@Override
 	public void onBackPressed() {
 		finish();
 	}
@@ -88,10 +82,9 @@ public class LogInActivity extends Activity implements Observer {
 	 * informationen från servern.
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel) {
-		System.out
-				.println("AUTHENTICATION FROM SERVER: " + authenticationModel);
-		if (authenticationModel.getUserName().equals(
-				originalModel.getUserName())
+		System.out.println("AUTHENTICATION FROM SERVER: " + authenticationModel);
+	
+		if (authenticationModel.getUserName().equals(originalModel.getUserName())
 				&& authenticationModel.isAccessGranted().equals("true")) {
 			database.addToDB(authenticationModel, getContentResolver());
 			accessGranted();
@@ -103,8 +96,7 @@ public class LogInActivity extends Activity implements Observer {
 
 	public void tryOfflineLogin(AuthenticationModel loginInput) {
 
-		if (database
-				.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
+		if (database.getDBCount(new AuthenticationModel(), getContentResolver()) != 0) {
 			System.out.println("Försöker logga in offline");
 
 			List modelList = database.getAllFromDB(loginInput,
@@ -118,9 +110,10 @@ public class LogInActivity extends Activity implements Observer {
 						&& loadedModel.isAccessGranted().equals("true")) {
 					accessGranted();
 				} else {
+					System.out.println("Rätt användarnamn, men fel lösenord");
 					incorrectLogIn();
 				}
-			} else {
+			} else{
 				removeLastUserFromDB();
 			}
 		}else{
@@ -132,7 +125,7 @@ public class LogInActivity extends Activity implements Observer {
 							.makeText(
 									getApplicationContext(),
 									"Misslyckades med att logga in offline, inget i databasen",
-									Toast.LENGTH_LONG);
+									Toast.LENGTH_SHORT);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}
@@ -155,7 +148,7 @@ public class LogInActivity extends Activity implements Observer {
 					Toast toast = Toast.makeText(getApplicationContext(),
 							"Felaktigt användarnamn eller lösenord! "
 									+ numberOfLoginTries + " försök kvar!",
-							Toast.LENGTH_LONG);
+							Toast.LENGTH_SHORT);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}
@@ -164,6 +157,7 @@ public class LogInActivity extends Activity implements Observer {
 	}
 
 	public void removeLastUserFromDB() {
+		System.out.println("Tar bort authenticationmodel från databasen");
 		List list = database.getAllFromDB(new AuthenticationModel(),
 				getContentResolver());
 		database.deleteFromDB((AuthenticationModel) list.get(0),
@@ -192,7 +186,6 @@ public class LogInActivity extends Activity implements Observer {
 		return hexString.toString();
 	}
 
-
 	/*
 	 * Metoden skickar iväg autenticeringsförfrågan till servern
 	 */
@@ -217,7 +210,6 @@ public class LogInActivity extends Activity implements Observer {
 			break;
 		default:
 			Intent intent = new Intent(this, MainActivity.class);
-			intent.putExtra("USER", userName);
 			startActivity(intent);
 			break;
 		}
@@ -248,7 +240,7 @@ public class LogInActivity extends Activity implements Observer {
 							.makeText(
 									getApplicationContext(),
 									"Det gick inte att ansluta till servern! Försöker logga in offline",
-									Toast.LENGTH_LONG);
+									Toast.LENGTH_SHORT);
 					toast.setGravity(Gravity.TOP, 0, 300);
 					toast.show();
 				}

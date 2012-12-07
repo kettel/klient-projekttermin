@@ -42,14 +42,14 @@ public class Cam extends Activity implements SensorEventListener {
 	private Button ibCapture;
 	private int degrees = -1;
 	private int callingactivity;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_cam);
 		callingactivity = getIntent().getIntExtra("calling-activity", 0);
-		
+
 		ibUse = (ImageButton) findViewById(R.id.ibUse);
 		ibCapture = (Button) findViewById(R.id.ibCapture);
 
@@ -160,7 +160,7 @@ public class Cam extends Activity implements SensorEventListener {
 	private PictureCallback mPicture = new PictureCallback() {
 
 		public void onPictureTaken(byte[] data, Camera camera) {
-			
+
 			Database db = Database.getInstance(getApplicationContext());
 			int count = db.getDBCount(new PictureModel(), getContentResolver());
 			if (count > 5) {
@@ -184,12 +184,12 @@ public class Cam extends Activity implements SensorEventListener {
 			ibUse.setImageBitmap(scaled);
 			switch (callingactivity) {
 			case ActivityConstants.CAMERA:
-				
+
 				break;
 			case ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT:
 				Intent intent = new Intent(Cam.this, AddAssignment.class);
-				//Senast tagna bild har id 5
-				intent.putExtra("pic", count-1);
+				// Senast tagna bild har id 5
+				intent.putExtra("pic", count - 1);
 				setResult(ActivityConstants.RESULT_FROM_CAMERA, intent);
 				finish();
 				break;

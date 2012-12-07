@@ -49,14 +49,12 @@ public class MainActivity extends SecureActivity {
 	AsyncTask<Void, Void, Void> mRegisterTask;
 
 	private QoSManager qosManager;
-	private MenuItem connectionMarker;
 	private MenuItem logout;
 	private MenuItem qosItem;
 	private Database database;
 	private SocketConnection socketConnection = new SocketConnection();
 	private User user;
-	private Boolean haveConnectedWifi= true;
-	private Boolean haveConnectedMobile = true;
+	private Boolean haveServerConnection = false;
 
 	// SIP-variabler
 	public static RegisterWithSipSingleton regSip;
@@ -75,8 +73,8 @@ public class MainActivity extends SecureActivity {
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
 
-//		checkNotNull(SERVER_URL, "SERVER_URL");
-//		checkNotNull(SENDER_ID, "SENDER_ID");
+		//		checkNotNull(SERVER_URL, "SERVER_URL");
+		//		checkNotNull(SENDER_ID, "SENDER_ID");
 		// Make sure the device has the proper dependencies.
 		GCMRegistrar.checkDevice(this);
 		// Make sure the manifest was properly set - comment out this line
@@ -91,9 +89,9 @@ public class MainActivity extends SecureActivity {
 			if (GCMRegistrar.isRegisteredOnServer(this) && user.isLoggedIn()) {
 				// Skips registration.
 				user.getAuthenticationModel()
-						.setGCMID(
-								GCMRegistrar
-										.getRegistrationId(getApplicationContext()));
+				.setGCMID(
+						GCMRegistrar
+						.getRegistrationId(getApplicationContext()));
 				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
@@ -264,10 +262,10 @@ public class MainActivity extends SecureActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
-		
+
 		logout = menu.findItem(R.id.logout);
 		logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-			
+
 			public boolean onMenuItemClick(MenuItem item) {
 				logout();
 				return false;
@@ -275,37 +273,44 @@ public class MainActivity extends SecureActivity {
 		}); 
 		qosItem = menu.findItem(R.id.QoSManager);
 		qosItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-			
+
 			public boolean onMenuItemClick(MenuItem item) {
-			startQoSManager();	
+				startQoSManager();	
 				return false;
 			}
 		});
-		connectionMarker = menu.findItem(R.id.connectionMarker);
 
-		
-		
-		registerReceiver(new BroadcastReceiver() {      
-		        public void onReceive(Context context, Intent intent) {
-		        	  ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		        	    NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-		        	    for (NetworkInfo ni : netInfo) {
-		        	        if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-		        	            if (ni.isConnected()){
-		        	                haveConnectedWifi = true;
-		        	            }else{
-		        	            	haveConnectedWifi = false;
-		        	            }
-		        	        if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-		        	            if (ni.isConnected()){
-		        	                haveConnectedMobile = true;
-		        	            }else{
-		        	            	haveConnectedMobile = false;
-		        	            }
-		        	    }
-		        	qosManager.checkConnectivity(connectionMarker, haveConnectedWifi, haveConnectedMobile);
-		        }}, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		
+		qosManager.setConnectivityMarker(menu.findItem(R.id.connectionMarker));
+
+		registerReceiver(new BroadcastReceiver() {   
+			Boolean haveConnectedWifi= false;
+			Boolean haveConnectedMobile = false;
+			
+			public void onReceive(Context context, Intent intent) {
+				ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+				NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+				for (NetworkInfo ni : netInfo) {
+					if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+						if (ni.isConnected()){
+							qosManager.checkServerConnection();
+						}
+						else{
+							haveConnectedWifi = false;
+						}
+					if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+						if (ni.isConnected()){
+							qosManager.checkServerConnection();
+						}
+						else{
+							haveConnectedMobile = false;
+						}
+				}
+				if(!haveConnectedWifi&&!haveConnectedMobile){
+					haveServerConnection=false;
+				}
+				qosManager.changeConnectivityMarkerStatus(haveServerConnection);
+			}}, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+
 		return true;
 	}
 
