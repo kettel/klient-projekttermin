@@ -189,6 +189,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 					temp.get(4), checkPrioString(temp.get(3)));
 
 			String tempUnseparated = temp.get(7);
+
 			if (tempUnseparated == null) {
 				tempUnseparated = "";
 			}
@@ -197,15 +198,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 
 			tempUnseparated = ""; // Nolla strängen
 
-			Log.d("Assignment",
-					"Ska nu lägga till ett uppdrag " + temp.get(0)
-							+ temp.get(1) + currentUser + false + temp.get(2)
-							+ temp.get(3) + AssignmentStatus.NOT_STARTED
-							+ "byteArray" + temp.get(4) + temp.get(5));
-
 			newAssignment.setGlobalID(currentUser);
-
-			Log.e("FEL", "saveToDB i AddAssignment");
 
 			db.addToDB(newAssignment, getContentResolver());
 			SocketConnection connection = new SocketConnection();
@@ -225,18 +218,16 @@ public class AddAssignment extends SecureActivity implements Serializable {
 		String newString = "";
 
 		if (!agents.equals("")) {
-			newString = agents.substring(9);
 			newAssignment.setAssignmentStatus(AssignmentStatus.STARTED);
 		}
 
-		List<String> items = new LinkedList<String>(Arrays.asList(newString
+		List<String> items = new LinkedList<String>(Arrays.asList(agents
 				.split("\\s*,\\s*"))); // reguljära uttryck haxx
 
 		List<ModelInterface> list = db.getAllFromDB(new Contact(),
 				getContentResolver());
-		Set<String> noDoublicatesSet = new HashSet<String>(items);
 
-		for (String agent : noDoublicatesSet) {
+		for (String agent : items) {
 			for (ModelInterface modelInterface : list) {
 				Contact contact = (Contact) modelInterface;
 				if (contact.getContactName().equals(agent)) {
@@ -245,7 +236,6 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			}
 		}
 		items.clear();
-		noDoublicatesSet.clear();
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {

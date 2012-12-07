@@ -49,6 +49,7 @@ public class Cam extends Activity implements SensorEventListener {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_cam);
 		callingactivity = getIntent().getIntExtra("calling-activity", 0);
+		
 
 		ibUse = (ImageButton) findViewById(R.id.ibUse);
 		ibCapture = (Button) findViewById(R.id.ibCapture);
@@ -84,8 +85,9 @@ public class Cam extends Activity implements SensorEventListener {
 
 	private void createCamera() {
 		// Create an instance of Camera
+		System.out.println(mCamera);
 		mCamera = getCameraInstance();
-
+		System.out.println(mCamera);
 		// Setting the right parameters in the camera
 		Camera.Parameters params = mCamera.getParameters();
 		// HÄlften av va de va

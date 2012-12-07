@@ -40,6 +40,8 @@ public class LogInActivity extends Activity implements Observer {
 	private int callingactivity;
 	private QoSManager qosManager;
 	public static final int LOGGED_IN_REQ_CODE=1;
+	public static final int SHUT_DOWN=2;
+	public static final int STAY_ALIVE=3;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -210,10 +212,10 @@ public class LogInActivity extends Activity implements Observer {
 		System.out.println("1");
 		if (requestCode==LOGGED_IN_REQ_CODE) {
 			System.out.println("2");
-			if (resultCode==RESULT_OK) {
+			if (resultCode==STAY_ALIVE) {
 				System.out.println("3");
 				finish();
-			}else if (resultCode==RESULT_CANCELED) {
+			}else if (resultCode==SHUT_DOWN) {
 				System.out.println("4");
 			}
 		}

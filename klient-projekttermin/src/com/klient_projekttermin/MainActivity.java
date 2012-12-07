@@ -1,7 +1,6 @@
 package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
-import static com.klient_projekttermin.CommonUtilities.SERVER_URL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +37,6 @@ import assignment.AssignmentOverview;
 import camera.CameraMenu;
 
 import com.google.android.gcm.GCMRegistrar;
-import com.klient_projekttermin.R.id;
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
@@ -217,7 +215,7 @@ public class MainActivity extends SecureActivity {
 					regSip = null;
 				}
 				dialog.dismiss();
-				setResult(RESULT_CANCELED);
+				setResult(LogInActivity.SHUT_DOWN);
 				logout();			
 				
 			}
@@ -268,7 +266,7 @@ public class MainActivity extends SecureActivity {
 		logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
-				setResult(RESULT_OK);
+				setResult(LogInActivity.STAY_ALIVE);
 				logout();
 				return false;
 			}

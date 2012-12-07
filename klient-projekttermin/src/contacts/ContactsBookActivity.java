@@ -47,6 +47,8 @@ public class ContactsBookActivity extends SecureActivity {
 	private ContacsAdapter ca;
 	private HashMap<Integer, Boolean> h = new HashMap<Integer, Boolean>();
 
+	private List<String> sortedContact;
+	private List<ModelInterface> lista;
 	private RegisterWithSipSingleton regSip;
 
 	@Override
@@ -56,10 +58,10 @@ public class ContactsBookActivity extends SecureActivity {
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		ListView lv = (ListView) findViewById(android.R.id.list);
 		db = Database.getInstance(this);
-		List<ModelInterface> lista = db.getAllFromDB(new Contact(),
+		lista = db.getAllFromDB(new Contact(),
 				getContentResolver());
 		contacts = new String[lista.size()];
-		List<String> sortedContact = new ArrayList<String>();
+		sortedContact = new ArrayList<String>();
 		for (ModelInterface m : lista) {
 			Contact c = (Contact) m;
 			sortedContact.add(c.getContactName());
@@ -77,12 +79,26 @@ public class ContactsBookActivity extends SecureActivity {
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-
-		// Hämta regSip från MainActivity
-		// .. är det här som nyttan med en service börjar uppenbara sig?
-		regSip = MainActivity.regSip;
+    protected void onStart() {
+        super.onStart();
+        
+        // Hämta regSip från MainActivity
+        // .. är det här som nyttan med en service börjar uppenbara sig?
+        regSip = MainActivity.regSip;
+    }
+	private List<Contact> getSortedContactList(){
+		
+		List<Contact> sortedList = new ArrayList<Contact>();
+		
+		for (String agent : sortedContact) {
+			for (ModelInterface m : lista) {
+				Contact c = (Contact) m;
+				if (agent.equals(c.getContactName())) {
+					sortedList.add(c);
+				}
+			}
+		}
+		return sortedList;
 	}
 
 	@Override
@@ -125,7 +141,6 @@ public class ContactsBookActivity extends SecureActivity {
 					showAlertDialog(c);
 					break;
 				}
-
 			}
 		}
 	}
@@ -134,8 +149,7 @@ public class ContactsBookActivity extends SecureActivity {
 		int[] sel = getAllSelected();
 		int cId = 0;
 		HashMap<Integer, Contact> hs = new HashMap<Integer, Contact>();
-		for (ModelInterface temp : db.getAllFromDB(new Contact(),
-				getContentResolver())) {
+		for (ModelInterface temp : getSortedContactList()) {
 			Contact c = (Contact) temp;
 			hs.put(cId, c);
 			cId++;
@@ -147,6 +161,7 @@ public class ContactsBookActivity extends SecureActivity {
 
 	private int[] getAllSelected() {
 		h = ca.getSelected();
+		
 		int k = 0;
 		for (boolean b : h.values()) {
 			if (b) {

@@ -50,7 +50,7 @@ public class SecureActivity extends Activity {
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
 		if (!user.isLoggedIn()) {
-			setResult(RESULT_CANCELED);
+			setResult(LogInActivity.STAY_ALIVE);
 			finish();
 		}
 	}
