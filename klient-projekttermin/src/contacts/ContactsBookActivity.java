@@ -61,10 +61,13 @@ public class ContactsBookActivity extends SecureActivity {
 		db = Database.getInstance(this);
 		lista = db.getAllFromDB(new Contact(),
 				getContentResolver());
+		
+		
 		contacts = new String[lista.size()];
 		sortedContact = new ArrayList<String>();
 		for (ModelInterface m : lista) {
 			Contact c = (Contact) m;
+			//Log.e("FEL", "Vad som finns i listan: " + c.getContactName());
 			sortedContact.add(c.getContactName());
 		}
 
