@@ -41,13 +41,10 @@ public class RegisterWithSipSingleton {
 	private SipAudioCall call = null;
 
 	// Hämta aktuell användare med lösenhash
-	User currentUser = User.getInstance();
-	public String username = currentUser.getAuthenticationModel().getUserName();
-	public String domain = "94.254.72.38";
-	public String password = currentUser.getAuthenticationModel().getPasswordHash();
-
-	
-	
+	private User currentUser;
+	private String username;
+	private String domain = "94.254.72.38";
+	private String password;
 	
 	private static RegisterWithSipSingleton instance = new RegisterWithSipSingleton();
 
@@ -65,6 +62,11 @@ public class RegisterWithSipSingleton {
 	}
 
 	public void initializeManager() {
+		// Hämta aktuell användare
+		currentUser = User.getInstance();
+		username = currentUser.getAuthenticationModel().getUserName();
+		password = currentUser.getAuthenticationModel().getPasswordHash();
+		
 		// Registrera intents för utgående och inkommande samtal
 		if(!isIntentsRegistred){
 			intentsRegistred++;
@@ -109,9 +111,11 @@ public class RegisterWithSipSingleton {
             return;
         }
 
-        if (me != null) {
-        	closeLocalProfile();
-        }
+		// Bortkommenterad koll. Verkar snabba upp registring av klient på server.
+//        if (me != null) {
+//        	closeLocalProfile();
+//        }
+		
         Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Ska skapa profil..");
         Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Användarnamn: " + username);
         try {
@@ -161,15 +165,24 @@ public class RegisterWithSipSingleton {
      */
     public void closeLocalProfile() {
     	if (timer != null){
+    		Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Ska stänga av SIP-Timern...");
         	timer.cancel();
         	timer.purge();
+        	timer = null;
+        	Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Stängde av SIP-Timern");
         }
     	if (manager == null) {
             return;
         }
         try {
             if (me != null) {
+            	Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Ska stänga av SIP-manager...");
             	manager.close(me.getUriString());
+            	me = null;
+            	manager = null;
+            	currentUser = null;
+            	password = null;
+            	Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Stängdes manager av? "+(manager.isOpened(me.getUriString())?"Ja":"Nej"));
             }
         } catch (Exception ee) {
             Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Failed to close local profile.", ee);
@@ -180,6 +193,7 @@ public class RegisterWithSipSingleton {
      * Make an outgoing call.
      */
     public void initiateCall(String nameToCall) {
+    	Log.d("RegisterWithSipSingleton/initiateCall","Kontakt att ringa: "+nameToCall);
     	sipAddress = "sip:"+nameToCall+"@94.254.72.38";
 
         try {

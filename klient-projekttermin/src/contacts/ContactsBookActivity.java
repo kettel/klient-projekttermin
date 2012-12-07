@@ -6,16 +6,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import sip.RegisterWithSipSingleton;
+
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;
 import models.ModelInterface;
-import sip.RegisterWithSipSingleton;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -36,12 +36,10 @@ import database.Database;
 
 public class ContactsBookActivity extends SecureActivity {
 
-	private RegisterWithSipSingleton regSip;
-
 	private String[] contacts;
 	private Database db;
 	private String[] contactAlts = { "Skicka meddelande till kontakt",
-	"Ring kontakt" };
+			"Ring kontakt" };
 	public static String contact;
 	private int callingActivity;
 	private List<Contact> contactsToAssignment = new ArrayList<Contact>();
@@ -49,12 +47,11 @@ public class ContactsBookActivity extends SecureActivity {
 	private ContacsAdapter ca;
 	private HashMap<Integer, Boolean> h = new HashMap<Integer, Boolean>();
 
-	
+	private RegisterWithSipSingleton regSip;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-
 		setContentView(R.layout.activity_contacts_book);
 		callingActivity = getIntent().getIntExtra("calling-activity", 0);
 		ListView lv = (ListView) findViewById(android.R.id.list);
@@ -78,20 +75,14 @@ public class ContactsBookActivity extends SecureActivity {
 				contacts, callingActivity);
 		lv.setAdapter(ca);
 	}
-	
+
 	@Override
-    protected void onStart() {
-        super.onStart();
-        
-        // Hämta regSip från MainActivity
-        // .. är det här som nyttan med en service börjar uppenbara sig?
-        regSip = MainActivity.regSip;
-    }
-	
-	@Override
-	protected void onDestroy(){
-		regSip.closeLocalProfile();
-		super.onDestroy();
+	protected void onStart() {
+		super.onStart();
+
+		// Hämta regSip från MainActivity
+		// .. är det här som nyttan med en service börjar uppenbara sig?
+		regSip = MainActivity.regSip;
 	}
 
 	@Override
@@ -126,7 +117,6 @@ public class ContactsBookActivity extends SecureActivity {
 				getContentResolver())) {
 			Contact c = (Contact) temp;
 			if (c.getContactName().equals(contacts[v.getId()])) {
-				showAlertDialog(c);
 				switch (callingActivity) {
 				case ActivityConstants.ADD_AGENTS:
 
@@ -159,7 +149,7 @@ public class ContactsBookActivity extends SecureActivity {
 		h = ca.getSelected();
 		int k = 0;
 		for (boolean b : h.values()) {
-			if(b){
+			if (b) {
 				k++;
 			}
 		}
@@ -200,13 +190,6 @@ public class ContactsBookActivity extends SecureActivity {
 					finish();
 					break;
 				case 1:
-//					Intent i= new Intent();
-//					i.putExtra("contactToCall", name);
-//					i.setAction(OutgoingCallReceiver.OUTGOING_CALL);
-//					Log.d("SIP/Contactbook","Ska ringa 1002...");
-//					getApplicationContext().sendBroadcast(i);
-//					//RegisterWithSipServerService.initiateCall();
-//					Log.d("SIP/ContactBookActivity","Ska starta ett utgående samtal...");
 					regSip.initiateCall(name);
 					break;
 				default:
