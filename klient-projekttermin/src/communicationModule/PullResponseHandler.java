@@ -5,6 +5,7 @@ import java.util.Observer;
 
 import qosManager.QoSManager;
 
+import login.User;
 import messageFunction.Inbox;
 import models.Assignment;
 import models.AuthenticationModel;
@@ -35,14 +36,21 @@ public class PullResponseHandler implements Observer {
 	private Intent notificationIntent;
 	private boolean hasChanged = false;
 	private String message = "";
+	private QoSManager qosManager;
 
 	public PullResponseHandler(Context context) {
 		super();
 		this.context = context;
 		db = Database.getInstance(context);
+		qosManager = QoSManager.getInstance();
 	}
 
 	public void update(Observable observable, Object data) {
+		
+		if(qosManager.readyToAdjustCM()){
+			qosManager.changeConnectivityMarkerStatus(true);
+		}
+		
 		if (notificationIntent == null) {
 			notificationIntent = new Intent(context, MainActivity.class);
 		}

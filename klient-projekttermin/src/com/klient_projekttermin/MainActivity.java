@@ -54,10 +54,11 @@ public class MainActivity extends SecureActivity {
 	private SocketConnection socketConnection = new SocketConnection();
 	private User user;
 	private Boolean haveServerConnection = false;
+	private BroadcastReceiver bcr;
 
 	// SIP-variabler
 	public static RegisterWithSipSingleton regSip;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,7 +69,7 @@ public class MainActivity extends SecureActivity {
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
 		setContentView(R.layout.activity_main);
-		
+
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
 
@@ -114,13 +115,13 @@ public class MainActivity extends SecureActivity {
 				mRegisterTask.execute(null, null, null);
 			}
 		}
-		
+
 		// SIP: Registrera klienten hos SIP-servern 
 		if(regSip == null){
 			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
 		}
 		regSip.initializeManager();
-		
+
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -175,9 +176,9 @@ public class MainActivity extends SecureActivity {
 					break;
 				case 5:
 					//if (qosManager.allowedToStartSip()) {
-						//myIntent = new Intent(MainActivity.this, SipMain.class);
+					//myIntent = new Intent(MainActivity.this, SipMain.class);
 					//} else {
-						unallowedStart.show();
+					unallowedStart.show();
 					//}
 					break;
 				default:
@@ -189,20 +190,18 @@ public class MainActivity extends SecureActivity {
 			}
 		});
 	}
+
 	@Override
 	protected void onResume(){
 		super.onResume();
-		
-        // SIP: Registrera klienten hos SIP-servern 
+
+		// SIP: Registrera klienten hos SIP-servern 
 		if(regSip == null){
 			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
 		}
-        regSip.initializeManager();
+		regSip.initializeManager();
 	}
-	
 
-	
-	
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Avsluta");
@@ -282,11 +281,11 @@ public class MainActivity extends SecureActivity {
 		});
 
 		qosManager.setConnectivityMarker(menu.findItem(R.id.connectionMarker));
-
-		registerReceiver(new BroadcastReceiver() {   
+		qosManager.setReadyToAdjustCM(true);
+		bcr = new BroadcastReceiver() {   
 			Boolean haveConnectedWifi= false;
 			Boolean haveConnectedMobile = false;
-			
+
 			public void onReceive(Context context, Intent intent) {
 				ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 				NetworkInfo[] netInfo = cm.getAllNetworkInfo();
@@ -310,20 +309,23 @@ public class MainActivity extends SecureActivity {
 					haveServerConnection=false;
 				}
 				qosManager.changeConnectivityMarkerStatus(haveServerConnection);
-			}}, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+			}};
 
-		return true;
+
+			registerReceiver(bcr, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+
+			return true;
 	}
 
 	@Override
 	protected void onDestroy() {
-
+		System.out.println("Kör onDestroy i MainActivity");
 		if (mRegisterTask != null) {
 			mRegisterTask.cancel(true);
 		}
 		GCMRegistrar.onDestroy(getApplicationContext());
-		
-		
+		unregisterReceiver(bcr);
+
 		super.onDestroy();
 	}
 

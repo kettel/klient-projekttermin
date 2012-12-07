@@ -50,9 +50,9 @@ public class LogInActivity extends Activity implements Observer {
 		database = Database.getInstance(getApplicationContext());
 		Intent intent = getIntent();
 		callingactivity = intent.getIntExtra("calling-activity", 0);
-		qosManager =QoSManager.getInstance();
+		qosManager = QoSManager.getInstance();
 		qosManager.setContext(getApplicationContext());
-
+		user = User.getInstance();
 	}
 
 	@Override
@@ -73,7 +73,6 @@ public class LogInActivity extends Activity implements Observer {
 		originalModel = new AuthenticationModel(userName,
 				hashPassword(password));
 
-		user = User.getInstance();
 		user.setAuthenticationModel(originalModel);
 
 		tryOnlineLogin(originalModel);
@@ -113,7 +112,6 @@ public class LogInActivity extends Activity implements Observer {
 						&& loadedModel.isAccessGranted().equals("true")) {
 					accessGranted();
 				} else {
-					System.out.println("Rätt användarnamn, men fel lösenord");
 					incorrectLogIn();
 				}
 			} else{
@@ -222,7 +220,6 @@ public class LogInActivity extends Activity implements Observer {
 	}
 
 	public void accessGranted() {
-
 		switch (callingactivity) {
 		case ActivityConstants.INACTIVITY:
 			break;
@@ -248,6 +245,7 @@ public class LogInActivity extends Activity implements Observer {
 
 		} else if (data instanceof String) {
 			user.setOnlineConnection(false);
+			System.out.println("Ingen Kontakt");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
