@@ -90,8 +90,8 @@ public class ContactsBookActivity extends SecureActivity {
 	
 	@Override
 	protected void onDestroy(){
-		super.onDestroy();
 		regSip.closeLocalProfile();
+		super.onDestroy();
 	}
 
 	@Override

@@ -47,11 +47,14 @@ public class SecureActivity extends Activity {
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
 		qosManager.adjustToCurrentBatteryMode();
-		socketConnection.addObserver(new PullResponseHandler(getApplicationContext()));
+		socketConnection.addObserver(new PullResponseHandler(
+				getApplicationContext()));
 		if (!user.isLoggedIn()) {
+			setResult(RESULT_CANCELED);
 			finish();
 		}
 	}
+
 	@Override
 	protected void onDestroy() {
 		unregisterReceiver(mHandleMessageReceiver);
@@ -68,8 +71,13 @@ public class SecureActivity extends Activity {
 						.setGCMID(
 								GCMRegistrar
 										.getRegistrationId(getApplicationContext()));
-				socketConnection.pullFromServer();
+				/**
+				 * Viktigt att checkContactDatabase körs först, annars finns
+				 * risken att inga kontakter hämtas. Detta då det kan ligga en
+				 * kontakt i kön när en pullrequest körs.
+				 */
 				checkContactDatabase();
+				socketConnection.pullFromServer();
 			} else if (newMessage.equals("logout")) {
 				socketConnection.logout();
 				finish();

@@ -39,6 +39,7 @@ public class LogInActivity extends Activity implements Observer {
 	private User user;
 	private int callingactivity;
 	private QoSManager qosManager;
+	public static final int LOGGED_IN_REQ_CODE=1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -203,6 +204,21 @@ public class LogInActivity extends Activity implements Observer {
 		});
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		System.out.println("1");
+		if (requestCode==LOGGED_IN_REQ_CODE) {
+			System.out.println("2");
+			if (resultCode==RESULT_OK) {
+				System.out.println("3");
+				finish();
+			}else if (resultCode==RESULT_CANCELED) {
+				System.out.println("4");
+			}
+		}
+	}
+
 	public void accessGranted() {
 
 		switch (callingactivity) {
@@ -210,12 +226,11 @@ public class LogInActivity extends Activity implements Observer {
 			break;
 		default:
 			Intent intent = new Intent(this, MainActivity.class);
+			startActivityForResult(intent, LOGGED_IN_REQ_CODE);
 			startActivity(intent);
 			break;
 		}
 		user.setLoggedIn(true);
-		setResult(RESULT_OK);
-		finish();
 	}
 
 	public void update(Observable observable, Object data) {

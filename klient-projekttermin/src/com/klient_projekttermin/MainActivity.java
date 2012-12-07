@@ -215,10 +215,8 @@ public class MainActivity extends SecureActivity {
 		builder.setPositiveButton("Ja", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int arg1) {
 				dialog.dismiss();
-				SocketConnection socketConnection = new SocketConnection();
-				socketConnection.logout();
-				setResult(RESULT_CANCELED);
-				finish();
+				setResult(RESULT_OK);
+				logout();
 			}
 		});
 		builder.setNegativeButton("Nej", new OnClickListener() {
@@ -267,6 +265,7 @@ public class MainActivity extends SecureActivity {
 		logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
+				setResult(RESULT_CANCELED);
 				logout();
 				return false;
 			}
@@ -336,11 +335,9 @@ public class MainActivity extends SecureActivity {
 	}
 
 	public void logout() {
-		finish();
-		Intent intent = new Intent(MainActivity.this, LogInActivity.class);
 		user.setLoggedIn(false);
-		SocketConnection connection = new SocketConnection();
-		connection.logout();
-		this.startActivity(intent);
+		socketConnection.logout();
+		finish();
+		
 	}
 }

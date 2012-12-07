@@ -280,6 +280,7 @@ public class SocketConnection extends Observable {
 					String json = gson.toJson(user.getAuthenticationModel());
 					writeToSocket(socket, json + "\n" + "logout\nclose\n");
 					closeSocket(socket);
+					user.setLoggedIn(false);
 				}
 
 			}
