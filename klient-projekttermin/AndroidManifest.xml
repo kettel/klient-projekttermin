@@ -3,51 +3,11 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <!-- Permissions -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="com.klient_projekttermin.permission.C2D_MESSAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- App receives GCM messages. -->
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <!-- GCM connects to Google Services. -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- GCM requires a Google account. -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <!-- Keeps the processor from sleeping when a message is received. -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- Permissions -->
-    <permission
-        android:name="com.klient_projekttermin.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-    <!-- Features -->
-    <uses-feature android:name="android.hardware.camera" />
-
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="16" />
-
     <application
         android:name="android.app.Application"
         android:icon="@drawable/loggakrona"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo" >
-
-        <!-- Receiver -->
-        <receiver
-            android:name="com.google.android.gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-
-                <category android:name="com.klient_projekttermin" />
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name=".MainActivity"
@@ -78,6 +38,14 @@
             android:label="Camera" >
         </activity>
         <activity
+            android:name="camera.PhotoGallery"
+            android:label="@string/title_activity_photo_gallery" >
+        </activity>
+        <activity 
+            android:name="contacts.ContactsBookActivity"
+            android:label="@string/title_activity_contacts_book">
+        </activity>
+        <activity
             android:name="logger.LogViewer"
             android:label="@string/title_activity_log_viewer" >
             <meta-data
@@ -103,6 +71,10 @@
             android:label="@string/uppdrag" >
         </activity>
         <activity
+            android:name="sip.IncomingCallDialog"
+            android:label="@string/title_activity_incoming_call_dialog" >
+        </activity>
+        <activity
             android:name="login.LogInActivity"
             android:label="@string/title_activity_login_function" >
             <intent-filter>
@@ -110,10 +82,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="contacts.ContactsBookActivity"
-            android:label="@string/title_activity_contacts_book" >
         </activity>
         <activity
             android:name="camera.Album"
@@ -142,6 +110,31 @@
             android:name="database.PictureContentProvider"
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
+        <service android:name=".GCMIntentService" />
+        <!-- SIP Receiver -->
+        <receiver android:name="sip.IncomingCallReceiver" />
+		<receiver
+            android:name="sip.Darclass"
+            android:permission="android.permission.BIND_DEVICE_ADMIN" >
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/my_admin" />
+
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>        
+		<!-- GCM Receiver -->
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.klient_projekttermin" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name="camera.Cam"
             android:label="@string/title_activity_cam"
@@ -151,5 +144,42 @@
 
         <service android:name="com.klient_projekttermin.GCMIntentService" />
     </application>
+    
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="16" />
+    
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.klient_projekttermin.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- App receives GCM messages. -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- GCM connects to Google Services. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- SIP permission -->
+    <uses-permission android:name="android.permission.USE_SIP" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" /> 
+    <!-- Permissions -->
+    <permission
+        android:name="com.klient_projekttermin.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    
+    <!-- Features -->
+    <uses-feature android:name="android.hardware.camera" />
+    <!-- SIP features -->
+	<uses-feature android:name="android.hardware.sip.voip" android:required="true" />
+    <uses-feature android:name="android.hardware.wifi" android:required="true" />
+    <uses-feature android:name="android.hardware.microphone" android:required="true" />
 
 </manifest>

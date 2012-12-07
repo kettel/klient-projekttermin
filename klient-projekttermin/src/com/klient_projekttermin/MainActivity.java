@@ -13,6 +13,7 @@ import map.MapActivity;
 import messageFunction.Inbox;
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
+import sip.RegisterWithSipSingleton;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -55,6 +56,9 @@ public class MainActivity extends SecureActivity {
 	private User user;
 	private Boolean haveServerConnection = false;
 
+	// SIP-variabler
+	public static RegisterWithSipSingleton regSip;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,7 +69,7 @@ public class MainActivity extends SecureActivity {
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
 		setContentView(R.layout.activity_main);
-
+		
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
 
@@ -162,6 +166,13 @@ public class MainActivity extends SecureActivity {
 					myIntent = new Intent(MainActivity.this,
 							ContactsBookActivity.class);
 					break;
+				case 5:
+					//if (qosManager.allowedToStartSip()) {
+						//myIntent = new Intent(MainActivity.this, SipMain.class);
+					//} else {
+						unallowedStart.show();
+					//}
+					break;
 				default:
 					break;
 				}
@@ -173,6 +184,30 @@ public class MainActivity extends SecureActivity {
 	}
 
 	@Override
+	protected void onStart() {
+		super.onStart();
+		
+        // SIP: Registrera klienten hos SIP-servern 
+		if(regSip == null){
+			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
+		}
+        regSip.initializeManager();
+	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		
+        // TODO: SIP: Registrera klienten hos SIP-servern 
+		if(regSip == null){
+			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
+		}
+        regSip.initializeManager();
+	}
+	
+
+	
+	
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Avsluta");
@@ -211,9 +246,9 @@ public class MainActivity extends SecureActivity {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera", "Kontakter" };
+				"Kamera", "Kontakter" ,"Samtalslogg"};
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" };
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" ,"Visa senaste samtal"};
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -286,6 +321,12 @@ public class MainActivity extends SecureActivity {
 			mRegisterTask.cancel(true);
 		}
 		GCMRegistrar.onDestroy(getApplicationContext());
+		
+		// Avregistrera klienten från SIP-servern
+		if(regSip != null){
+			regSip.closeLocalProfile();
+		}
+		
 		super.onDestroy();
 	}
 

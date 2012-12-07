@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".IncomingCallDialog" >
+
+    <ToggleButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="55dp"
+        android:text="ToggleButton" />
+
+    <TextView
+        android:id="@+id/textViewCaller"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/toggleButton1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="75dp"
+        android:text="TextView" />
+
+    <QuickContactBadge
+        android:id="@+id/quickContactBadge1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textViewCaller"
+        android:layout_alignLeft="@+id/textViewCaller"
+        android:layout_marginBottom="44dp" />
+
+    <TextView
+        android:id="@+id/textViewTimeInCall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/toggleButton1"
+        android:layout_alignLeft="@+id/toggleButton1"
+        android:layout_marginBottom="32dp"
+        android:text="TextView" />
+
+</RelativeLayout>

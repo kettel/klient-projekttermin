@@ -111,6 +111,7 @@ public class SecureActivity extends Activity {
 		public void run() {
 			Intent intent = new Intent(SecureActivity.this, LogInActivity.class);
 			intent.putExtra("calling-activity", ActivityConstants.INACTIVITY);
+			user.setLoggedIn(false);
 			SecureActivity.this.startActivity(intent);
 		}
 	};
