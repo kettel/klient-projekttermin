@@ -91,6 +91,7 @@ public class MainActivity extends SecureActivity {
 				.setGCMID(
 						GCMRegistrar
 						.getRegistrationId(getApplicationContext()));
+				checkContactDatabase();
 				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
