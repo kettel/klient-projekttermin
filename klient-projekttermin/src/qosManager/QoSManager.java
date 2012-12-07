@@ -36,6 +36,7 @@ public class QoSManager implements Observer {
 	private BatteryCheckingFunction batteryCheckingFunction;
 	private Context applicationContext;
 	private User user;
+	private MenuItem connectivityMarker;
 
 	private QoSManager() {
 		user = User.getInstance();
@@ -49,6 +50,14 @@ public class QoSManager implements Observer {
 
 	public void setContext(Context context){
 		applicationContext = context;
+	}
+
+	public void setConnectivityMarker(MenuItem menuItem){
+		connectivityMarker = menuItem;
+	}
+
+	public MenuItem getConnectivityMarker(){
+		return connectivityMarker;
 	}
 
 	public void startBatteryCheckingThread(Context context) {
@@ -130,16 +139,19 @@ public class QoSManager implements Observer {
 		wifiManager.setWifiEnabled(wantToTurnOn);
 	}
 
-	public void checkConnectivity(MenuItem connectionMarker,Boolean haveWifiConnection,Boolean haveMobileConnection){
+	public void checkServerConnection(){
+		SocketConnection connection = new SocketConnection();	
+		connection.addObserver(new PullResponseHandler(applicationContext));
+		connection.pullFromServer();
+	}
 
-		if(haveWifiConnection||haveMobileConnection){
-			SocketConnection connection = new SocketConnection();	
-			connection.addObserver(new PullResponseHandler(applicationContext));
-			connection.pullFromServer();
-			connectionMarker.setIcon(android.R.drawable.presence_online);
+	public void changeConnectivityMarkerStatus(Boolean serverConnection){
+
+		if(serverConnection){
+			connectivityMarker.setIcon(android.R.drawable.presence_online);
 		}
 		else{
-			connectionMarker.setIcon(android.R.drawable.presence_offline);
+			connectivityMarker.setIcon(android.R.drawable.presence_offline);
 		}
 	}
 

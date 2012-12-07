@@ -2,7 +2,7 @@
 
     <item
         android:id="@+id/connectionMarker"
-        android:icon="@android:drawable/presence_online"
+        android:icon="@android:drawable/presence_offline"
         android:showAsAction="ifRoom"/>
     <item
         android:id="@+id/logout"

@@ -119,7 +119,7 @@ public class SocketConnection extends Observable {
 				if (tries < 5) {
 					System.out.println("reload servers");
 					tries++;
-					Thread.sleep(1000);
+					Thread.sleep(100);
 					iterator = servers.iterator();
 					System.out.println(iterator.hasNext());
 				} else {
@@ -155,6 +155,7 @@ public class SocketConnection extends Observable {
 	}
 
 	public void pullFromServer() {
+		System.out.println("Sending pullrequest");
 		new Thread(new Runnable() {
 
 			public void run() {
