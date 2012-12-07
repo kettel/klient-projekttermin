@@ -1,7 +1,6 @@
 package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
-import static com.klient_projekttermin.CommonUtilities.SERVER_URL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +37,6 @@ import assignment.AssignmentOverview;
 import camera.CameraMenu;
 
 import com.google.android.gcm.GCMRegistrar;
-import com.klient_projekttermin.R.id;
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
@@ -56,10 +54,11 @@ public class MainActivity extends SecureActivity {
 	private SocketConnection socketConnection = new SocketConnection();
 	private User user;
 	private Boolean haveServerConnection = false;
+	private BroadcastReceiver bcr;
 
 	// SIP-variabler
 	public static RegisterWithSipSingleton regSip;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,7 +69,7 @@ public class MainActivity extends SecureActivity {
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
 		setContentView(R.layout.activity_main);
-		
+
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
 
@@ -93,6 +92,7 @@ public class MainActivity extends SecureActivity {
 				.setGCMID(
 						GCMRegistrar
 						.getRegistrationId(getApplicationContext()));
+				checkContactDatabase();
 				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
@@ -115,13 +115,13 @@ public class MainActivity extends SecureActivity {
 				mRegisterTask.execute(null, null, null);
 			}
 		}
-		
+
 		// SIP: Registrera klienten hos SIP-servern 
 		if(regSip == null){
 			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
 		}
 		regSip.initializeManager();
-		
+
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -176,9 +176,9 @@ public class MainActivity extends SecureActivity {
 					break;
 				case 5:
 					//if (qosManager.allowedToStartSip()) {
-						//myIntent = new Intent(MainActivity.this, SipMain.class);
+					//myIntent = new Intent(MainActivity.this, SipMain.class);
 					//} else {
-						unallowedStart.show();
+					unallowedStart.show();
 					//}
 					break;
 				default:
@@ -191,46 +191,33 @@ public class MainActivity extends SecureActivity {
 		});
 	}
 
-//	@Override
-//	protected void onStart() {
-//		super.onStart();
-//		
-//        
-//	}
-	
 	@Override
 	protected void onResume(){
 		super.onResume();
-		
-        // SIP: Registrera klienten hos SIP-servern 
+
+		// SIP: Registrera klienten hos SIP-servern 
 		if(regSip == null){
 			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
 		}
-        regSip.initializeManager();
+		regSip.initializeManager();
 	}
-	
 
-	
-	
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Avsluta");
 		builder.setMessage("Vill du avsluta?");
 		builder.setPositiveButton("Ja", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int arg1) {
-				dialog.dismiss();
-				SocketConnection socketConnection = new SocketConnection();
-				socketConnection.logout();
-				setResult(RESULT_CANCELED);
-				
 				// Avregistrera klienten från SIP-servern
 				if(regSip != null){
 					Log.d("SIP/MainActivity/onBackPressed/Ja","Ska stänga SIP-profilen...");
 					regSip.closeLocalProfile();
 					regSip = null;
 				}
+				dialog.dismiss();
+				setResult(LogInActivity.SHUT_DOWN);
+				logout();			
 				
-				finish();
 			}
 		});
 		builder.setNegativeButton("Nej", new OnClickListener() {
@@ -279,6 +266,7 @@ public class MainActivity extends SecureActivity {
 		logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
+				setResult(LogInActivity.STAY_ALIVE);
 				logout();
 				return false;
 			}
@@ -293,11 +281,11 @@ public class MainActivity extends SecureActivity {
 		});
 
 		qosManager.setConnectivityMarker(menu.findItem(R.id.connectionMarker));
-
-		registerReceiver(new BroadcastReceiver() {   
+		qosManager.setReadyToAdjustCM(true);
+		bcr = new BroadcastReceiver() {   
 			Boolean haveConnectedWifi= false;
 			Boolean haveConnectedMobile = false;
-			
+
 			public void onReceive(Context context, Intent intent) {
 				ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 				NetworkInfo[] netInfo = cm.getAllNetworkInfo();
@@ -321,20 +309,23 @@ public class MainActivity extends SecureActivity {
 					haveServerConnection=false;
 				}
 				qosManager.changeConnectivityMarkerStatus(haveServerConnection);
-			}}, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+			}};
 
-		return true;
+
+			registerReceiver(bcr, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+
+			return true;
 	}
 
 	@Override
 	protected void onDestroy() {
-
+		System.out.println("Kör onDestroy i MainActivity");
 		if (mRegisterTask != null) {
 			mRegisterTask.cancel(true);
 		}
 		GCMRegistrar.onDestroy(getApplicationContext());
-		
-		
+		unregisterReceiver(bcr);
+
 		super.onDestroy();
 	}
 
@@ -344,11 +335,8 @@ public class MainActivity extends SecureActivity {
 	}
 
 	public void logout() {
-		finish();
-		Intent intent = new Intent(MainActivity.this, LogInActivity.class);
 		user.setLoggedIn(false);
-		SocketConnection connection = new SocketConnection();
-		connection.logout();
-		this.startActivity(intent);
+		socketConnection.logout();
+		finish();
 	}
 }

@@ -39,6 +39,9 @@ public class LogInActivity extends Activity implements Observer {
 	private User user;
 	private int callingactivity;
 	private QoSManager qosManager;
+	public static final int LOGGED_IN_REQ_CODE=1;
+	public static final int SHUT_DOWN=2;
+	public static final int STAY_ALIVE=3;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,9 +50,9 @@ public class LogInActivity extends Activity implements Observer {
 		database = Database.getInstance(getApplicationContext());
 		Intent intent = getIntent();
 		callingactivity = intent.getIntExtra("calling-activity", 0);
-		qosManager =QoSManager.getInstance();
+		qosManager = QoSManager.getInstance();
 		qosManager.setContext(getApplicationContext());
-
+		user = User.getInstance();
 	}
 
 	@Override
@@ -70,7 +73,6 @@ public class LogInActivity extends Activity implements Observer {
 		originalModel = new AuthenticationModel(userName,
 				hashPassword(password));
 
-		user = User.getInstance();
 		user.setAuthenticationModel(originalModel);
 
 		tryOnlineLogin(originalModel);
@@ -110,7 +112,6 @@ public class LogInActivity extends Activity implements Observer {
 						&& loadedModel.isAccessGranted().equals("true")) {
 					accessGranted();
 				} else {
-					System.out.println("Rätt användarnamn, men fel lösenord");
 					incorrectLogIn();
 				}
 			} else{
@@ -203,19 +204,31 @@ public class LogInActivity extends Activity implements Observer {
 		});
 	}
 
-	public void accessGranted() {
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		System.out.println("1");
+		if (requestCode==LOGGED_IN_REQ_CODE) {
+			System.out.println("2");
+			if (resultCode==STAY_ALIVE) {
+				System.out.println("3");
+				finish();
+			}else if (resultCode==SHUT_DOWN) {
+				System.out.println("4");
+			}
+		}
+	}
 
+	public void accessGranted() {
 		switch (callingactivity) {
 		case ActivityConstants.INACTIVITY:
 			break;
 		default:
 			Intent intent = new Intent(this, MainActivity.class);
-			startActivity(intent);
+			startActivityForResult(intent, LOGGED_IN_REQ_CODE);
 			break;
 		}
 		user.setLoggedIn(true);
-		setResult(RESULT_OK);
-		finish();
 	}
 
 	public void update(Observable observable, Object data) {
@@ -232,6 +245,7 @@ public class LogInActivity extends Activity implements Observer {
 
 		} else if (data instanceof String) {
 			user.setOnlineConnection(false);
+			System.out.println("Ingen Kontakt");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {
