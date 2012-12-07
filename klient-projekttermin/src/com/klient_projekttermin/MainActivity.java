@@ -25,6 +25,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -114,6 +115,13 @@ public class MainActivity extends SecureActivity {
 				mRegisterTask.execute(null, null, null);
 			}
 		}
+		
+		// SIP: Registrera klienten hos SIP-servern 
+		if(regSip == null){
+			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
+		}
+		regSip.initializeManager();
+		
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
 		lv.setAdapter(new SimpleAdapter(this, generateMenuContent(),
@@ -183,22 +191,18 @@ public class MainActivity extends SecureActivity {
 		});
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-        // SIP: Registrera klienten hos SIP-servern 
-		if(regSip == null){
-			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
-		}
-        regSip.initializeManager();
-	}
+//	@Override
+//	protected void onStart() {
+//		super.onStart();
+//		
+//        
+//	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
 		
-        // TODO: SIP: Registrera klienten hos SIP-servern 
+        // SIP: Registrera klienten hos SIP-servern 
 		if(regSip == null){
 			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
 		}
@@ -218,6 +222,14 @@ public class MainActivity extends SecureActivity {
 				SocketConnection socketConnection = new SocketConnection();
 				socketConnection.logout();
 				setResult(RESULT_CANCELED);
+				
+				// Avregistrera klienten från SIP-servern
+				if(regSip != null){
+					Log.d("SIP/MainActivity/onBackPressed/Ja","Ska stänga SIP-profilen...");
+					regSip.closeLocalProfile();
+					regSip = null;
+				}
+				
 				finish();
 			}
 		});
@@ -322,10 +334,6 @@ public class MainActivity extends SecureActivity {
 		}
 		GCMRegistrar.onDestroy(getApplicationContext());
 		
-		// Avregistrera klienten från SIP-servern
-		if(regSip != null){
-			regSip.closeLocalProfile();
-		}
 		
 		super.onDestroy();
 	}
