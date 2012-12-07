@@ -175,7 +175,7 @@ public class RegisterWithSipSingleton {
             return;
         }
         try {
-            //if (me != null) {
+            if (me != null) {
             	Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Ska stänga av SIP-manager...");
             	manager.close(me.getUriString());
             	me = null;
@@ -183,7 +183,7 @@ public class RegisterWithSipSingleton {
             	currentUser = null;
             	password = null;
             	Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Stängdes manager av? "+(manager.isOpened(me.getUriString())?"Ja":"Nej"));
-            //}
+            }
         } catch (Exception ee) {
             Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Failed to close local profile.", ee);
         }
