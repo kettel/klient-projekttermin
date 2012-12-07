@@ -35,13 +35,11 @@ public class PullResponseHandler implements Observer {
 	private Intent notificationIntent;
 	private boolean hasChanged = false;
 	private String message = "";
-	private QoSManager qosManager;
 
 	public PullResponseHandler(Context context) {
 		super();
 		this.context = context;
 		db = Database.getInstance(context);
-		qosManager.getInstance();
 	}
 
 	public void update(Observable observable, Object data) {
@@ -85,12 +83,6 @@ public class PullResponseHandler implements Observer {
 			} else if (data instanceof AuthenticationModel) {
 
 			}
-			try {
-				System.out.println("KONTAKT MED SERVERN FINNS");
-				qosManager.changeConnectivityMarkerStatus(true);
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 		}
 	}
 
@@ -109,10 +101,10 @@ public class PullResponseHandler implements Observer {
 				.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 		Notification notification = new NotificationCompat.Builder(context)
-		.setContentTitle(title).setContentText(message)
-		.setContentIntent(intent).setSmallIcon(icon)
-		.setLights(Color.YELLOW, 1, 2).setAutoCancel(true)
-		.setSound(defaultSound).build();
+				.setContentTitle(title).setContentText(message)
+				.setContentIntent(intent).setSmallIcon(icon)
+				.setLights(Color.YELLOW, 1, 2).setAutoCancel(true)
+				.setSound(defaultSound).build();
 
 		notificationManager.notify(0, notification);
 	}

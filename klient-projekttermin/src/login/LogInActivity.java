@@ -229,7 +229,6 @@ public class LogInActivity extends Activity implements Observer {
 		default:
 			Intent intent = new Intent(this, MainActivity.class);
 			startActivityForResult(intent, LOGGED_IN_REQ_CODE);
-			startActivity(intent);
 			break;
 		}
 		user.setLoggedIn(true);
