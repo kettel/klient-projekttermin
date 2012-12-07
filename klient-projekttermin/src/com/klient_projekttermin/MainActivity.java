@@ -1,7 +1,6 @@
 package com.klient_projekttermin;
 
 import static com.klient_projekttermin.CommonUtilities.SENDER_ID;
-import static com.klient_projekttermin.CommonUtilities.SERVER_URL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +37,6 @@ import assignment.AssignmentOverview;
 import camera.CameraMenu;
 
 import com.google.android.gcm.GCMRegistrar;
-import com.klient_projekttermin.R.id;
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
@@ -94,6 +92,7 @@ public class MainActivity extends SecureActivity {
 				.setGCMID(
 						GCMRegistrar
 						.getRegistrationId(getApplicationContext()));
+				checkContactDatabase();
 				socketConnection.pullFromServer();
 			} else {
 				// Try to register again, but not in the UI thread.
@@ -192,13 +191,6 @@ public class MainActivity extends SecureActivity {
 		});
 	}
 
-	//	@Override
-	//	protected void onStart() {
-	//		super.onStart();
-	//		
-	//        
-	//	}
-
 	@Override
 	protected void onResume(){
 		super.onResume();
@@ -216,19 +208,16 @@ public class MainActivity extends SecureActivity {
 		builder.setMessage("Vill du avsluta?");
 		builder.setPositiveButton("Ja", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int arg1) {
-				dialog.dismiss();
-				SocketConnection socketConnection = new SocketConnection();
-				socketConnection.logout();
-				setResult(RESULT_CANCELED);
-
 				// Avregistrera klienten från SIP-servern
 				if(regSip != null){
 					Log.d("SIP/MainActivity/onBackPressed/Ja","Ska stänga SIP-profilen...");
 					regSip.closeLocalProfile();
 					regSip = null;
 				}
-
-				finish();
+				dialog.dismiss();
+				setResult(LogInActivity.SHUT_DOWN);
+				logout();			
+				
 			}
 		});
 		builder.setNegativeButton("Nej", new OnClickListener() {
@@ -277,6 +266,7 @@ public class MainActivity extends SecureActivity {
 		logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
+				setResult(LogInActivity.STAY_ALIVE);
 				logout();
 				return false;
 			}
@@ -345,11 +335,9 @@ public class MainActivity extends SecureActivity {
 	}
 
 	public void logout() {
-		finish();
-		Intent intent = new Intent(MainActivity.this, LogInActivity.class);
 		user.setLoggedIn(false);
-		SocketConnection connection = new SocketConnection();
-		connection.logout();
-		this.startActivity(intent);
+		socketConnection.logout();
+		finish();
+		
 	}
 }

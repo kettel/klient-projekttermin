@@ -46,10 +46,11 @@ public class ContactsBookActivity extends SecureActivity {
 	private MenuItem useContacts;
 	private ContacsAdapter ca;
 	private HashMap<Integer, Boolean> h = new HashMap<Integer, Boolean>();
+
 	private List<String> sortedContact;
 	private List<ModelInterface> lista;
 	private RegisterWithSipSingleton regSip;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,7 +77,7 @@ public class ContactsBookActivity extends SecureActivity {
 				contacts, callingActivity);
 		lv.setAdapter(ca);
 	}
-	
+
 	@Override
     protected void onStart() {
         super.onStart();
@@ -98,12 +99,6 @@ public class ContactsBookActivity extends SecureActivity {
 			}
 		}
 		return sortedList;
-	}
-	
-	@Override
-	protected void onDestroy(){
-		super.onDestroy();
-		regSip.closeLocalProfile();
 	}
 
 	@Override
@@ -169,7 +164,7 @@ public class ContactsBookActivity extends SecureActivity {
 		
 		int k = 0;
 		for (boolean b : h.values()) {
-			if(b){
+			if (b) {
 				k++;
 			}
 		}

@@ -37,14 +37,12 @@ public class PullResponseHandler implements Observer {
 	private boolean hasChanged = false;
 	private String message = "";
 	private QoSManager qosManager;
-	private User user;
 
 	public PullResponseHandler(Context context) {
 		super();
 		this.context = context;
 		db = Database.getInstance(context);
 		qosManager = QoSManager.getInstance();
-		user = User.getInstance();
 	}
 
 	public void update(Observable observable, Object data) {
@@ -111,10 +109,10 @@ public class PullResponseHandler implements Observer {
 				.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
 		Notification notification = new NotificationCompat.Builder(context)
-		.setContentTitle(title).setContentText(message)
-		.setContentIntent(intent).setSmallIcon(icon)
-		.setLights(Color.YELLOW, 1, 2).setAutoCancel(true)
-		.setSound(defaultSound).build();
+				.setContentTitle(title).setContentText(message)
+				.setContentIntent(intent).setSmallIcon(icon)
+				.setLights(Color.YELLOW, 1, 2).setAutoCancel(true)
+				.setSound(defaultSound).build();
 
 		notificationManager.notify(0, notification);
 	}
