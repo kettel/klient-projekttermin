@@ -3,6 +3,8 @@ package qosManager;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.klient_projekttermin.SecureActivity;
+
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
@@ -14,7 +16,7 @@ import android.net.wifi.WifiManager;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
-public class QoSManager implements Observer {
+public class QoSManager extends SecureActivity implements Observer {
 	private int lowBatteryLevel=20;
 	private Boolean permissionToUseWiFi = false;
 	private Boolean permissionToStartMap = false;
@@ -37,6 +39,7 @@ public class QoSManager implements Observer {
 	private Context applicationContext;
 	private User user;
 	private MenuItem connectivityMarker;
+	private Boolean readyToAdjustCM = false;
 
 	private QoSManager() {
 		user = User.getInstance();
@@ -145,14 +148,19 @@ public class QoSManager implements Observer {
 		connection.pullFromServer();
 	}
 
-	public void changeConnectivityMarkerStatus(Boolean serverConnection){
+	public void changeConnectivityMarkerStatus(final Boolean serverConnection){
 
-		if(serverConnection){
-			connectivityMarker.setIcon(android.R.drawable.presence_online);
-		}
-		else{
-			connectivityMarker.setIcon(android.R.drawable.presence_offline);
-		}
+		runOnUiThread(new Runnable() {
+			
+			public void run() {
+				if(serverConnection){
+					connectivityMarker.setIcon(android.R.drawable.presence_online);
+				}
+				else{
+					connectivityMarker.setIcon(android.R.drawable.presence_offline);
+				}				
+			}
+		});
 	}
 
 	public Boolean batterySaveModeIsActivated(){
@@ -201,6 +209,14 @@ public class QoSManager implements Observer {
 		else{
 			return permissionToUseWiFiOkay;
 		}
+	}
+	
+	public Boolean readyToAdjustCM() {
+		return readyToAdjustCM;
+	}
+
+	public void setReadyToAdjustCM(Boolean readyToAdjustCM) {
+		this.readyToAdjustCM = readyToAdjustCM;
 	}
 
 	public float getScreenBrightnessValue(){
