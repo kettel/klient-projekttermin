@@ -16,6 +16,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -59,10 +60,13 @@ public class ContactsBookActivity extends SecureActivity {
 		db = Database.getInstance(this);
 		lista = db.getAllFromDB(new Contact(),
 				getContentResolver());
+		
+		
 		contacts = new String[lista.size()];
 		sortedContact = new ArrayList<String>();
 		for (ModelInterface m : lista) {
 			Contact c = (Contact) m;
+			//Log.e("FEL", "Vad som finns i listan: " + c.getContactName());
 			sortedContact.add(c.getContactName());
 		}
 
