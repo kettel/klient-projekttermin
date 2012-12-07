@@ -180,6 +180,7 @@ public class RegisterWithSipSingleton {
      * Make an outgoing call.
      */
     public void initiateCall(String nameToCall) {
+    	Log.d("RegisterWithSipSingleton/initiateCall","Kontakt att ringa: "+nameToCall);
     	sipAddress = "sip:"+nameToCall+"@94.254.72.38";
 
         try {
