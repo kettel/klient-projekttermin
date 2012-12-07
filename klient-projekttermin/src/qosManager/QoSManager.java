@@ -140,9 +140,9 @@ public class QoSManager implements Observer {
 	}
 
 	public void checkServerConnection(){
-		SocketConnection connection = new SocketConnection();	
-		connection.addObserver(new PullResponseHandler(applicationContext));
-		connection.pullFromServer();
+//		SocketConnection connection = new SocketConnection();	
+//		connection.addObserver(new PullResponseHandler(applicationContext));
+//		connection.pullFromServer();
 	}
 
 	public void changeConnectivityMarkerStatus(Boolean serverConnection){

@@ -79,11 +79,15 @@ public class SecureActivity extends Activity {
 				checkContactDatabase();
 				socketConnection.pullFromServer();
 			} else if (newMessage.equals("logout")) {
-				socketConnection.logout();
-				finish();
+				logout();
 			}
 		}
 	};
+	public void logout(){
+		socketConnection.logout();
+		setResult(LogInActivity.STAY_ALIVE);
+		finish();
+	}
 
 	public void checkContactDatabase() {
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
