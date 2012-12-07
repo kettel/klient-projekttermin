@@ -336,6 +336,5 @@ public class MainActivity extends SecureActivity {
 		user.setLoggedIn(false);
 		socketConnection.logout();
 		finish();
-		
 	}
 }
