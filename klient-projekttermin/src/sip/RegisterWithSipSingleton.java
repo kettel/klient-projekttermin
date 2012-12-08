@@ -46,6 +46,10 @@ public class RegisterWithSipSingleton {
 	private String domain = "94.254.72.38";
 	private String password;
 	
+	private static int readyCounter = 0;
+	private static int registeringCounter = 0;
+	private static int failedCounter = 0;
+	
 	private static RegisterWithSipSingleton instance = new RegisterWithSipSingleton();
 
 	private RegisterWithSipSingleton(){}
@@ -112,9 +116,9 @@ public class RegisterWithSipSingleton {
         }
 
 		// Bortkommenterad koll. Verkar snabba upp registring av klient på server.
-//        if (me != null) {
-//        	closeLocalProfile();
-//        }
+        if (me != null) {
+        	closeLocalProfile();
+        }
 		
         Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Ska skapa profil..");
         Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Användarnamn: " + username);
@@ -134,19 +138,22 @@ public class RegisterWithSipSingleton {
         	// Sätt upp en lyssnare som lyssnar efter hur väl anslutningen har gått
         	manager.setRegistrationListener(me.getUriString(), new SipRegistrationListener() {
                 public void onRegistering(String localProfileUri) {
-                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Registrerar mot SIP-server...");
+                	registeringCounter++;
+                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Registrerar mot SIP-server för "+registeringCounter +" gången...");
                 	//isRegistred = false;
                 }
 
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Redo");
+                	readyCounter++;
+                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Redo för "+readyCounter+" gången.");
                 	isRegistred = true;
                 	//initiateCall();
                 }
 
                 public void onRegistrationFailed(String localProfileUri, int errorCode,
                         String errorMessage) {
-                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Misslyckades att registrera mot SIP-server. Försöker igen...");
+                	failedCounter++;
+                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Misslyckades att registrera mot SIP-server för "+failedCounter+ " gången. Försöker igen...");
                 	isRegistred = false;
                 }
             });
@@ -163,26 +170,17 @@ public class RegisterWithSipSingleton {
      * Closes out your local profile, freeing associated objects into memory
      * and unregistering your device from the server.
      */
-    public void closeLocalProfile() {
+	public void closeLocalProfile() {
     	if (timer != null){
-    		Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Ska stänga av SIP-Timern...");
         	timer.cancel();
         	timer.purge();
-        	timer = null;
-        	Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Stängde av SIP-Timern");
         }
     	if (manager == null) {
             return;
         }
         try {
             if (me != null) {
-            	Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Ska stänga av SIP-manager...");
             	manager.close(me.getUriString());
-            	me = null;
-            	manager = null;
-            	currentUser = null;
-            	password = null;
-            	Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Stängdes manager av? "+(manager.isOpened(me.getUriString())?"Ja":"Nej"));
             }
         } catch (Exception ee) {
             Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Failed to close local profile.", ee);

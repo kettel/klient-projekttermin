@@ -118,7 +118,8 @@ public class QoSManager extends SecureActivity implements Observer {
 	 */
 	public void adjustToLowBatteryLevel() {
 		BatterySaveModeIsActivated=true;
-		adjustScreenBrightness(screenBrightnesslevel);
+		// Acro S-specifikt?
+		//adjustScreenBrightness(screenBrightnesslevel);
 		adjustNetworkStatus(permissionToUseWiFi);
 	}
 
