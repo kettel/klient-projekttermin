@@ -17,14 +17,10 @@ import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
 import android.net.sip.SipSession;
-import android.os.Handler;
 import android.util.Log;
 
 public class RegisterWithSipSingleton {
 	private Timer timer;
-	private static Handler handler;
-	private static Runnable runnable;
-	
 	private boolean isRegistred = false;
 	private static Context context;
 
@@ -36,7 +32,7 @@ public class RegisterWithSipSingleton {
 	public String sipAddress = null;
 
 	public static ObservableCallStatus callStatus = new ObservableCallStatus();
-	
+
 	public boolean isCallAnswered = false;
 
 	// Variabler som jag inte vet vart de ska vara. Main? Service? Hjälpklass?
@@ -49,24 +45,23 @@ public class RegisterWithSipSingleton {
 	private String username;
 	private String domain = "94.254.72.38";
 	private String password;
-	
+
 	private static int readyCounter = 0;
 	private static int registeringCounter = 0;
 	private static int failedCounter = 0;
-	private static int handlerCounter = 0;
-	
+
 	private static RegisterWithSipSingleton instance = new RegisterWithSipSingleton();
 
 	private RegisterWithSipSingleton(){}
 
 	public static RegisterWithSipSingleton getInstance(Context c){
-		
+
 		// Det här borde bara köras när första instansen instansierar...
 		if(context != c){
 			Log.d("SIP/Singletonklassen","Kontexterna är inte samma...");
 			context = c;
 		}
-		
+
 		return instance;
 	}
 
@@ -75,7 +70,7 @@ public class RegisterWithSipSingleton {
 		currentUser = User.getInstance();
 		username = currentUser.getAuthenticationModel().getUserName();
 		password = currentUser.getAuthenticationModel().getPasswordHash();
-		
+
 		// Registrera intents för utgående och inkommande samtal
 		if(!isIntentsRegistred){
 			intentsRegistred++;
@@ -87,52 +82,30 @@ public class RegisterWithSipSingleton {
 	        context.registerReceiver(callReceiver, filter);
 	        isIntentsRegistred = true;
 		}
-		
+
 		if(manager == null) {
 			manager = SipManager.newInstance(context);
         }
         initializeLocalProfile();
-//        
-//        int delay = 5000; // delay for 5 sec.
-//		final int period = 1000; // repeat every sec.
-//
-//		// Försök återregistrera varje sekund om man inte är registrerad
-//		timer = new Timer();
-//		timer.scheduleAtFixedRate(new TimerTask()
-//		{
-//			public void run()
-//			{
-//				if(!isRegistred){
-//					Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile/Timer","Försöker mot SIP-server...");
-//					if(manager == null) {
-//						manager = SipManager.newInstance(context);
-//					}
-//					initializeLocalProfile();
-//				}
-//			}
-//		}, delay, period);
-//        if(handlerCounter == 0){
-//        	handler = new Handler();
-//    		
-//    		runnable = new Runnable(){
-//    			public void run(){
-//    				handlerCounter++;
-//    				if(!isRegistred){
-//    					Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile/Handler","Kör handler för " + handlerCounter + " gången.");
-//    					Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile/Handler","Försöker mot SIP-server...");
-//    					if(manager == null) {
-//    						manager = SipManager.newInstance(context);
-//    					}
-//    					initializeLocalProfile();
-//    				}
-//    			
-//    				// Kör runnable igen
-//    				handler.postDelayed(this, period);
-//    			}
-//    		};
-//    		// Starta handler
-//    		handler.postDelayed(runnable, delay);
-//        }
+        
+        int delay = 5000; // delay for 5 sec.
+		int period = 1000; // repeat every sec.
+
+		// Försök återregistrera varje sekund om man inte är registrerad
+		timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask()
+		{
+			public void run()
+			{
+				if(!isRegistred){
+					Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile/Timer","Försöker mot SIP-server...");
+					if(manager == null) {
+						manager = SipManager.newInstance(context);
+					}
+					initializeLocalProfile();
+				}
+			}
+		}, delay, period);
     }
 	/**
 	 * Registrera användaren hos SIP-servern
@@ -144,71 +117,64 @@ public class RegisterWithSipSingleton {
 
 		// Bortkommenterad koll. Verkar snabba upp registring av klient på server.
         if (me != null) {
-        	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","me != null.");
-//        	closeLocalProfile();
+        	closeLocalProfile();
         }
-		
-        // Om klienten inte är registrerad, registrera den (onödigt annars..)
-        if(!isRegistred){
-        	try {
-        		Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Ska skapa profil..");
-        		Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Användarnamn: " + username);
 
-        		SipProfile.Builder builder = new SipProfile.Builder(username, domain);
-        		builder.setPassword(password);
-        		me = builder.build();
+        Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Ska skapa profil..");
+        Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Användarnamn: " + username);
+        try {
+        	
+        	SipProfile.Builder builder = new SipProfile.Builder(username, domain);
+        	builder.setPassword(password);
+        	me = builder.build();
 
-        		// Låt klienten kunna ta emot samtal (kryssrutan under Konton i samtalsinställningar)
-        		Intent intent = new Intent();
-        		intent.setAction("com.klient_projekttermin.INCOMING_CALL");
-        		//intent.setAction("com.klient_projekttermin.OUTGOING_CALL");
-        		PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA);
-        		manager.open(me, pendingIntent, null);
+        	// Låt klienten kunna ta emot samtal (kryssrutan under Konton i samtalsinställningar)
+        	Intent intent = new Intent();
+        	intent.setAction("com.klient_projekttermin.INCOMING_CALL");
+        	//intent.setAction("com.klient_projekttermin.OUTGOING_CALL");
+        	PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, Intent.FILL_IN_DATA);
+        	manager.open(me, pendingIntent, null);
 
-        		// Sätt upp en lyssnare som lyssnar efter hur väl anslutningen har gått
-        		manager.setRegistrationListener(me.getUriString(), new SipRegistrationListener() {
-        			public void onRegistering(String localProfileUri) {
-        				registeringCounter++;
-        				Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Registrerar mot SIP-server för "+registeringCounter +" gången...");
-        				//isRegistred = false;
-        			}
+        	// Sätt upp en lyssnare som lyssnar efter hur väl anslutningen har gått
+        	manager.setRegistrationListener(me.getUriString(), new SipRegistrationListener() {
+                public void onRegistering(String localProfileUri) {
+                	registeringCounter++;
+                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Registrerar mot SIP-server för "+registeringCounter +" gången...");
+                	//isRegistred = false;
+                }
 
-        			public void onRegistrationDone(String localProfileUri, long expiryTime) {
-        				readyCounter++;
-        				Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Redo för "+readyCounter+" gången.");
-        				isRegistred = true;
-        				//initiateCall();
-        			}
+                public void onRegistrationDone(String localProfileUri, long expiryTime) {
+                	readyCounter++;
+                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Redo för "+readyCounter+" gången.");
+                	isRegistred = true;
+                	//initiateCall();
+                }
 
-        			public void onRegistrationFailed(String localProfileUri, int errorCode,
-        					String errorMessage) {
-        				failedCounter++;
-        				Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Misslyckades att registrera mot SIP-server för "+failedCounter+ " gången. Försöker igen...");
-        				isRegistred = false;
-        			}
-        		});
-        	} 
-        	catch (ParseException e) {
-        		Log.e("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Parse error.. "+e);
-        	}
-        	catch (SipException e) {
-        		Log.e("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Sip exceptionerror.. "+e);
-        	}
+                public void onRegistrationFailed(String localProfileUri, int errorCode,
+                        String errorMessage) {
+                	failedCounter++;
+                	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Misslyckades att registrera mot SIP-server för "+failedCounter+ " gången. Försöker igen...");
+                	isRegistred = false;
+                }
+            });
+        } 
+        catch (ParseException e) {
+        	Log.e("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Parse error.. "+e);
         }
-		
+        catch (SipException e) {
+        	Log.e("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Sip exceptionerror.. "+e);
+        }
+
 	}
 	/**
      * Closes out your local profile, freeing associated objects into memory
      * and unregistering your device from the server.
      */
 	public void closeLocalProfile() {
-//    	if (timer != null){
-//        	timer.cancel();
-//        	timer.purge();
-//        }
-		// Döda återanslutningsförsöken
-		handler.removeCallbacks(runnable);
-		
+    	if (timer != null){
+        	timer.cancel();
+        	timer.purge();
+        }
     	if (manager == null) {
             return;
         }
