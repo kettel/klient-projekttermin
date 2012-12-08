@@ -118,7 +118,7 @@ public class MainActivity extends SecureActivity {
 
 		// SIP: Registrera klienten hos SIP-servern 
 		if(regSip == null){
-			regSip = RegisterWithSipSingleton.getInstance(this);
+			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
 			regSip.initializeManager();
 		}
 		
@@ -210,12 +210,6 @@ public class MainActivity extends SecureActivity {
 		builder.setMessage("Vill du avsluta?");
 		builder.setPositiveButton("Ja", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int arg1) {
-				// Avregistrera klienten från SIP-servern
-				if(regSip != null){
-					Log.d("SIP/MainActivity/onBackPressed/Ja","Ska stänga SIP-profilen...");
-					regSip.closeLocalProfile();
-					regSip = null;
-				}
 				dialog.dismiss();
 				setResult(LogInActivity.SHUT_DOWN);
 				logout();			
@@ -337,6 +331,13 @@ public class MainActivity extends SecureActivity {
 	}
 
 	public void logout() {
+		// Avregistrera klienten från SIP-servern
+		if(regSip != null){
+			Log.d("SIP/MainActivity/onBackPressed/Ja","Ska stänga SIP-profilen...");
+			regSip.closeLocalProfile();
+			regSip = null;
+		}
+		
 		user.setLoggedIn(false);
 		socketConnection.logout();
 		finish();
