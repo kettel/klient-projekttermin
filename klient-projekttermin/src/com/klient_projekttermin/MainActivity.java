@@ -91,7 +91,8 @@ public class MainActivity extends SecureActivity {
 				user.getAuthenticationModel()
 				.setGCMID(
 						GCMRegistrar
-						.getRegistrationId(getApplicationContext()));
+						.getRegistrationId(
+							));
 				checkContactDatabase();
 				socketConnection.pullFromServer();
 			} else {
@@ -118,7 +119,7 @@ public class MainActivity extends SecureActivity {
 
 		// SIP: Registrera klienten hos SIP-servern 
 		if(regSip == null){
-			regSip = RegisterWithSipSingleton.getInstance(this);
+			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
 			regSip.initializeManager();
 		}
 		
