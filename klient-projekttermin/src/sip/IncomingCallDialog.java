@@ -60,14 +60,15 @@ import com.klient_projekttermin.R;
  * TODO: Visa samtalstid för ringda/mottagna samtal (om tid finns)
  * 
  * Databas: 
- * TODO: Hämta SIP-profil från servern 
- * TODO: Hämta och lagra kontakters SIP-nummer (för samtal inom FM) 
- * TODO: Om behövs, lägg till SIP-nummer i kontaktmodellen 
+ * TODO: Hämta SIP-profil från servern [DONE]
+ * TODO: Hämta och lagra kontakters SIP-nummer (för samtal inom FM) [DONE] 
+ * TODO: Om behövs, lägg till SIP-nummer i kontaktmodellen  [DONE]
  * 
  * Buggar:
  * TODO: Samtal ska överleva en skärmrotation
  * TODO: Registrera att mottagaren av samtalet har svarat vid utgående samtal. Väldigt märkligt då kopplingssignaler
  * 		 spelas tills andra änden svarar...
+ * TODO: Fixa så även andra telefoner än Acro S kan registrera sig på Servern.
  * 
  * @author kettel
  * 
