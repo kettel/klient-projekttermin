@@ -118,9 +118,10 @@ public class MainActivity extends SecureActivity {
 
 		// SIP: Registrera klienten hos SIP-servern 
 		if(regSip == null){
-			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
+			regSip = RegisterWithSipSingleton.getInstance(this);
+			regSip.initializeManager();
 		}
-		regSip.initializeManager();
+		
 
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
@@ -198,8 +199,9 @@ public class MainActivity extends SecureActivity {
 		// SIP: Registrera klienten hos SIP-servern 
 		if(regSip == null){
 			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
+			regSip.initializeManager();
 		}
-		regSip.initializeManager();
+		
 	}
 
 	public void onBackPressed() {
