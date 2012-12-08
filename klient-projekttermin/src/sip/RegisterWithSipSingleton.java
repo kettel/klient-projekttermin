@@ -17,10 +17,14 @@ import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
 import android.net.sip.SipSession;
+import android.os.Handler;
 import android.util.Log;
 
 public class RegisterWithSipSingleton {
 	private Timer timer;
+	private static Handler handler;
+	private static Runnable runnable;
+	
 	private boolean isRegistred = false;
 	private static Context context;
 
@@ -88,15 +92,28 @@ public class RegisterWithSipSingleton {
         }
         initializeLocalProfile();
         
-        int delay = 5000; // delay for 5 sec.
-		int period = 1000; // repeat every sec.
-
-		// Försök återregistrera varje sekund om man inte är registrerad
-		timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask()
-		{
-			public void run()
-			{
+//        int delay = 5000; // delay for 5 sec.
+		final int period = 1000; // repeat every sec.
+//
+//		// Försök återregistrera varje sekund om man inte är registrerad
+//		timer = new Timer();
+//		timer.scheduleAtFixedRate(new TimerTask()
+//		{
+//			public void run()
+//			{
+//				if(!isRegistred){
+//					Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile/Timer","Försöker mot SIP-server...");
+//					if(manager == null) {
+//						manager = SipManager.newInstance(context);
+//					}
+//					initializeLocalProfile();
+//				}
+//			}
+//		}, delay, period);
+        handler = new Handler();
+		
+		runnable = new Runnable(){
+			public void run(){
 				if(!isRegistred){
 					Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile/Timer","Försöker mot SIP-server...");
 					if(manager == null) {
@@ -104,8 +121,11 @@ public class RegisterWithSipSingleton {
 					}
 					initializeLocalProfile();
 				}
+			
+				// Kör runnable igen
+				handler.postDelayed(this, period);
 			}
-		}, delay, period);
+		};
     }
 	/**
 	 * Registrera användaren hos SIP-servern
@@ -117,13 +137,15 @@ public class RegisterWithSipSingleton {
 
 		// Bortkommenterad koll. Verkar snabba upp registring av klient på server.
         if (me != null) {
-        	closeLocalProfile();
+        	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","me != null.");
+//        	closeLocalProfile();
         }
 		
-        Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Ska skapa profil..");
-        Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Användarnamn: " + username);
+        
         try {
-        	
+        	Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Ska skapa profil..");
+            Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Användarnamn: " + username);
+            
         	SipProfile.Builder builder = new SipProfile.Builder(username, domain);
         	builder.setPassword(password);
         	me = builder.build();
@@ -171,10 +193,13 @@ public class RegisterWithSipSingleton {
      * and unregistering your device from the server.
      */
 	public void closeLocalProfile() {
-    	if (timer != null){
-        	timer.cancel();
-        	timer.purge();
-        }
+//    	if (timer != null){
+//        	timer.cancel();
+//        	timer.purge();
+//        }
+		// Döda återanslutningsförsöken
+		handler.removeCallbacks(runnable);
+		
     	if (manager == null) {
             return;
         }
