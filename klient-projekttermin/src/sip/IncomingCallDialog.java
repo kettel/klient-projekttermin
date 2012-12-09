@@ -2,8 +2,6 @@ package sip;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
@@ -25,15 +23,12 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 
 /**
