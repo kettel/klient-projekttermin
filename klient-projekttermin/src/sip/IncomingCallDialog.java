@@ -29,6 +29,7 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -256,6 +257,8 @@ public class IncomingCallDialog extends Activity {
 
 			// Sätt toggle-knappen till nedtryckt (det är ju vi som ringer...)
 			setToggleButtonChecked();
+			
+			setCallButtonText("Lägg på");
 
 			// Lyssna efter om personen har svarat på påringningen
 			final class ObserverCallStatus implements Observer {
@@ -325,7 +328,9 @@ public class IncomingCallDialog extends Activity {
 		startCallTimer();
 		updateCaller(caller + " ringer...");
 		updateCallTime();
-
+		
+		setCallButtonText("Svara");
+		
 		// Dra igång ringsignalen
 		if (ringtone == null) {
 			notification = RingtoneManager
@@ -371,6 +376,7 @@ public class IncomingCallDialog extends Activity {
 					StaticCall.answerCall(StaticCall.call);
 					// Uppdatera tiden i textView
 					updateCallTime();
+					
 				}
 				// Lägg på samtal
 				if (!buttonView.isChecked() && RegisterWithSipSingleton.isCallAnswered()) {
@@ -443,7 +449,20 @@ public class IncomingCallDialog extends Activity {
 				// Sätt namnet på den som ringer
 				TextView timeView = (TextView) findViewById(R.id.textViewTimeInCall);
 				timeView.setText(timeInCall);
+				ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
+				toggle.setText("Lägg på");
 				Log.d("SIP/IncomingCallDialog/UpdateCallTime","Satt callTime till: " + timeInCall + " med textlängd: " + timeInCall.length());
+			}
+		});
+	}
+	
+	private void setCallButtonText(final String text){
+		this.runOnUiThread(new Runnable() {
+			public void run() {
+				// Sätt namnet på den som ringer
+				ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
+				toggle.setText(text);
+				Log.d("SIP/IncomingCallDialog/setCallButtonText","Satt setCallButtonText till: " + text);
 			}
 		});
 	}

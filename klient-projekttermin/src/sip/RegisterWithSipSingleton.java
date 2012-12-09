@@ -43,6 +43,8 @@ public class RegisterWithSipSingleton {
 	private static int readyCounter = 0;
 	private static int registeringCounter = 0;
 	private static int failedCounter = 0;
+	
+	private static SipRegistrationListener sipRegListener;
 
 	private static RegisterWithSipSingleton instance = new RegisterWithSipSingleton();
 
@@ -122,7 +124,7 @@ public class RegisterWithSipSingleton {
 				manager.open(me, pendingIntent, null);
 
 				// Sätt upp en lyssnare som lyssnar efter hur väl anslutningen har gått
-				manager.setRegistrationListener(me.getUriString(), new SipRegistrationListener() {
+				sipRegListener = new SipRegistrationListener() {
 					public void onRegistering(String localProfileUri) {
 						registeringCounter++;
 						Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Registrerar mot SIP-server för "+registeringCounter +" gången...");
@@ -137,10 +139,12 @@ public class RegisterWithSipSingleton {
 					public void onRegistrationFailed(String localProfileUri, int errorCode,
 							String errorMessage) {
 						failedCounter++;
-						Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Misslyckades att registrera mot SIP-server för "+failedCounter+ " gången. Försöker igen...");
+						Log.d("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Misslyckades att registrera mot SIP-server för "+failedCounter+ " gången.");
 						isRegistred = false;
 					}
-				});
+				};
+				
+				manager.setRegistrationListener(me.getUriString(), sipRegListener);
 			} 
 			catch (ParseException e) {
 				Log.e("SIP/RegisterWithSipSingleton/InitializeLocalProfile","Parse error.. "+e);
@@ -159,17 +163,20 @@ public class RegisterWithSipSingleton {
 	public static void closeLocalProfile() {
 
 		if (manager == null) {
-			if(isRegistred){
-				isRegistred = false;
+			if(isRegistred()){
+				setRegistred(false);
 			}
 			return;
 		}
 		try {
 			if (me != null) {
+				manager.unregister(me, sipRegListener);
 				manager.close(me.getUriString());
-				if(isRegistred){
-					isRegistred = false;
+				if(isRegistred()){
+					setRegistred(false);
 				}
+//				manager = null;
+//				me = null;
 			}
 		} catch (Exception ee) {
 			Log.d("SIP/RegisterWithSipSingleton/CloseLocalProfile", "Failed to close local profile.", ee);
