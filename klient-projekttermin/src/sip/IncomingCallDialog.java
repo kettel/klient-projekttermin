@@ -75,6 +75,7 @@ import com.klient_projekttermin.R;
  * TODO: Vid inkommande samtal ska inte "PÅ" stå efter att man har tryckt på "Svara".
  * TODO: Vid inkommande samtal när man tryckt på "Lägg på" ska inte "AV" synas innan aktiviteten stängs.
  * TODO: Fixa så även andra telefoner än Acro S kan registrera sig på Servern. [PARTIALLY DONE]
+ * TODO: Återregistrera enheten när den har blivit "Lagged" hos SIP-servern. (sköts nu när man ska ringa en kontakt och inte är registrerad..)
  * 
  * @author kettel
  * 
