@@ -100,6 +100,7 @@ public class CreateMessage extends SecureActivity {
 		// Skicka till kommunikationsmodulen
 
 		SocketConnection connection = new SocketConnection();
+		connection.setContext(getApplicationContext());
 		connection.sendModel(messageObject);
 
 		finish();

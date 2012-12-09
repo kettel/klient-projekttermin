@@ -68,6 +68,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 		if (intent.getExtras().containsKey("action")) {
 			if (intent.getExtras().get("action").equals("pull")) {
 				SocketConnection connection = new SocketConnection();
+				connection.setContext(getApplicationContext());
 				connection.addObserver(new PullResponseHandler(context));
 				connection.pullFromServer();
 			}

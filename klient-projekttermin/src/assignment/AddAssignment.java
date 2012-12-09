@@ -202,6 +202,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 
 			db.addToDB(newAssignment, getContentResolver());
 			SocketConnection connection = new SocketConnection();
+			connection.setContext(getApplicationContext());
 			connection.sendModel(newAssignment);
 			finish();
 		} else {

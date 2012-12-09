@@ -35,6 +35,7 @@ public class SecureActivity extends Activity {
 	public static String inactivity;
 	public static int LOGIN_REQUEST = 1;
 	private User user = User.getInstance();
+	
 	private SocketConnection socketConnection = new SocketConnection();
 	private Database database;
 
@@ -47,6 +48,7 @@ public class SecureActivity extends Activity {
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
 		qosManager.adjustToCurrentBatteryMode();
+		socketConnection.setContext(getApplicationContext());
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
 		if (!user.isLoggedIn()) {

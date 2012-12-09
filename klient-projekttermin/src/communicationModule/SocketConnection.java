@@ -3,14 +3,28 @@ package communicationModule;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Observable;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 import login.User;
 import models.Assignment;
@@ -18,6 +32,8 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
+
+import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -31,6 +47,8 @@ public class SocketConnection extends Observable {
 	Iterator<String[]> iterator;
 	private int tries = 0;
 	private boolean failedToConnect = false;
+	private Context context;
+	private boolean ContextIsReady = false;
 
 	/**
 	 * Konstruktor som även initierar serverlistan.
@@ -247,17 +265,62 @@ public class SocketConnection extends Observable {
 	}
 
 	private Socket createSocket() {
-		Socket socket = null;
+		SSLSocket socket = null;
+		char keystorepass[] = "password".toCharArray();
+		char trustpassword[] = "password".toCharArray();
 		do {
-			try {
-				socket = new Socket(ip, port);
-				System.out.println("Socketen lyckades ansluta");
-			} catch (UnknownHostException e) {
-				loadNextServer();
+			if (ContextIsReady == true) {
+				try {
+					System.out.println("här kommer krypto");
+					KeyStore ts = KeyStore.getInstance("BKS");
+					InputStream trustin = this.context.getAssets().open(
+							"clienttruststore.bks");
+					ts.load(trustin, trustpassword);
 
-			} catch (IOException e) {
-				loadNextServer();
+					KeyStore ks = KeyStore.getInstance("BKS");
+					InputStream keyin = this.context.getAssets().open(
+							"client.bks");
+					ks.load(keyin, keystorepass);
+					System.out.println("keystore klar");
+					TrustManagerFactory tmf = TrustManagerFactory
+							.getInstance(TrustManagerFactory
+									.getDefaultAlgorithm());
+					tmf.init(ts);
+
+					KeyManagerFactory kmf = KeyManagerFactory
+							.getInstance(KeyManagerFactory
+									.getDefaultAlgorithm());
+					kmf.init(ks, keystorepass);
+					System.out.println("alla masters klara");
+					SSLContext sslCtx = SSLContext.getInstance("TLS");
+					sslCtx.init(kmf.getKeyManagers(), tmf.getTrustManagers(),
+							new SecureRandom());
+					System.out.println("sslcontext klart");
+					SSLSocketFactory socketFactory = sslCtx.getSocketFactory();
+					System.out.println("trying to connect, ip is: " + ip
+							+ " port is: " + port);
+
+					socket = (SSLSocket) socketFactory.createSocket(ip, port);
+					socket.startHandshake();
+					System.out.println("Socketen lyckades ansluta");
+				} catch (UnknownHostException e) {
+					loadNextServer();
+
+				} catch (IOException e) {
+					loadNextServer();
+				} catch (KeyStoreException e) {
+					e.printStackTrace();
+				} catch (NoSuchAlgorithmException e) {
+					e.printStackTrace();
+				} catch (CertificateException e) {
+					e.printStackTrace();
+				} catch (UnrecoverableKeyException e) {
+					e.printStackTrace();
+				} catch (KeyManagementException e) {
+					e.printStackTrace();
+				}
 			}
+
 		} while (socket == null && !failedToConnect);
 		return socket;
 	}
@@ -285,6 +348,17 @@ public class SocketConnection extends Observable {
 
 			}
 		}).start();
+	}
+
+	/**
+	 * Hämtar ApplicationContext från aktiviteten som startar SocketContection
+	 * 
+	 * @param context
+	 */
+	public synchronized void setContext(Context context) {
+		this.context = context;
+		ContextIsReady = true;
+
 	}
 
 }
