@@ -50,14 +50,14 @@ public class MainActivity extends SecureActivity {
 	private QoSManager qosManager;
 	private MenuItem logout;
 	private MenuItem qosItem;
-	private Database database;
 	private SocketConnection socketConnection = new SocketConnection();
 	private User user;
 	private Boolean haveServerConnection = false;
 	private BroadcastReceiver bcr;
-
+	private Database database;
+	
 	// SIP-variabler
-	public static RegisterWithSipSingleton regSip;
+//	public static RegisterWithSipSingleton regSip;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -117,9 +117,9 @@ public class MainActivity extends SecureActivity {
 		}
 
 		// SIP: Registrera klienten hos SIP-servern 
-		if(regSip == null){
-			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
-			regSip.initializeManager();
+		if(!RegisterWithSipSingleton.isRegistred()){
+			RegisterWithSipSingleton.setContext(getApplicationContext());
+			RegisterWithSipSingleton.initializeManager();
 		}
 		
 
@@ -197,9 +197,9 @@ public class MainActivity extends SecureActivity {
 		super.onResume();
 
 		// SIP: Registrera klienten hos SIP-servern 
-		if(regSip == null){
-			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
-			regSip.initializeManager();
+		if(!RegisterWithSipSingleton.isRegistred()){
+			RegisterWithSipSingleton.setContext(getApplicationContext());
+			RegisterWithSipSingleton.initializeManager();
 		}
 		
 	}
@@ -332,10 +332,9 @@ public class MainActivity extends SecureActivity {
 
 	public void logout() {
 		// Avregistrera klienten från SIP-servern
-		if(regSip != null){
+		if(RegisterWithSipSingleton.isRegistred()){
 			Log.d("SIP/MainActivity/onBackPressed/Ja","Ska stänga SIP-profilen...");
-			regSip.closeLocalProfile();
-			regSip = null;
+			RegisterWithSipSingleton.closeLocalProfile();
 		}
 		
 		user.setLoggedIn(false);

@@ -27,18 +27,18 @@ public class RegisterWithSipSingleton {
 
 	public static ObservableCallStatus callStatus = new ObservableCallStatus();
 
-	public boolean isCallAnswered = false;
+	private static boolean isCallAnswered = false;
 
 	// Variabler som jag inte vet vart de ska vara. Main? Service? Hjälpklass?
-	public IncomingCallReceiver callReceiver;
+	public static IncomingCallReceiver callReceiver;
 
-	private SipAudioCall call = null;
+	private static SipAudioCall call = null;
 
 	// Hämta aktuell användare med lösenhash
-	private User currentUser;
-	private String username;
-	private String domain = "94.254.72.38";
-	private String password;
+	private static User currentUser;
+	private static String username;
+	private static String domain = "94.254.72.38";
+	private static String password;
 
 	private static int readyCounter = 0;
 	private static int registeringCounter = 0;
@@ -63,7 +63,10 @@ public class RegisterWithSipSingleton {
 		return instance;
 	}
 
-	public void initializeManager() {
+	/**
+	 * Registrera användare hos SIP-servern
+	 */
+	public static void initializeManager() {
 
 
 		// Registrera intents för utgående och inkommande samtal
@@ -87,7 +90,7 @@ public class RegisterWithSipSingleton {
 	/**
 	 * Registrera användaren hos SIP-servern
 	 */
-	public void initializeLocalProfile() {
+	private static void initializeLocalProfile() {
 		if (manager == null) {
 			return;
 		}
@@ -153,7 +156,7 @@ public class RegisterWithSipSingleton {
 	 * Closes out your local profile, freeing associated objects into memory
 	 * and unregistering your device from the server.
 	 */
-	public void closeLocalProfile() {
+	public static void closeLocalProfile() {
 
 		if (manager == null) {
 			if(isRegistred){
@@ -177,7 +180,7 @@ public class RegisterWithSipSingleton {
 	/**
 	 * Make an outgoing call.
 	 */
-	public void initiateCall(String nameToCall) {
+	public static void initiateCall(String nameToCall) {
 		Log.d("RegisterWithSipSingleton/initiateCall","Kontakt att ringa: "+nameToCall);
 		sipAddress = "sip:"+nameToCall+"@94.254.72.38";
 
@@ -249,7 +252,7 @@ public class RegisterWithSipSingleton {
 		}
 	}
 
-	public void dropCall(){
+	public static void dropCall(){
 		try {
 			call.endCall();
 		} catch (SipException e) {
@@ -259,11 +262,37 @@ public class RegisterWithSipSingleton {
 	}
 
 
-	public SipAudioCall getCall() {
+	public static SipAudioCall getCall() {
 		return call;
 	}
 
-	public void setCall(SipAudioCall call) {
-		this.call = call;
+	public static void setCall(SipAudioCall c) {
+		RegisterWithSipSingleton.call = c;
 	}
+
+	public static boolean isRegistred() {
+		Log.d("SIP/RegSingleton/isRegistred","Ska returnera isRegistred. Är jag registrerad? " +((isRegistred)?"Ja":"Nej"));
+		return isRegistred;
+	}
+
+	public static void setRegistred(boolean isRegistred) {
+		RegisterWithSipSingleton.isRegistred = isRegistred;
+	}
+
+	public static Context getContext() {
+		return context;
+	}
+
+	public static void setContext(Context context) {
+		RegisterWithSipSingleton.context = context;
+	}
+
+	public static boolean isCallAnswered() {
+		return isCallAnswered;
+	}
+
+	public static void setCallAnswered(boolean isCallAnswered) {
+		RegisterWithSipSingleton.isCallAnswered = isCallAnswered;
+	}
+	
 }
