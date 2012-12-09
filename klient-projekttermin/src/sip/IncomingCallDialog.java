@@ -66,15 +66,15 @@ import com.klient_projekttermin.R;
  * TODO: Om behövs, lägg till SIP-nummer i kontaktmodellen  [DONE]
  * 
  * Buggar:
+ * TODO: Vid inkommande samtal ska inte "PÅ" stå efter att man har tryckt på "Svara". [DONE]
+ * TODO: Vid inkommande samtal när man tryckt på "Lägg på" ska inte "AV" synas innan aktiviteten stängs. [DONE]
+ * TODO: Fixa så även andra telefoner än Acro S kan registrera sig på Servern. [PARTIALLY DONE]
  * TODO: Samtal ska överleva en skärmrotation
  * TODO: Registrera att mottagaren av samtalet har svarat vid utgående samtal. Väldigt märkligt då kopplingssignaler
  * 		 spelas tills andra änden svarar...
  * TODO: Andra telefoner än Acro S ska kunna utnyttja närhetssensorn för Skärm På/Av.
  * TODO: Blinkande gul lampa efter att Skärmlås PÅ använts, ska inte blinka. Stängs av efter att man låst upp skärmen. (Acro S?)
  * TODO: Vid utgående samtal ska texten "TextView" i fält för samtalstid inte synas.
- * TODO: Vid inkommande samtal ska inte "PÅ" stå efter att man har tryckt på "Svara".
- * TODO: Vid inkommande samtal när man tryckt på "Lägg på" ska inte "AV" synas innan aktiviteten stängs.
- * TODO: Fixa så även andra telefoner än Acro S kan registrera sig på Servern. [PARTIALLY DONE]
  * TODO: Återregistrera enheten när den har blivit "Lagged" hos SIP-servern. (sköts nu när man ska ringa en kontakt och inte är registrerad..)
  * 
  * @author kettel
@@ -264,7 +264,6 @@ public class IncomingCallDialog extends Activity {
 			// Sätt toggle-knappen till nedtryckt (det är ju vi som ringer...)
 			setToggleButtonChecked();
 			
-			setCallButtonText("Lägg på");
 
 			// Lyssna efter om personen har svarat på påringningen
 			final class ObserverCallStatus implements Observer {
@@ -335,7 +334,6 @@ public class IncomingCallDialog extends Activity {
 		updateCaller(caller + " ringer...");
 		updateCallTime();
 		
-		setCallButtonText("Svara");
 		
 		// Dra igång ringsignalen
 		if (ringtone == null) {
@@ -456,24 +454,11 @@ public class IncomingCallDialog extends Activity {
 				// Sätt namnet på den som ringer
 				TextView timeView = (TextView) findViewById(R.id.textViewTimeInCall);
 				timeView.setText(timeInCall);
-				ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
-				toggle.setText("Lägg på");
 				Log.d("SIP/IncomingCallDialog/UpdateCallTime","Satt callTime till: " + timeInCall + " med textlängd: " + timeInCall.length());
 			}
 		});
 	}
 	
-	private void setCallButtonText(final String text){
-		this.runOnUiThread(new Runnable() {
-			public void run() {
-				// Sätt namnet på den som ringer
-				ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
-				toggle.setText(text);
-				Log.d("SIP/IncomingCallDialog/setCallButtonText","Satt setCallButtonText till: " + text);
-			}
-		});
-	}
-
 	private void updateCaller(final String text) {
 		// Sätt namn på vem som ringer i UI-tråden (Be a good citizen..)
 		this.runOnUiThread(new Runnable() {
