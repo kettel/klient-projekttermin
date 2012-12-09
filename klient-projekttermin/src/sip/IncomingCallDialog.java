@@ -69,7 +69,12 @@ import com.klient_projekttermin.R;
  * TODO: Samtal ska överleva en skärmrotation
  * TODO: Registrera att mottagaren av samtalet har svarat vid utgående samtal. Väldigt märkligt då kopplingssignaler
  * 		 spelas tills andra änden svarar...
- * TODO: Fixa så även andra telefoner än Acro S kan registrera sig på Servern.
+ * TODO: Andra telefoner än Acro S ska kunna utnyttja närhetssensorn för Skärm På/Av.
+ * TODO: Blinkande gul lampa efter att Skärmlås PÅ använts, ska inte blinka. Stängs av efter att man låst upp skärmen. (Acro S?)
+ * TODO: Vid utgående samtal ska texten "TextView" i fält för samtalstid inte synas.
+ * TODO: Vid inkommande samtal ska inte "PÅ" stå efter att man har tryckt på "Svara".
+ * TODO: Vid inkommande samtal när man tryckt på "Lägg på" ska inte "AV" synas innan aktiviteten stängs.
+ * TODO: Fixa så även andra telefoner än Acro S kan registrera sig på Servern. [PARTIALLY DONE]
  * 
  * @author kettel
  * 
@@ -387,6 +392,7 @@ public class IncomingCallDialog extends Activity {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					
 					// Underrätta lyssnare om att samtalet är slut
 					RegisterWithSipSingleton.callStatus.setStatus(false);
 					Log.d("SIP/IncomingCallDialog/incomingCall/onCheckedListener",
