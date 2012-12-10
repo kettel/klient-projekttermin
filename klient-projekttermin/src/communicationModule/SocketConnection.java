@@ -34,6 +34,7 @@ import models.MessageModel;
 import models.ModelInterface;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -50,6 +51,8 @@ public class SocketConnection extends Observable {
 	private Context context;
 	private boolean ContextIsReady = false;
 
+	
+	private int failedCounter = 0;
 	/**
 	 * Konstruktor som även initierar serverlistan.
 	 */
@@ -102,6 +105,7 @@ public class SocketConnection extends Observable {
 	}
 
 	public HashMap<String, int[]> getServer() {
+		Log.d("SocketConnection/getServer","Jag returnerar null");
 		return null;
 	}
 
@@ -303,13 +307,8 @@ public class SocketConnection extends Observable {
 					socket = (SSLSocket) socketFactory.createSocket(ip, port);
 					socket.startHandshake();
 					System.out.println("Socketen lyckades ansluta");
-					failedToConnect = true;
-					
-					// Sov en halv sekund för att avlasta appen
-					synchronizedWait(this);
 				} catch (UnknownHostException e) {
 					loadNextServer();
-
 				} catch (IOException e) {
 					loadNextServer();
 				} catch (KeyStoreException e) {
@@ -324,13 +323,15 @@ public class SocketConnection extends Observable {
 					e.printStackTrace();
 				}
 			}
+			// Vänta 50ms
+			synchronizedWait(this);
 		} while (socket == null && !failedToConnect);
 		return socket;
 	}
 	
 	private synchronized void synchronizedWait (SocketConnection socketConnection) {
 		try {
-			socketConnection.wait(500);
+			socketConnection.wait(50);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
