@@ -28,7 +28,6 @@ public class BatteryCheckingFunction extends Observable {
 						int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 
 						if (level != batteryLevel) {
-							System.out.println("Batterinivå: "+level);
 							batteryLevel = level;
 							sendNotification(level);
 						}
@@ -40,7 +39,7 @@ public class BatteryCheckingFunction extends Observable {
 	}
 
 	private synchronized void timeToWait() {
-		int waitTime = 2000;
+		int waitTime = 1800000;
 		try {
 			Thread.sleep(waitTime);
 		} catch (Exception e) {

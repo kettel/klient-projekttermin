@@ -37,6 +37,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		qosManager = QoSManager.getInstance();
 		qosManager.setContext(this);
 		batterySaveToggle = (ToggleButton) findViewById(id.toggleForManualActivationOfBatterySaveMode);
+		qosManager.setBatterySaveModeToggle(batterySaveToggle);
 		automaticSaveModeToggel = (ToggleButton) findViewById(id.automaticQos);
 		screenBrightnessBar = (SeekBar) findViewById(id.screenBrihgtnessSeekBar);
 		screenBrightnessBar.setOnSeekBarChangeListener(this);

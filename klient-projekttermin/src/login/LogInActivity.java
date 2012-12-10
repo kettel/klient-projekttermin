@@ -13,7 +13,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,7 +83,6 @@ public class LogInActivity extends Activity implements Observer {
 	 * informationen från servern.
 	 */
 	private void checkAuthenticity(AuthenticationModel authenticationModel) {
-		System.out.println("AUTHENTICATION FROM SERVER: " + authenticationModel);
 	
 		if (authenticationModel.getUserName().equals(originalModel.getUserName())
 				&& authenticationModel.isAccessGranted().equals("true")) {
@@ -160,7 +158,6 @@ public class LogInActivity extends Activity implements Observer {
 	}
 
 	public void removeLastUserFromDB() {
-		System.out.println("Tar bort authenticationmodel från databasen");
 		List list = database.getAllFromDB(new AuthenticationModel(),
 				getContentResolver());
 		database.deleteFromDB((AuthenticationModel) list.get(0),
@@ -211,14 +208,10 @@ public class LogInActivity extends Activity implements Observer {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		//System.out.println("1");
 		if (requestCode==LOGGED_IN_REQ_CODE) {
-			//System.out.println("2");
 			if (resultCode==STAY_ALIVE) {
-				//System.out.println("3");
 				finish();
 			}else if (resultCode==SHUT_DOWN) {
-				//System.out.println("4");
 			}
 		}
 	}
@@ -249,7 +242,6 @@ public class LogInActivity extends Activity implements Observer {
 
 		} else if (data instanceof String) {
 			user.setOnlineConnection(false);
-			System.out.println("Ingen Kontakt");
 			this.runOnUiThread(new Runnable() {
 
 				public void run() {

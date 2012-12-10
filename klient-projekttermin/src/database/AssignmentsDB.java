@@ -169,8 +169,8 @@ public class AssignmentsDB {
 	public void delete(ContentResolver contentResolver, Assignment assignment) {
 		contentResolver.delete(
 				Assignments.CONTENT_URI,
-				Assignments.ASSIGNMENT_ID + " = "
-						+ Long.toString(assignment.getId()), null);
+				Assignments.GLOBAL_ASSIGNMENT_ID + " = "
+						+ "\"" + assignment.getGlobalID() + "\"", null);
 
 	}
 
