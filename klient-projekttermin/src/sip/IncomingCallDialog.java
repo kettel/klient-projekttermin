@@ -67,9 +67,10 @@ import com.klient_projekttermin.R;
  * TODO: Andra telefoner än Acro S ska kunna utnyttja närhetssensorn för Skärm På/Av. [DONE]
  * TODO: Vid utgående samtal ska texten "TextView" i fält för samtalstid inte synas. [DONE]
  * TODO: Samtal ska överleva en skärmrotation [DONE]
+ * TODO: Neka nya inkommande samtal när man är i samtal. [DONE]
  * TODO: Blinkande gul lampa efter att Skärmlås PÅ använts, ska inte blinka. Stängs av efter att man låst upp skärmen. (Acro S?) (GCM)
  * TODO: Återregistrera enheten när den har blivit "Lagged" hos SIP-servern. (sköts nu när man ska ringa en kontakt och inte är registrerad..)
- * TODO: Tuta upptaget och neka nya inkommande samtal när man är i samtal.
+ * TODO: Tuta upptaget när användare är upptagen (Asterisk Extensions?)
  * TODO: Registrera att mottagaren av samtalet har svarat vid utgående samtal. Väldigt märkligt då kopplingssignaler
  * 		 spelas tills andra änden svarar...
  * 
