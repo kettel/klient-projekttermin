@@ -86,7 +86,6 @@ public class PullResponseHandler implements Observer {
 				 * Har det inkommande uppdraget "FINISHED" som status ska den raderas från databasen.
 				 */
 				if (incAssignment.getAssignmentStatus() == AssignmentStatus.FINISHED) {
-					Log.e("FEL", "Inkommande 'finnish' ska ta bort ett assignment i DB");
 					db.deleteFromDB(incAssignment, context.getContentResolver());
 				} else {
 					/**
