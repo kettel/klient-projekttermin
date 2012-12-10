@@ -71,6 +71,7 @@ import com.klient_projekttermin.R;
  * TODO: Blinkande gul lampa efter att Skärmlås PÅ använts, ska inte blinka. Stängs av efter att man låst upp skärmen. (Acro S?)
  * TODO: Vid utgående samtal ska texten "TextView" i fält för samtalstid inte synas.
  * TODO: Återregistrera enheten när den har blivit "Lagged" hos SIP-servern. (sköts nu när man ska ringa en kontakt och inte är registrerad..)
+ * TODO: Tuta upptaget och neka nya inkommande samtal när man är i samtal.
  * 
  * @author kettel
  * 
