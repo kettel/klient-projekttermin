@@ -428,11 +428,9 @@ public class IncomingCallDialog extends Activity {
 					seconds = seconds % 60;
 					if (seconds < 10) {
 						String time = "" + minutes + ":0" + seconds;
-						Log.d("SIP", time);
 						timeInCall = time;
 					} else {
 						String time = "" + minutes + ":" + seconds;
-						Log.d("SIP", time);
 						timeInCall = time;
 					}
 					// Uppdatera samtalstiden
