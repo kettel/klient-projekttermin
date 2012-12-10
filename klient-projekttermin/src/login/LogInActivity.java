@@ -210,19 +210,20 @@ public class LogInActivity extends Activity implements Observer {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		System.out.println("1");
+		//System.out.println("1");
 		if (requestCode==LOGGED_IN_REQ_CODE) {
-			System.out.println("2");
+			//System.out.println("2");
 			if (resultCode==STAY_ALIVE) {
-				System.out.println("3");
+				//System.out.println("3");
 				finish();
 			}else if (resultCode==SHUT_DOWN) {
-				System.out.println("4");
+				//System.out.println("4");
 			}
 		}
 	}
 
 	public void accessGranted() {
+		user.setLoggedIn(true);
 		switch (callingactivity) {
 		case ActivityConstants.INACTIVITY:
 			break;
@@ -231,7 +232,6 @@ public class LogInActivity extends Activity implements Observer {
 			startActivityForResult(intent, LOGGED_IN_REQ_CODE);
 			break;
 		}
-		user.setLoggedIn(true);
 	}
 
 	public void update(Observable observable, Object data) {

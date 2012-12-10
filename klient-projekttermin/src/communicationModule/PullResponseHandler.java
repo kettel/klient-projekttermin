@@ -46,11 +46,11 @@ public class PullResponseHandler implements Observer {
 	}
 
 	public void update(Observable observable, Object data) {
-		
-		if(qosManager.readyToAdjustCM()){
+
+		if (qosManager.readyToAdjustCM()) {
 			qosManager.changeConnectivityMarkerStatus(true);
 		}
-		
+
 		if (notificationIntent == null) {
 			notificationIntent = new Intent(context, MainActivity.class);
 		}
@@ -60,7 +60,16 @@ public class PullResponseHandler implements Observer {
 			if (data instanceof Contact) {
 				System.out.println("Ny kontakt");
 				message = "Ny kontakt";
-				db.addToDB((Contact) data, context.getContentResolver());
+				/**
+				 * Om update blir en etta har uppdrag uppdateras och således
+				 * behöver det inte läggas till som nytt. Annars lägger man till
+				 * det som ett nytt uppdrag.
+				 */
+				int update = db.updateModel((Contact) data,
+						context.getContentResolver());
+				if (update == 0) {
+					db.addToDB((Contact) data, context.getContentResolver());
+				}
 				notificationIntent = new Intent(context,
 						ContactsBookActivity.class);
 				hasChanged = true;
@@ -76,10 +85,9 @@ public class PullResponseHandler implements Observer {
 						context.getContentResolver());
 				if (update == 0) {
 					db.addToDB((Assignment) data, context.getContentResolver());
-					notificationIntent = new Intent(context,
-							AssignmentOverview.class);
 				}
-
+				notificationIntent = new Intent(context,
+						AssignmentOverview.class);
 				hasChanged = true;
 			} else if (data instanceof MessageModel) {
 				System.out.println("Nytt meddelande");
