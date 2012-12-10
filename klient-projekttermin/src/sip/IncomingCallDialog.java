@@ -3,6 +3,8 @@ package sip;
 import java.util.Observable;
 import java.util.Observer;
 
+import login.User;
+
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -27,6 +29,7 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.klient_projekttermin.R;
@@ -68,6 +71,7 @@ import com.klient_projekttermin.R;
  * TODO: Vid utgående samtal ska texten "TextView" i fält för samtalstid inte synas. [DONE]
  * TODO: Samtal ska överleva en skärmrotation [DONE]
  * TODO: Neka nya inkommande samtal när man är i samtal. [DONE]
+ * TODO: Det ska inte gå att ringa sig själv..
  * TODO: Blinkande gul lampa efter att Skärmlås PÅ använts, ska inte blinka. Stängs av efter att man låst upp skärmen. (Acro S?) (GCM)
  * TODO: Återregistrera enheten när den har blivit "Lagged" hos SIP-servern. (sköts nu när man ska ringa en kontakt och inte är registrerad..)
  * TODO: Tuta upptaget när användare är upptagen (Asterisk Extensions?)

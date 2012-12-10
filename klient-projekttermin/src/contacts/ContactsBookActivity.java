@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import login.User;
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import assignment.AddAssignment;
@@ -203,7 +205,12 @@ public class ContactsBookActivity extends SecureActivity {
 					finish();
 					break;
 				case 1:
-					RegisterWithSipSingleton.initiateCall(name);
+					User currentUser = User.getInstance();
+					if(currentUser.getAuthenticationModel().getUserName().equalsIgnoreCase(name)){
+						Toast.makeText(getApplicationContext(), "Du kan inte ringa dig själv..", Toast.LENGTH_SHORT).show();
+					}else{
+						RegisterWithSipSingleton.initiateCall(name);
+					}
 					break;
 				default:
 					break;
