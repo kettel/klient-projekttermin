@@ -40,7 +40,7 @@ public class AssignmentOverview extends SecureActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
-		lv = (ListView)findViewById(android.R.id.list);
+		lv = (ListView) findViewById(android.R.id.list);
 
 		User user = User.getInstance();
 		currentUser = user.getAuthenticationModel().getUserName();
@@ -80,7 +80,10 @@ public class AssignmentOverview extends SecureActivity {
 		/**
 		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
-		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
+		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
+				getContentResolver().query(
+						AssignmentTable.Assignments.CONTENT_URI, null, null,
+						null, AssignmentTable.Assignments.PRIORITY_INT), false);
 		this.lv.setAdapter(adapter);
 	}
 
@@ -98,7 +101,8 @@ public class AssignmentOverview extends SecureActivity {
 
 		for (ModelInterface a : assList) {
 			Assignment b = (Assignment) a;
-			tempHeadArr[i] = b.getName() + "   Prio: " + b.getAssignmentPriorityToString();
+			tempHeadArr[i] = b.getName() + "   Prio: "
+					+ b.getAssignmentPriorityToString();
 			idInAdapter[i] = b.getId();
 			i++;
 		}
@@ -118,7 +122,8 @@ public class AssignmentOverview extends SecureActivity {
 						AssignmentDetails.class);
 
 				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
-				myIntent.putExtra("calling-activity", ActivityConstants.ASSIGNMENT_OVERVIEW);
+				myIntent.putExtra("calling-activity",
+						ActivityConstants.ASSIGNMENT_OVERVIEW);
 				AssignmentOverview.this.startActivity(myIntent);
 			}
 		});
@@ -130,8 +135,7 @@ public class AssignmentOverview extends SecureActivity {
 	 */
 	public void setLongItemClickListener() {
 		// Skapar en lyssnare som lyssnar efter långa intryckningar
-		this.lv.setOnItemLongClickListener(
-		new OnItemLongClickListener() {
+		this.lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int eraseAtPos, long arg3) {
@@ -182,7 +186,7 @@ public class AssignmentOverview extends SecureActivity {
 				// Sätter status för att uppdraget har avslutats.
 				a.setAssignmentStatus(AssignmentStatus.FINISHED);
 
-				SocketConnection connection=new SocketConnection();
+				SocketConnection connection = new SocketConnection();
 				connection.setContext(getApplicationContext());
 				connection.sendModel(a);
 			}

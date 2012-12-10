@@ -13,9 +13,9 @@ import models.ModelInterface;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 public class AssignmentsDB {
+
 	private AssignmentsDB() {
 	}
 
@@ -49,6 +49,7 @@ public class AssignmentsDB {
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
 		values.put(Assignments.PRIORITY, assignment.getAssignmentPriority()
 				.toString());
+		values.put(Assignments.PRIORITY_INT, assignment.getPrio_int());
 		contentResolver.insert(Assignments.CONTENT_URI, values);
 	}
 
@@ -65,6 +66,7 @@ public class AssignmentsDB {
 				Long timestamp = Long.valueOf("0");
 				double lon = 0, lat = 0;
 				boolean externalMission = false;
+				long priorityInt = 0;
 				byte[] image = null;
 				AssignmentStatus status = AssignmentStatus.NOT_STARTED;
 				AssignmentPriority priority = AssignmentPriority.PRIO_NORMAL;
@@ -72,6 +74,7 @@ public class AssignmentsDB {
 
 				for (int i = 0; i < cursor.getColumnCount(); i++) {
 					String currentCol = cursor.getColumnName(i);
+					System.out.println(currentCol);
 					if (currentCol.equalsIgnoreCase(Assignments.ASSIGNMENT_ID)) {
 						id = cursor.getInt(i);
 					}else if (currentCol.equalsIgnoreCase(Assignments.GLOBAL_ASSIGNMENT_ID)) {
@@ -122,6 +125,9 @@ public class AssignmentsDB {
 							.equalsIgnoreCase(Assignments.PRIORITY)) {
 						priority = AssignmentPriority.valueOf(cursor
 								.getString(i));
+					} else if (currentCol
+							.equalsIgnoreCase(Assignments.PRIORITY_INT)) {
+						priorityInt = cursor.getInt(i);
 					}
 				}
 				Assignment assignment = new Assignment(id, // id från DB
@@ -140,7 +146,8 @@ public class AssignmentsDB {
 						streetname, // streetName
 						sitename, // siteName
 						timestamp,// timeStamp
-						priority); // priority
+						priority, 
+						priorityInt); // priority
 
 				assignmentList.add(assignment);
 
@@ -189,6 +196,7 @@ public class AssignmentsDB {
 		values.put(Assignments.TIMESTAMP, assignment.getTimeStamp());
 		values.put(Assignments.PRIORITY, assignment.getAssignmentPriority()
 				.toString());
+		values.put(Assignments.PRIORITY_INT, assignment.getPrio_int());
 		int updated = contentResolver.update(
 				Assignments.CONTENT_URI,
 				values,

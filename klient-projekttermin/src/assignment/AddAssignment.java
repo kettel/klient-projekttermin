@@ -63,6 +63,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private CheckBox toOutsiders;
 	private boolean isExternalMission;
 	private List<Contact> agents = new ArrayList<Contact>();
+	private int prioInteger;
 
 	@Override
 	@SuppressLint("UseSparseArrays")
@@ -186,7 +187,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 					currentUser, isExternalMission, temp.get(2), temp.get(6),
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
-					temp.get(4), checkPrioString(temp.get(3)));
+					temp.get(4), checkPrioString(temp.get(3)), prioInteger);
 
 			String tempUnseparated = temp.get(7);
 
@@ -242,12 +243,16 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private AssignmentPriority checkPrioString(String prioString) {
 
 		if (prioString == null) {
+			prioInteger = 2;
 			return AssignmentPriority.PRIO_NORMAL;
 		} else if (prioString.equals("Hög prioritet")) {
+			prioInteger = 1;
 			return AssignmentPriority.PRIO_HIGH;
 		} else if (prioString.equals("Normal prioritet")) {
+			prioInteger = 2;
 			return AssignmentPriority.PRIO_NORMAL;
 		} else if (prioString.equals("Låg prioritet")) {
+			prioInteger = 3;
 			return AssignmentPriority.PRIO_LOW;
 		} else
 			return AssignmentPriority.PRIO_NORMAL;
