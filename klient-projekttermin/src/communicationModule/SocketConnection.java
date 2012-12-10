@@ -313,14 +313,10 @@ public class SocketConnection extends Observable {
 			}
 
 			do {
-
 				try {
-
 					socket = (SSLSocket) socketFactory.createSocket(ip, port);
 					socket.startHandshake();
 					System.out.println("Socketen lyckades ansluta");
-					// Sov en halv sekund för att avlasta appen
-					// synchronizedWait(this);
 				} catch (UnknownHostException e) {
 					loadNextServer();
 
@@ -333,14 +329,6 @@ public class SocketConnection extends Observable {
 			System.out.println("Saknar context till krypteringen");
 		}
 		return socket;
-	}
-
-	private synchronized void synchronizedWait(SocketConnection socketConnection) {
-		try {
-			socketConnection.wait(50);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void closeSocket(SSLSocket socket) {
