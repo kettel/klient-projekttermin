@@ -68,9 +68,7 @@ public class PullResponseHandler implements Observer {
 				 */
 				int update = db.updateModel((Contact) data,
 						context.getContentResolver());
-				Log.d("PullResponse","Ny kontakt? Update = " + update);
 				if (update == 0) {
-					Log.d("PullResponse","Ny kontakt: " + ((Contact) data).getContactName());
 					db.addToDB((Contact) data, context.getContentResolver());
 				}
 				notificationIntent = new Intent(context,
