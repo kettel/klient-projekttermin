@@ -88,10 +88,12 @@ public class LogInActivity extends Activity implements Observer {
 	
 		if (authenticationModel.getUserName().equals(originalModel.getUserName())
 				&& authenticationModel.isAccessGranted().equals("true")) {
+			System.out.println("Login ok!");
 			database.addToDB(authenticationModel, getContentResolver());
 			accessGranted();
 
 		} else {
+			System.out.println("Incorrect login credentials");
 			incorrectLogIn();
 		}
 	}
