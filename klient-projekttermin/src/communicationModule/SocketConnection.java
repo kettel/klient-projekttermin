@@ -15,7 +15,6 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Observable;
 
@@ -37,6 +36,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.klient_projekttermin.CommonUtilities;
 
+/**
+ * VAR VÄNLIG RÖR EJ! Vid användande av denna klass bör du sätta en
+ * PullResponseHandler som observer innan du utför en anslutning. Var även
+ * försiktig vid användandet av denna klass då varje ny anslutning tar väldigt
+ * mycket kraft.
+ * 
+ * @author lundmark
+ * 
+ */
+
 public class SocketConnection extends Observable {
 	private Gson gson = new Gson();
 	private String ip = "94.254.72.38";
@@ -45,8 +54,7 @@ public class SocketConnection extends Observable {
 	Iterator<String[]> iterator;
 	private int tries = 0;
 	private boolean failedToConnect = false;
-	private Context context;
-	private boolean contextIsReady = false;
+	private Context context=null;
 
 	/**
 	 * Konstruktor som även initierar serverlistan.
@@ -60,10 +68,19 @@ public class SocketConnection extends Observable {
 	 * Skapar en array av addresser till servrar samt laddar in den första
 	 */
 	private void initServerList() {
+		/**
+		 * För att lägga till en server, skapa en String array med föjande
+		 * utseende: [0]=ip,[1]=serverport,[2]=jettyport
+		 * 
+		 * Nedan följer servrarna:
+		 */
 		String[] i = { "94.254.72.38", "17234", "16783" };
 		servers.add(i);
 		String[] j = { "94.254.72.38", "18234", "17783" };
 		servers.add(j);
+		/**
+		 * --Slut på serverlistan--
+		 */
 		iterator = servers.iterator();
 		loadNextServer();
 	}
@@ -99,10 +116,6 @@ public class SocketConnection extends Observable {
 		}).start();
 	}
 
-	public HashMap<String, int[]> getServer() {
-		return null;
-	}
-
 	/**
 	 * Skapar en ny socketanslutning och skriver en sträng på denna
 	 * 
@@ -119,8 +132,8 @@ public class SocketConnection extends Observable {
 	}
 
 	/**
-	 * Laddar in nästa server. Server addressen samt portar finnsi arrayen.Ip på
-	 * index 0, port på index 1 och jettyport på index 2
+	 * Laddar in nästa server. Server addressen samt portar finnsi arrayen. Ip
+	 * på index 0, port på index 1 och jettyport på index 2
 	 */
 	private void loadNextServer() {
 		if (iterator.hasNext()) {
@@ -131,7 +144,14 @@ public class SocketConnection extends Observable {
 			CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
 					+ server[2];
 		} else {
+			/**
+			 * Nått slutet på listan så laddar om dessa igen.
+			 */
 			try {
+				/**
+				 * När man laddat om listan 5 gånger och inte lyckats inser man
+				 * sig besegrad o lägger ner.
+				 */
 				if (tries < 5) {
 					System.out.println("reload servers");
 					tries++;
@@ -139,6 +159,9 @@ public class SocketConnection extends Observable {
 					iterator = servers.iterator();
 					System.out.println(iterator.hasNext());
 				} else {
+					/**
+					 * 5 försök gjorda, lägger ner.
+					 */
 					failedToConnect = true;
 					setChanged();
 					notifyObservers("failed");
@@ -270,7 +293,7 @@ public class SocketConnection extends Observable {
 		SSLSocketFactory socketFactory = null;
 		char keystorepass[] = "password".toCharArray();
 		char trustpassword[] = "password".toCharArray();
-		if (contextIsReady == true) {
+		if (context != null) {
 			System.out.println("Börjar med krypteringsdelen");
 			KeyStore keyStore = null;
 			try {
@@ -298,6 +321,23 @@ public class SocketConnection extends Observable {
 				socketFactory = sslCtx.getSocketFactory();
 				System.out.println("trying to connect, ip is: " + ip
 						+ " port is: " + port);
+
+				do {
+
+					try {
+
+						socket = (SSLSocket) socketFactory.createSocket(ip,
+								port);
+						socket.startHandshake();
+						System.out.println("Socketen lyckades ansluta");
+					} catch (UnknownHostException e) {
+						loadNextServer();
+
+					} catch (IOException e) {
+						loadNextServer();
+					}
+
+				} while (socket == null && !failedToConnect);
 			} catch (KeyStoreException e1) {
 				e1.printStackTrace();
 			} catch (IOException e) {
@@ -311,36 +351,11 @@ public class SocketConnection extends Observable {
 			} catch (KeyManagementException e) {
 				e.printStackTrace();
 			}
-
-			do {
-
-				try {
-
-					socket = (SSLSocket) socketFactory.createSocket(ip, port);
-					socket.startHandshake();
-					System.out.println("Socketen lyckades ansluta");
-					// Sov en halv sekund för att avlasta appen
-					// synchronizedWait(this);
-				} catch (UnknownHostException e) {
-					loadNextServer();
-
-				} catch (IOException e) {
-					loadNextServer();
-				}
-
-			} while (socket == null && !failedToConnect);
 		} else {
-			System.out.println("Saknar context till krypteringen");
+			System.out
+					.println("Saknar context till krypteringen, du bör verkligen undersöka varför inget context är satt eller varför detta är nu!!");
 		}
 		return socket;
-	}
-
-	private synchronized void synchronizedWait(SocketConnection socketConnection) {
-		try {
-			socketConnection.wait(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void closeSocket(SSLSocket socket) {
@@ -369,13 +384,12 @@ public class SocketConnection extends Observable {
 	}
 
 	/**
-	 * Hämtar ApplicationContext från aktiviteten som startar SocketContection
+	 * Setter för context som krävs för varje anslutning.
 	 * 
 	 * @param context
 	 */
 	public synchronized void setContext(Context context) {
 		this.context = context;
-		contextIsReady = true;
 	}
 
 }
