@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -32,7 +31,6 @@ import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
 import models.ModelInterface;
-
 import android.content.Context;
 
 import com.google.gson.Gson;
@@ -48,7 +46,7 @@ public class SocketConnection extends Observable {
 	private int tries = 0;
 	private boolean failedToConnect = false;
 	private Context context;
-	private boolean ContextIsReady = false;
+	private boolean contextIsReady = false;
 
 	/**
 	 * Konstruktor som även initierar serverlistan.
@@ -112,7 +110,7 @@ public class SocketConnection extends Observable {
 	 *            - En sträng med det som ska skickas
 	 */
 	private void sendJSON(String json) {
-		Socket socket = createSocket();
+		SSLSocket socket = createSocket();
 		if (socket != null) {
 			writeToSocket(socket, json + "\n");
 			closeSocket(socket);
@@ -161,7 +159,7 @@ public class SocketConnection extends Observable {
 	 *            - Strängen
 	 */
 	private void sendAuthentication(String json) {
-		Socket socket = createSocket();
+		SSLSocket socket = createSocket();
 		if (socket != null) {
 			writeToSocket(socket, json + "\nclose\n");
 			readSocket(socket);
@@ -177,7 +175,7 @@ public class SocketConnection extends Observable {
 		new Thread(new Runnable() {
 
 			public void run() {
-				Socket socket = createSocket();
+				SSLSocket socket = createSocket();
 				if (socket != null) {
 					User user = User.getInstance();
 					String json = gson.toJson(user.getAuthenticationModel());
@@ -195,7 +193,7 @@ public class SocketConnection extends Observable {
 
 			public void run() {
 
-				Socket socket = createSocket();
+				SSLSocket socket = createSocket();
 				if (socket != null) {
 					User user = User.getInstance();
 					String json = gson.toJson(user.getAuthenticationModel());
@@ -207,7 +205,7 @@ public class SocketConnection extends Observable {
 		}).start();
 	}
 
-	private void readSocket(Socket socket) {
+	private void readSocket(SSLSocket socket) {
 		try {
 			BufferedReader bufferedReader = new BufferedReader(
 					new InputStreamReader(socket.getInputStream()));
@@ -242,6 +240,9 @@ public class SocketConnection extends Observable {
 				}
 			}
 			bufferedReader.close();
+			/**
+			 * Meddelar pullRequestHandler, om satt, att hämtningen är klar.
+			 */
 			setChanged();
 			notifyObservers(null);
 		} catch (JsonSyntaxException e) {
@@ -251,7 +252,7 @@ public class SocketConnection extends Observable {
 		}
 	}
 
-	private void writeToSocket(Socket socket, String string) {
+	private void writeToSocket(SSLSocket socket, String string) {
 		try {
 			BufferedWriter bufferedWriter = new BufferedWriter(
 					new OutputStreamWriter(socket.getOutputStream()));
@@ -264,68 +265,73 @@ public class SocketConnection extends Observable {
 
 	}
 
-	private Socket createSocket() {
+	private SSLSocket createSocket() {
 		SSLSocket socket = null;
+		SSLSocketFactory socketFactory = null;
 		char keystorepass[] = "password".toCharArray();
 		char trustpassword[] = "password".toCharArray();
-		do {
-			if (ContextIsReady == true) {
+		if (contextIsReady == true) {
+			System.out.println("Börjar med krypteringsdelen");
+			KeyStore keyStore = null;
+			try {
+				keyStore = KeyStore.getInstance("BKS");
+				InputStream trustin = this.context.getAssets().open(
+						"clienttruststore.bks");
+				keyStore.load(trustin, trustpassword);
+
+				KeyStore ks = KeyStore.getInstance("BKS");
+				InputStream keyin = this.context.getAssets().open("client.bks");
+				ks.load(keyin, keystorepass);
+				System.out.println("keystore klar");
+				TrustManagerFactory tmf = TrustManagerFactory
+						.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+				tmf.init(keyStore);
+
+				KeyManagerFactory kmf = KeyManagerFactory
+						.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+				kmf.init(ks, keystorepass);
+				System.out.println("alla masters klara");
+				SSLContext sslCtx = SSLContext.getInstance("TLS");
+				sslCtx.init(kmf.getKeyManagers(), tmf.getTrustManagers(),
+						new SecureRandom());
+				System.out.println("sslcontext klart");
+				socketFactory = sslCtx.getSocketFactory();
+				System.out.println("trying to connect, ip is: " + ip
+						+ " port is: " + port);
+			} catch (KeyStoreException e1) {
+				e1.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			} catch (CertificateException e) {
+				e.printStackTrace();
+			} catch (UnrecoverableKeyException e) {
+				e.printStackTrace();
+			} catch (KeyManagementException e) {
+				e.printStackTrace();
+			}
+
+			do {
 				try {
-					System.out.println("här kommer krypto");
-					KeyStore ts = KeyStore.getInstance("BKS");
-					InputStream trustin = this.context.getAssets().open(
-							"clienttruststore.bks");
-					ts.load(trustin, trustpassword);
-
-					KeyStore ks = KeyStore.getInstance("BKS");
-					InputStream keyin = this.context.getAssets().open(
-							"client.bks");
-					ks.load(keyin, keystorepass);
-					System.out.println("keystore klar");
-					TrustManagerFactory tmf = TrustManagerFactory
-							.getInstance(TrustManagerFactory
-									.getDefaultAlgorithm());
-					tmf.init(ts);
-
-					KeyManagerFactory kmf = KeyManagerFactory
-							.getInstance(KeyManagerFactory
-									.getDefaultAlgorithm());
-					kmf.init(ks, keystorepass);
-					System.out.println("alla masters klara");
-					SSLContext sslCtx = SSLContext.getInstance("TLS");
-					sslCtx.init(kmf.getKeyManagers(), tmf.getTrustManagers(),
-							new SecureRandom());
-					System.out.println("sslcontext klart");
-					SSLSocketFactory socketFactory = sslCtx.getSocketFactory();
-					System.out.println("trying to connect, ip is: " + ip
-							+ " port is: " + port);
-
 					socket = (SSLSocket) socketFactory.createSocket(ip, port);
 					socket.startHandshake();
 					System.out.println("Socketen lyckades ansluta");
-					failedToConnect = true;
 				} catch (UnknownHostException e) {
 					loadNextServer();
 
 				} catch (IOException e) {
 					loadNextServer();
-				} catch (KeyStoreException e) {
-					e.printStackTrace();
-				} catch (NoSuchAlgorithmException e) {
-					e.printStackTrace();
-				} catch (CertificateException e) {
-					e.printStackTrace();
-				} catch (UnrecoverableKeyException e) {
-					e.printStackTrace();
-				} catch (KeyManagementException e) {
-					e.printStackTrace();
 				}
-			}
-		} while (socket == null && !failedToConnect);
+
+			} while (socket == null && !failedToConnect);
+		} else {
+			System.out.println("Saknar context till krypteringen");
+		}
 		return socket;
 	}
 
-	private void closeSocket(Socket socket) {
+	private void closeSocket(SSLSocket socket) {
 		try {
 			socket.close();
 		} catch (IOException e) {
@@ -337,7 +343,7 @@ public class SocketConnection extends Observable {
 	public void logout() {
 		new Thread(new Runnable() {
 			public void run() {
-				Socket socket = createSocket();
+				SSLSocket socket = createSocket();
 				if (socket != null) {
 					User user = User.getInstance();
 					String json = gson.toJson(user.getAuthenticationModel());
@@ -357,8 +363,7 @@ public class SocketConnection extends Observable {
 	 */
 	public synchronized void setContext(Context context) {
 		this.context = context;
-		ContextIsReady = true;
-
+		contextIsReady = true;
 	}
 
 }
