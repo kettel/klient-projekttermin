@@ -14,6 +14,7 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.ToggleButton;
 
 public class QoSManager extends SecureActivity implements Observer {
 	private int lowBatteryLevel=20;
@@ -40,6 +41,8 @@ public class QoSManager extends SecureActivity implements Observer {
 	private BatteryCheckingFunction batteryCheckingFunction;
 	private Context applicationContext;
 	private MenuItem connectivityMarker;
+	private ToggleButton batterySaveModeToggle;
+	private Boolean toggleIsSet = false;
 	private Boolean readyToAdjustCM = false;
 
 	private QoSManager() {
@@ -57,6 +60,11 @@ public class QoSManager extends SecureActivity implements Observer {
 
 	public void setConnectivityMarker(MenuItem menuItem){
 		connectivityMarker = menuItem;
+	}
+
+	public void setBatterySaveModeToggle(ToggleButton toggleButton){
+		batterySaveModeToggle = toggleButton;
+		toggleIsSet = true;
 	}
 
 	public MenuItem getConnectivityMarker(){
@@ -90,14 +98,14 @@ public class QoSManager extends SecureActivity implements Observer {
 	 */
 	public void update(Observable observable, Object data) {
 		int batteryLevel = (Integer) data;
-
+		
 		if(batteryLevel<=lowBatteryLevel&&okayBatterylevel){
 			okayBatterylevel=false;
-			adjustToLowBatteryLevel(this);
+			adjustToLowBatteryLevel(applicationContext);
 		}
 		else if(batteryLevel>lowBatteryLevel&&!okayBatterylevel){
 			okayBatterylevel = true;
-			adjustToOkayBatteryLevel(this);
+			adjustToOkayBatteryLevel(applicationContext);
 		}
 	}
 
@@ -107,6 +115,18 @@ public class QoSManager extends SecureActivity implements Observer {
 	 */
 	public void adjustToOkayBatteryLevel(Context context) {
 		BatterySaveModeIsActivated = false;
+
+		if(toggleIsSet){
+			runOnUiThread(new Runnable() {
+
+				public void run() {
+					if(batterySaveModeToggle.isChecked()){
+						batterySaveModeToggle.setChecked(false);
+					}
+				}
+			});
+		}
+
 		adjustScreenBrightness(context, screenBrightnesslevelOkay);
 		adjustNetworkStatus(permissionToUseWiFiOkay);
 	}
@@ -117,7 +137,18 @@ public class QoSManager extends SecureActivity implements Observer {
 	 */
 	public void adjustToLowBatteryLevel(Context context) {
 		BatterySaveModeIsActivated=true;
-		// Acro S-specifikt?
+
+		if(toggleIsSet){
+			runOnUiThread(new Runnable() {
+
+				public void run() {
+					if(!batterySaveModeToggle.isChecked()){
+						batterySaveModeToggle.setChecked(true);
+					}
+				}
+			});
+		}
+
 		adjustScreenBrightness(context, screenBrightnesslevel);
 		adjustNetworkStatus(permissionToUseWiFi);
 	}
@@ -127,11 +158,16 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * 
 	 * @param value kan vara ett valfritt float-värde mellan 0.0-1.0;
 	 */
-	public void adjustScreenBrightness(Context context, float brightnessValue) {
-		System.out.println("Skärmstyrka: "+brightnessValue);
-		WindowManager.LayoutParams layout = ((Activity) context).getWindow().getAttributes();
+	public void adjustScreenBrightness(final Context context, float brightnessValue) {
+		final WindowManager.LayoutParams layout = ((Activity) context).getWindow().getAttributes();
 		layout.screenBrightness = brightnessValue;
-		((Activity) context).getWindow().setAttributes(layout);
+
+		runOnUiThread(new Runnable() {
+
+			public void run() {
+				((Activity) context).getWindow().setAttributes(layout);
+			}
+		});
 	}
 
 	/**
