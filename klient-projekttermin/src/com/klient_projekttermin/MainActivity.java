@@ -291,14 +291,14 @@ public class MainActivity extends SecureActivity {
 				for (NetworkInfo ni : netInfo) {
 					if (ni.getTypeName().equalsIgnoreCase("WIFI"))
 						if (ni.isConnected()){
-							qosManager.checkServerConnection();
+							qosManager.tryToReconnectToServer();
 						}
 						else{
 							haveConnectedWifi = false;
 						}
 					if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
 						if (ni.isConnected()){
-							qosManager.checkServerConnection();
+							qosManager.tryToReconnectToServer();
 						}
 						else{
 							haveConnectedMobile = false;

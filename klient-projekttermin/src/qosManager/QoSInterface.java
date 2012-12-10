@@ -1,6 +1,5 @@
 package qosManager;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -13,8 +12,9 @@ import android.widget.ToggleButton;
 
 import com.klient_projekttermin.R;
 import com.klient_projekttermin.R.id;
+import com.klient_projekttermin.SecureActivity;
 
-public class QoSInterface extends Activity implements OnSeekBarChangeListener, OnCheckedChangeListener {
+public class QoSInterface extends SecureActivity implements OnSeekBarChangeListener, OnCheckedChangeListener {
 	private QoSManager qosManager;
 	private ToggleButton batterySaveToggle;
 	private ToggleButton automaticSaveModeToggel;
@@ -154,7 +154,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		messagePermission.setChecked(false);
 		assignmentPermission.setChecked(true);
 		contactBookPermission.setChecked(true);
-		screenBrightnessBar.setProgress(20);
+		screenBrightnessBar.setProgress(10);
 		batterylevelBar.setProgress(20);
 
 		if(qosManager.batterySaveModeIsActivated()){
@@ -165,7 +165,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			qosManager.setPermissionToStartAssignment(false);
 			qosManager.setPermissionToStartContactBook(false);
 			qosManager.setLowBatteryLevel(this, 20);
-			qosManager.setScreenBrightnessValueLow(this, (float) 0.2);
+			qosManager.setScreenBrightnessValueLow(this, (float) 0.1);
 			qosManager.adjustToLowBatteryLevel(this);
 		}
 	}
@@ -188,8 +188,8 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		if(seekBar.equals(screenBrightnessBar)){
 			float value = ((float) progress/100);
 
-			if(value<=0.1){
-				value=(float) 0.1;
+			if(value<=0.05){
+				value=(float) 0.05;
 			}
 			screenBrightnessLevelText.setText(progress+" %");
 			qosManager.setScreenBrightnessValueLow(this, value);
@@ -202,12 +202,10 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 
 	public void onStartTrackingTouch(SeekBar seekBar) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

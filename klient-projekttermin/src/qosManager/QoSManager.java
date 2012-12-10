@@ -24,7 +24,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	private Boolean permissionToStartMessages = true;
 	private Boolean permissionToStartAssignment = false;
 	private Boolean permissionToStartContactBook = false;
-	private float screenBrightnesslevel = (float) 0.2;
+	private float screenBrightnesslevel = (float) 0.1;
 
 	private float screenBrightnesslevelOkay = (float) 0.5;
 	private Boolean permissionToStartMapOkay = true;
@@ -33,7 +33,6 @@ public class QoSManager extends SecureActivity implements Observer {
 	private Boolean permissionToStartMessagesOkay = true;
 	private Boolean permissionToStartAssignmentOkay = true;
 	private Boolean permissionToStartContactBookOkay = true;
-
 
 	private Boolean BatterySaveModeIsActivated=false;
 	private Boolean okayBatterylevel = true;
@@ -114,6 +113,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * laddningsnivå
 	 */
 	public void adjustToOkayBatteryLevel(Context context) {
+		System.out.println("Anpassar till okej batterinivå");
 		BatterySaveModeIsActivated = false;
 
 		if(toggleIsSet){
@@ -136,6 +136,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * laddningsnivå
 	 */
 	public void adjustToLowBatteryLevel(Context context) {
+		System.out.println("Anpassar till lågt batteri");
 		BatterySaveModeIsActivated=true;
 
 		if(toggleIsSet){
@@ -159,6 +160,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * @param value kan vara ett valfritt float-värde mellan 0.0-1.0;
 	 */
 	public void adjustScreenBrightness(final Context context, float brightnessValue) {
+		System.out.println("Korrigerar ljusstyrkan till: "+brightnessValue);
 		final WindowManager.LayoutParams layout = ((Activity) context).getWindow().getAttributes();
 		layout.screenBrightness = brightnessValue;
 
@@ -179,7 +181,7 @@ public class QoSManager extends SecureActivity implements Observer {
 		wifiManager.setWifiEnabled(wantToTurnOn);
 	}
 
-	public void checkServerConnection(){
+	public void tryToReconnectToServer(){
 		SocketConnection connection = new SocketConnection();	
 		connection.addObserver(new PullResponseHandler(applicationContext));
 		connection.pullFromServer();
@@ -277,9 +279,10 @@ public class QoSManager extends SecureActivity implements Observer {
 	 */
 	public void setScreenBrightnessValueLow(Context context,float newScreenBrightnessLevel){
 		screenBrightnesslevel = newScreenBrightnessLevel;
-
+		System.out.println("Nytt värde på skärmstyrkan är sparat");
 		if(BatterySaveModeIsActivated){
 			adjustScreenBrightness(context, screenBrightnesslevel);
+			System.out.println("Nu skärmstyrka är satt");
 		}
 	}
 
