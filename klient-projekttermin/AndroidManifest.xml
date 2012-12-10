@@ -76,7 +76,8 @@
         </activity>
         <activity
             android:name="login.LogInActivity"
-            android:label="@string/title_activity_login_function" >
+            android:label="@string/title_activity_login_function"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

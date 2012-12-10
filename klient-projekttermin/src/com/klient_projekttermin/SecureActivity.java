@@ -47,7 +47,6 @@ public class SecureActivity extends Activity {
 				DISPLAY_MESSAGE_ACTION));
 		qosManager = QoSManager.getInstance();
 		qosManager.startBatteryCheckingThread(this);
-		qosManager.adjustToCurrentBatteryMode();
 		socketConnection.setContext(getApplicationContext());
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
@@ -147,7 +146,7 @@ public class SecureActivity extends Activity {
 	@Override
 	protected void onResume() {		
 		super.onResume();
-		qosManager.adjustToCurrentBatteryMode();
+		qosManager.adjustToCurrentBatteryMode(this);
 		resetDisconnectTimer();
 	}
 

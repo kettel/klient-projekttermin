@@ -199,7 +199,6 @@ public class MainActivity extends SecureActivity {
 	@Override
 	protected void onResume(){
 		super.onResume();
-		qosManager.adjustToCurrentBatteryMode();
 
 		// SIP: Registrera klienten hos SIP-servern 
 		if(!RegisterWithSipSingleton.isRegistred()){

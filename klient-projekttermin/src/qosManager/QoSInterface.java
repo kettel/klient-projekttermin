@@ -71,10 +71,10 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	 */
 	public void manualStartBatterySaveMode(View v){
 		if(batterySaveToggle.isChecked()){
-			qosManager.adjustToLowBatteryLevel();
+			qosManager.adjustToLowBatteryLevel(this);
 		}
 		else{
-			qosManager.adjustToOkayBatteryLevel();
+			qosManager.adjustToOkayBatteryLevel(this);
 		}
 	}
 
@@ -163,9 +163,9 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			qosManager.setPermissionToStartMessages(true);
 			qosManager.setPermissionToStartAssignment(false);
 			qosManager.setPermissionToStartContactBook(false);
-			qosManager.setLowBatteryLevel(20);
-			qosManager.setScreenBrightnessValueLow((float) 0.2);
-			qosManager.adjustToLowBatteryLevel();
+			qosManager.setLowBatteryLevel(this, 20);
+			qosManager.setScreenBrightnessValueLow(this, (float) 0.2);
+			qosManager.adjustToLowBatteryLevel(this);
 		}
 	}
 
@@ -191,11 +191,11 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 				value=(float) 0.1;
 			}
 			screenBrightnessLevelText.setText(progress+" %");
-			qosManager.setScreenBrightnessValueLow(value);
+			qosManager.setScreenBrightnessValueLow(this, value);
 		}
 		else{
 			lowBatteryLevelText.setText(progress+" %");
-			qosManager.setLowBatteryLevel(progress);
+			qosManager.setLowBatteryLevel(this, progress);
 		}
 	}
 
@@ -236,7 +236,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			setWiFiPermission(buttonView);
 		}
 		if(batterySaveToggle.isChecked()){
-			qosManager.adjustToLowBatteryLevel();
+			qosManager.adjustToLowBatteryLevel(this);
 		}
 	}
 }

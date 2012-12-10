@@ -76,10 +76,11 @@ public class QoSManager extends SecureActivity implements Observer {
 		batteryCheckingFunction.stopBatteryCheckFunction();
 	}
 
-	public void adjustToCurrentBatteryMode(){
+	public void adjustToCurrentBatteryMode(Context context){
 		if(BatterySaveModeIsActivated){
-			System.out.println("ANPASSAR TILL LÅG BATTERINIVÅ");
-			adjustToLowBatteryLevel();
+			adjustToLowBatteryLevel(context);
+		}else{
+			adjustToOkayBatteryLevel(context);	
 		}
 	}
 
@@ -92,11 +93,11 @@ public class QoSManager extends SecureActivity implements Observer {
 
 		if(batteryLevel<=lowBatteryLevel&&okayBatterylevel){
 			okayBatterylevel=false;
-			adjustToLowBatteryLevel();
+			adjustToLowBatteryLevel(this);
 		}
 		else if(batteryLevel>lowBatteryLevel&&!okayBatterylevel){
 			okayBatterylevel = true;
-			adjustToOkayBatteryLevel();
+			adjustToOkayBatteryLevel(this);
 		}
 	}
 
@@ -104,9 +105,9 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * Metoden ändrar enhetens inställningar om batteriet når en bra
 	 * laddningsnivå
 	 */
-	public void adjustToOkayBatteryLevel() {
+	public void adjustToOkayBatteryLevel(Context context) {
 		BatterySaveModeIsActivated = false;
-		adjustScreenBrightness(screenBrightnesslevelOkay);
+		adjustScreenBrightness(context, screenBrightnesslevelOkay);
 		adjustNetworkStatus(permissionToUseWiFiOkay);
 	}
 
@@ -114,10 +115,10 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * Metoden ändrar enhetens inställningar om batteriet når en låg
 	 * laddningsnivå
 	 */
-	public void adjustToLowBatteryLevel() {
+	public void adjustToLowBatteryLevel(Context context) {
 		BatterySaveModeIsActivated=true;
 		// Acro S-specifikt?
-		adjustScreenBrightness(screenBrightnesslevel);
+		adjustScreenBrightness(context, screenBrightnesslevel);
 		adjustNetworkStatus(permissionToUseWiFi);
 	}
 
@@ -126,11 +127,11 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * 
 	 * @param value kan vara ett valfritt float-värde mellan 0.0-1.0;
 	 */
-	public void adjustScreenBrightness(float brightnessValue) {
+	public void adjustScreenBrightness(Context context, float brightnessValue) {
 		System.out.println("Skärmstyrka: "+brightnessValue);
-		WindowManager.LayoutParams layout = ((Activity) applicationContext).getWindow().getAttributes();
+		WindowManager.LayoutParams layout = ((Activity) context).getWindow().getAttributes();
 		layout.screenBrightness = brightnessValue;
-		((Activity) applicationContext).getWindow().setAttributes(layout);
+		((Activity) context).getWindow().setAttributes(layout);
 	}
 
 	/**
@@ -151,7 +152,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	public void changeConnectivityMarkerStatus(final Boolean serverConnection){
 
 		runOnUiThread(new Runnable() {
-			
+
 			public void run() {
 				if(serverConnection){
 					connectivityMarker.setIcon(android.R.drawable.presence_online);
@@ -218,7 +219,7 @@ public class QoSManager extends SecureActivity implements Observer {
 			return permissionToStartContactBookOkay;
 		}
 	}
-	
+
 	public Boolean readyToAdjustCM() {
 		return readyToAdjustCM;
 	}
@@ -238,11 +239,11 @@ public class QoSManager extends SecureActivity implements Observer {
 	/**
 	 * Metoden sätter ett värde på skärmljusstyrkan
 	 */
-	public void setScreenBrightnessValueLow(float newScreenBrightnessLevel){
+	public void setScreenBrightnessValueLow(Context context,float newScreenBrightnessLevel){
 		screenBrightnesslevel = newScreenBrightnessLevel;
 
 		if(BatterySaveModeIsActivated){
-			adjustScreenBrightness(screenBrightnesslevel);
+			adjustScreenBrightness(context, screenBrightnesslevel);
 		}
 	}
 
@@ -265,15 +266,15 @@ public class QoSManager extends SecureActivity implements Observer {
 	public void setPermissionToStartAssignment(Boolean permissionStartAssignmentLow) {
 		permissionToStartAssignment = permissionStartAssignmentLow;
 	}
-	
+
 	public void setPermissionToStartContactBook(Boolean permissionStartContactBookLow) {
 		permissionToStartContactBook = permissionStartContactBookLow;
 	}
 
-	public void setLowBatteryLevel(int batterylevel) {
+	public void setLowBatteryLevel(Context context, int batterylevel) {
 		lowBatteryLevel = batterylevel;
 		if(batterySaveModeIsActivated()){
-			adjustToLowBatteryLevel();
+			adjustToLowBatteryLevel(context);
 		}
 	}
 	public Boolean getPermissionToStartMap() {
@@ -295,7 +296,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	public Boolean getPermissionToStartAssignment() {
 		return permissionToStartAssignment;
 	}
-	
+
 	public Boolean getPermissionToStartContactBook(){
 		return permissionToStartContactBook;
 	}
