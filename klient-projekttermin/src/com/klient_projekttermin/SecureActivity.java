@@ -145,8 +145,9 @@ public class SecureActivity extends Activity {
 	}
 
 	@Override
-	protected void onResume() {
+	protected void onResume() {		
 		super.onResume();
+		qosManager.adjustToCurrentBatteryMode();
 		resetDisconnectTimer();
 	}
 

@@ -8,7 +8,6 @@ import com.klient_projekttermin.SecureActivity;
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
-import login.User;
 import android.app.Activity;
 import android.content.Context;
 
@@ -40,12 +39,10 @@ public class QoSManager extends SecureActivity implements Observer {
 
 	private BatteryCheckingFunction batteryCheckingFunction;
 	private Context applicationContext;
-	private User user;
 	private MenuItem connectivityMarker;
 	private Boolean readyToAdjustCM = false;
 
 	private QoSManager() {
-		user = User.getInstance();
 	}
 
 	private static QoSManager instance = new QoSManager();
@@ -81,6 +78,7 @@ public class QoSManager extends SecureActivity implements Observer {
 
 	public void adjustToCurrentBatteryMode(){
 		if(BatterySaveModeIsActivated){
+			System.out.println("ANPASSAR TILL LÅG BATTERINIVÅ");
 			adjustToLowBatteryLevel();
 		}
 	}
@@ -119,7 +117,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	public void adjustToLowBatteryLevel() {
 		BatterySaveModeIsActivated=true;
 		// Acro S-specifikt?
-		//adjustScreenBrightness(screenBrightnesslevel);
+		adjustScreenBrightness(screenBrightnesslevel);
 		adjustNetworkStatus(permissionToUseWiFi);
 	}
 
@@ -129,6 +127,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * @param value kan vara ett valfritt float-värde mellan 0.0-1.0;
 	 */
 	public void adjustScreenBrightness(float brightnessValue) {
+		System.out.println("Skärmstyrka: "+brightnessValue);
 		WindowManager.LayoutParams layout = ((Activity) applicationContext).getWindow().getAttributes();
 		layout.screenBrightness = brightnessValue;
 		((Activity) applicationContext).getWindow().setAttributes(layout);
