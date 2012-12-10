@@ -267,7 +267,7 @@ public class SocketConnection extends Observable {
 
 	private SSLSocket createSocket() {
 		SSLSocket socket = null;
-		SSLSocketFactory socketFactory=null;
+		SSLSocketFactory socketFactory = null;
 		char keystorepass[] = "password".toCharArray();
 		char trustpassword[] = "password".toCharArray();
 		if (contextIsReady == true) {
@@ -299,22 +299,16 @@ public class SocketConnection extends Observable {
 				System.out.println("trying to connect, ip is: " + ip
 						+ " port is: " + port);
 			} catch (KeyStoreException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (CertificateException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (UnrecoverableKeyException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (KeyManagementException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -325,7 +319,8 @@ public class SocketConnection extends Observable {
 					socket = (SSLSocket) socketFactory.createSocket(ip, port);
 					socket.startHandshake();
 					System.out.println("Socketen lyckades ansluta");
-					failedToConnect = true;
+					// Sov en halv sekund för att avlasta appen
+					// synchronizedWait(this);
 				} catch (UnknownHostException e) {
 					loadNextServer();
 
@@ -338,6 +333,14 @@ public class SocketConnection extends Observable {
 			System.out.println("Saknar context till krypteringen");
 		}
 		return socket;
+	}
+
+	private synchronized void synchronizedWait(SocketConnection socketConnection) {
+		try {
+			socketConnection.wait(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void closeSocket(SSLSocket socket) {
