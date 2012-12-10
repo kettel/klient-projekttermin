@@ -303,6 +303,7 @@ public class SocketConnection extends Observable {
 					socket = (SSLSocket) socketFactory.createSocket(ip, port);
 					socket.startHandshake();
 					System.out.println("Socketen lyckades ansluta");
+					failedToConnect = true;
 				} catch (UnknownHostException e) {
 					loadNextServer();
 
@@ -320,7 +321,6 @@ public class SocketConnection extends Observable {
 					e.printStackTrace();
 				}
 			}
-
 		} while (socket == null && !failedToConnect);
 		return socket;
 	}
