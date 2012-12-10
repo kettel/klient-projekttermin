@@ -35,6 +35,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 				public void onRinging(SipAudioCall call, SipProfile caller) {
 					try {
 //						regSip.setCall(call);
+						if(regSip.isCallAnswered()){
+							Log.d("SIP/IncomingCallReceiver","Upptaget...");
+						}
 						Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 						startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
 						startIncomingCallDialog.putExtra("outgoing",false);

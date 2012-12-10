@@ -63,15 +63,15 @@ import com.klient_projekttermin.R;
  * Buggar:
  * TODO: Vid inkommande samtal ska inte "PÅ" stå efter att man har tryckt på "Svara". [DONE]
  * TODO: Vid inkommande samtal när man tryckt på "Lägg på" ska inte "AV" synas innan aktiviteten stängs. [DONE]
- * TODO: Fixa så även andra telefoner än Acro S kan registrera sig på Servern. [PARTIALLY DONE]
- * TODO: Samtal ska överleva en skärmrotation
- * TODO: Registrera att mottagaren av samtalet har svarat vid utgående samtal. Väldigt märkligt då kopplingssignaler
- * 		 spelas tills andra änden svarar...
- * TODO: Andra telefoner än Acro S ska kunna utnyttja närhetssensorn för Skärm På/Av.
- * TODO: Blinkande gul lampa efter att Skärmlås PÅ använts, ska inte blinka. Stängs av efter att man låst upp skärmen. (Acro S?)
- * TODO: Vid utgående samtal ska texten "TextView" i fält för samtalstid inte synas.
+ * TODO: Fixa så även andra telefoner än Acro S kan registrera sig på Servern. [DONE]
+ * TODO: Andra telefoner än Acro S ska kunna utnyttja närhetssensorn för Skärm På/Av. [DONE]
+ * TODO: Vid utgående samtal ska texten "TextView" i fält för samtalstid inte synas. [DONE]
+ * TODO: Samtal ska överleva en skärmrotation [DONE]
+ * TODO: Blinkande gul lampa efter att Skärmlås PÅ använts, ska inte blinka. Stängs av efter att man låst upp skärmen. (Acro S?) (GCM)
  * TODO: Återregistrera enheten när den har blivit "Lagged" hos SIP-servern. (sköts nu när man ska ringa en kontakt och inte är registrerad..)
  * TODO: Tuta upptaget och neka nya inkommande samtal när man är i samtal.
+ * TODO: Registrera att mottagaren av samtalet har svarat vid utgående samtal. Väldigt märkligt då kopplingssignaler
+ * 		 spelas tills andra änden svarar...
  * 
  * @author kettel
  * 
@@ -177,7 +177,10 @@ public class IncomingCallDialog extends Activity {
 						}
 					}
 					// Telefonen tas bort från örat
-					else if(event.values[0] == 1.0){
+					// Sony: 1.0 när telefonen inte är nära något
+					// Samsung: 5.0
+					// Andra: ?
+					else if(event.values[0] > 0.0){
 						Log.d("SIP/IncomingCallDialog/onCreate","Proximity: "+event.values[0]);
 						Log.d("SIP/IncomingCallDialog/onCreate","Skärmen är nu: " + (isScreenOn?"på":"av"));
 						// Om skärmen är släckt, lås upp skärmen
@@ -450,7 +453,6 @@ public class IncomingCallDialog extends Activity {
 				// Sätt namnet på den som ringer
 				TextView timeView = (TextView) findViewById(R.id.textViewTimeInCall);
 				timeView.setText(timeInCall);
-				Log.d("SIP/IncomingCallDialog/UpdateCallTime","Satt callTime till: " + timeInCall + " med textlängd: " + timeInCall.length());
 			}
 		});
 	}

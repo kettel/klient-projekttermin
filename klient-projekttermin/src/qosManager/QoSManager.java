@@ -31,7 +31,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	private Boolean permissionToStartCameraOkay = true;
 	private Boolean permissionToStartMessagesOkay = true;
 	private Boolean permissionToStartAssignmentOkay = true;
-	private Boolean permissionToStartContactBookOkay = false;
+	private Boolean permissionToStartContactBookOkay = true;
 
 
 	private Boolean BatterySaveModeIsActivated=false;

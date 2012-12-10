@@ -206,7 +206,6 @@ public class MainActivity extends SecureActivity {
 			RegisterWithSipSingleton.setContext(getApplicationContext());
 			RegisterWithSipSingleton.initializeManager();
 		}
-		
 	}
 
 	public void onBackPressed() {
