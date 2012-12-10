@@ -72,7 +72,8 @@
         </activity>
         <activity
             android:name="sip.IncomingCallDialog"
-            android:label="@string/title_activity_incoming_call_dialog" >
+            android:label="@string/title_activity_incoming_call_dialog" 
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="login.LogInActivity"
