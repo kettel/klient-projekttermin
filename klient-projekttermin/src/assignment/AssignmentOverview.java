@@ -183,6 +183,7 @@ public class AssignmentOverview extends SecureActivity {
 				a.setAssignmentStatus(AssignmentStatus.FINISHED);
 
 				SocketConnection connection=new SocketConnection();
+				connection.setContext(getApplicationContext());
 				connection.sendModel(a);
 			}
 

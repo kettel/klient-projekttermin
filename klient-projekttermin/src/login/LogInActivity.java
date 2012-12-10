@@ -193,6 +193,7 @@ public class LogInActivity extends Activity implements Observer {
 	public void tryOnlineLogin(AuthenticationModel authenticationModel) {
 
 		SocketConnection connection = new SocketConnection();
+		connection.setContext(getApplicationContext());
 		connection.addObserver(this);
 		connection.authenticate(authenticationModel);
 		runOnUiThread(new Runnable() {

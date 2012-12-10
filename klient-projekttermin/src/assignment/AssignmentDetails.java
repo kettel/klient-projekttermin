@@ -235,6 +235,7 @@ public class AssignmentDetails extends SecureActivity {
 								getContentResolver());
 						
 						SocketConnection connection=new SocketConnection();
+						connection.setContext(getApplicationContext());
 						connection.sendModel(currentAssignment);
 
 						// Sätter texten som ska visas i uppdragsvyn.

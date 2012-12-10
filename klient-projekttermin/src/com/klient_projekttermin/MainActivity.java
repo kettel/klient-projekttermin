@@ -50,14 +50,14 @@ public class MainActivity extends SecureActivity {
 	private QoSManager qosManager;
 	private MenuItem logout;
 	private MenuItem qosItem;
-	private Database database;
 	private SocketConnection socketConnection = new SocketConnection();
 	private User user;
 	private Boolean haveServerConnection = false;
 	private BroadcastReceiver bcr;
-
+	private Database database;
+	
 	// SIP-variabler
-	public static RegisterWithSipSingleton regSip;
+//	public static RegisterWithSipSingleton regSip;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -117,10 +117,11 @@ public class MainActivity extends SecureActivity {
 		}
 
 		// SIP: Registrera klienten hos SIP-servern 
-		if(regSip == null){
-			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
+		if(!RegisterWithSipSingleton.isRegistred()){
+			RegisterWithSipSingleton.setContext(getApplicationContext());
+			RegisterWithSipSingleton.initializeManager();
 		}
-		regSip.initializeManager();
+		
 
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
@@ -200,10 +201,11 @@ public class MainActivity extends SecureActivity {
 		super.onResume();
 
 		// SIP: Registrera klienten hos SIP-servern 
-		if(regSip == null){
-			regSip = RegisterWithSipSingleton.getInstance(getApplicationContext());
+		if(!RegisterWithSipSingleton.isRegistred()){
+			RegisterWithSipSingleton.setContext(getApplicationContext());
+			RegisterWithSipSingleton.initializeManager();
 		}
-		regSip.initializeManager();
+		
 	}
 
 	public void onBackPressed() {
@@ -212,12 +214,6 @@ public class MainActivity extends SecureActivity {
 		builder.setMessage("Vill du avsluta?");
 		builder.setPositiveButton("Ja", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int arg1) {
-				// Avregistrera klienten från SIP-servern
-				if(regSip != null){
-					Log.d("SIP/MainActivity/onBackPressed/Ja","Ska stänga SIP-profilen...");
-					regSip.closeLocalProfile();
-					regSip = null;
-				}
 				dialog.dismiss();
 				setResult(LogInActivity.SHUT_DOWN);
 				logout();			
@@ -339,9 +335,14 @@ public class MainActivity extends SecureActivity {
 	}
 
 	public void logout() {
+		// Avregistrera klienten från SIP-servern
+		if(RegisterWithSipSingleton.isRegistred()){
+			Log.d("SIP/MainActivity/onBackPressed/Ja","Ska stänga SIP-profilen...");
+			RegisterWithSipSingleton.closeLocalProfile();
+		}
+		
 		user.setLoggedIn(false);
 		socketConnection.logout();
 		finish();
-		
 	}
 }

@@ -313,6 +313,7 @@ public class DisplayOfConversation extends SecureActivity {
 		message.getEditableText().clear();
 
 		SocketConnection connection = new SocketConnection();
+		connection.setContext(getApplicationContext());
 		connection.sendModel(messageObject);
 		loadConversation(chosenContact);
 	}
