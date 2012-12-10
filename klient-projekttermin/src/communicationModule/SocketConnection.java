@@ -304,6 +304,9 @@ public class SocketConnection extends Observable {
 					socket.startHandshake();
 					System.out.println("Socketen lyckades ansluta");
 					failedToConnect = true;
+					
+					// Sov en halv sekund för att avlasta appen
+					synchronizedWait(this);
 				} catch (UnknownHostException e) {
 					loadNextServer();
 
@@ -324,7 +327,16 @@ public class SocketConnection extends Observable {
 		} while (socket == null && !failedToConnect);
 		return socket;
 	}
-
+	
+	private synchronized void synchronizedWait (SocketConnection socketConnection) {
+		try {
+			socketConnection.wait(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	private void closeSocket(Socket socket) {
 		try {
 			socket.close();
