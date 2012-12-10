@@ -65,7 +65,7 @@ public class ContactsDB {
     public void updateContact(ContentResolver contentResolver, String newName, String id) {
         ContentValues contentValue = new ContentValues();
         contentValue.put(Contacts.NAME, newName);
-        contentResolver.update(Contacts.CONTENT_URI, contentValue, Contacts.CONTACT_ID + "='" + id + "'", null);
+        contentResolver.update(Contacts.CONTENT_URI, contentValue, Contacts.CONTACT_ID + "='" + id + "'", null); //Contacts.CONTACT_ID + "='" + id + "'"
     }
 
     // erases all entries in the database
@@ -105,7 +105,7 @@ public class ContactsDB {
 		ContentValues values = new ContentValues();
         values.put(Contacts.NAME, contact.getContactName());
         int updated = 0;
-        updated = contentResolver.update(Contacts.CONTENT_URI, values, null, null);
+        updated = contentResolver.update(Contacts.CONTENT_URI, values, Contacts.NAME + " =\"" + contact.getContactName() + "\"", null);
         Log.d("DB", "Uppdaterade " + updated + " contacts.");
         return updated;
 	}
