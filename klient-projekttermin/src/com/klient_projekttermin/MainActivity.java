@@ -172,8 +172,12 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 4:
+					if(qosManager.isAllowedToStartContactBook()){
 					myIntent = new Intent(MainActivity.this,
 							ContactsBookActivity.class);
+					}else{
+						unallowedStart.show();
+					}
 					break;
 				case 5:
 					//if (qosManager.allowedToStartSip()) {
@@ -201,7 +205,6 @@ public class MainActivity extends SecureActivity {
 			RegisterWithSipSingleton.setContext(getApplicationContext());
 			RegisterWithSipSingleton.initializeManager();
 		}
-		
 	}
 
 	public void onBackPressed() {
@@ -315,7 +318,6 @@ public class MainActivity extends SecureActivity {
 
 	@Override
 	protected void onDestroy() {
-		System.out.println("Kör onDestroy i MainActivity");
 		if (mRegisterTask != null) {
 			mRegisterTask.cancel(true);
 		}
