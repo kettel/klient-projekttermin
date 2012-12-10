@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import assignment.AssignmentOverview;
 
 import com.klient_projekttermin.GCMIntentService;
@@ -67,7 +68,9 @@ public class PullResponseHandler implements Observer {
 				 */
 				int update = db.updateModel((Contact) data,
 						context.getContentResolver());
+				Log.d("PullResponse","Ny kontakt? Update = " + update);
 				if (update == 0) {
+					Log.d("PullResponse","Ny kontakt: " + ((Contact) data).getContactName());
 					db.addToDB((Contact) data, context.getContentResolver());
 				}
 				notificationIntent = new Intent(context,
