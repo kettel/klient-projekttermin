@@ -18,12 +18,9 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -31,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import camera.Album;
 import camera.Cam;
 
@@ -80,133 +78,96 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			return R.layout.button_item;
 		case 7:
 			return R.layout.button_item;
+		case 8:
+			return android.R.layout.simple_list_item_checked;
 		default:
 			return R.layout.textfield_item;
 		}
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		if (convertView == null) {
+			/**
+			 * Finns ingen vy som vi kan återanvända, skapar en ny!
+			 */
+			convertView = inflater.inflate(getItemViewType(position), parent,
+					false);
+			/**
+			 * I brist på förståelse för koden samt tid skapar vi världens
+			 * fulaste switch-case som ger alla items funktionalitet beroende på
+			 * plats.
+			 */
+			switch (position) {
+			case 1:
+				b1 = (Button) convertView.findViewById(R.id.button_item);
+				b1.setText(((HashMap<String, String>) this.getItem(position))
+						.get("line1"));
+				b1.setOnClickListener(new OnClickListener() {
 
-		convertView = null;
-
-		final View v = super.getView(position, convertView, parent);
-		editText = (EditText) v.findViewById(R.id.text_item);
-		if (position == 7) {
-			convertView = inflater.inflate(getItemViewType(position), null);
-			b7 = (Button) convertView.findViewById(R.id.button_item);
-			System.out.println(b7 + " bfak  " + this.getItem(position));
-			b7.setHint(((HashMap<String, String>) this.getItem(position))
-					.get("line1"));
-			if (itemStrings.get(position) != null
-					&& !itemStrings.get(position).equals("")) {
-				b7.setText(itemStrings.get(position));
-			}
-			b7.setOnClickListener(new OnClickListener() {
-
-				public void onClick(View v) {
-					agentsAlternatives(b7);
-				}
-
-			});
-
-		} else if (position == 3) {
-			convertView = inflater.inflate(getItemViewType(position), null);
-			b3 = (Button) convertView.findViewById(R.id.button_item);
-			b3.setHint(((HashMap<String, String>) this.getItem(position))
-					.get("line1"));
-			if (itemStrings.get(position) != null
-					&& !itemStrings.get(position).equals("")) {
-				b3.setText(itemStrings.get(position));
-			}
-			b3.setOnClickListener(new OnClickListener() {
-
-				public void onClick(View v) {
-					priorityAlternatives(b3);
-				}
-
-			});
-		} else if (position == 5) {
-			convertView = inflater.inflate(getItemViewType(position), null);
-			b5 = (Button) convertView.findViewById(R.id.button_item);
-			b5.setHint(((HashMap<String, String>) this.getItem(position))
-					.get("line1"));
-			if (itemStrings.get(position) != null
-					&& !itemStrings.get(position).equals("")) {
-				b5.setText(itemStrings.get(position));
-			}
-			b5.setOnClickListener(new OnClickListener() {
-
-				public void onClick(View v) {
-					pictureAlternatives();
-				}
-
-			});
-		} else if (position == 1) {
-			convertView = inflater.inflate(getItemViewType(position), null);
-			b1 = (Button) convertView.findViewById(R.id.button_item);
-			b1.setHint(((HashMap<String, String>) this.getItem(position))
-					.get("line1"));
-			if (itemStrings.get(position) != null
-					&& !itemStrings.get(position).equals("")) {
-				b1.setText("Hämtade koordinater");
-			}
-			b1.setOnClickListener(new OnClickListener() {
-
-				public void onClick(View v) {
-					coordinateField(b1);
-				}
-
-			});
-		} else if (editText != null) {
-			if (itemStrings.get(position) != null) {
-				editText.setText(itemStrings.get(position));
-			} else {
-				editText.setText(null);
-			}
-			editText.setHint(((HashMap<String, String>) this.getItem(position))
-					.get("line1"));
-			editText.setId(position);
-			editText.setOnFocusChangeListener(this);
-			editText.setOnKeyListener(new OnKeyListener() {
-
-				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					if (event.getAction() == KeyEvent.ACTION_DOWN) {
-						switch (keyCode) {
-						case KeyEvent.KEYCODE_DPAD_CENTER:
-						case KeyEvent.KEYCODE_ENTER:
-							switch (position) {
-							case 0:
-								coordinateField(b1);
-								break;
-							case 4:
-								pictureAlternatives();
-								break;
-							case 2:
-								priorityAlternatives(b3);
-								break;
-							case 6:
-								agentsAlternatives(b7);
-								break;
-							default:
-								break;
-							}
-							return true;
-						default:
-							break;
-						}
+					public void onClick(View v) {
+						coordinateField(b1);
 					}
-					return false;
+				});
+				break;
+			case 3:
+				b3 = (Button) convertView.findViewById(R.id.button_item);
+				b3.setText(((HashMap<String, String>) this.getItem(position))
+						.get("line1"));
+				b3.setOnClickListener(new OnClickListener() {
+
+					public void onClick(View v) {
+						priorityAlternatives(b3);
+					}
+				});
+				break;
+			case 5:
+				b5 = (Button) convertView.findViewById(R.id.button_item);
+				b5.setText(((HashMap<String, String>) this.getItem(position))
+						.get("line1"));
+				b5.setOnClickListener(new OnClickListener() {
+
+					public void onClick(View v) {
+						pictureAlternatives();
+					}
+				});
+				break;
+			case 7:
+				b7 = (Button) convertView.findViewById(R.id.button_item);
+				b7.setText(((HashMap<String, String>) this.getItem(position))
+						.get("line1"));
+				b7.setOnClickListener(new OnClickListener() {
+
+					public void onClick(View v) {
+						agentsAlternatives(b7);
+					}
+				});
+				break;
+			case 8:
+				TextView textView = (TextView) convertView
+						.findViewById(android.R.id.text1);
+				textView.setText(((HashMap<String, String>) this
+						.getItem(position)).get("line1"));
+				break;
+
+			default:
+				editText = (EditText) convertView.findViewById(R.id.text_item);
+				if (itemStrings.get(position) != null) {
+					editText.setText(itemStrings.get(position));
+				} else {
+					editText.setText(null);
+					editText.setHint(((HashMap<String, String>) this
+							.getItem(position)).get("line1"));
 				}
-			});
+				editText.setId(position);
+				break;
+			}
 		}
-		if (position == 7 || position == 3 || position == 5 || position == 1) {
-			return convertView;
-		} else
-			return v;
+		return convertView;
 
 	}
 
@@ -233,8 +194,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 
 	private void agentsAlternatives(Button b) {
 		Intent intent = new Intent(context, ContactsBookActivity.class);
-		intent.putExtra("calling-activity",
-				ActivityConstants.ADD_AGENTS);
+		intent.putExtra("calling-activity", ActivityConstants.ADD_AGENTS);
 		((AddAssignment) context).startActivityForResult(intent, 1);
 	}
 
@@ -321,7 +281,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		});
 		dialog.show();
 	}
-
+	
 	private void priorityAlternatives(final Button b) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("Välj uppdragets prioritet");
@@ -363,7 +323,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		return itemStrings;
 	}
 
-	public void setAgents(List<Contact> l){
+	public void setAgents(List<Contact> l) {
 		StringBuilder sb = new StringBuilder();
 		for (Contact contact : l) {
 			sb.append(contact.getContactName() + ", ");
@@ -371,7 +331,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		itemStrings.put(7, sb.toString());
 		b7.setText(sb.toString());
 	}
-	
+
 	public void setItemStrings(HashMap<Integer, String> itemStrings) {
 		this.itemStrings = itemStrings;
 	}

@@ -6,10 +6,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import login.User;
 import map.MapActivity;
@@ -24,7 +22,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,7 +47,8 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
 	private String[] dataString = { "Uppdragsnamn", "Koordinater",
 			"Uppdragsbeskrivning", "Prioritet", "Uppdragsplats", "Bild",
-			"Uppskattad tid", "Lägg till agenter" };
+			"Uppskattad tid", "Lägg till agenter",
+			"Inkludera utomstående aktörer" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.text_item };
@@ -120,13 +118,13 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			data.add(temp);
 		}
 	}
-	
-	private void fromContact(Intent i){
+
+	private void fromContact(Intent i) {
 		System.out.println("intent " + i);
 		Gson gson = new Gson();
 		Type type = new TypeToken<List<Contact>>() {
 		}.getType();
-		agents  = gson.fromJson(i.getStringExtra("agents"), type);
+		agents = gson.fromJson(i.getStringExtra("agents"), type);
 		adapter.setAgents(agents);
 	}
 
