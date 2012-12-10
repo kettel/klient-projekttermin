@@ -24,6 +24,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	private CheckBox messagePermission;
 	private CheckBox assignmentPermission;
 	private CheckBox cameraPermission;
+	private CheckBox contactBookPermission;
 	private CheckBox wifiPermission;
 	private TextView lowBatteryLevelText;
 	private TextView screenBrightnessLevelText;
@@ -45,7 +46,9 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		messagePermission = (CheckBox) findViewById(id.messageFunctionCheckBox);
 		assignmentPermission = (CheckBox) findViewById(id.assignmentFunctionCheckBox);
 		cameraPermission = (CheckBox) findViewById(id.cameraFunctionCheckBox);
+		contactBookPermission = (CheckBox) findViewById(R.id.contactBookCheckBox);
 		wifiPermission = (CheckBox) findViewById(id.WiFiConnectionCheckBox);
+		
 		lowBatteryLevelText = (TextView) findViewById(id.lowBatteryValue);
 		screenBrightnessLevelText = (TextView) findViewById(id.lowScreenBrightnessValue);
 
@@ -60,6 +63,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		cameraPermission.setOnCheckedChangeListener(this);
 		messagePermission.setOnCheckedChangeListener(this);
 		assignmentPermission.setOnCheckedChangeListener(this);
+		contactBookPermission.setOnCheckedChangeListener(this);
 	}
 
 	/**
@@ -123,6 +127,15 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			qosManager.setPermissionToStartCamera(true);
 		}
 	}
+	
+	public void setContactBookPermission(View v){
+		if(contactBookPermission.isChecked()){
+			qosManager.setPermissionToStartContactBook(false);
+		}
+		else {
+			qosManager.setPermissionToStartContactBook(true);
+		}
+	}
 
 	public void setWiFiPermission(View v){
 		if(wifiPermission.isChecked()){
@@ -139,6 +152,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		cameraPermission.setChecked(true);
 		messagePermission.setChecked(false);
 		assignmentPermission.setChecked(true);
+		contactBookPermission.setChecked(true);
 		screenBrightnessBar.setProgress(20);
 		batterylevelBar.setProgress(20);
 
@@ -148,6 +162,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			qosManager.setPermissionToStartCamera(false);
 			qosManager.setPermissionToStartMessages(true);
 			qosManager.setPermissionToStartAssignment(false);
+			qosManager.setPermissionToStartContactBook(false);
 			qosManager.setLowBatteryLevel(20);
 			qosManager.setScreenBrightnessValueLow((float) 0.2);
 			qosManager.adjustToLowBatteryLevel();
@@ -160,6 +175,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		messagePermission.setChecked(!qosManager.getPermissionToStartMessages());
 		assignmentPermission.setChecked(!qosManager.getPermissionToStartAssignment());
 		cameraPermission.setChecked(!qosManager.getPermissionToStartCamera());
+		contactBookPermission.setChecked(!qosManager.getPermissionToStartContactBook());
 		wifiPermission.setChecked(!qosManager.getPermissionToUseWiFi());
 		screenBrightnessBar.setProgress((int) (qosManager.getScreenBrightnessValue()*100));
 		batterylevelBar.setProgress(qosManager.getLowBatteryLevel());
@@ -198,6 +214,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		int messageChkId = messagePermission.getId();
 		int assignmentChkId = assignmentPermission.getId();
 		int cameraChkId = cameraPermission.getId();
+		int contactBookChkId = contactBookPermission.getId();
 		int wifiChkId = wifiPermission.getId();
 
 		if(mapChkId==buttonView.getId()){
@@ -212,10 +229,12 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		else if(cameraChkId==buttonView.getId()){
 			setCameraPermission(buttonView);
 		}
+		else if(contactBookChkId==buttonView.getId()){
+			setContactBookPermission(buttonView);
+		}
 		else if(wifiChkId==buttonView.getId()){
 			setWiFiPermission(buttonView);
 		}
-
 		if(batterySaveToggle.isChecked()){
 			qosManager.adjustToLowBatteryLevel();
 		}

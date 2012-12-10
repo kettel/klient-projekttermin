@@ -23,6 +23,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	private Boolean permissionToStartCamera = false;
 	private Boolean permissionToStartMessages = true;
 	private Boolean permissionToStartAssignment = false;
+	private Boolean permissionToStartContactBook = false;
 	private float screenBrightnesslevel = (float) 0.2;
 
 	private float screenBrightnesslevelOkay = (float) 0.5;
@@ -31,6 +32,8 @@ public class QoSManager extends SecureActivity implements Observer {
 	private Boolean permissionToStartCameraOkay = true;
 	private Boolean permissionToStartMessagesOkay = true;
 	private Boolean permissionToStartAssignmentOkay = true;
+	private Boolean permissionToStartContactBookOkay = false;
+
 
 	private Boolean BatterySaveModeIsActivated=false;
 	private Boolean okayBatterylevel = true;
@@ -79,9 +82,6 @@ public class QoSManager extends SecureActivity implements Observer {
 	public void adjustToCurrentBatteryMode(){
 		if(BatterySaveModeIsActivated){
 			adjustToLowBatteryLevel();
-		}
-		else{
-			//			adjustToOkayBatteryLevel();
 		}
 	}
 
@@ -143,9 +143,9 @@ public class QoSManager extends SecureActivity implements Observer {
 	}
 
 	public void checkServerConnection(){
-//		SocketConnection connection = new SocketConnection();	
-//		connection.addObserver(new PullResponseHandler(applicationContext));
-//		connection.pullFromServer();
+		SocketConnection connection = new SocketConnection();	
+		connection.addObserver(new PullResponseHandler(applicationContext));
+		connection.pullFromServer();
 	}
 
 	public void changeConnectivityMarkerStatus(final Boolean serverConnection){
@@ -210,6 +210,14 @@ public class QoSManager extends SecureActivity implements Observer {
 			return permissionToUseWiFiOkay;
 		}
 	}
+	public boolean isAllowedToStartContactBook() {
+		if(BatterySaveModeIsActivated){
+			return permissionToStartContactBook;
+		}
+		else{
+			return permissionToStartContactBookOkay;
+		}
+	}
 	
 	public Boolean readyToAdjustCM() {
 		return readyToAdjustCM;
@@ -257,6 +265,10 @@ public class QoSManager extends SecureActivity implements Observer {
 	public void setPermissionToStartAssignment(Boolean permissionStartAssignmentLow) {
 		permissionToStartAssignment = permissionStartAssignmentLow;
 	}
+	
+	public void setPermissionToStartContactBook(Boolean permissionStartContactBookLow) {
+		permissionToStartContactBook = permissionStartContactBookLow;
+	}
 
 	public void setLowBatteryLevel(int batterylevel) {
 		lowBatteryLevel = batterylevel;
@@ -282,5 +294,9 @@ public class QoSManager extends SecureActivity implements Observer {
 
 	public Boolean getPermissionToStartAssignment() {
 		return permissionToStartAssignment;
+	}
+	
+	public Boolean getPermissionToStartContactBook(){
+		return permissionToStartContactBook;
 	}
 }

@@ -1,5 +1,4 @@
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
@@ -232,11 +231,33 @@
             android:layout_alignParentRight="true" />
 
         <TextView
-            android:id="@+id/denyWiFiConnection"
+            android:id="@+id/denyContactBook"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/denyCameraFunction"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/contactBookCheckBox"
+            android:ems="10"
+            android:lines="1"
+            android:text="@string/denyContactBook"
+            android:textSize="18dp" >
+        </TextView>
+
+        <CheckBox
+            android:id="@+id/contactBookCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/denyContactBook"
+            android:layout_alignParentRight="true" />
+
+        <TextView
+            android:id="@+id/denyWiFiConnection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/contactBookCheckBox"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:layout_toLeftOf="@+id/WiFiConnectionCheckBox"
@@ -257,6 +278,7 @@
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="true"
             android:layout_below="@+id/denyWiFiConnection"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"

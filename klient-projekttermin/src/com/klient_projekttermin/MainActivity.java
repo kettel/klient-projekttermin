@@ -171,8 +171,12 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 4:
+					if(qosManager.isAllowedToStartContactBook()){
 					myIntent = new Intent(MainActivity.this,
 							ContactsBookActivity.class);
+					}else{
+						unallowedStart.show();
+					}
 					break;
 				case 5:
 					//if (qosManager.allowedToStartSip()) {

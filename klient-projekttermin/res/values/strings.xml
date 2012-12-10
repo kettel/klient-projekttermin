@@ -104,5 +104,6 @@
     <string name="QoS">QoS</string>
     <string name="discard">Discard</string>
     <string name="use">Save</string>
+    <string name="denyContactBook">Inaktivera kontaktlista</string>
 
 </resources>
