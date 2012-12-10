@@ -131,7 +131,7 @@ public class Database {
 			return assignmentsDB.updateAssignment(contentResolver, (Assignment) m);
 		}
 		else if(dbRep.equalsIgnoreCase("contact")){
-			contactsDB.updateContact(contentResolver, (Contact) m);
+			return contactsDB.updateContact(contentResolver, (Contact) m);
 		}
 		else if(dbRep.equalsIgnoreCase("message")){
 			messagesDB.updateMessage(contentResolver, (MessageModel)m);

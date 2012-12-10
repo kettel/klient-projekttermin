@@ -101,11 +101,13 @@ public class ContactsDB {
 		
 	}
 	
-	public void updateContact(ContentResolver contentResolver, Contact contact) {
+	public int updateContact(ContentResolver contentResolver, Contact contact) {
 		ContentValues values = new ContentValues();
         values.put(Contacts.NAME, contact.getContactName());
-        int updated = contentResolver.update(Contacts.CONTENT_URI, values, null, null);
+        int updated = 0;
+        updated = contentResolver.update(Contacts.CONTENT_URI, values, null, null);
         Log.d("DB", "Uppdaterade " + updated + " contacts.");
+        return updated;
 	}
 
 }
