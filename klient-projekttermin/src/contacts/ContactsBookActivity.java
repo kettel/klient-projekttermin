@@ -6,12 +6,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import sip.RegisterWithSipSingleton;
-
 import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;
 import models.ModelInterface;
+import sip.RegisterWithSipSingleton;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import assignment.AddAssignment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
-import com.klient_projekttermin.MainActivity;
 import com.klient_projekttermin.R;
 import com.klient_projekttermin.SecureActivity;
 
@@ -50,7 +48,6 @@ public class ContactsBookActivity extends SecureActivity {
 
 	private List<String> sortedContact;
 	private List<ModelInterface> lista;
-	private RegisterWithSipSingleton regSip;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -86,9 +83,6 @@ public class ContactsBookActivity extends SecureActivity {
     protected void onStart() {
         super.onStart();
         
-        // Hämta regSip från MainActivity
-        // .. är det här som nyttan med en service börjar uppenbara sig?
-        regSip = MainActivity.regSip;
     }
 	private List<Contact> getSortedContactList(){
 		
@@ -209,7 +203,7 @@ public class ContactsBookActivity extends SecureActivity {
 					finish();
 					break;
 				case 1:
-					regSip.initiateCall(name);
+					RegisterWithSipSingleton.initiateCall(name);
 					break;
 				default:
 					break;

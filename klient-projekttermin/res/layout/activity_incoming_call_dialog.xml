@@ -11,7 +11,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="55dp"
-        android:text="ToggleButton" />
+        android:textOff="@string/callAnswer"
+        android:textOn="@string/callDeny" />
 
     <TextView
         android:id="@+id/textViewCaller"
@@ -19,8 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/toggleButton1"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="75dp"
-        android:text="TextView" />
+        android:layout_marginBottom="75dp" />
 
     <QuickContactBadge
         android:id="@+id/quickContactBadge1"
@@ -36,7 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/toggleButton1"
         android:layout_alignLeft="@+id/toggleButton1"
-        android:layout_marginBottom="32dp"
-        android:text="TextView" />
+        android:layout_marginBottom="32dp" />
 
 </RelativeLayout>
