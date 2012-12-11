@@ -17,7 +17,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -47,8 +46,8 @@ import assignment.AssignmentDetails;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
-import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
+import com.klient_projekttermin.SecureActivity;
 import com.nutiteq.BasicMapComponent;
 import com.nutiteq.android.MapView;
 import com.nutiteq.components.KmlPlace;
@@ -164,7 +163,7 @@ public class MapActivity extends SecureActivity implements Observer,
 		final StoredMap sm = new StoredMap("OpenStreetMap", Environment
 				.getExternalStorageDirectory().getPath() + "/MGMapsCache", true);
 		this.mapComponent.setFileSystem(new AndroidFileSystem());
-//		this.mapComponent.setMap(OpenStreetMap.MAPNIK);
+		// this.mapComponent.setMap(OpenStreetMap.MAPNIK);
 		this.mapComponent.setMap(sm);
 		this.mapComponent.setPanningStrategy(new ThreadDrivenPanning());
 		this.mapComponent.startMapping();
@@ -290,7 +289,11 @@ public class MapActivity extends SecureActivity implements Observer,
 					mapComponent.addPolygon(p);
 				} else {
 					for (WgsPoint wgsPoint : co) {
-						addInterestPoint(wgsPoint, a.getName());
+						if (wgsPoint.getLat() == 0.0
+								&& wgsPoint.getLon() == 0.0) {
+						} else {
+							addInterestPoint(wgsPoint, a.getName());
+						}
 					}
 				}
 			}

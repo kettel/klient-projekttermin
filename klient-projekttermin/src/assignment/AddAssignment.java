@@ -127,7 +127,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 			fromCamera(data);
 		} else if (resultCode == ActivityConstants.RESULT_FROM_CONTACTS) {
 			fromContact(data);
-		}
+		} 
 	}
 
 	private void loadContent() {
@@ -401,7 +401,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 					Intent intent = new Intent(AddAssignment.this, Album.class);
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-					startActivityForResult(intent, 1);
+					startActivityForResult(intent, 125);
 					break;
 				case 1:
 					Intent intent2 = new Intent(AddAssignment.this, Cam.class);
@@ -421,7 +421,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 		Intent intent = new Intent(AddAssignment.this,
 				ContactsBookActivity.class);
 		intent.putExtra("calling-activity", ActivityConstants.ADD_AGENTS);
-		this.startActivityForResult(intent, 1);
+		this.startActivityForResult(intent, 125);
 	}
 
 	public void setAgents(List<Contact> l) {
