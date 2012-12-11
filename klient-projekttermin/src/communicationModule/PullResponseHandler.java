@@ -96,6 +96,7 @@ public class PullResponseHandler implements Observer {
 					int update = db.updateModel(incAssignment,
 							context.getContentResolver());
 					if (update == 0) {
+						incAssignment.setAssignmentStatus(AssignmentStatus.NEED_HELP);
 						db.addToDB(incAssignment, context.getContentResolver());
 					}
 				}

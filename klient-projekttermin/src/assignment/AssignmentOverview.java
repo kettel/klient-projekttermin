@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ public class AssignmentOverview extends SecureActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
 		lv = (ListView) findViewById(android.R.id.list);
+		db = Database.getInstance(getApplicationContext());
 
 		User user = User.getInstance();
 		currentUser = user.getAuthenticationModel().getUserName();
@@ -95,7 +97,6 @@ public class AssignmentOverview extends SecureActivity {
 	 * @return
 	 */
 	private String[] getAssHeadsFromDatabase() {
-		db = Database.getInstance(getApplicationContext());
 		assList = db.getAllFromDB(new Assignment(), getContentResolver());
 		int i = 0;
 		String[] tempHeadArr = new String[assList.size()];
@@ -106,18 +107,30 @@ public class AssignmentOverview extends SecureActivity {
 			tempHeadArr[i] = b.getName() + "   Prio: "
 					+ b.getAssignmentPriorityToString();
 			idInAdapter[i] = b.getId();
-			i++;
+			i++;		db = Database.getInstance(getApplicationContext());
+
 		}
 		return tempHeadArr;
 	}
 
 	private long getID(int id){
-		db = Database.getInstance(getApplicationContext());
 		listAssignments = db.getAllFromDB(
 				new Assignment(), getContentResolver());
 		long a = adapter.getItemId(id);
 		for (ModelInterface modelInterface : listAssignments) {
 			Assignment s = (Assignment) modelInterface;
+			System.out.println(s.getAssignmentStatus());
+			if(s.getAssignmentStatus() == AssignmentStatus.NEED_HELP && s.getId() == a){
+				System.out.println("I if --------------------------------------");
+				if(s.getAgents().isEmpty()){
+					s.setAssignmentStatus(AssignmentStatus.NOT_STARTED);
+					db.updateModel(s, getContentResolver());
+				} else {
+					s.setAssignmentStatus(AssignmentStatus.STARTED);
+					db.updateModel(s, getContentResolver());
+				}
+			}
+			adapter.notifyDataSetChanged();
 			if (s.getId() == a) {
 				return s.getId();
 			}
