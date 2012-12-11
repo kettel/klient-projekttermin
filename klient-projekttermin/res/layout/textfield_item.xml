@@ -11,8 +11,15 @@
         android:layout_marginLeft="10dp"
         android:background="@android:color/transparent"
         android:ems="10"
-        android:singleLine="true"
         android:hint="Hint"
-        android:textSize="20dp" />
+        android:singleLine="true"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@android:id/text2"
+        style="android:attr/listItemSecondLineStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp" />
 
 </LinearLayout>
