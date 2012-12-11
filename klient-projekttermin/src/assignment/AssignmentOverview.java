@@ -9,9 +9,8 @@ import models.ModelInterface;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +20,8 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.klient_projekttermin.ActivityConstants;
-import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
+import com.klient_projekttermin.SecureActivity;
 import communicationModule.SocketConnection;
 
 import database.AssignmentTable;
@@ -35,6 +34,10 @@ public class AssignmentOverview extends SecureActivity {
 	private List<ModelInterface> assList;
 	private String currentUser;
 	private ListView lv;
+	private Cursor c;
+	private AssignmentCursorAdapter adapter;
+	private List<ModelInterface> listAssignments;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,14 +79,13 @@ public class AssignmentOverview extends SecureActivity {
 	}
 
 	public void loadAssignmentList() {
-		getAssHeadsFromDatabase();
+//		getAssHeadsFromDatabase();
 		/**
 		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
-		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,
-				getContentResolver().query(
-						AssignmentTable.Assignments.CONTENT_URI, null, null,
-						null, AssignmentTable.Assignments.PRIORITY_INT), false);
+		c = getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI,
+				null, null, null, AssignmentTable.Assignments.PRIORITY_INT);
+		adapter = new AssignmentCursorAdapter(this, c, false);
 		this.lv.setAdapter(adapter);
 	}
 
@@ -109,19 +111,33 @@ public class AssignmentOverview extends SecureActivity {
 		return tempHeadArr;
 	}
 
+	private long getID(int id){
+		db = Database.getInstance(getApplicationContext());
+		listAssignments = db.getAllFromDB(
+				new Assignment(), getContentResolver());
+		long a = adapter.getItemId(id);
+		for (ModelInterface modelInterface : listAssignments) {
+			Assignment s = (Assignment) modelInterface;
+			if (s.getId() == a) {
+				return s.getId();
+			}
+		}
+		return 0;
+	}
 	/**
 	 * Sätter en klicklyssnare på listvyn.
 	 */
 	public void setItemClickListner() {
+		
 		this.lv.setOnItemClickListener(new OnItemClickListener() {
 
+			
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int itemClicked, long arg3) {
 
 				Intent myIntent = new Intent(AssignmentOverview.this,
 						AssignmentDetails.class);
-
-				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
+				myIntent.putExtra("assignmentID", getID(itemClicked));
 				myIntent.putExtra("calling-activity",
 						ActivityConstants.ASSIGNMENT_OVERVIEW);
 				AssignmentOverview.this.startActivity(myIntent);
@@ -139,7 +155,7 @@ public class AssignmentOverview extends SecureActivity {
 
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int eraseAtPos, long arg3) {
-				showEraseOption(idInAdapter[eraseAtPos]);
+				showEraseOption(eraseAtPos);
 				return true;
 			}
 		});
@@ -179,20 +195,17 @@ public class AssignmentOverview extends SecureActivity {
 	public void eraseAssignment(long assignmentId) {
 		List<ModelInterface> listAssignments = db.getAllFromDB(
 				new Assignment(), getContentResolver());
-		for (ModelInterface m : listAssignments) {
-			Assignment a = (Assignment) m;
-			if (a.getId() == assignmentId) {
-				db.deleteFromDB(a, getContentResolver());
-				// Sätter status för att uppdraget har avslutats.
-				a.setAssignmentStatus(AssignmentStatus.FINISHED);
-
+		long a = adapter.getItemId((int) assignmentId);
+		for (ModelInterface modelInterface : listAssignments) {
+			Assignment s = (Assignment) modelInterface;
+			if (s.getId() == a) {
+				db.deleteFromDB(s, getContentResolver());
+				s.setAssignmentStatus(AssignmentStatus.FINISHED);
 				SocketConnection connection = new SocketConnection();
 				connection.setContext(getApplicationContext());
-				connection.sendModel(a);
+				connection.sendModel(s);
 			}
-
 		}
-
 		loadAssignmentList();
 	}
 }
