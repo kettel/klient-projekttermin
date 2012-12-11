@@ -6,12 +6,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import login.User;
+import map.CustomAdapter;
 import map.MapActivity;
 import models.Assignment;
 import models.AssignmentPriority;
@@ -20,37 +19,50 @@ import models.Contact;
 import models.ModelInterface;
 import models.PictureModel;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.CheckBox;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.Toast;
+import camera.Album;
+import camera.Cam;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
 import com.klient_projekttermin.SecureActivity;
+import com.nutiteq.components.WgsPoint;
 import communicationModule.SocketConnection;
 
+import contacts.ContactsBookActivity;
 import database.Database;
 
-public class AddAssignment extends SecureActivity implements Serializable {
+public class AddAssignment extends SecureActivity implements Serializable,
+		OnItemClickListener {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String jsonCoord = null;
 	private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-	private String[] dataString = { "Uppdragsnamn", "Koordinater",
-			"Uppdragsbeskrivning", "Prioritet", "Uppdragsplats", "Bild",
-			"Uppskattad tid", "Lägg till agenter" };
+	private String[] dataString = { "Uppdragsnamn", "Uppdragsbeskrivning",
+			"Uppdragsplats", "Uppskattad tid", "Koordinater", "Prioritet",
+			"Bild", "Lägg till agenter", "Inkludera utomstående aktörer" };
 	private MenuItem saveItem;
 	private String[] from = { "line1" };
 	private int[] to = { R.id.text_item };
@@ -60,9 +72,13 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private ListView lv;
 	private Bitmap bitmap;
 	private int callingActivity;
-	private CheckBox toOutsiders;
 	private boolean isExternalMission;
 	private List<Contact> agents = new ArrayList<Contact>();
+	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
+	private static String[] pictureAlts = { "Bifoga bild", "Ta bild",
+			"Ingen bild" };
+	private static String[] coordsAlts = { "Bifoga koordinater från karta",
+			"Använd GPS position", "Inga koordinater" };
 	private int prioInteger;
 
 	@Override
@@ -71,6 +87,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_assignment);
 		lv = (ListView) findViewById(android.R.id.list);
+		lv.setOnItemClickListener(this);
 		loadContent();
 
 		adapter = new SimpleEditTextItemAdapter(this, data,
@@ -110,7 +127,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			fromCamera(data);
 		} else if (resultCode == ActivityConstants.RESULT_FROM_CONTACTS) {
 			fromContact(data);
-		}
+		} 
 	}
 
 	private void loadContent() {
@@ -121,14 +138,13 @@ public class AddAssignment extends SecureActivity implements Serializable {
 			data.add(temp);
 		}
 	}
-	
-	private void fromContact(Intent i){
-		System.out.println("intent " + i);
+
+	private void fromContact(Intent i) {
 		Gson gson = new Gson();
 		Type type = new TypeToken<List<Contact>>() {
 		}.getType();
-		agents  = gson.fromJson(i.getStringExtra("agents"), type);
-		adapter.setAgents(agents);
+		agents = gson.fromJson(i.getStringExtra("agents"), type);
+		setAgents(agents);
 	}
 
 	private void fromCamera(Intent intent) {
@@ -172,18 +188,11 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	private void saveToDB() {
 		db = Database.getInstance(getApplicationContext());
 
-		// ------Kollar om det är ett externt uppdrag;
-		toOutsiders = (CheckBox) findViewById(R.id.checkBox_to_outsider);
-		if (toOutsiders.isChecked()) {
-			isExternalMission = true;
-		} else
-			isExternalMission = false;
-		// -----End
-
 		HashMap<Integer, String> temp = ((SimpleEditTextItemAdapter) lv
 				.getAdapter()).getItemStrings();
 
 		if (temp.get(0) != null) {
+			System.out.println("VAD E DENN" + temp.get(1));
 			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 					currentUser, isExternalMission, temp.get(2), temp.get(6),
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
@@ -216,9 +225,6 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	}
 
 	private void addAgentsFromList(String agents, Assignment newAssignment) {
-
-		String newString = "";
-
 		if (!agents.equals("")) {
 			newAssignment.setAssignmentStatus(AssignmentStatus.STARTED);
 		}
@@ -281,5 +287,149 @@ public class AddAssignment extends SecureActivity implements Serializable {
 		Bitmap bitmap = BitmapFactory.decodeByteArray(p.getPicture(), 0,
 				p.getPicture().length, ops);
 		return bitmap;
+	}
+
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		switch (arg2) {
+		case 4:
+			coordinateField();
+			break;
+		case 5:
+			priorityAlternatives();
+			break;
+		case 6:
+			pictureAlternatives();
+			break;
+		case 7:
+			agentsAlternatives();
+			break;
+		case 8:
+			CheckedTextView textview = (CheckedTextView) arg1;
+			textview.setChecked(!textview.isChecked());
+			isExternalMission = textview.isChecked();
+		default:
+			break;
+		}
+	}
+
+	private void priorityAlternatives() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Välj uppdragets prioritet");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				priorityAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				adapter.getItemStrings().put(5, priorityAlts[arg2]);
+				adapter.notifyDataSetChanged();
+			}
+		});
+		dialog.show();
+	}
+
+	private void coordinateField() {
+		LocationManager manager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+		String provider = manager.getBestProvider(new Criteria(), true);
+		Location location = manager.getLastKnownLocation(provider);
+		Gson gson = new Gson();
+		final Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		WgsPoint[] wgs = new WgsPoint[1];
+		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
+
+		final String pos = gson.toJson(wgs, type);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Koordinater");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				coordsAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+				switch (arg2) {
+				case 0:
+					dialog.dismiss();
+					Intent intent = new Intent(AddAssignment.this,
+							MapActivity.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT);
+					startActivityForResult(intent, 0);
+					break;
+				case 1:
+					adapter.getItemStrings().put(4, pos);
+					adapter.notifyDataSetChanged();
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
+
+	private void pictureAlternatives() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Bild alternativ");
+		ListView modeList = new ListView(this);
+		CustomAdapter modeAdapter = new CustomAdapter(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				pictureAlts);
+		modeList.setAdapter(modeAdapter);
+		builder.setView(modeList);
+
+		final Dialog dialog = builder.create();
+		modeList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialog.dismiss();
+
+				switch (arg2) {
+				case 0:
+					Intent intent = new Intent(AddAssignment.this, Album.class);
+					intent.putExtra("calling-activity",
+							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
+					startActivityForResult(intent, 125);
+					break;
+				case 1:
+					Intent intent2 = new Intent(AddAssignment.this, Cam.class);
+					intent2.putExtra("calling-activity",
+							ActivityConstants.TAKE_PICTURE_FOR_ASSIGNMENT);
+					startActivityForResult(intent2, 2);
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		dialog.show();
+	}
+
+	private void agentsAlternatives() {
+		Intent intent = new Intent(AddAssignment.this,
+				ContactsBookActivity.class);
+		intent.putExtra("calling-activity", ActivityConstants.ADD_AGENTS);
+		this.startActivityForResult(intent, 125);
+	}
+
+	public void setAgents(List<Contact> l) {
+		StringBuilder sb = new StringBuilder();
+		for (Contact contact : l) {
+			sb.append(contact.getContactName() + ", ");
+		}
+		adapter.getItemStrings().put(7, sb.toString());
+		adapter.notifyDataSetChanged();
 	}
 }

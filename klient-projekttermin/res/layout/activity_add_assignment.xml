@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
-
-    <ListView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@android:id/list"
-        android:layout_width="fill_parent"
-        android:layout_height="500dp"
-        android:layout_alignParentTop="True">
-    </ListView>
-
-    <CheckBox
-        android:id="@+id/checkBox_to_outsider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="True"
-        android:layout_centerHorizontal="True"
-        android:text="Inkludera utomstående aktörer." />
-
-</RelativeLayout>
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/list"
+    android:layout_width="fill_parent"
+    android:layout_height="500dp"
+    android:layout_alignParentTop="True" >
+</ListView>
