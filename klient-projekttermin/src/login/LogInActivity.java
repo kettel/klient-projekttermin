@@ -218,6 +218,7 @@ public class LogInActivity extends Activity implements Observer {
 
 	public void accessGranted() {
 		user.setLoggedIn(true);
+		passwordView.clearComposingText();
 		switch (callingactivity) {
 		case ActivityConstants.INACTIVITY:
 			break;
