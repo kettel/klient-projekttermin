@@ -54,7 +54,7 @@ public class SocketConnection extends Observable {
 	Iterator<String[]> iterator;
 	private int tries = 0;
 	private boolean failedToConnect = false;
-	private Context context=null;
+	private Context context = null;
 
 	/**
 	 * Konstruktor som även initierar serverlistan.
@@ -338,8 +338,8 @@ public class SocketConnection extends Observable {
 					}
 
 				} while (socket == null && !failedToConnect);
-			} catch (KeyStoreException e1) {
-				e1.printStackTrace();
+			} catch (KeyStoreException e) {
+				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (NoSuchAlgorithmException e) {
@@ -353,7 +353,7 @@ public class SocketConnection extends Observable {
 			}
 		} else {
 			System.out
-					.println("Saknar context till krypteringen, du bör verkligen undersöka varför inget context är satt eller varför detta är nu!!");
+					.println("Saknar context till krypteringen, du bör verkligen undersöka varför inget context är satt eller varför detta är null!!");
 		}
 		return socket;
 	}
