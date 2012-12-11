@@ -244,7 +244,6 @@ public class Cam extends Activity implements SensorEventListener {
 					ibUse.startAnimation(animation);
 				}
 			}
-
 		}
 	}
 

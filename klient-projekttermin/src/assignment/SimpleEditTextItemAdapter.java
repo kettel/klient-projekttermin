@@ -98,7 +98,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		if (position == 7) {
 			convertView = inflater.inflate(getItemViewType(position), null);
 			b7 = (Button) convertView.findViewById(R.id.button_item);
-			System.out.println(b7 + " bfak  " + this.getItem(position));
 			b7.setHint(((HashMap<String, String>) this.getItem(position))
 					.get("line1"));
 			if (itemStrings.get(position) != null

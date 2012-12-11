@@ -74,7 +74,6 @@ public class AssignmentsDB {
 
 				for (int i = 0; i < cursor.getColumnCount(); i++) {
 					String currentCol = cursor.getColumnName(i);
-					System.out.println(currentCol);
 					if (currentCol.equalsIgnoreCase(Assignments.ASSIGNMENT_ID)) {
 						id = cursor.getInt(i);
 					}else if (currentCol.equalsIgnoreCase(Assignments.GLOBAL_ASSIGNMENT_ID)) {

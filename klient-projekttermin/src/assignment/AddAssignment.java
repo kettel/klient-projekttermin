@@ -123,7 +123,6 @@ public class AddAssignment extends SecureActivity implements Serializable {
 	}
 	
 	private void fromContact(Intent i){
-		System.out.println("intent " + i);
 		Gson gson = new Gson();
 		Type type = new TypeToken<List<Contact>>() {
 		}.getType();
@@ -184,6 +183,7 @@ public class AddAssignment extends SecureActivity implements Serializable {
 				.getAdapter()).getItemStrings();
 
 		if (temp.get(0) != null) {
+			System.out.println("VAD E DENN" + temp.get(1));
 			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 					currentUser, isExternalMission, temp.get(2), temp.get(6),
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
