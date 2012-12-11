@@ -35,8 +35,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 				public void onRinging(SipAudioCall call, SipProfile caller) {
 					try {
 //						regSip.setCall(call);
-						if(regSip.isCallAnswered()){
-							Log.d("SIP/IncomingCallReceiver","Upptaget...");
+						// Om klienten redan är i samtal, hantera inte inkommande samtal
+						if(RegisterWithSipSingleton.isCallAnswered()){
+							Log.d("SIP/IncomingCallReceiver","Upptaget... Är i samtal med "+StaticCall.call.getPeerProfile().getDisplayName()+". Tar emot samtal ifrån: " + incomingCall.getPeerProfile().getDisplayName());
+							return;
 						}
 						Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 						startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
@@ -59,8 +61,12 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 					}
 				}
 			};
-			// TODO: Problem i Static-land här då manager antagligen inte riktigt finns..
-			// TODO: Se till så att inställningar inte dras ned i hastighet så kopiöst...
+			// Om klienten redan är i samtal, hantera inte inkommande samtal 
+			if(RegisterWithSipSingleton.isCallAnswered()){
+				Log.d("SIP/IncomingCallReceiver","Upptaget... Är i samtal med "+StaticCall.call.getPeerProfile().getDisplayName()+". Tar emot samtal ifrån: " + incomingCall.getPeerProfile().getDisplayName());
+				return;
+			}
+			
 			incomingCall = regSip.manager.takeAudioCall(intent, listener);
 			Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
 			startIncomingCallDialog.putExtra("caller", incomingCall.getPeerProfile().getDisplayName());

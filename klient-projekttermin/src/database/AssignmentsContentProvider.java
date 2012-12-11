@@ -75,7 +75,8 @@ public class AssignmentsContentProvider extends ContentProvider {
 					+ Assignments.STREETNAME + " VARCHAR(255), "
 					+ Assignments.SITENAME + " VARCHAR(255), "
 					+ Assignments.TIMESTAMP + " VARCHAR(255), "
-					+ Assignments.PRIORITY + " VARCHAR(255));";
+					+ Assignments.PRIORITY + " VARCHAR(255), "
+					+ Assignments.PRIORITY_INT + " VARCHAR(255));";
 
 			db.execSQL(DATABASE_CREATE);
 		}
@@ -236,5 +237,7 @@ public class AssignmentsContentProvider extends ContentProvider {
 				Assignments.TIMESTAMP);
 		assignmentsProjectionMap
 				.put(Assignments.PRIORITY, Assignments.PRIORITY);
+		assignmentsProjectionMap
+		.put(Assignments.PRIORITY_INT, Assignments.PRIORITY_INT);
 	}
 }

@@ -1,5 +1,6 @@
 package assignment;
 
+import models.AssignmentStatus;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -60,8 +61,13 @@ public class AssignmentCursorAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View arg0, Context arg1, Cursor arg2) {
 		final String text = convertToString(arg2);
+		int i = arg2.getColumnIndex(AssignmentTable.Assignments.STATUS);
+		if(arg2.getString(i).equals(AssignmentStatus.NEED_HELP.toString())){
+			((TextView) arg0).setBackgroundColor(Color.LTGRAY);
+		} else {
+			((TextView) arg0).setBackgroundColor(Color.TRANSPARENT);
+		}
 		((TextView) arg0).setText(text);
-//		((TextView) arg0).setTextColor(Color.BLACK);
 	}
 
 	@Override

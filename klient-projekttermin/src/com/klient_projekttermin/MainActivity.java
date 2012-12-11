@@ -172,8 +172,12 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 4:
+					if(qosManager.isAllowedToStartContactBook()){
 					myIntent = new Intent(MainActivity.this,
 							ContactsBookActivity.class);
+					}else{
+						unallowedStart.show();
+					}
 					break;
 				case 5:
 					//if (qosManager.allowedToStartSip()) {
@@ -201,7 +205,6 @@ public class MainActivity extends SecureActivity {
 			RegisterWithSipSingleton.setContext(getApplicationContext());
 			RegisterWithSipSingleton.initializeManager();
 		}
-		
 	}
 
 	public void onBackPressed() {
@@ -288,14 +291,14 @@ public class MainActivity extends SecureActivity {
 				for (NetworkInfo ni : netInfo) {
 					if (ni.getTypeName().equalsIgnoreCase("WIFI"))
 						if (ni.isConnected()){
-							qosManager.checkServerConnection();
+							qosManager.tryToReconnectToServer();
 						}
 						else{
 							haveConnectedWifi = false;
 						}
 					if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
 						if (ni.isConnected()){
-							qosManager.checkServerConnection();
+							qosManager.tryToReconnectToServer();
 						}
 						else{
 							haveConnectedMobile = false;
@@ -315,7 +318,6 @@ public class MainActivity extends SecureActivity {
 
 	@Override
 	protected void onDestroy() {
-		System.out.println("Kör onDestroy i MainActivity");
 		if (mRegisterTask != null) {
 			mRegisterTask.cancel(true);
 		}

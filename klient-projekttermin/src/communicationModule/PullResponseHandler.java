@@ -8,6 +8,8 @@ import qosManager.QoSManager;
 import login.User;
 import messageFunction.Inbox;
 import models.Assignment;
+import models.AssignmentPriority;
+import models.AssignmentStatus;
 import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
@@ -77,15 +79,26 @@ public class PullResponseHandler implements Observer {
 			} else if (data instanceof Assignment) {
 				System.out.println("Nytt uppdrag");
 				message = "Nytt uppdrag";
+
+				Assignment incAssignment = (Assignment) data;
+				
 				/**
-				 * Om update blir en etta har uppdrag uppdateras och således
-				 * behöver det inte läggas till som nytt. Annars lägger man till
-				 * det som ett nytt uppdrag.
+				 * Har det inkommande uppdraget "FINISHED" som status ska den raderas från databasen.
 				 */
-				int update = db.updateModel((Assignment) data,
-						context.getContentResolver());
-				if (update == 0) {
-					db.addToDB((Assignment) data, context.getContentResolver());
+				if (incAssignment.getAssignmentStatus() == AssignmentStatus.FINISHED) {
+					db.deleteFromDB(incAssignment, context.getContentResolver());
+				} else {
+					/**
+					 * Om update blir en etta har uppdrag uppdateras och således
+					 * behöver det inte läggas till som nytt. Annars lägger man
+					 * till det som ett nytt uppdrag.
+					 */
+					int update = db.updateModel(incAssignment,
+							context.getContentResolver());
+					if (update == 0) {
+						incAssignment.setAssignmentStatus(AssignmentStatus.NEED_HELP);
+						db.addToDB(incAssignment, context.getContentResolver());
+					}
 				}
 				notificationIntent = new Intent(context,
 						AssignmentOverview.class);

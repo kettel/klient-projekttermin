@@ -18,7 +18,6 @@ import models.AssignmentStatus;
 import models.Contact;
 import models.ModelInterface;
 import models.PictureModel;
-import android.R.id;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -36,11 +35,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CheckBox;
 import android.widget.CheckedTextView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import camera.Album;
 import camera.Cam;
@@ -76,15 +72,14 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	private ListView lv;
 	private Bitmap bitmap;
 	private int callingActivity;
-	private CheckBox toOutsiders;
 	private boolean isExternalMission;
 	private List<Contact> agents = new ArrayList<Contact>();
 	private static String[] priorityAlts = { "Hög", "Normal", "Låg" };
-	private EditText editText;
 	private static String[] pictureAlts = { "Bifoga bild", "Ta bild",
 			"Ingen bild" };
 	private static String[] coordsAlts = { "Bifoga koordinater från karta",
 			"Använd GPS position", "Inga koordinater" };
+	private int prioInteger;
 
 	@Override
 	@SuppressLint("UseSparseArrays")
@@ -201,7 +196,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
 					currentUser, isExternalMission, temp.get(2), temp.get(6),
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
-					temp.get(4), checkPrioString(temp.get(3)));
+					temp.get(4), checkPrioString(temp.get(3)), prioInteger);
 
 			String tempUnseparated = temp.get(7);
 
@@ -230,9 +225,6 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	}
 
 	private void addAgentsFromList(String agents, Assignment newAssignment) {
-
-		String newString = "";
-
 		if (!agents.equals("")) {
 			newAssignment.setAssignmentStatus(AssignmentStatus.STARTED);
 		}
@@ -257,12 +249,16 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	private AssignmentPriority checkPrioString(String prioString) {
 
 		if (prioString == null) {
+			prioInteger = 2;
 			return AssignmentPriority.PRIO_NORMAL;
 		} else if (prioString.equals("Hög prioritet")) {
+			prioInteger = 1;
 			return AssignmentPriority.PRIO_HIGH;
 		} else if (prioString.equals("Normal prioritet")) {
+			prioInteger = 2;
 			return AssignmentPriority.PRIO_NORMAL;
 		} else if (prioString.equals("Låg prioritet")) {
+			prioInteger = 3;
 			return AssignmentPriority.PRIO_LOW;
 		} else
 			return AssignmentPriority.PRIO_NORMAL;
@@ -310,7 +306,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 		case 8:
 			CheckedTextView textview = (CheckedTextView) arg1;
 			textview.setChecked(!textview.isChecked());
-			isExternalMission=textview.isChecked();
+			isExternalMission = textview.isChecked();
 		default:
 			break;
 		}
@@ -427,6 +423,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 		intent.putExtra("calling-activity", ActivityConstants.ADD_AGENTS);
 		this.startActivityForResult(intent, 1);
 	}
+
 	public void setAgents(List<Contact> l) {
 		StringBuilder sb = new StringBuilder();
 		for (Contact contact : l) {

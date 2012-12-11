@@ -1,5 +1,4 @@
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
@@ -38,7 +37,7 @@
             android:layout_alignBaseline="@+id/turnOnQosText"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/toggleForManualActivationOfBatterySaveMode"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:checked="true"
             android:onClick="startAutomaticAdjustments" />
 
@@ -47,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/manualActivationOfBatterySaveModeText"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:layout_toLeftOf="@+id/automaticQos"
             android:ems="10"
             android:gravity="center"
@@ -60,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/turnOnQosText"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:ems="10"
             android:gravity="center"
             android:lines="1"
@@ -120,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/lowBatteyLevelSeekBar"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:ems="10"
             android:lines="1"
             android:text="@string/screenBrightness"
@@ -151,7 +150,7 @@
             android:layout_below="@+id/screenBrihgtnessSeekBar"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:ems="10"
             android:lines="1"
             android:text="@string/denyMapFunction"
@@ -232,11 +231,33 @@
             android:layout_alignParentRight="true" />
 
         <TextView
-            android:id="@+id/denyWiFiConnection"
+            android:id="@+id/denyContactBook"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/denyCameraFunction"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/contactBookCheckBox"
+            android:ems="10"
+            android:lines="1"
+            android:text="@string/denyContactBook"
+            android:textSize="18dp" >
+        </TextView>
+
+        <CheckBox
+            android:id="@+id/contactBookCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/denyContactBook"
+            android:layout_alignParentRight="true" />
+
+        <TextView
+            android:id="@+id/denyWiFiConnection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/denyContactBook"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
             android:layout_toLeftOf="@+id/WiFiConnectionCheckBox"
@@ -259,7 +280,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/denyWiFiConnection"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:onClick="setDefaultValues"
             android:text="@string/defaultButton" />
     </RelativeLayout>

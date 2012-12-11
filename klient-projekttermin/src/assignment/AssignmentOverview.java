@@ -9,9 +9,9 @@ import models.ModelInterface;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +21,8 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import com.klient_projekttermin.ActivityConstants;
-import com.klient_projekttermin.SecureActivity;
 import com.klient_projekttermin.R;
+import com.klient_projekttermin.SecureActivity;
 import communicationModule.SocketConnection;
 
 import database.AssignmentTable;
@@ -35,12 +35,17 @@ public class AssignmentOverview extends SecureActivity {
 	private List<ModelInterface> assList;
 	private String currentUser;
 	private ListView lv;
+	private Cursor c;
+	private AssignmentCursorAdapter adapter;
+	private List<ModelInterface> listAssignments;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_assignment_overview);
-		lv = (ListView)findViewById(android.R.id.list);
+		lv = (ListView) findViewById(android.R.id.list);
+		db = Database.getInstance(getApplicationContext());
 
 		User user = User.getInstance();
 		currentUser = user.getAuthenticationModel().getUserName();
@@ -76,11 +81,13 @@ public class AssignmentOverview extends SecureActivity {
 	}
 
 	public void loadAssignmentList() {
-		getAssHeadsFromDatabase();
+//		getAssHeadsFromDatabase();
 		/**
 		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
-		AssignmentCursorAdapter adapter = new AssignmentCursorAdapter(this,getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI, null, null, null, null), false);
+		c = getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI,
+				null, null, null, AssignmentTable.Assignments.PRIORITY_INT);
+		adapter = new AssignmentCursorAdapter(this, c, false);
 		this.lv.setAdapter(adapter);
 	}
 
@@ -90,7 +97,6 @@ public class AssignmentOverview extends SecureActivity {
 	 * @return
 	 */
 	private String[] getAssHeadsFromDatabase() {
-		db = Database.getInstance(getApplicationContext());
 		assList = db.getAllFromDB(new Assignment(), getContentResolver());
 		int i = 0;
 		String[] tempHeadArr = new String[assList.size()];
@@ -98,27 +104,55 @@ public class AssignmentOverview extends SecureActivity {
 
 		for (ModelInterface a : assList) {
 			Assignment b = (Assignment) a;
-			tempHeadArr[i] = b.getName() + "   Prio: " + b.getAssignmentPriorityToString();
+			tempHeadArr[i] = b.getName() + "   Prio: "
+					+ b.getAssignmentPriorityToString();
 			idInAdapter[i] = b.getId();
-			i++;
+			i++;		db = Database.getInstance(getApplicationContext());
+
 		}
 		return tempHeadArr;
 	}
 
+	private long getID(int id){
+		listAssignments = db.getAllFromDB(
+				new Assignment(), getContentResolver());
+		long a = adapter.getItemId(id);
+		for (ModelInterface modelInterface : listAssignments) {
+			Assignment s = (Assignment) modelInterface;
+			System.out.println(s.getAssignmentStatus());
+			if(s.getAssignmentStatus() == AssignmentStatus.NEED_HELP && s.getId() == a){
+				System.out.println("I if --------------------------------------");
+				if(s.getAgents().isEmpty()){
+					s.setAssignmentStatus(AssignmentStatus.NOT_STARTED);
+					db.updateModel(s, getContentResolver());
+				} else {
+					s.setAssignmentStatus(AssignmentStatus.STARTED);
+					db.updateModel(s, getContentResolver());
+				}
+			}
+			adapter.notifyDataSetChanged();
+			if (s.getId() == a) {
+				return s.getId();
+			}
+		}
+		return 0;
+	}
 	/**
 	 * Sätter en klicklyssnare på listvyn.
 	 */
 	public void setItemClickListner() {
+		
 		this.lv.setOnItemClickListener(new OnItemClickListener() {
 
+			
 			public void onItemClick(AdapterView<?> arg0, View arg1,
 					int itemClicked, long arg3) {
 
 				Intent myIntent = new Intent(AssignmentOverview.this,
 						AssignmentDetails.class);
-
-				myIntent.putExtra("assignmentID", idInAdapter[itemClicked]);
-				myIntent.putExtra("calling-activity", ActivityConstants.ASSIGNMENT_OVERVIEW);
+				myIntent.putExtra("assignmentID", getID(itemClicked));
+				myIntent.putExtra("calling-activity",
+						ActivityConstants.ASSIGNMENT_OVERVIEW);
 				AssignmentOverview.this.startActivity(myIntent);
 			}
 		});
@@ -130,12 +164,11 @@ public class AssignmentOverview extends SecureActivity {
 	 */
 	public void setLongItemClickListener() {
 		// Skapar en lyssnare som lyssnar efter långa intryckningar
-		this.lv.setOnItemLongClickListener(
-		new OnItemLongClickListener() {
+		this.lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int eraseAtPos, long arg3) {
-				showEraseOption(idInAdapter[eraseAtPos]);
+				showEraseOption(eraseAtPos);
 				return true;
 			}
 		});
@@ -175,20 +208,17 @@ public class AssignmentOverview extends SecureActivity {
 	public void eraseAssignment(long assignmentId) {
 		List<ModelInterface> listAssignments = db.getAllFromDB(
 				new Assignment(), getContentResolver());
-		for (ModelInterface m : listAssignments) {
-			Assignment a = (Assignment) m;
-			if (a.getId() == assignmentId) {
-				db.deleteFromDB(a, getContentResolver());
-				// Sätter status för att uppdraget har avslutats.
-				a.setAssignmentStatus(AssignmentStatus.FINISHED);
-
-				SocketConnection connection=new SocketConnection();
+		long a = adapter.getItemId((int) assignmentId);
+		for (ModelInterface modelInterface : listAssignments) {
+			Assignment s = (Assignment) modelInterface;
+			if (s.getId() == a) {
+				db.deleteFromDB(s, getContentResolver());
+				s.setAssignmentStatus(AssignmentStatus.FINISHED);
+				SocketConnection connection = new SocketConnection();
 				connection.setContext(getApplicationContext());
-				connection.sendModel(a);
+				connection.sendModel(s);
 			}
-
 		}
-
 		loadAssignmentList();
 	}
 }

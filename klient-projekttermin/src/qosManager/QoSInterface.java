@@ -1,6 +1,5 @@
 package qosManager;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -13,8 +12,9 @@ import android.widget.ToggleButton;
 
 import com.klient_projekttermin.R;
 import com.klient_projekttermin.R.id;
+import com.klient_projekttermin.SecureActivity;
 
-public class QoSInterface extends Activity implements OnSeekBarChangeListener, OnCheckedChangeListener {
+public class QoSInterface extends SecureActivity implements OnSeekBarChangeListener, OnCheckedChangeListener {
 	private QoSManager qosManager;
 	private ToggleButton batterySaveToggle;
 	private ToggleButton automaticSaveModeToggel;
@@ -24,6 +24,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	private CheckBox messagePermission;
 	private CheckBox assignmentPermission;
 	private CheckBox cameraPermission;
+	private CheckBox contactBookPermission;
 	private CheckBox wifiPermission;
 	private TextView lowBatteryLevelText;
 	private TextView screenBrightnessLevelText;
@@ -36,6 +37,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		qosManager = QoSManager.getInstance();
 		qosManager.setContext(this);
 		batterySaveToggle = (ToggleButton) findViewById(id.toggleForManualActivationOfBatterySaveMode);
+		qosManager.setBatterySaveModeToggle(batterySaveToggle);
 		automaticSaveModeToggel = (ToggleButton) findViewById(id.automaticQos);
 		screenBrightnessBar = (SeekBar) findViewById(id.screenBrihgtnessSeekBar);
 		screenBrightnessBar.setOnSeekBarChangeListener(this);
@@ -45,7 +47,9 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		messagePermission = (CheckBox) findViewById(id.messageFunctionCheckBox);
 		assignmentPermission = (CheckBox) findViewById(id.assignmentFunctionCheckBox);
 		cameraPermission = (CheckBox) findViewById(id.cameraFunctionCheckBox);
+		contactBookPermission = (CheckBox) findViewById(R.id.contactBookCheckBox);
 		wifiPermission = (CheckBox) findViewById(id.WiFiConnectionCheckBox);
+		
 		lowBatteryLevelText = (TextView) findViewById(id.lowBatteryValue);
 		screenBrightnessLevelText = (TextView) findViewById(id.lowScreenBrightnessValue);
 
@@ -60,6 +64,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		cameraPermission.setOnCheckedChangeListener(this);
 		messagePermission.setOnCheckedChangeListener(this);
 		assignmentPermission.setOnCheckedChangeListener(this);
+		contactBookPermission.setOnCheckedChangeListener(this);
 	}
 
 	/**
@@ -67,10 +72,10 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 	 */
 	public void manualStartBatterySaveMode(View v){
 		if(batterySaveToggle.isChecked()){
-			qosManager.adjustToLowBatteryLevel();
+			qosManager.adjustToLowBatteryLevel(this);
 		}
 		else{
-			qosManager.adjustToOkayBatteryLevel();
+			qosManager.adjustToOkayBatteryLevel(this);
 		}
 	}
 
@@ -123,6 +128,15 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			qosManager.setPermissionToStartCamera(true);
 		}
 	}
+	
+	public void setContactBookPermission(View v){
+		if(contactBookPermission.isChecked()){
+			qosManager.setPermissionToStartContactBook(false);
+		}
+		else {
+			qosManager.setPermissionToStartContactBook(true);
+		}
+	}
 
 	public void setWiFiPermission(View v){
 		if(wifiPermission.isChecked()){
@@ -139,7 +153,8 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		cameraPermission.setChecked(true);
 		messagePermission.setChecked(false);
 		assignmentPermission.setChecked(true);
-		screenBrightnessBar.setProgress(20);
+		contactBookPermission.setChecked(true);
+		screenBrightnessBar.setProgress(10);
 		batterylevelBar.setProgress(20);
 
 		if(qosManager.batterySaveModeIsActivated()){
@@ -148,9 +163,10 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 			qosManager.setPermissionToStartCamera(false);
 			qosManager.setPermissionToStartMessages(true);
 			qosManager.setPermissionToStartAssignment(false);
-			qosManager.setLowBatteryLevel(20);
-			qosManager.setScreenBrightnessValueLow((float) 0.2);
-			qosManager.adjustToLowBatteryLevel();
+			qosManager.setPermissionToStartContactBook(false);
+			qosManager.setLowBatteryLevel(this, 20);
+			qosManager.setScreenBrightnessValueLow(this, (float) 0.1);
+			qosManager.adjustToLowBatteryLevel(this);
 		}
 	}
 
@@ -160,6 +176,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		messagePermission.setChecked(!qosManager.getPermissionToStartMessages());
 		assignmentPermission.setChecked(!qosManager.getPermissionToStartAssignment());
 		cameraPermission.setChecked(!qosManager.getPermissionToStartCamera());
+		contactBookPermission.setChecked(!qosManager.getPermissionToStartContactBook());
 		wifiPermission.setChecked(!qosManager.getPermissionToUseWiFi());
 		screenBrightnessBar.setProgress((int) (qosManager.getScreenBrightnessValue()*100));
 		batterylevelBar.setProgress(qosManager.getLowBatteryLevel());
@@ -171,26 +188,24 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		if(seekBar.equals(screenBrightnessBar)){
 			float value = ((float) progress/100);
 
-			if(value<=0.1){
-				value=(float) 0.1;
+			if(value<=0.05){
+				value=(float) 0.05;
 			}
 			screenBrightnessLevelText.setText(progress+" %");
-			qosManager.setScreenBrightnessValueLow(value);
+			qosManager.setScreenBrightnessValueLow(this, value);
 		}
 		else{
 			lowBatteryLevelText.setText(progress+" %");
-			qosManager.setLowBatteryLevel(progress);
+			qosManager.setLowBatteryLevel(this, progress);
 		}
 	}
 
 	public void onStartTrackingTouch(SeekBar seekBar) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void onStopTrackingTouch(SeekBar seekBar) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -198,6 +213,7 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		int messageChkId = messagePermission.getId();
 		int assignmentChkId = assignmentPermission.getId();
 		int cameraChkId = cameraPermission.getId();
+		int contactBookChkId = contactBookPermission.getId();
 		int wifiChkId = wifiPermission.getId();
 
 		if(mapChkId==buttonView.getId()){
@@ -212,12 +228,14 @@ public class QoSInterface extends Activity implements OnSeekBarChangeListener, O
 		else if(cameraChkId==buttonView.getId()){
 			setCameraPermission(buttonView);
 		}
+		else if(contactBookChkId==buttonView.getId()){
+			setContactBookPermission(buttonView);
+		}
 		else if(wifiChkId==buttonView.getId()){
 			setWiFiPermission(buttonView);
 		}
-
 		if(batterySaveToggle.isChecked()){
-			qosManager.adjustToLowBatteryLevel();
+			qosManager.adjustToLowBatteryLevel(this);
 		}
 	}
 }

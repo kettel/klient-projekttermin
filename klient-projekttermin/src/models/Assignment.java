@@ -52,6 +52,7 @@ public class Assignment implements ModelInterface {
 	private String siteName;
 	// Prioritetsnivå
 	private AssignmentPriority assignmentPrio;
+	private long prio_int = 0;
 
 	/**
 	 * Tom konstruktor. Används bland annat för att hämta från databasen.
@@ -278,7 +279,7 @@ public class Assignment implements ModelInterface {
 			boolean externalMission, String assignmentDescription,
 			String timeSpan, AssignmentStatus assignmentStatus,
 			byte[] cameraImage, String streetName, String siteName,
-			AssignmentPriority assignmentPrio) {
+			AssignmentPriority assignmentPrio, long prio_int) {
 		this.name = name;
 		this.region = region;
 		this.sender = sender;
@@ -291,6 +292,7 @@ public class Assignment implements ModelInterface {
 		this.siteName = siteName;
 		this.assignmentTimeStamp = Calendar.getInstance().getTimeInMillis();
 		this.assignmentPrio = assignmentPrio;
+		this.prio_int = prio_int;
 	}
 
 	/**
@@ -318,7 +320,7 @@ public class Assignment implements ModelInterface {
 			boolean externalMission, String assignmentDescription,
 			String timeSpan, AssignmentStatus assignmentStatus,
 			byte[] cameraImage, String streetName, String siteName,
-			Long timeStamp, AssignmentPriority assignmentPrio) {
+			Long timeStamp, AssignmentPriority assignmentPrio, long prio_int) {
 		this.id = id;
 		this.globalID = globalID;
 		this.name = name;
@@ -336,6 +338,7 @@ public class Assignment implements ModelInterface {
 		this.siteName = siteName;
 		this.assignmentTimeStamp = timeStamp;
 		this.assignmentPrio = assignmentPrio;
+		this.prio_int = prio_int;
 	}
 
 	public String getRegion() {
@@ -469,5 +472,11 @@ public class Assignment implements ModelInterface {
 	}
 	public void setGlobalID(String user){
 		this.globalID = user + assignmentTimeStamp.toString();
+	}
+	public long getPrio_int() {
+		return prio_int;
+	}
+	public void setPrio_int(int prio_int) {
+		this.prio_int = prio_int;
 	}
 }

@@ -36,6 +36,7 @@ public class AssignmentTable {
 		public static final String SITENAME = "sitename";
 		public static final String TIMESTAMP = "timestamp";
 		public static final String PRIORITY = "priority";
+		public static final String PRIORITY_INT = "priority_int";
 		
 	}
 }
