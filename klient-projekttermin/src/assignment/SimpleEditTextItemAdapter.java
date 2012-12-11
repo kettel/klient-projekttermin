@@ -45,7 +45,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 		case 8:
 			return android.R.layout.simple_list_item_checked;
 		default:
-			return android.R.layout.simple_list_item_1;
+			return android.R.layout.simple_list_item_2;
 		}
 	}
 
@@ -87,7 +87,12 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				textView.setText(this.itemStrings.get(position));
 			}
 		}
-
+		if (convertView.findViewById(android.R.id.text2) != null) {
+			TextView textView = (TextView) convertView
+					.findViewById(android.R.id.text2);
+			textView.setText(((HashMap<String, String>) this.getItem(position))
+					.get("line1"));
+		}
 		return convertView;
 
 	}

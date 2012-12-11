@@ -193,10 +193,10 @@ public class AddAssignment extends SecureActivity implements Serializable,
 				.getAdapter()).getItemStrings();
 
 		if (temp.get(0) != null) {
-			Assignment newAssignment = new Assignment(temp.get(0), temp.get(1),
-					currentUser, isExternalMission, temp.get(2), temp.get(6),
+			Assignment newAssignment = new Assignment(temp.get(0), temp.get(4),
+					currentUser, isExternalMission, temp.get(1), temp.get(3),
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
-					temp.get(4), checkPrioString(temp.get(3)), prioInteger);
+					temp.get(2), checkPrioString(temp.get(5)), prioInteger);
 
 			String tempUnseparated = temp.get(7);
 
@@ -361,7 +361,6 @@ public class AddAssignment extends SecureActivity implements Serializable,
 				dialog.dismiss();
 				switch (arg2) {
 				case 0:
-					dialog.dismiss();
 					Intent intent = new Intent(AddAssignment.this,
 							MapActivity.class);
 					intent.putExtra("calling-activity",
