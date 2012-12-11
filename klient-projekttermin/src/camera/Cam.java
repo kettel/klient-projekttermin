@@ -1,11 +1,15 @@
 package camera;
 
+import java.io.ByteArrayOutputStream;
+
 import models.PictureModel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -163,15 +167,17 @@ public class Cam extends Activity implements SensorEventListener {
 
 		public void onPictureTaken(byte[] data, Camera camera) {
 
+			byte[] rotData = rotateByteArrayPicture(data, 90);
+			
 			Database db = Database.getInstance(getApplicationContext());
 			int count = db.getDBCount(new PictureModel(), getContentResolver());
 			if (count > 5) {
 				while (db.getDBCount(new PictureModel(), getContentResolver()) > 5) {
 					db.deleteFromDB(new PictureModel(), getContentResolver());
 				}
-				db.addToDB(new PictureModel(data), getContentResolver());
+				db.addToDB(new PictureModel(rotData), getContentResolver());
 			} else {
-				db.addToDB(new PictureModel(data), getContentResolver());
+				db.addToDB(new PictureModel(rotData), getContentResolver());
 			}
 
 			count = db.getDBCount(new PictureModel(), getContentResolver());
@@ -181,7 +187,7 @@ public class Cam extends Activity implements SensorEventListener {
 			ops.inSampleSize = 2;
 
 			Bitmap bm = BitmapFactory
-					.decodeByteArray(data, 0, data.length, ops);
+					.decodeByteArray(rotData, 0, rotData.length, ops);
 			Bitmap scaled = Bitmap.createScaledBitmap(bm, 50, 50, true);
 			ibUse.setImageBitmap(scaled);
 			switch (callingactivity) {
@@ -200,6 +206,27 @@ public class Cam extends Activity implements SensorEventListener {
 			}
 		}
 	};
+	
+	private byte[] rotateByteArrayPicture(byte[] byteArray, float degree){
+	
+		BitmapFactory.Options ops = new BitmapFactory.Options();
+		Bitmap bm = BitmapFactory
+				.decodeByteArray(byteArray, 0, byteArray.length, ops);
+		
+		//Matris för att rotera
+		Matrix rotateMatrix = new Matrix();
+		rotateMatrix.postRotate(degree);
+		
+		//Rotera bitmapen BM
+		Bitmap rotateBM  = bm.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), rotateMatrix, true);
+		
+		//Till byte[]
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		rotateBM.compress(CompressFormat.PNG, 0, bos); 
+		return bos.toByteArray();
+	}
+	
+	
 
 	/**
 	 * Putting in place a listener so we can get the sensor data only when
@@ -244,7 +271,6 @@ public class Cam extends Activity implements SensorEventListener {
 					ibUse.startAnimation(animation);
 				}
 			}
-
 		}
 	}
 

@@ -119,9 +119,7 @@ public class AssignmentOverview extends SecureActivity {
 		long a = adapter.getItemId(id);
 		for (ModelInterface modelInterface : listAssignments) {
 			Assignment s = (Assignment) modelInterface;
-			System.out.println(s.getAssignmentStatus());
 			if(s.getAssignmentStatus() == AssignmentStatus.NEED_HELP && s.getId() == a){
-				System.out.println("I if --------------------------------------");
 				if(s.getAgents().isEmpty()){
 					s.setAssignmentStatus(AssignmentStatus.NOT_STARTED);
 					db.updateModel(s, getContentResolver());

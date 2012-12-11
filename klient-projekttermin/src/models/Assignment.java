@@ -345,7 +345,7 @@ public class Assignment implements ModelInterface {
 		if (region == null) {
 			Gson gson = new Gson();
 			WgsPoint[] p = new WgsPoint[1];
-			p[0] = new WgsPoint(0, 0);
+			p[0] = new WgsPoint(0.0, 0.0);
 			Type type = new TypeToken<WgsPoint[]>() {
 			}.getType();
 			region = gson.toJson(p, type);

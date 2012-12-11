@@ -52,7 +52,6 @@ public class CustomAdapter extends ArrayAdapter<String> {
 
 	@Override
 	public boolean isEnabled(int position) {
-		// TODO Auto-generated method stub
 		if (position==0) {
 			return enabled;
 		}
@@ -66,6 +65,7 @@ public class CustomAdapter extends ArrayAdapter<String> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
+		System.out.println(enabled);
 		if (position==0&&!enabled&&convertView!=null) {
 			convertView.setAlpha((float)0.5);
 		}

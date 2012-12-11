@@ -172,7 +172,6 @@ public class AssignmentDetails extends SecureActivity {
 		Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
 		StringBuilder sb = new StringBuilder();
-		
 		WgsPoint[] cords = gson.fromJson(currentAssignment.getRegion(), type);
 		if (cords != null) {
 			for (WgsPoint wgsPoint : cords) {

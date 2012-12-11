@@ -102,6 +102,7 @@ public class SecureActivity extends Activity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == LOGIN_REQUEST) {
 			if (resultCode == Activity.RESULT_CANCELED) {
+				System.out.println("result canceled");
 				finish();
 			}
 		}

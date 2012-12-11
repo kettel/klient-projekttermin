@@ -140,7 +140,6 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	}
 
 	private void fromContact(Intent i) {
-		System.out.println("intent " + i);
 		Gson gson = new Gson();
 		Type type = new TypeToken<List<Contact>>() {
 		}.getType();
@@ -400,7 +399,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 					Intent intent = new Intent(AddAssignment.this, Album.class);
 					intent.putExtra("calling-activity",
 							ActivityConstants.ADD_PICTURE_TO_ASSIGNMENT);
-					startActivityForResult(intent, 1);
+					startActivityForResult(intent, 125);
 					break;
 				case 1:
 					Intent intent2 = new Intent(AddAssignment.this, Cam.class);
@@ -420,7 +419,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 		Intent intent = new Intent(AddAssignment.this,
 				ContactsBookActivity.class);
 		intent.putExtra("calling-activity", ActivityConstants.ADD_AGENTS);
-		this.startActivityForResult(intent, 1);
+		this.startActivityForResult(intent, 125);
 	}
 
 	public void setAgents(List<Contact> l) {
