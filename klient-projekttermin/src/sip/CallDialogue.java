@@ -81,7 +81,7 @@ import com.klient_projekttermin.R;
  * @author kettel
  * 
  */
-public class IncomingCallDialog extends Activity {
+public class CallDialogue extends Activity {
 
 	private long timeWhenCallStarted = 0;
 	private String timeInCall = new String("");
@@ -117,7 +117,9 @@ public class IncomingCallDialog extends Activity {
 	// Om skärmen är tänd
 	private boolean isScreenOn;
 
-	//RegisterWithSipSingleton regSip;
+	private SipRegistrator regSip;
+	
+	private CurrentCall currentCall;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +129,10 @@ public class IncomingCallDialog extends Activity {
 		setContentView(R.layout.activity_incoming_call_dialog);
 		Bundle extras = getIntent().getExtras();
 		boolean isOutgoing = extras.getBoolean("outgoing");
+		
+		// Hämta instanser av SipRegistrator och CurrentCall
+		regSip = SipRegistrator.getInstance();
+		currentCall = CurrentCall.getInstance();
 		
 		// Nollställ callTime
 		timeInCall = "";
@@ -163,6 +169,7 @@ public class IncomingCallDialog extends Activity {
 		// Initiera närhetssensorn
 		mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		mProximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+		
 		
 		// Skapa en lyssnare för närhetssensorn
 		proximitySensorEventListener = new SensorEventListener(){
@@ -228,7 +235,7 @@ public class IncomingCallDialog extends Activity {
 		// för timern.
 		Log.d("SIP/IncomingCallDialog/onStart",
 				"kör en onStart och hämtat regSip. Är isCallAnswered? "
-						+ ((RegisterWithSipSingleton.isCallAnswered()) ? "sant" : "falskt"));
+						+ ((regSip.callStatus.getStatus()) ? "sant" : "falskt"));
 		super.onStart();
 	}
 
@@ -256,7 +263,7 @@ public class IncomingCallDialog extends Activity {
 	 * Hantera ett utgående samtal
 	 */
 	private void outgoingCall() {
-		if(RegisterWithSipSingleton.isRegistred()){
+		if(regSip.isRegistred()){
 			Log.d("SIP/IncomingCallDialog/outgoingCall",
 					"Startar ett utgående samtal..");
 
@@ -275,16 +282,15 @@ public class IncomingCallDialog extends Activity {
 					Log.d("SIP/SipSingleton/Outgoingcall/ObserverCallStatus",
 							"Nu har visst användaren gjort något..");
 					// Om något har avbrutit samtalet så callStatus är false
-					if (!RegisterWithSipSingleton.callStatus.getStatus()) {
+					if (!regSip.callStatus.getStatus()) {
 						Log.d("SIP/SipSingleton/Outgoingcall/ObserverCallStatus",
 								"Andra änden la visst på...");
 						finish();
 					}
 					// Om den andra änden svarar
-					else if(RegisterWithSipSingleton.callStatus.getStatus()){
+					else if(regSip.callStatus.getStatus()){
 						Log.d("SIP/SipSingleton/Outgoingcall/ObserverCallStatus",
 								"Andra änden svarade...");
-						RegisterWithSipSingleton.setCallAnswered(true);
 						// Sätt tiden till när samtalet besvaras
 						timeWhenCallStarted = System.currentTimeMillis();
 						
@@ -295,7 +301,7 @@ public class IncomingCallDialog extends Activity {
 				}
 			}
 			ObserverCallStatus observer = new ObserverCallStatus();
-			RegisterWithSipSingleton.callStatus.addObserver(observer);
+			regSip.callStatus.addObserver(observer);
 
 			// Lyssna på toggle-knappen
 			ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
@@ -310,8 +316,7 @@ public class IncomingCallDialog extends Activity {
 					}
 					// Lägg på samtal
 					if (!buttonView.isChecked()) {
-						RegisterWithSipSingleton.setCallAnswered(false);
-						RegisterWithSipSingleton.callStatus.setStatus(false);
+						regSip.callStatus.setStatus(false);
 						Log.d("SIP/IncomingCallDialog/OutgoingCall",
 								"Samtal avslutat. Ska nu köra finish på aktivitet...");
 //						finish();
@@ -321,7 +326,7 @@ public class IncomingCallDialog extends Activity {
 		}
 		else{
 			Log.d("SIP/IncomingCallDialog/OutgoingCall","Användaren är inte registrerad mot SIP-servern. Ska registrera...");
-			RegisterWithSipSingleton.initializeManager();
+			regSip.initializeManager();
 		}
 		
 	}
@@ -352,7 +357,7 @@ public class IncomingCallDialog extends Activity {
 		final class ObserverCallStatus implements Observer {
 			public void update(Observable arg0, Object arg1) {
 				// Om något har avbrutit samtalet så callStatus är false
-				if (!RegisterWithSipSingleton.callStatus.getStatus()) {
+				if (!regSip.callStatus.getStatus()) {
 					Log.d("SIP/SipSingleton/incomingCall/ObserverCallStatus",
 							"Någon la visst på...");
 					finish();
@@ -361,7 +366,7 @@ public class IncomingCallDialog extends Activity {
 		}
 		// Lyssna efter om personen har svarat på påringningen
 		ObserverCallStatus observer = new ObserverCallStatus();
-		RegisterWithSipSingleton.callStatus.addObserver(observer);
+		regSip.callStatus.addObserver(observer);
 
 		// Lyssna på toggle-knappen
 		ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleButton1);
@@ -373,31 +378,26 @@ public class IncomingCallDialog extends Activity {
 					// Stoppa ringsignalen
 					stopRingTone();
 					// Sätt true då samtalet är öppet
-					RegisterWithSipSingleton.callStatus.setStatus(true);
+					regSip.callStatus.setStatus(true);
 					// Uppdatera samtalstexten
 					updateCaller("I samtal med " + caller);
-					// Samtal är besvarat
-					RegisterWithSipSingleton.setCallAnswered(true);
 					// Sätt aktuell tid till initialtid för samtalsstart
 					timeWhenCallStarted = System.currentTimeMillis();
 					// Besvara samtalet
-					StaticCall.answerCall(StaticCall.call);
+					currentCall.answerCall();
 					// Uppdatera tiden i textView
 					updateCallTime();
 					
 				}
 				// Lägg på samtal
-				if (!buttonView.isChecked() && RegisterWithSipSingleton.isCallAnswered()) {
-					RegisterWithSipSingleton.setCallAnswered(false);
-					try {
-						IncomingCallReceiver.incomingCall.endCall();
-					} catch (SipException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				if (!buttonView.isChecked() && regSip.callStatus.getStatus()) {
+					// Lägg på samtalet
+					currentCall.dropCall();
 					
 					// Underrätta lyssnare om att samtalet är slut
-					RegisterWithSipSingleton.callStatus.setStatus(false);
+					regSip.callStatus.setStatus(false);
+					
+					// Skriv i LogCat att samtalet är över
 					Log.d("SIP/IncomingCallDialog/incomingCall/onCheckedListener",
 							"Samtal avslutat. Ska nu köra finish på aktivitet...");
 				}
@@ -405,8 +405,9 @@ public class IncomingCallDialog extends Activity {
 		});
 	}
 
-	
-
+	/**
+	 * Toggla toggle-knappen (aka min asfula svara/lägg på knapp)
+	 */
 	private void setToggleButtonChecked() {
 		this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -417,6 +418,9 @@ public class IncomingCallDialog extends Activity {
 		});
 	}
 
+	/**
+	 * Starta samtalstimern
+	 */
 	private void startCallTimer() {
 		int delay = 0; // Vänta inte innan timern ska starta
 		final int period = 1000; // Upprepa varje sekund
@@ -425,11 +429,18 @@ public class IncomingCallDialog extends Activity {
 		
 		runnable = new Runnable(){
 			public void run() {
-				if (RegisterWithSipSingleton.isCallAnswered()) {
+				if (regSip.callStatus.getStatus()) {
+					// Hämta antal millisekunder sedan samtalet startades
 					long millis = System.currentTimeMillis()
 							- timeWhenCallStarted;
+					
+					// Konvertera till sekunder
 					int seconds = (int) (millis / 1000);
+					
+					// Och minuter
 					int minutes = seconds / 60;
+					
+					// Kapa överflödiga sekunder
 					seconds = seconds % 60;
 					if (seconds < 10) {
 						String time = "" + minutes + ":0" + seconds;
@@ -441,27 +452,33 @@ public class IncomingCallDialog extends Activity {
 					// Uppdatera samtalstiden
 					updateCallTime();
 				}
-				// Kör runnable igen
+				// Kör timern igen
 				handler.postDelayed(this, period);
 			}
 		};
 		
+		// Starta timern
 		handler.postDelayed(runnable, delay);
 		
 	}
-
+	
+	/**
+	 * Uppdaterar textfältet med samtalstid
+	 */
 	private void updateCallTime() {
 		this.runOnUiThread(new Runnable() {
 			public void run() {
-				// Sätt namnet på den som ringer
 				TextView timeView = (TextView) findViewById(R.id.textViewTimeInCall);
 				timeView.setText(timeInCall);
 			}
 		});
 	}
 	
+	/**
+	 * Uppdatera textfältet för att informera om vem man pratar med.
+	 * @param text
+	 */
 	private void updateCaller(final String text) {
-		// Sätt namn på vem som ringer i UI-tråden (Be a good citizen..)
 		this.runOnUiThread(new Runnable() {
 			public void run() {
 				// Sätt namnet på den som ringer
@@ -471,20 +488,14 @@ public class IncomingCallDialog extends Activity {
 		});
 	}
 
-	public static void endCall() {
-		RegisterWithSipSingleton.callStatus.setStatus(false);
-		StaticCall.dropCall(StaticCall.call);
-	}
-
 	/**
 	 * Då onFinish inte riktigt är pålitlig för att tillräckligt snabbt döda
 	 * vare sig ringsignal eller timer
 	 */
 	private void killEssentials() {
 		// Avsluta ev pågående samtal
-		RegisterWithSipSingleton.setCallAnswered(false);
-		RegisterWithSipSingleton.dropCall();
-		endCall();
+		regSip.callStatus.setStatus(false);
+		currentCall.dropCall();
 		
 		// Avregistrera närhetssensorlyssnaren
 		if(mSensorManager != null){
@@ -523,18 +534,11 @@ public class IncomingCallDialog extends Activity {
         window.clearFlags(LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         window.clearFlags(LayoutParams.FLAG_TURN_SCREEN_ON);
         
-        // Släcker skärmen men tänder den inte igen sen...
-//        WindowManager.LayoutParams layoutParam = getWindow().getAttributes();
-//        layoutParam.screenBrightness = 0; 
-//        layoutParam.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-//        getWindow().setAttributes(layoutParam);
-//        
         // Hämta sedan adminrättigheter för att få låsa skärmen
-        adminComponent = new ComponentName(IncomingCallDialog.this, Darclass.class);
+        adminComponent = new ComponentName(CallDialogue.this, Darclass.class);
         devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         
         // Om device-rättigheter inte är instansierade, hämta dem genom en JÄTTEIRRITERANDE ruta..
-        // TODO: Autoacceptera rutan..
         if (!devicePolicyManager.isAdminActive(adminComponent)) {
             Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
             intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
@@ -557,10 +561,11 @@ public class IncomingCallDialog extends Activity {
 			Log.d("SIP/IncomingCallDialog/startRingTone", "Ska starta ringsignal...");
 			ringtone.play();
 			
-			// Start immediately
-			// Vibrate for 200 milliseconds
-			// Sleep for 500 milliseconds
+			// Mönster för vibration.
+			// Starta omedelbart, vibrera 200ms, vänta 500ms
 			long[] pattern = { 0, 200, 500 };
+			
+			// Vibrera enligt mönster. Starta omedelbart.
 			vibrator.vibrate(pattern, 0);
 			
 			isRinging = true;
@@ -569,19 +574,14 @@ public class IncomingCallDialog extends Activity {
 	}
 	
 	private void stopRingTone() {
-		// Om ringsignalen spelas, stoppa den
+		// Om ringsignal och vibrator spelas, stoppa dem
 		if (isRinging) {
-			//if (ringtone != null && ringtone.isPlaying()) {
-				Log.d("SIP/IncomingDialer/stopRingTone", "Ska stoppa ringsignalen ringtone...");
-				ringtone.stop();
-				vibrator.cancel();
-				Log.d("SIP/IncomingDialer/stopRingTone", "Stoppade ringsignal ringtone");
-			//}
-
+			ringtone.stop();
+			vibrator.cancel();
+				
+			// Om ringsignalen ändå spelas, stoppa den ordentligt
 			if (mRingtoneManager != null) {
-				Log.d("SIP/IncomingDialer/stopRingTone", "Ska stoppa ringsignal RingToneManager.");
 				mRingtoneManager.stopPreviousRingtone();
-				Log.d("SIP/IncomingDialer/stopRingTone", "Stoppade ringsignal RingToneManager.");
 			}
 			
 			isRinging = false;

@@ -8,15 +8,14 @@ import android.net.sip.SipException;
 import android.net.sip.SipProfile;
 import android.util.Log;
 
-/*** Lyssnar efter inkommande SIP-samtal, fångar dem och ger dem till SipMain.
+/*** Lyssnar efter inkommande SIP-samtal, fångar dem och ger dem till CallDialog.
  */
 public class IncomingCallReceiver extends BroadcastReceiver {
 	
-	static SipAudioCall incomingCall = null;
-	static int callCounter = 0;
+	private int callCounter = 0;
 	
-	private RegisterWithSipSingleton regSip;
-	
+	private SipRegistrator regSip;
+	private CurrentCall currentCall;
 	/**
 	 * Processes the incoming call, answers it, and hands it over to the
 	 * WalkieTalkieActivity.
@@ -27,32 +26,35 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 	public void onReceive(final Context context, Intent intent) {
 		callCounter++;
 		Log.d("SIP/IncomingCallReceiver/onReceive","Ett inkommande samtal... Samtal nummer: "+callCounter);
-		regSip = RegisterWithSipSingleton.getInstance(context);
+		regSip = SipRegistrator.getInstance();
 		
 		try {
 			SipAudioCall.Listener listener = new SipAudioCall.Listener() {
+				// Vid inkommande samtal (när telefonen ringer)
 				@Override
 				public void onRinging(SipAudioCall call, SipProfile caller) {
 					try {
 //						regSip.setCall(call);
 						// Om klienten redan är i samtal, hantera inte inkommande samtal
-						if(RegisterWithSipSingleton.isCallAnswered()){
-							Log.d("SIP/IncomingCallReceiver","Upptaget... Är i samtal med "+StaticCall.call.getPeerProfile().getDisplayName()+". Tar emot samtal ifrån: " + incomingCall.getPeerProfile().getDisplayName());
+						if(regSip.callStatus.getStatus()){
+							Log.d("SIP/IncomingCallReceiver","Upptaget... Är i samtal med annan. Tar emot samtal ifrån: " + call.getPeerProfile().getDisplayName() + " som kommer nekas.");
 							return;
 						}
-						Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
-						startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
-						startIncomingCallDialog.putExtra("outgoing",false);
-						startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						context.startActivity(startIncomingCallDialog);
+						// Jag tror inte detta händer annat än när ett nytt inkommande samtal försöker ansluta över ett pågående.
+//						Intent startIncomingCallDialog = new Intent(context,CallDialog.class);
+//						startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
+//						startIncomingCallDialog.putExtra("outgoing",false);
+//						startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//						context.startActivity(startIncomingCallDialog);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
+				// När samtalet är avslutat/brutet
 				@Override
 				public void onCallEnded(SipAudioCall call){
 					Log.d("SIP/IncomingCallRec/onCallEnded","Samtalet avslutades...");
-					RegisterWithSipSingleton.callStatus.setStatus(false);
+					regSip.callStatus.setStatus(false);
 					try {
 						call.endCall();
 					} catch (SipException e) {
@@ -61,27 +63,26 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 					}
 				}
 			};
-			// Om klienten redan är i samtal, hantera inte inkommande samtal 
-			if(RegisterWithSipSingleton.isCallAnswered()){
-				Log.d("SIP/IncomingCallReceiver","Upptaget... Är i samtal med "+StaticCall.call.getPeerProfile().getDisplayName()+". Tar emot samtal ifrån: " + incomingCall.getPeerProfile().getDisplayName());
+			
+			currentCall = CurrentCall.getInstance();
+			// Om användaren inte är i samtal
+			if(!currentCall.isBusy()){
+				currentCall.setCall(regSip.manager.takeAudioCall(intent, listener));
+				
+				// Starta sedan CallDialog för ett inkommande samtal
+				Intent startIncomingCallDialog = new Intent(context,CallDialogue.class);
+				startIncomingCallDialog.putExtra("caller", currentCall.getCall().getPeerProfile().getDisplayName());
+				startIncomingCallDialog.putExtra("outgoing",false);
+				startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(startIncomingCallDialog);
+			}
+			// Om användaren är upptagen i ett annat samtal
+			else{
+				Log.d("SIP/IncomingCallReceiver","Upptaget... Är redan i samtal med "+currentCall.getCall().getPeerProfile().getDisplayName());
 				return;
 			}
-			
-			incomingCall = regSip.manager.takeAudioCall(intent, listener);
-			Intent startIncomingCallDialog = new Intent(context,IncomingCallDialog.class);
-			startIncomingCallDialog.putExtra("caller", incomingCall.getPeerProfile().getDisplayName());
-			startIncomingCallDialog.putExtra("outgoing",false);
-			startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			regSip.setCall(incomingCall);
-			StaticCall.call = incomingCall;
-			context.startActivity(startIncomingCallDialog);
 		} catch (Exception e) {
-			if (incomingCall != null) {
-				Log.d("SIP/IncomingCallReceiver","IncomingCall är inte null men något gick fel. Stänger...");
-				incomingCall.close();
-				Log.d("SIP/IncomingCallReceiver","Fel: " + e.toString());
-				e.printStackTrace();
-			}
+			Log.e("SIP/IncomingCallReceiver","Något gick fel med det inkommande samtalet..", e);
 		}
 	}
 }

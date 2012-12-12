@@ -8,8 +8,13 @@ import java.util.Observer;
 
 import models.AuthenticationModel;
 import qosManager.QoSManager;
+import sip.CallDialogue;
+import sip.Darclass;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -41,6 +46,11 @@ public class LogInActivity extends Activity implements Observer {
 	public static final int LOGGED_IN_REQ_CODE=1;
 	public static final int SHUT_DOWN=2;
 	public static final int STAY_ALIVE=3;
+	
+	// DevicePolicyManager för att kunna låsa skärmen
+	protected static final int REQUEST_ENABLE = 0;
+	private DevicePolicyManager devicePolicyManager;
+	private ComponentName adminComponent;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +62,24 @@ public class LogInActivity extends Activity implements Observer {
 		qosManager = QoSManager.getInstance();
 		qosManager.setContext(getApplicationContext());
 		user = User.getInstance();
+		
+		// Fråga om appen får vara DeviceAdmin (skärmlås i samtal ni vet..)
+		isDeviceManager();
+	}
+	
+	/**
+	 * Fråga om användaren vill tillåta appen att vara DeviceManager (här istället för i CallDialog)
+	 */
+	private void isDeviceManager() {
+        adminComponent = new ComponentName(LogInActivity.this, Darclass.class);
+        devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        
+        // Om device-rättigheter inte är instansierade, hämta dem genom en JÄTTEIRRITERANDE ruta..
+        if (!devicePolicyManager.isAdminActive(adminComponent)) {
+            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
+            startActivityForResult(intent, REQUEST_ENABLE);
+        } 
 	}
 
 	@Override

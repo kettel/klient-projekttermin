@@ -12,7 +12,7 @@ import map.MapActivity;
 import messageFunction.Inbox;
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
-import sip.RegisterWithSipSingleton;
+import sip.SipRegistrator;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -57,7 +57,7 @@ public class MainActivity extends SecureActivity {
 	private Database database;
 
 	// SIP-variabler
-	// public static RegisterWithSipSingleton regSip;
+	public static SipRegistrator regSip;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -117,10 +117,22 @@ public class MainActivity extends SecureActivity {
 		}
 
 		// SIP: Registrera klienten hos SIP-servern
-		if (!RegisterWithSipSingleton.isRegistred()) {
-			RegisterWithSipSingleton.setContext(getApplicationContext());
-			RegisterWithSipSingleton.initializeManager();
+		regSip = SipRegistrator.getInstance();
+		
+		// Om kontexten inte är satt, är det antagligen första gången SIP används
+		if(regSip.getContext() == null){
+			// Sätt Context
+			regSip.setContext(getApplicationContext());
+			
+			// Samt SIP-domän
+			regSip.setDomain("94.254.72.38");
 		}
+		
+		// Om klienten inte är registrerad hos SIP-servern än, gör det
+		if(!regSip.isRegistred()){
+			regSip.initializeManager();
+		}
+			
 
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
@@ -200,9 +212,20 @@ public class MainActivity extends SecureActivity {
 		super.onResume();
 
 		// SIP: Registrera klienten hos SIP-servern
-		if (!RegisterWithSipSingleton.isRegistred()) {
-			RegisterWithSipSingleton.setContext(getApplicationContext());
-			RegisterWithSipSingleton.initializeManager();
+		regSip = SipRegistrator.getInstance();
+
+		// Om kontexten inte är satt, är det antagligen första gången SIP används
+		if(regSip.getContext() == null){
+			// Sätt Context
+			regSip.setContext(getApplicationContext());
+
+			// Samt SIP-domän
+			regSip.setDomain("94.254.72.38");
+		}
+
+		// Om klienten inte är registrerad hos SIP-servern än, gör det
+		if(!regSip.isRegistred()){
+			regSip.initializeManager();
 		}
 	}
 
@@ -332,11 +355,13 @@ public class MainActivity extends SecureActivity {
 	}
 
 	public void logout() {
-		// Avregistrera klienten från SIP-servern
-		if (RegisterWithSipSingleton.isRegistred()) {
-			Log.d("SIP/MainActivity/onBackPressed/Ja",
-					"Ska stänga SIP-profilen...");
-			RegisterWithSipSingleton.closeLocalProfile();
+		// Avregistrera klienten från SIP-servern, om profilen finns
+		if (regSip != null) {
+			if(regSip.isRegistred()){
+				Log.d("SIP/MainActivity/onBackPressed/Ja",
+						"Ska stänga SIP-profilen...");
+				regSip.closeLocalProfile();
+			}
 		}
 		socketConnection.logout();
 		setResult(LogInActivity.STAY_ALIVE);

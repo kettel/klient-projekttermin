@@ -4,11 +4,19 @@ import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.util.Log;
 
-public class StaticCall {
+public class CurrentCall {
 
-	public static SipAudioCall call = null;
+	private SipAudioCall call = null;
 	
-    public static void answerCall(SipAudioCall call){
+	private CurrentCall(){}
+	
+	private static CurrentCall instance = new CurrentCall();
+	
+	public static CurrentCall getInstance(){
+		return instance;
+	}
+	
+    public void answerCall(){
 		try {
 			Log.d("SIP/StaticCall/AnswerCall","Ska svara på samtal..");
 			call.answerCall(30);
@@ -24,7 +32,7 @@ public class StaticCall {
 		}
 	}
 
-	public static void dropCall(SipAudioCall call){
+	public void dropCall(){
 		try {
 			if(call != null){
 				call.endCall();
@@ -35,4 +43,20 @@ public class StaticCall {
 		}
 	}
 
+	public SipAudioCall getCall() {
+		return call;
+	}
+
+	public void setCall(SipAudioCall call) {
+		this.call = call;
+	}
+
+	/**
+	 * Se efter om användaren är i samtal.
+	 * @return True om sant, false annars.
+	 */
+	public boolean isBusy(){
+		return call.isInCall();
+	}
+	
 }
