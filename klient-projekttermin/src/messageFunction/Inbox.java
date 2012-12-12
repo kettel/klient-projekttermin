@@ -27,10 +27,8 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.google.android.gcm.GCMRegistrar;
 import com.klient_projekttermin.R;
 import com.klient_projekttermin.SecureActivity;
-import communicationModule.SocketConnection;
 
 import database.Database;
 
@@ -44,7 +42,6 @@ public class Inbox extends SecureActivity {
 	// Sätter den som tom sträng för att undvika NULLPOINTER!
 	private String userName;
 	private User user = User.getInstance();
-	private SocketConnection socketConnection = new SocketConnection();
 	private ArrayAdapter<String> adapter;
 
 	@Override

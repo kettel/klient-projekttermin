@@ -65,7 +65,7 @@ public class MainActivity extends SecureActivity {
 		initiateDB(this);
 		qosManager = QoSManager.getInstance();
 		user = User.getInstance();
-
+		socketConnection.setContext(getApplicationContext());
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
 		setContentView(R.layout.activity_main);

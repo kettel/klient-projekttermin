@@ -7,6 +7,8 @@ import java.util.Map;
 import models.Contact;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -60,21 +62,29 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 			 */
 			convertView = inflater.inflate(getItemViewType(position), parent,
 					false);
-			if (convertView.findViewById(android.R.id.text1) != null) {
+			if (getItemViewType(position) == android.R.layout.simple_list_item_2) {
 				TextView textView = (TextView) convertView
 						.findViewById(android.R.id.text1);
 				textView.setText(((HashMap<String, String>) this
 						.getItem(position)).get("line1"));
-			} else if (convertView.findViewById(R.id.text_item) != null) {
+				textView.setTextColor(Color.GRAY);
+			} else if (getItemViewType(position) == R.layout.textfield_item) {
 				EditText editText = (EditText) convertView
 						.findViewById(R.id.text_item);
 				editText.setHint(((HashMap<String, String>) this
 						.getItem(position)).get("line1"));
 				editText.setOnFocusChangeListener(this);
 				editText.setId(position);
+			} else if (getItemViewType(position) == android.R.layout.simple_list_item_checked) {
+				System.out.println("checked");
+				TextView textView = (TextView) convertView
+						.findViewById(android.R.id.text1);
+				textView.setText(((HashMap<String, String>) this
+						.getItem(position)).get("line1"));
 			}
 
 		}
+		// Skapandet av ny vy klar
 		if (this.itemStrings.containsKey(position)) {
 			if (convertView.findViewById(R.id.text_item) != null) {
 				EditText editText = (EditText) convertView
@@ -85,6 +95,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				TextView textView = (TextView) convertView
 						.findViewById(android.R.id.text1);
 				textView.setText(this.itemStrings.get(position));
+				textView.setTextColor(Color.WHITE);
 			}
 		}
 		if (convertView.findViewById(android.R.id.text2) != null) {
