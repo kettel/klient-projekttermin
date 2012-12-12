@@ -114,7 +114,7 @@ public class MapActivity extends SecureActivity implements Observer,
 	private static String[] regionAlts = { "Ta bort region",
 			"Skapa uppdrag med region" };
 	private static String[] placeAlts = { "Visa detaljer för uppdrag" };
-	private static String[] clickAlts = { "Lägg till uppdrag"};
+	private static String[] clickAlts = { "Lägg till uppdrag" };
 	private boolean onRetainCalled;
 	private int callingActivity;
 	private HashMap<Integer, String> content;
@@ -843,7 +843,11 @@ public class MapActivity extends SecureActivity implements Observer,
 	 */
 	public void elementEntered(OnMapElement arg0) {
 		if (arg0 instanceof Polygon) {
-			regionChoice(arg0);
+			if (isAssignment(arg0) == 123456789) {
+				regionChoice(arg0);
+			} else {
+				getAssignmentFromLabel(arg0);
+			}
 		}
 		if (arg0 instanceof Place) {
 			getAssignmentFromLabel(arg0);
@@ -854,6 +858,7 @@ public class MapActivity extends SecureActivity implements Observer,
 	}
 
 	private void getAssignmentFromLabel(OnMapElement l) {
+		final boolean bool;
 		final OnMapElement label = l;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(label.getLabel().toString());
@@ -874,18 +879,16 @@ public class MapActivity extends SecureActivity implements Observer,
 					Database db = Database.getInstance(getApplicationContext());
 					List<ModelInterface> list = db.getAllFromDB(a,
 							getContentResolver());
-					for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
-						a = (Assignment) list.get(i);
-						if (a.getName().equals(label.getLabel().toString())) {
-							Intent intent = new Intent(MapActivity.this,
-									AssignmentDetails.class);
-							intent.putExtra("calling-activity",
-									ActivityConstants.ASSIGNMENT_NAME);
-							intent.putExtra(assignmentName, a.getId());
-							intent.putExtra("currentUser", currentUser);
-							MapActivity.this.startActivity(intent);
-							break;
-						}
+					if (isAssignment(label) == 123456789) {
+					} else {
+						Intent intent = new Intent(MapActivity.this,
+								AssignmentDetails.class);
+						intent.putExtra("calling-activity",
+								ActivityConstants.ASSIGNMENT_NAME);
+						intent.putExtra(assignmentName, isAssignment(label));
+						intent.putExtra("currentUser", currentUser);
+						MapActivity.this.startActivity(intent);
+						break;
 					}
 					break;
 				default:
@@ -894,6 +897,20 @@ public class MapActivity extends SecureActivity implements Observer,
 			}
 		});
 		dialog.show();
+	}
+
+	private long isAssignment(OnMapElement l) {
+		final OnMapElement label = l;
+		Assignment a = new Assignment();
+		Database db = Database.getInstance(getApplicationContext());
+		List<ModelInterface> list = db.getAllFromDB(a, getContentResolver());
+		for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
+			a = (Assignment) list.get(i);
+			if (a.getName().equals(label.getLabel().toString())) {
+				return a.getId();
+			}
+		}
+		return 123456789;
 	}
 
 	@Override
