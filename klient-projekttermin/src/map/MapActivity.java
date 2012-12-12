@@ -88,11 +88,13 @@ public class MapActivity extends SecureActivity implements Observer,
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
 	private ArrayAdapter<String> sm;
 	private MapView mapView;
+	private WgsPoint[] rTa;
 	private ZoomControls zoomControls;
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
 	private boolean isInAddMode = false;
 	private boolean gpsOnOff = true;
 	private ArrayList<WgsPoint> points = new ArrayList<WgsPoint>();
+	private ArrayList<WgsPoint> pointsT = new ArrayList<WgsPoint>();
 	private ArrayList<Place> regionCorners = new ArrayList<Place>();
 	private static Image[] icons = {
 			Utils.createImage("/res/drawable-hdpi/blobredsmall.png"),
@@ -339,6 +341,9 @@ public class MapActivity extends SecureActivity implements Observer,
 				MenuItem item = m.findItem(R.id.menu_add_region);
 				item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
+						if(callingActivity == ActivityConstants.ADD_ASSIGNMENT_ACTIVITY){
+							return AddRegionToAssignment(item);
+						}
 						return changeAddRegionMode(item);
 					}
 				});
@@ -515,6 +520,47 @@ public class MapActivity extends SecureActivity implements Observer,
 				WgsPoint[] p = (WgsPoint[]) (points)
 						.toArray(new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
+			}
+			/**
+			 * Tar bort punkterna från kartan
+			 */
+			if (!regionCorners.isEmpty()) {
+				Place[] corners = (Place[]) regionCorners
+						.toArray(new Place[regionCorners.size()]);
+				mapComponent.removePlaces(corners);
+			}
+		}
+		return true;
+	}
+	
+	public boolean AddRegionToAssignment(MenuItem m) {
+		isInAddMode = !isInAddMode;
+		/**
+		 * När klar med markering nollställ listan med punkter
+		 */
+		if (isInAddMode) {
+			m.setTitle("Klar med markering");
+			points.clear();
+			Gson gson = new Gson();
+			Type type = new TypeToken<WgsPoint[]>() {
+			}.getType();
+			Intent intent = new Intent(MapActivity.this,
+					AddAssignment.class);
+			intent.putExtra("calling-activity",
+					ActivityConstants.MAP_ACTIVITY);
+			intent.putExtra(coordinates, gson.toJson(rTa, type));
+			setResult(ActivityConstants.RESULT_FROM_MAP, intent);
+			finish();
+		}
+		/**
+		 * Skapa punkter på kartan som användaren vill markera
+		 */
+		else {
+			m.setTitle("Markera region");
+			if (!pointsT.isEmpty()) {
+				rTa = (WgsPoint[]) (pointsT)
+						.toArray(new WgsPoint[pointsT.size()]);
+				mapComponent.addPolygon(new Polygon(rTa));
 			}
 			/**
 			 * Tar bort punkterna från kartan
@@ -858,7 +904,6 @@ public class MapActivity extends SecureActivity implements Observer,
 	}
 
 	private void getAssignmentFromLabel(OnMapElement l) {
-		final boolean bool;
 		final OnMapElement label = l;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(label.getLabel().toString());
