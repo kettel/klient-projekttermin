@@ -114,8 +114,7 @@ public class MapActivity extends SecureActivity implements Observer,
 	private static String[] regionAlts = { "Ta bort region",
 			"Skapa uppdrag med region" };
 	private static String[] placeAlts = { "Visa detaljer för uppdrag" };
-	private static String[] clickAlts = { "Lägg till uppdrag",
-			"Lägg till intreese punkt" };
+	private static String[] clickAlts = { "Lägg till uppdrag"};
 	private boolean onRetainCalled;
 	private int callingActivity;
 	private HashMap<Integer, String> content;
@@ -647,9 +646,6 @@ public class MapActivity extends SecureActivity implements Observer,
 							ActivityConstants.MAP_ACTIVITY);
 					intent.putExtra(coordinates, gson.toJson(wgs, type));
 					MapActivity.this.startActivity(intent);
-					break;
-				case 1:
-					addInterestPoint(wgs[0], "");
 					break;
 				default:
 					break;
