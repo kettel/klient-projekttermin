@@ -55,8 +55,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		convertView=super.getView(position, convertView, parent);
-		if (convertView == null) {
+		if (convertView == null||position==8) {
 			/**
 			 * Finns ingen vy som vi kan återanvända, skapar en ny!
 			 */
