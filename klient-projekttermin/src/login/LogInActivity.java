@@ -210,8 +210,8 @@ public class LogInActivity extends Activity implements Observer {
 
 		if (requestCode==LOGGED_IN_REQ_CODE) {
 			if (resultCode==STAY_ALIVE) {
-				finish();
 			}else if (resultCode==SHUT_DOWN) {
+				finish();
 			}
 		}
 	}

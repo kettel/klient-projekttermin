@@ -93,13 +93,13 @@ public class Cam extends Activity implements SensorEventListener {
 		mCamera = getCameraInstance();
 		System.out.println(mCamera);
 		// Setting the right parameters in the camera
-		Camera.Parameters params = mCamera.getParameters();
-		// HÄlften av va de va
-		params.setPictureSize(800, 600);
-		params.setPictureFormat(PixelFormat.JPEG);
-		params.setJpegQuality(85);
-
-		mCamera.setParameters(params);
+//		Camera.Parameters params = mCamera.getParameters();
+//		// HÄlften av va de va
+//		params.setPictureSize(800, 600);
+//		params.setPictureFormat(PixelFormat.JPEG);
+//		params.setJpegQuality(85);
+//
+//		mCamera.setParameters(params);
 
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this, mCamera);
