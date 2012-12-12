@@ -27,7 +27,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private HashMap<Integer, String> itemStrings = new HashMap<Integer, String>();
 	private Context context;
 	public static String items;
-	private String temp = "Agenter: ";
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -56,6 +55,7 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		convertView=super.getView(position, convertView, parent);
 		if (convertView == null) {
 			/**
 			 * Finns ingen vy som vi kan återanvända, skapar en ny!
@@ -76,14 +76,13 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 				editText.setOnFocusChangeListener(this);
 				editText.setId(position);
 			} else if (getItemViewType(position) == android.R.layout.simple_list_item_checked) {
-				System.out.println("checked");
 				TextView textView = (TextView) convertView
 						.findViewById(android.R.id.text1);
 				textView.setText(((HashMap<String, String>) this
 						.getItem(position)).get("line1"));
 			}
-
 		}
+
 		// Skapandet av ny vy klar
 		if (this.itemStrings.containsKey(position)) {
 			if (convertView.findViewById(R.id.text_item) != null) {
@@ -91,7 +90,8 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 						.findViewById(R.id.text_item);
 				editText.setText(this.itemStrings.get(position));
 				editText.setId(position);
-			} else if (convertView.findViewById(android.R.id.text1) != null) {
+			} else if (convertView.findViewById(android.R.id.text1) != null
+					&& getItemViewType(position) != android.R.layout.simple_list_item_checked) {
 				TextView textView = (TextView) convertView
 						.findViewById(android.R.id.text1);
 				textView.setText(this.itemStrings.get(position));
