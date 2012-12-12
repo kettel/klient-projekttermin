@@ -7,6 +7,8 @@ import java.util.Map;
 import models.Contact;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -25,7 +27,6 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	private HashMap<Integer, String> itemStrings = new HashMap<Integer, String>();
 	private Context context;
 	public static String items;
-	private String temp = "Agenter: ";
 
 	public SimpleEditTextItemAdapter(Context context,
 			List<? extends Map<String, ?>> data, int resource, String[] from,
@@ -54,37 +55,46 @@ public class SimpleEditTextItemAdapter extends SimpleAdapter implements
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		if (convertView == null) {
+		if (convertView == null||position==8) {
 			/**
 			 * Finns ingen vy som vi kan återanvända, skapar en ny!
 			 */
 			convertView = inflater.inflate(getItemViewType(position), parent,
 					false);
-			if (convertView.findViewById(android.R.id.text1) != null) {
+			if (getItemViewType(position) == android.R.layout.simple_list_item_2) {
 				TextView textView = (TextView) convertView
 						.findViewById(android.R.id.text1);
 				textView.setText(((HashMap<String, String>) this
 						.getItem(position)).get("line1"));
-			} else if (convertView.findViewById(R.id.text_item) != null) {
+				textView.setTextColor(Color.GRAY);
+			} else if (getItemViewType(position) == R.layout.textfield_item) {
 				EditText editText = (EditText) convertView
 						.findViewById(R.id.text_item);
 				editText.setHint(((HashMap<String, String>) this
 						.getItem(position)).get("line1"));
 				editText.setOnFocusChangeListener(this);
 				editText.setId(position);
+			} else if (getItemViewType(position) == android.R.layout.simple_list_item_checked) {
+				TextView textView = (TextView) convertView
+						.findViewById(android.R.id.text1);
+				textView.setText(((HashMap<String, String>) this
+						.getItem(position)).get("line1"));
 			}
-
 		}
+
+		// Skapandet av ny vy klar
 		if (this.itemStrings.containsKey(position)) {
 			if (convertView.findViewById(R.id.text_item) != null) {
 				EditText editText = (EditText) convertView
 						.findViewById(R.id.text_item);
 				editText.setText(this.itemStrings.get(position));
 				editText.setId(position);
-			} else if (convertView.findViewById(android.R.id.text1) != null) {
+			} else if (convertView.findViewById(android.R.id.text1) != null
+					&& getItemViewType(position) != android.R.layout.simple_list_item_checked) {
 				TextView textView = (TextView) convertView
 						.findViewById(android.R.id.text1);
 				textView.setText(this.itemStrings.get(position));
+				textView.setTextColor(Color.WHITE);
 			}
 		}
 		if (convertView.findViewById(android.R.id.text2) != null) {

@@ -188,7 +188,8 @@ public class QoSManager extends SecureActivity implements Observer {
 	}
 
 	public void tryToReconnectToServer(){
-		SocketConnection connection = new SocketConnection();	
+		SocketConnection connection = new SocketConnection();
+		connection.setContext(applicationContext);
 		connection.addObserver(new PullResponseHandler(applicationContext));
 		connection.pullFromServer();
 	}
