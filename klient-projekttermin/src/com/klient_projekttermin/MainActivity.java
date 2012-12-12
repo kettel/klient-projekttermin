@@ -129,7 +129,7 @@ public class MainActivity extends SecureActivity {
 				android.R.layout.simple_list_item_2, from, to));
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			Toast unallowedStart = Toast.makeText(getApplicationContext(),
-					"Du har inte tillåtelse att starta denna funktion",
+					"Energisparläget har begränsat denna funktionalitet",
 					Toast.LENGTH_SHORT);
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
