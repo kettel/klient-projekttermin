@@ -150,7 +150,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	private void fromCamera(Intent intent) {
 		int id = intent.getIntExtra("pic", 0);
 		bitmap = getPic(id);
-		adapter.textToItem(5, "Bifogad bild");
+		adapter.textToItem(6, "Bifogad bild");
 		runOnUiThread(new Runnable() {
 			public void run() {
 				adapter.notifyDataSetChanged();
@@ -161,8 +161,8 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	private void fromMap(Intent intent) {
 		jsonCoord = intent.getStringExtra(MapActivity.coordinates);
 		String name = intent.getStringExtra("name");
-		adapter.textToItem(4, name);
-		adapter.textToItem(1, jsonCoord);
+		adapter.textToItem(2, name);
+		adapter.textToItem(4, jsonCoord);
 		runOnUiThread(new Runnable() {
 			public void run() {
 				adapter.notifyDataSetChanged();
