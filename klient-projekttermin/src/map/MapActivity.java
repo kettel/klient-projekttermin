@@ -88,11 +88,14 @@ public class MapActivity extends SecureActivity implements Observer,
 	private SearchSuggestions searchSuggestions = new SearchSuggestions();
 	private ArrayAdapter<String> sm;
 	private MapView mapView;
+	private WgsPoint[] rTa;
 	private ZoomControls zoomControls;
 	private final WgsPoint LINKÖPING = new WgsPoint(15.5826, 58.427);
 	private boolean isInAddMode = false;
+	private boolean addMode = false;
 	private boolean gpsOnOff = true;
 	private ArrayList<WgsPoint> points = new ArrayList<WgsPoint>();
+	private ArrayList<WgsPoint> pointsT = new ArrayList<WgsPoint>();
 	private ArrayList<Place> regionCorners = new ArrayList<Place>();
 	private static Image[] icons = {
 			Utils.createImage("/res/drawable-hdpi/blobredsmall.png"),
@@ -156,6 +159,7 @@ public class MapActivity extends SecureActivity implements Observer,
 
 	public void createMap() {
 		this.setContentView(R.layout.activity_map);
+		this.mapComponent = null;
 		this.mapComponent = new BasicMapComponent("tutorial", new AppContext(
 				this), 1, 1, LINKÖPING, 10);
 		// final StoredMap sm = new StoredMap("OurAwsomeMap", "/map", true);
@@ -515,6 +519,7 @@ public class MapActivity extends SecureActivity implements Observer,
 				WgsPoint[] p = (WgsPoint[]) (points)
 						.toArray(new WgsPoint[points.size()]);
 				mapComponent.addPolygon(new Polygon(p));
+				ifAssignmentRequestForRegionCoordinates(p);
 			}
 			/**
 			 * Tar bort punkterna från kartan
@@ -526,6 +531,17 @@ public class MapActivity extends SecureActivity implements Observer,
 			}
 		}
 		return true;
+	}
+
+	private void ifAssignmentRequestForRegionCoordinates(WgsPoint[] p) {
+			Gson gson = new Gson();
+			Type type = new TypeToken<WgsPoint[]>() {
+			}.getType();
+			Intent intent = new Intent(MapActivity.this, AddAssignment.class);
+			intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
+			intent.putExtra(coordinates, gson.toJson(p, type));
+			setResult(ActivityConstants.RESULT_FROM_MAP, intent);
+			finish();
 	}
 
 	/**
@@ -858,7 +874,6 @@ public class MapActivity extends SecureActivity implements Observer,
 	}
 
 	private void getAssignmentFromLabel(OnMapElement l) {
-		final boolean bool;
 		final OnMapElement label = l;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(label.getLabel().toString());
