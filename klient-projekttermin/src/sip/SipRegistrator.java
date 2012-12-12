@@ -34,8 +34,10 @@ public class SipRegistrator {
 	public ObservableCallStatus callStatus = new ObservableCallStatus();
 
 	// Variabler som jag inte vet vart de ska vara. Main? Service? Hjälpklass?
-	public IncomingCallReceiver callReceiver;
-
+	private IncomingCallReceiver callReceiver;
+	
+	private IntentFilter filter;
+	
 	private CurrentCall currentCall;
 
 	// Hämta aktuell användare med lösenhash
@@ -74,7 +76,7 @@ public class SipRegistrator {
 			intentsRegistred++;
 			Log.d("SIP/Singletonklassen","Registrerar intents för gång nummer: " + intentsRegistred);
 			// SIP: Registrera Intent för att hantera inkommande SIP-samtal
-			IntentFilter filter = new IntentFilter();
+			filter = new IntentFilter();
 			filter.addAction("com.klient_projekttermin.INCOMING_CALL");
 			callReceiver = new IncomingCallReceiver();
 			context.registerReceiver(callReceiver, filter);
@@ -166,7 +168,12 @@ public class SipRegistrator {
 	 * klienten hos SIP-servern.
 	 */
 	public void closeLocalProfile() {
-		// Om manager inte finns behöver man inte göra mer än att
+		// Om Intent för att öppna samtalsdialogen vid inkommande samtal finns, avregistrera det
+		if(isIntentsRegistred){
+			context.unregisterReceiver(callReceiver);
+			isIntentsRegistred = false;
+		}
+		// Om manager inte finns behöver man inte göra mer än att avsluta här
 		if (manager == null) {
 			// Är användaren registrerad, sätt isRegistred till false
 			if(isRegistred){
