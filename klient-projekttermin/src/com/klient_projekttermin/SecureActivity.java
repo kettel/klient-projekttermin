@@ -86,7 +86,7 @@ public class SecureActivity extends Activity {
 		}
 	};
 	public void logout(){
-		socketConnection.logout();
+		user.setLoggedIn(false);
 		setResult(LogInActivity.STAY_ALIVE);
 		finish();
 	}
