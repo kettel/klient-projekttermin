@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -534,14 +535,17 @@ public class MapActivity extends SecureActivity implements Observer,
 	}
 
 	private void ifAssignmentRequestForRegionCoordinates(WgsPoint[] p) {
-			Gson gson = new Gson();
-			Type type = new TypeToken<WgsPoint[]>() {
-			}.getType();
-			Intent intent = new Intent(MapActivity.this, AddAssignment.class);
-			intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
-			intent.putExtra(coordinates, gson.toJson(p, type));
+		Gson gson = new Gson();
+		Type type = new TypeToken<WgsPoint[]>() {
+		}.getType();
+		Intent intent = new Intent(MapActivity.this, AddAssignment.class);
+		intent.putExtra("calling-activity", ActivityConstants.MAP_ACTIVITY);
+		intent.putExtra(coordinates, gson.toJson(p, type));
+		if (callingActivity == ActivityConstants.ADD_COORDINATES_TO_ASSIGNMENT) {
 			setResult(ActivityConstants.RESULT_FROM_MAP, intent);
 			finish();
+		}
+		
 	}
 
 	/**
@@ -623,7 +627,11 @@ public class MapActivity extends SecureActivity implements Observer,
 					intent.putExtra("calling-activity",
 							ActivityConstants.MAP_ACTIVITY);
 					intent.putExtra(coordinates, gson.toJson(wgs, type));
-					setResult(ActivityConstants.RESULT_FROM_MAP, intent);
+					if (callingActivity == ActivityConstants.ASSIGNMENT_DETAILS) {
+						MapActivity.this.startActivity(intent);
+					} else {
+						setResult(ActivityConstants.RESULT_FROM_MAP, intent);
+					}
 					finish();
 					break;
 				default:
@@ -902,6 +910,7 @@ public class MapActivity extends SecureActivity implements Observer,
 								ActivityConstants.ASSIGNMENT_NAME);
 						intent.putExtra(assignmentName, isAssignment(label));
 						intent.putExtra("currentUser", currentUser);
+						MapActivity.this.finish();
 						MapActivity.this.startActivity(intent);
 						break;
 					}
