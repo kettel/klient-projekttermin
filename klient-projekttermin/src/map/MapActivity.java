@@ -901,13 +901,16 @@ public class MapActivity extends SecureActivity implements Observer,
 
 	private long isAssignment(OnMapElement l) {
 		final OnMapElement label = l;
-		Assignment a = new Assignment();
-		Database db = Database.getInstance(getApplicationContext());
-		List<ModelInterface> list = db.getAllFromDB(a, getContentResolver());
-		for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
-			a = (Assignment) list.get(i);
-			if (a.getName().equals(label.getLabel().toString())) {
-				return a.getId();
+		if (label.getLabel() != null) {
+			Assignment a = new Assignment();
+			Database db = Database.getInstance(getApplicationContext());
+			List<ModelInterface> list = db
+					.getAllFromDB(a, getContentResolver());
+			for (int i = 0; i < db.getDBCount(a, getContentResolver()); i++) {
+				a = (Assignment) list.get(i);
+				if (a.getName().equals(label.getLabel().toString())) {
+					return a.getId();
+				}
 			}
 		}
 		return 123456789;
