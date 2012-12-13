@@ -40,12 +40,15 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 							Log.d("SIP/IncomingCallReceiver","Upptaget... Är i samtal med annan. Tar emot samtal ifrån: " + call.getPeerProfile().getDisplayName() + " som kommer nekas.");
 							return;
 						}
-						// Jag tror inte detta händer annat än när ett nytt inkommande samtal försöker ansluta över ett pågående.
-//						Intent startIncomingCallDialog = new Intent(context,CallDialog.class);
-//						startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
-//						startIncomingCallDialog.putExtra("outgoing",false);
-//						startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//						context.startActivity(startIncomingCallDialog);
+						if(currentCall == null){
+							currentCall = CurrentCall.getInstance();
+						}
+						currentCall.setCall(call);
+						Intent startIncomingCallDialog = new Intent(context,CallDialogue.class);
+						startIncomingCallDialog.putExtra("caller", call.getPeerProfile().getDisplayName());
+						startIncomingCallDialog.putExtra("outgoing",false);
+						startIncomingCallDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						context.startActivity(startIncomingCallDialog);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
