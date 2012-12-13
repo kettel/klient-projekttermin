@@ -56,7 +56,12 @@ public class CurrentCall {
 	 * @return True om sant, false annars.
 	 */
 	public boolean isBusy(){
-		return call.isInCall();
+		boolean busy = false;
+		if(call == null){
+			busy = false;
+		}else{
+			busy = call.isInCall();
+		}
+		return busy;
 	}
-	
 }
