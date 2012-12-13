@@ -11,6 +11,7 @@ import java.util.List;
 
 import login.User;
 import models.MessageModel;
+import models.MessageStatus;
 import models.ModelInterface;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -300,10 +301,11 @@ public class DisplayOfConversation extends SecureActivity {
 	}
 
 	public void sendMessage(View v) {
+		System.out.println("send message i display");
 		InputMethodManager inm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		messageObject = new MessageModel(message.getText().toString(),
-				chosenContact, currentUser);
+				chosenContact, currentUser, MessageStatus.SENT);
 
 		// Sparar messageObject i databasen
 		dataBase.addToDB(messageObject, getContentResolver());

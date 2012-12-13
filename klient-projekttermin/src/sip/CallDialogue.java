@@ -3,8 +3,6 @@ package sip;
 import java.util.Observable;
 import java.util.Observer;
 
-import login.User;
-
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -17,7 +15,6 @@ import android.hardware.SensorManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.net.sip.SipException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -29,7 +26,6 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.klient_projekttermin.R;
@@ -126,7 +122,7 @@ public class CallDialogue extends Activity {
 		super.onCreate(savedInstanceState);
 		Log.d("SIP/IncomingCallDialog/OnCreate",
 				"Startar incomingcalldialog...");
-		setContentView(R.layout.activity_incoming_call_dialog);
+		setContentView(R.layout.activity_call_dialogue);
 		Bundle extras = getIntent().getExtras();
 		boolean isOutgoing = extras.getBoolean("outgoing");
 		

@@ -21,6 +21,8 @@ public class MessageModel implements ModelInterface {
 	private String sender;
 	// Tiddstämpel i UNIX Epoch-format för när meddelandet skapades
 	private Long messageTimeStamp;
+	
+	private MessageStatus status;
 
 	/**
 	 * Tom konstruktor. Används för att hämta från databasen.
@@ -35,10 +37,11 @@ public class MessageModel implements ModelInterface {
 	 * @param messageContent
 	 * @param reciever
 	 */
-	public MessageModel(String messageContent, String reciever, String sender) {
+	public MessageModel(String messageContent, String reciever, String sender, MessageStatus status) {
 		this.messageContent = messageContent;
 		this.reciever = reciever;
 		this.sender = sender;
+		this.status = status;
 		messageTimeStamp = Calendar.getInstance().getTimeInMillis();
 	}
 
@@ -50,13 +53,14 @@ public class MessageModel implements ModelInterface {
 	 * @param timeStamp
 	 */
 	public MessageModel(long id, String messageContent, String reciever,
-			String sender, Long messageTimeStamp, boolean isRead) {
+			String sender, Long messageTimeStamp, boolean isRead, MessageStatus status) {
 		this.id = id;
 		this.messageContent = messageContent;
 		this.reciever = reciever;
 		this.sender = sender;
 		this.messageTimeStamp = messageTimeStamp;
 		this.isRead = isRead;
+		this.status = status;
 	}
 	
 	/**
@@ -117,6 +121,14 @@ public class MessageModel implements ModelInterface {
 	 */
 	public String getSender(){
 		return sender;
+	}
+
+	public MessageStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(MessageStatus status) {
+		this.status = status;
 	}
 
 	/**

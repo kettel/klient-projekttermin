@@ -6,6 +6,7 @@ import java.util.List;
 import database.MessageTable.Messages;
 
 import models.MessageModel;
+import models.MessageStatus;
 import models.ModelInterface;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -31,6 +32,7 @@ public class MessagesDB {
 		values.put(Messages.TIMESTAMP,
 				Long.toString(message.getMessageTimeStamp()));
 		values.put(Messages.ISREAD, Boolean.toString(message.isRead()));
+		values.put(Messages.STATUS, message.getStatus().toString());
 		contentResolver.insert(Messages.CONTENT_URI, values);
 	}
 
@@ -49,6 +51,7 @@ public class MessagesDB {
 
 	public List<ModelInterface> getAllMessages(ContentResolver contentResolver) {
 		List<ModelInterface> returnList = new ArrayList<ModelInterface>();
+		MessageStatus status = MessageStatus.SENT;
 		Cursor cursor = contentResolver.query(Messages.CONTENT_URI, null,
 				Messages.MESSAGE_ID + " IS NOT null", null, null);
 		if (cursor.moveToFirst()) {
@@ -72,16 +75,43 @@ public class MessagesDB {
 						timestamp = Long.valueOf(cursor.getString(i));
 					} else if (currentCol.equalsIgnoreCase(Messages.ISREAD)) {
 						isRead = Boolean.valueOf(cursor.getString(i));
+					} else if (currentCol.equalsIgnoreCase(Messages.STATUS)) {
+						status = MessageStatus.valueOf(cursor.getString(i));
 					}
 				}
 				MessageModel message = new MessageModel(id, content, receiver,
-						sender, timestamp, isRead);
+						sender, timestamp, isRead, status);
 				returnList.add(message);
 			} while (cursor.moveToNext());
 		}
 		return returnList;
 	}
 
+	public int getIdFromMessage(ContentResolver contentResolver, MessageModel message){
+		int returnInt = -1;
+		Cursor cursor = contentResolver.query(Messages.CONTENT_URI, null,
+				Messages.SENDER + " = \"" + message.getSender() + "\" and " + 
+				Messages.CONTENT +" = \"" + message.getMessageContent() + "\" and " +
+				Messages.TIMESTAMP + " = \"" + Long.toString(message.getMessageTimeStamp())+"\"", null, null);
+		// Om antalet rader är mer än 1 är något galet.. Returnera -1.
+		if(cursor.getCount() > 1){
+			return returnInt;
+		}
+		if (cursor.moveToFirst()) {
+			do {
+				// Loopa igenom alla kolumner
+				for (int i = 0; i < cursor.getColumnCount(); i++) {
+					// Leta efter MESSAGE_ID-kolumnen
+					String currentCol = cursor.getColumnName(i);
+					if(currentCol.equalsIgnoreCase(Messages.MESSAGE_ID)){
+						returnInt = cursor.getInt(i);
+					}
+				}
+			}while (cursor.moveToNext());
+		}
+		return returnInt;
+	}
+	
 	public void updateMessage(ContentResolver contentResolver, MessageModel message) {
 		ContentValues values = new ContentValues();
 		values.put(Messages.CONTENT, message.getMessageContent()
@@ -91,8 +121,11 @@ public class MessagesDB {
 		values.put(Messages.TIMESTAMP,
 				Long.toString(message.getMessageTimeStamp()));
 		values.put(Messages.ISREAD, Boolean.toString(message.isRead()));
+		values.put(Messages.STATUS, (message.getStatus()).toString());
+		int id = getIdFromMessage(contentResolver, message);
+		System.out.println(id);
 		int updated = contentResolver.update(Messages.CONTENT_URI, values,
-				Messages.MESSAGE_ID + " = " + Long.toString(message.getId()),
+				Messages.MESSAGE_ID + " = " + "\"" + Long.toString((id)) + "\"",
 				null);
 		Log.d("DB", "Uppdaterade " + updated + " messages.");
 	}

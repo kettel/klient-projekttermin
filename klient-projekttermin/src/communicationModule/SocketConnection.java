@@ -16,6 +16,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Observable;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -26,15 +27,19 @@ import javax.net.ssl.TrustManagerFactory;
 
 import login.User;
 import models.Assignment;
+import models.AssignmentStatus;
 import models.AuthenticationModel;
 import models.Contact;
 import models.MessageModel;
+import models.MessageStatus;
 import models.ModelInterface;
 import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.klient_projekttermin.CommonUtilities;
+
+import database.Database;
 
 /**
  * VAR VÄNLIG RÖR EJ! Vid användande av denna klass bör du sätta en
@@ -55,6 +60,7 @@ public class SocketConnection extends Observable {
 	private int tries = 0;
 	private boolean failedToConnect = false;
 	private Context context = null;
+	private Database db;
 
 	/**
 	 * Konstruktor som även initierar serverlistan.
@@ -95,9 +101,47 @@ public class SocketConnection extends Observable {
 		final ModelInterface model = modelInterface;
 		new Thread(new Runnable() {
 			public void run() {
+				
 				sendJSON(gson.toJson(model));
+				if (failedToConnect) {
+					addToQue(model);
+				} else {
+					String que = getQue();
+					if (!que.equals("")) {
+						System.out.println("QUE not empty : ");
+						sendJSON(que);
+					} else {
+						System.out.println("Que is empty");
+					}
+				}
 			}
 		}).start();
+	}
+
+	private String getQue() {
+		db = Database.getInstance(context);
+		StringBuilder sb = new StringBuilder();
+		List<ModelInterface> assignments = db.getAllFromDB(new Assignment(),
+				context.getContentResolver());
+		for (ModelInterface m : assignments) {
+			if (((Assignment) m).getAssignmentStatus() == AssignmentStatus.QUE) {
+				((Assignment) m)
+						.setAssignmentStatus(AssignmentStatus.NOT_STARTED);
+				db.updateModel(m, context.getContentResolver());
+				sb.append(gson.toJson(m) + "\n");
+			}
+		}
+		List<ModelInterface> messages = db.getAllFromDB(new MessageModel(),
+				context.getContentResolver());
+		for (ModelInterface m : messages) {
+			System.out.println("STATUS " + ((MessageModel) m).getStatus());
+			if (((MessageModel) m).getStatus() == MessageStatus.QUE) {
+				((MessageModel) m).setStatus(MessageStatus.SENT);
+				db.updateModel(m, context.getContentResolver());
+				sb.append(gson.toJson(m) + "\n");
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -112,6 +156,7 @@ public class SocketConnection extends Observable {
 
 			public void run() {
 				sendAuthentication(gson.toJson(model));
+
 			}
 		}).start();
 	}
@@ -124,6 +169,7 @@ public class SocketConnection extends Observable {
 	 */
 	private void sendJSON(String json) {
 		SSLSocket socket = createSocket();
+		System.out.println("Skickar detta " + json);
 		if (socket != null) {
 			writeToSocket(socket, json + "\n");
 			closeSocket(socket);
@@ -138,7 +184,7 @@ public class SocketConnection extends Observable {
 	private void loadNextServer() {
 		if (iterator.hasNext()) {
 			String[] server = iterator.next();
-			System.out.println("byter port: " + server[1]);
+			// System.out.println("byter port: " + server[1]);
 			ip = server[0];
 			port = Integer.parseInt(server[1]);
 			CommonUtilities.SERVER_URL = "http://" + server[0] + ":"
@@ -153,11 +199,11 @@ public class SocketConnection extends Observable {
 				 * sig besegrad o lägger ner.
 				 */
 				if (tries < 5) {
-					System.out.println("reload servers");
+					// System.out.println("reload servers");
 					tries++;
 					Thread.sleep(100);
 					iterator = servers.iterator();
-					System.out.println(iterator.hasNext());
+					// System.out.println(iterator.hasNext());
 				} else {
 					/**
 					 * 5 försök gjorda, lägger ner.
@@ -167,8 +213,8 @@ public class SocketConnection extends Observable {
 					notifyObservers("failed");
 				}
 			} catch (InterruptedException e) {
-				System.out
-						.println("Omladdning av serverlistan i loadNextServer i SocketConnection sket sig");
+				// System.out
+				// .println("Omladdning av serverlistan i loadNextServer i SocketConnection sket sig");
 				e.printStackTrace();
 			}
 		}
@@ -194,7 +240,7 @@ public class SocketConnection extends Observable {
 	}
 
 	public void pullFromServer() {
-		System.out.println("Sending pullrequest");
+		// System.out.println("Sending pullrequest");
 		new Thread(new Runnable() {
 
 			public void run() {
@@ -258,8 +304,8 @@ public class SocketConnection extends Observable {
 							inputString, AuthenticationModel.class);
 					notifyObservers(authenticationModel);
 				} else {
-					System.out.println("Did not recognize model: "
-							+ inputString);
+					// System.out.println("Did not recognize model: "
+					// + inputString);
 				}
 			}
 			bufferedReader.close();
@@ -281,7 +327,7 @@ public class SocketConnection extends Observable {
 					new OutputStreamWriter(socket.getOutputStream()));
 			bufferedWriter.write(string);
 			bufferedWriter.flush();
-			System.out.println("Lyckades skriva till server");
+			// System.out.println("Lyckades skriva till server");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -294,7 +340,7 @@ public class SocketConnection extends Observable {
 		char keystorepass[] = "password".toCharArray();
 		char trustpassword[] = "password".toCharArray();
 		if (context != null) {
-			System.out.println("Börjar med krypteringsdelen");
+			// System.out.println("Börjar med krypteringsdelen");
 			KeyStore keyStore = null;
 			try {
 				keyStore = KeyStore.getInstance("BKS");
@@ -305,7 +351,7 @@ public class SocketConnection extends Observable {
 				KeyStore ks = KeyStore.getInstance("BKS");
 				InputStream keyin = this.context.getAssets().open("client.bks");
 				ks.load(keyin, keystorepass);
-				System.out.println("keystore klar");
+				// System.out.println("keystore klar");
 				TrustManagerFactory tmf = TrustManagerFactory
 						.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 				tmf.init(keyStore);
@@ -313,11 +359,11 @@ public class SocketConnection extends Observable {
 				KeyManagerFactory kmf = KeyManagerFactory
 						.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 				kmf.init(ks, keystorepass);
-				System.out.println("alla masters klara");
+				// System.out.println("alla masters klara");
 				SSLContext sslCtx = SSLContext.getInstance("TLS");
 				sslCtx.init(kmf.getKeyManagers(), tmf.getTrustManagers(),
 						new SecureRandom());
-				System.out.println("sslcontext klart");
+				// System.out.println("sslcontext klart");
 				socketFactory = sslCtx.getSocketFactory();
 				System.out.println("trying to connect, ip is: " + ip
 						+ " port is: " + port);
@@ -326,7 +372,7 @@ public class SocketConnection extends Observable {
 						socket = (SSLSocket) socketFactory.createSocket(ip,
 								port);
 						socket.startHandshake();
-						System.out.println("Socketen lyckades ansluta");
+						// System.out.println("Socketen lyckades ansluta");
 					} catch (UnknownHostException e) {
 						loadNextServer();
 					} catch (IOException e) {
@@ -352,6 +398,21 @@ public class SocketConnection extends Observable {
 					.println("Saknar context till krypteringen, du bör verkligen undersöka varför inget context är satt eller varför detta är null!!");
 		}
 		return socket;
+	}
+
+	private void addToQue(ModelInterface model) {
+		System.out.println("Add to Que");
+		db = Database.getInstance(context);
+		if (model.getDatabaseRepresentation().equalsIgnoreCase("assignment")) {
+			System.out.println("Add assignment to que");
+			((Assignment) model).setAssignmentStatus(AssignmentStatus.QUE);
+			db.updateModel(model, context.getContentResolver());
+		} else if (model.getDatabaseRepresentation()
+				.equalsIgnoreCase("message")) {
+			System.out.println("Add message to que");
+			((MessageModel) model).setStatus(MessageStatus.QUE);
+			db.updateModel(model, context.getContentResolver());
+		}
 	}
 
 	private void closeSocket(SSLSocket socket) {
