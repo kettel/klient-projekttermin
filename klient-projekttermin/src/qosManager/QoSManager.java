@@ -24,6 +24,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	private Boolean permissionToStartMessages = true;
 	private Boolean permissionToStartAssignment = false;
 	private Boolean permissionToStartContactBook = false;
+	private Boolean permissionToStartCallLog = false;
 	private float screenBrightnesslevel = (float) 0.1;
 
 	private float screenBrightnesslevelOkay = (float) 0.5;
@@ -33,6 +34,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	private Boolean permissionToStartMessagesOkay = true;
 	private Boolean permissionToStartAssignmentOkay = true;
 	private Boolean permissionToStartContactBookOkay = true;
+	private Boolean permissionToStartCallLogOkay = true;
 
 	private Boolean BatterySaveModeIsActivated=false;
 	private Boolean okayBatterylevel = true;
@@ -258,7 +260,15 @@ public class QoSManager extends SecureActivity implements Observer {
 			return permissionToStartContactBookOkay;
 		}
 	}
-
+	public boolean isAllowedToStartCallLog(){
+		if(BatterySaveModeIsActivated){
+			return permissionToStartCallLog;
+		}
+		else{
+			return permissionToStartCallLogOkay;
+		}
+	}
+	
 	public Boolean readyToAdjustCM() {
 		return readyToAdjustCM;
 	}
@@ -317,6 +327,10 @@ public class QoSManager extends SecureActivity implements Observer {
 			adjustToLowBatteryLevel(context);
 		}
 	}
+	
+	public void setPermissionToStartCallLog(Boolean permissionStartCallLog){
+		permissionToStartCallLog = permissionStartCallLog;
+	}
 	public Boolean getPermissionToStartMap() {
 		return permissionToStartMap;
 	}
@@ -339,5 +353,9 @@ public class QoSManager extends SecureActivity implements Observer {
 
 	public Boolean getPermissionToStartContactBook(){
 		return permissionToStartContactBook;
+	}
+	
+	public Boolean getPermissionToStartCallLog(){
+		return permissionToStartCallLog;
 	}
 }
