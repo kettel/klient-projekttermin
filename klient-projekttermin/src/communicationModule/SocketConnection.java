@@ -199,11 +199,9 @@ public class SocketConnection extends Observable {
 				 * sig besegrad o lägger ner.
 				 */
 				if (tries < 5) {
-					// System.out.println("reload servers");
 					tries++;
 					Thread.sleep(100);
 					iterator = servers.iterator();
-					// System.out.println(iterator.hasNext());
 				} else {
 					/**
 					 * 5 försök gjorda, lägger ner.

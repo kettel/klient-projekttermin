@@ -195,15 +195,13 @@ public class LogInActivity extends Activity implements Observer {
 			}
 			finish();
 		} else {
-			this.runOnUiThread(new Runnable() {
+			runOnUiThread(new Runnable() {
 
 				public void run() {
-					Toast toast = Toast.makeText(getApplicationContext(),
-							"Felaktigt användarnamn eller lösenord! "
-									+ numberOfLoginTries + " försök kvar!",
-							Toast.LENGTH_SHORT);
-					toast.setGravity(Gravity.TOP, 0, 300);
-					toast.show();
+					showProgress(false);
+					mPasswordView
+							.setError(getString(R.string.error_incorrect_password));
+					mPasswordView.requestFocus();
 				}
 			});
 		}
@@ -267,6 +265,7 @@ public class LogInActivity extends Activity implements Observer {
 		runOnUiThread(new Runnable() {
 			public void run() {
 				mPasswordView.getEditableText().clear();
+				showProgress(false);
 			}
 		});
 		Intent intent = new Intent(this, MainActivity.class);
@@ -283,10 +282,8 @@ public class LogInActivity extends Activity implements Observer {
 			runOnUiThread(new Runnable() {
 
 				public void run() {
-					showProgress(false);
-					mPasswordView
-							.setError(getString(R.string.error_incorrect_password));
-					mPasswordView.requestFocus();
+					TextView textView = (TextView) findViewById(R.id.login_status_message);
+					textView.setText(R.string.offline_login);
 				}
 			});
 
