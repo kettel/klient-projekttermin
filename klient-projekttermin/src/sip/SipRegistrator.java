@@ -262,11 +262,13 @@ public class SipRegistrator {
 			// Sätt utgående samtal till currentCall
 			currentCall.setCall(manager.makeAudioCall(me.getUriString(), sipAddress, listener, 30));
 			
+			Log.d("SIP/SipRegistrator","ska starta dialogrutan för utgående samtal...");
+			
 			// Starta dialogrutan för samtal och sätt det som ett utgående samtal
-			Intent startIncoming = new Intent(context,CallDialogue.class);
-			startIncoming.putExtra("outgoing",true);
-			startIncoming.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startActivity(startIncoming);
+			Intent startOutgoing = new Intent(context,CallDialogue.class);
+			startOutgoing.putExtra("outgoing",true);
+			startOutgoing.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			context.startActivity(startOutgoing);
 		}
 		catch (Exception e) {
 			Log.i("SIP/SipRegistrator/InitiateCall", "Fel när SIP-manager försökte stängas..", e);

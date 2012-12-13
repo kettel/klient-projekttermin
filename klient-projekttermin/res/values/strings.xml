@@ -87,7 +87,7 @@
     <string name="title_activity_album">Album</string>
     <string name="title_activity_cam">Kamera</string>
     <string name="title_activity_qo_sinterface">Inställningar för batterisparläge</string>
-    <string name="title_activity_incoming_call_dialog">Samtal</string>
+    <string name="title_activity_call_dialog">Samtal</string>
     <string name="automaticQoS">Automatiskt QoS-läge</string>
     <string name="automaticBatterySaveModeText">Automatisk aktivering av batterisparläge är: </string>
     <string name="batterySaveOptions">Alternativ för batterisparläge:</string>
