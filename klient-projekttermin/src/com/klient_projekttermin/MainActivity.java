@@ -360,7 +360,7 @@ public class MainActivity extends SecureActivity {
 			if(regSip.isRegistred()){
 				Log.d("SIP/MainActivity/onBackPressed/Ja",
 						"Ska stänga SIP-profilen...");
-				regSip.closeLocalProfile();
+				regSip.endLocalProfile();
 			}
 		}
 		socketConnection.logout();

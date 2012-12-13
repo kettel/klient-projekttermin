@@ -168,11 +168,7 @@ public class SipRegistrator {
 	 * klienten hos SIP-servern.
 	 */
 	public void closeLocalProfile() {
-		// Om Intent för att öppna samtalsdialogen vid inkommande samtal finns, avregistrera det
-		if(isIntentsRegistred){
-			context.unregisterReceiver(callReceiver);
-			isIntentsRegistred = false;
-		}
+		
 		// Om manager inte finns behöver man inte göra mer än att avsluta här
 		if (manager == null) {
 			// Är användaren registrerad, sätt isRegistred till false
@@ -196,6 +192,15 @@ public class SipRegistrator {
 		}
 	}
 
+	public void endLocalProfile(){
+		// Om Intent för att öppna samtalsdialogen vid inkommande samtal finns, avregistrera det
+		if(isIntentsRegistred){
+			context.unregisterReceiver(callReceiver);
+			isIntentsRegistred = false;
+		}
+		closeLocalProfile();
+	}
+	
 	/**
 	 * Ring ett utgående samtal.
 	 * @param nameToCall	Namn på person att ringa. Måste existera på SIP-servern för att det ska fungera.
