@@ -24,6 +24,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -254,6 +255,7 @@ public class LogInActivity extends Activity implements Observer {
 
 		if (requestCode == LOGGED_IN_REQ_CODE) {
 			if (resultCode == STAY_ALIVE) {
+				showProgress(false);
 			} else if (resultCode == SHUT_DOWN) {
 				finish();
 			}
@@ -263,20 +265,12 @@ public class LogInActivity extends Activity implements Observer {
 	public void accessGranted() {
 		user.setLoggedIn(true);
 		runOnUiThread(new Runnable() {
-
 			public void run() {
 				mPasswordView.getEditableText().clear();
-
 			}
 		});
-		switch (callingactivity) {
-		case ActivityConstants.INACTIVITY:
-			break;
-		default:
-			Intent intent = new Intent(this, MainActivity.class);
-			startActivityForResult(intent, LOGGED_IN_REQ_CODE);
-			break;
-		}
+		Intent intent = new Intent(this, MainActivity.class);
+		startActivityForResult(intent, LOGGED_IN_REQ_CODE);
 	}
 
 	public void update(Observable observable, Object data) {
@@ -339,6 +333,8 @@ public class LogInActivity extends Activity implements Observer {
 		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
+			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(mPasswordView.getWindowToken(), 0);
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
 			showProgress(true);
 			doLogin();
@@ -391,7 +387,6 @@ public class LogInActivity extends Activity implements Observer {
 			originalModel = new AuthenticationModel(mEmail,
 					hashPassword(mPassword));
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

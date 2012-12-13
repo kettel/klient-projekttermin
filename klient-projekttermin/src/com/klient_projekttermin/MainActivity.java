@@ -364,7 +364,6 @@ public class MainActivity extends SecureActivity {
 			}
 		}
 		socketConnection.logout();
-		setResult(LogInActivity.STAY_ALIVE);
 		finish();
 	}
 }
