@@ -92,6 +92,7 @@ public class MainActivity extends SecureActivity {
 						.setGCMID(
 								GCMRegistrar
 										.getRegistrationId(getApplicationContext()));
+				checkAssignmentDatabase();
 				checkContactDatabase();
 				socketConnection.pullFromServer();
 			} else {
@@ -118,21 +119,21 @@ public class MainActivity extends SecureActivity {
 
 		// SIP: Registrera klienten hos SIP-servern
 		regSip = SipRegistrator.getInstance();
-		
-		// Om kontexten inte är satt, är det antagligen första gången SIP används
-		if(regSip.getContext() == null){
+
+		// Om kontexten inte är satt, är det antagligen första gången SIP
+		// används
+		if (regSip.getContext() == null) {
 			// Sätt Context
 			regSip.setContext(getApplicationContext());
-			
+
 			// Samt SIP-domän
 			regSip.setDomain("94.254.72.38");
 		}
-		
+
 		// Om klienten inte är registrerad hos SIP-servern än, gör det
-		if(!regSip.isRegistred()){
+		if (!regSip.isRegistred()) {
 			regSip.initializeManager();
 		}
-			
 
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
@@ -214,8 +215,9 @@ public class MainActivity extends SecureActivity {
 		// SIP: Registrera klienten hos SIP-servern
 		regSip = SipRegistrator.getInstance();
 
-		// Om kontexten inte är satt, är det antagligen första gången SIP används
-		if(regSip.getContext() == null){
+		// Om kontexten inte är satt, är det antagligen första gången SIP
+		// används
+		if (regSip.getContext() == null) {
 			// Sätt Context
 			regSip.setContext(getApplicationContext());
 
@@ -224,7 +226,7 @@ public class MainActivity extends SecureActivity {
 		}
 
 		// Om klienten inte är registrerad hos SIP-servern än, gör det
-		if(!regSip.isRegistred()){
+		if (!regSip.isRegistred()) {
 			regSip.initializeManager();
 		}
 	}
@@ -357,7 +359,7 @@ public class MainActivity extends SecureActivity {
 	public void logout() {
 		// Avregistrera klienten från SIP-servern, om profilen finns
 		if (regSip != null) {
-			if(regSip.isRegistred()){
+			if (regSip.isRegistred()) {
 				Log.d("SIP/MainActivity/onBackPressed/Ja",
 						"Ska stänga SIP-profilen...");
 				regSip.endLocalProfile();

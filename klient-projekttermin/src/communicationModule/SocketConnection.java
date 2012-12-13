@@ -101,7 +101,7 @@ public class SocketConnection extends Observable {
 		final ModelInterface model = modelInterface;
 		new Thread(new Runnable() {
 			public void run() {
-				
+
 				sendJSON(gson.toJson(model));
 				if (failedToConnect) {
 					addToQue(model);
@@ -265,6 +265,23 @@ public class SocketConnection extends Observable {
 					User user = User.getInstance();
 					String json = gson.toJson(user.getAuthenticationModel());
 					writeToSocket(socket, json + "\ngetAllContacts\nclose\n");
+					readSocket(socket);
+					closeSocket(socket);
+				}
+			}
+		}).start();
+	}
+
+	public void getAllAssignmentsReq() {
+		new Thread(new Runnable() {
+
+			public void run() {
+
+				SSLSocket socket = createSocket();
+				if (socket != null) {
+					User user = User.getInstance();
+					String json = gson.toJson(user.getAuthenticationModel());
+					writeToSocket(socket, json + "\ngetAllAssignments\nclose\n");
 					readSocket(socket);
 					closeSocket(socket);
 				}

@@ -4,6 +4,7 @@ import static com.klient_projekttermin.CommonUtilities.DISPLAY_MESSAGE_ACTION;
 import static com.klient_projekttermin.CommonUtilities.EXTRA_MESSAGE;
 import login.LogInActivity;
 import login.User;
+import models.Assignment;
 import models.Contact;
 import qosManager.QoSManager;
 import android.annotation.SuppressLint;
@@ -17,7 +18,6 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.google.android.gcm.GCMRegistrar;
-
 import communicationModule.PullResponseHandler;
 import communicationModule.SocketConnection;
 
@@ -78,6 +78,7 @@ public class SecureActivity extends Activity {
 				 * risken att inga kontakter hämtas. Detta då det kan ligga en
 				 * kontakt i kön när en pullrequest körs.
 				 */
+				checkAssignmentDatabase();
 				checkContactDatabase();
 				socketConnection.pullFromServer();
 			} else if (newMessage.equals("logout")) {
@@ -94,6 +95,12 @@ public class SecureActivity extends Activity {
 	public void checkContactDatabase() {
 		if (database.getDBCount(new Contact(), getContentResolver()) == 0) {
 			socketConnection.getAllContactsReq();
+		}
+	}
+	
+	public void checkAssignmentDatabase() {
+		if (database.getDBCount(new Assignment(), getContentResolver()) == 0){
+			socketConnection.getAllAssignmentsReq();
 		}
 	}
 
