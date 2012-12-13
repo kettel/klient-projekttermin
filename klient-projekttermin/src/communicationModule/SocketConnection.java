@@ -365,20 +365,16 @@ public class SocketConnection extends Observable {
 						new SecureRandom());
 				// System.out.println("sslcontext klart");
 				socketFactory = sslCtx.getSocketFactory();
-				// System.out.println("trying to connect, ip is: " + ip
-				// + " port is: " + port);
-
+				System.out.println("trying to connect, ip is: " + ip
+						+ " port is: " + port);
 				do {
-
 					try {
-
 						socket = (SSLSocket) socketFactory.createSocket(ip,
 								port);
 						socket.startHandshake();
 						// System.out.println("Socketen lyckades ansluta");
 					} catch (UnknownHostException e) {
 						loadNextServer();
-
 					} catch (IOException e) {
 						loadNextServer();
 					}
