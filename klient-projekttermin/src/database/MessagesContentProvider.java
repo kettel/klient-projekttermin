@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Message;
 import android.util.Log;
 
 public class MessagesContentProvider extends ContentProvider{
@@ -63,7 +64,8 @@ private static final String PASSWORD = Database.PASSWORD;
         			+ Messages.RECEIVER + " text, " 
         			+ Messages.SENDER + " text, "
         			+ Messages.TIMESTAMP + " text, "
-        			+ Messages.ISREAD + " text);";
+        			+ Messages.ISREAD + " text, "
+        			+ Messages.STATUS + " text);";
             db.execSQL(DATABASE_CREATE);
         }
 
@@ -195,5 +197,6 @@ private static final String PASSWORD = Database.PASSWORD;
         messagesProjectionMap.put(Messages.SENDER, Messages.SENDER);
         messagesProjectionMap.put(Messages.TIMESTAMP, Messages.TIMESTAMP);
         messagesProjectionMap.put(Messages.ISREAD, Messages.ISREAD);
+        messagesProjectionMap.put(Messages.STATUS, Messages.STATUS);
     }
 }
