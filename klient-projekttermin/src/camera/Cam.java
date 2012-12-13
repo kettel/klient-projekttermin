@@ -46,14 +46,13 @@ public class Cam extends Activity implements SensorEventListener {
 	private Button ibCapture;
 	private int degrees = -1;
 	private int callingactivity;
-
+	private boolean allowedToTakePicture = true;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_cam);
 		callingactivity = getIntent().getIntExtra("calling-activity", 0);
-		
 
 		ibUse = (ImageButton) findViewById(R.id.ibUse);
 		ibCapture = (Button) findViewById(R.id.ibCapture);
@@ -70,8 +69,12 @@ public class Cam extends Activity implements SensorEventListener {
 		// Add a listener to the Capture button
 		ibCapture.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				mCamera.takePicture(null, null, mPicture);
-				mPreview = new CameraPreview(getApplicationContext(), mCamera);
+				if (allowedToTakePicture) {
+					mCamera.takePicture(null, null, mPicture);
+					mPreview = new CameraPreview(getApplicationContext(),
+							mCamera);
+					allowedToTakePicture = false;
+				}
 			}
 		});
 
@@ -93,13 +96,13 @@ public class Cam extends Activity implements SensorEventListener {
 		mCamera = getCameraInstance();
 		System.out.println(mCamera);
 		// Setting the right parameters in the camera
-//		Camera.Parameters params = mCamera.getParameters();
-//		// HÄlften av va de va
-//		params.setPictureSize(800, 600);
-//		params.setPictureFormat(PixelFormat.JPEG);
-//		params.setJpegQuality(85);
-//
-//		mCamera.setParameters(params);
+		// Camera.Parameters params = mCamera.getParameters();
+		// // HÄlften av va de va
+		// params.setPictureSize(800, 600);
+		// params.setPictureFormat(PixelFormat.JPEG);
+		// params.setJpegQuality(85);
+		//
+		// mCamera.setParameters(params);
 
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this, mCamera);
@@ -168,7 +171,7 @@ public class Cam extends Activity implements SensorEventListener {
 		public void onPictureTaken(byte[] data, Camera camera) {
 
 			byte[] rotData = rotateByteArrayPicture(data, 90);
-			
+
 			Database db = Database.getInstance(getApplicationContext());
 			int count = db.getDBCount(new PictureModel(), getContentResolver());
 			if (count > 5) {
@@ -186,8 +189,8 @@ public class Cam extends Activity implements SensorEventListener {
 			BitmapFactory.Options ops = new BitmapFactory.Options();
 			ops.inSampleSize = 2;
 
-			Bitmap bm = BitmapFactory
-					.decodeByteArray(rotData, 0, rotData.length, ops);
+			Bitmap bm = BitmapFactory.decodeByteArray(rotData, 0,
+					rotData.length, ops);
 			Bitmap scaled = Bitmap.createScaledBitmap(bm, 50, 50, true);
 			ibUse.setImageBitmap(scaled);
 			switch (callingactivity) {
@@ -204,29 +207,29 @@ public class Cam extends Activity implements SensorEventListener {
 			default:
 				break;
 			}
+			allowedToTakePicture = true;
 		}
 	};
-	
-	private byte[] rotateByteArrayPicture(byte[] byteArray, float degree){
-	
+
+	private byte[] rotateByteArrayPicture(byte[] byteArray, float degree) {
+
 		BitmapFactory.Options ops = new BitmapFactory.Options();
-		Bitmap bm = BitmapFactory
-				.decodeByteArray(byteArray, 0, byteArray.length, ops);
-		
-		//Matris för att rotera
+		Bitmap bm = BitmapFactory.decodeByteArray(byteArray, 0,
+				byteArray.length, ops);
+
+		// Matris för att rotera
 		Matrix rotateMatrix = new Matrix();
 		rotateMatrix.postRotate(degree);
-		
-		//Rotera bitmapen BM
-		Bitmap rotateBM  = bm.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), rotateMatrix, true);
-		
-		//Till byte[]
+
+		// Rotera bitmapen BM
+		Bitmap rotateBM = bm.createBitmap(bm, 0, 0, bm.getWidth(),
+				bm.getHeight(), rotateMatrix, true);
+
+		// Till byte[]
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		rotateBM.compress(CompressFormat.PNG, 0, bos); 
+		rotateBM.compress(CompressFormat.PNG, 0, bos);
 		return bos.toByteArray();
 	}
-	
-	
 
 	/**
 	 * Putting in place a listener so we can get the sensor data only when
