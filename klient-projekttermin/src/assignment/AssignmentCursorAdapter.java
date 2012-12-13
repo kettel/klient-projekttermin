@@ -63,7 +63,7 @@ public class AssignmentCursorAdapter extends CursorAdapter {
 		final String text = convertToString(arg2);
 		int i = arg2.getColumnIndex(AssignmentTable.Assignments.STATUS);
 		if(arg2.getString(i).equals(AssignmentStatus.NEED_HELP.toString())){
-			((TextView) arg0).setBackgroundColor(Color.LTGRAY);
+			((TextView) arg0).setBackgroundColor(Color.DKGRAY);
 		} else {
 			((TextView) arg0).setBackgroundColor(Color.TRANSPARENT);
 		}
