@@ -12,7 +12,7 @@ import map.MapActivity;
 import messageFunction.Inbox;
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
-import sip.RegisterWithSipSingleton;
+import sip.SipRegistrator;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -55,9 +55,9 @@ public class MainActivity extends SecureActivity {
 	private Boolean haveServerConnection = false;
 	private BroadcastReceiver bcr;
 	private Database database;
-	
+
 	// SIP-variabler
-//	public static RegisterWithSipSingleton regSip;
+	public static SipRegistrator regSip;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -73,8 +73,8 @@ public class MainActivity extends SecureActivity {
 		// used to replace listview functionality
 		ListView lv = (ListView) findViewById(android.R.id.list);
 
-		//		checkNotNull(SERVER_URL, "SERVER_URL");
-		//		checkNotNull(SENDER_ID, "SENDER_ID");
+		// checkNotNull(SERVER_URL, "SERVER_URL");
+		// checkNotNull(SENDER_ID, "SENDER_ID");
 		// Make sure the device has the proper dependencies.
 		GCMRegistrar.checkDevice(this);
 		// Make sure the manifest was properly set - comment out this line
@@ -89,9 +89,10 @@ public class MainActivity extends SecureActivity {
 			if (GCMRegistrar.isRegisteredOnServer(this) && user.isLoggedIn()) {
 				// Skips registration.
 				user.getAuthenticationModel()
-				.setGCMID(
-						GCMRegistrar
-						.getRegistrationId(getApplicationContext()));
+						.setGCMID(
+								GCMRegistrar
+										.getRegistrationId(getApplicationContext()));
+				checkAssignmentDatabase();
 				checkContactDatabase();
 				socketConnection.pullFromServer();
 			} else {
@@ -116,12 +117,23 @@ public class MainActivity extends SecureActivity {
 			}
 		}
 
-		// SIP: Registrera klienten hos SIP-servern 
-		if(!RegisterWithSipSingleton.isRegistred()){
-			RegisterWithSipSingleton.setContext(getApplicationContext());
-			RegisterWithSipSingleton.initializeManager();
+		// SIP: Registrera klienten hos SIP-servern
+		regSip = SipRegistrator.getInstance();
+
+		// Om kontexten inte är satt, är det antagligen första gången SIP
+		// används
+		if (regSip.getContext() == null) {
+			// Sätt Context
+			regSip.setContext(getApplicationContext());
+
+			// Samt SIP-domän
+			regSip.setDomain("94.254.72.38");
 		}
-		
+
+		// Om klienten inte är registrerad hos SIP-servern än, gör det
+		if (!regSip.isRegistred()) {
+			regSip.initializeManager();
+		}
 
 		String[] from = { "line1", "line2" };
 		int[] to = { android.R.id.text1, android.R.id.text2 };
@@ -172,19 +184,19 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 4:
-					if(qosManager.isAllowedToStartContactBook()){
-					myIntent = new Intent(MainActivity.this,
-							ContactsBookActivity.class);
-					}else{
+					if (qosManager.isAllowedToStartContactBook()) {
+						myIntent = new Intent(MainActivity.this,
+								ContactsBookActivity.class);
+					} else {
 						unallowedStart.show();
 					}
 					break;
 				case 5:
-					//if (qosManager.allowedToStartSip()) {
-					//myIntent = new Intent(MainActivity.this, SipMain.class);
-					//} else {
+					// if (qosManager.allowedToStartSip()) {
+					// myIntent = new Intent(MainActivity.this, SipMain.class);
+					// } else {
 					unallowedStart.show();
-					//}
+					// }
 					break;
 				default:
 					break;
@@ -197,13 +209,25 @@ public class MainActivity extends SecureActivity {
 	}
 
 	@Override
-	protected void onResume(){
+	protected void onResume() {
 		super.onResume();
 
-		// SIP: Registrera klienten hos SIP-servern 
-		if(!RegisterWithSipSingleton.isRegistred()){
-			RegisterWithSipSingleton.setContext(getApplicationContext());
-			RegisterWithSipSingleton.initializeManager();
+		// SIP: Registrera klienten hos SIP-servern
+		regSip = SipRegistrator.getInstance();
+
+		// Om kontexten inte är satt, är det antagligen första gången SIP
+		// används
+		if (regSip.getContext() == null) {
+			// Sätt Context
+			regSip.setContext(getApplicationContext());
+
+			// Samt SIP-domän
+			regSip.setDomain("94.254.72.38");
+		}
+
+		// Om klienten inte är registrerad hos SIP-servern än, gör det
+		if (!regSip.isRegistred()) {
+			regSip.initializeManager();
 		}
 	}
 
@@ -215,8 +239,8 @@ public class MainActivity extends SecureActivity {
 			public void onClick(DialogInterface dialog, int arg1) {
 				dialog.dismiss();
 				setResult(LogInActivity.SHUT_DOWN);
-				logout();			
-				
+				logout();
+
 			}
 		});
 		builder.setNegativeButton("Nej", new OnClickListener() {
@@ -244,9 +268,10 @@ public class MainActivity extends SecureActivity {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera", "Kontakter" ,"Samtalslogg"};
+				"Kamera", "Kontakter", "Samtalslogg" };
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" ,"Visa senaste samtal"};
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter",
+				"Visa senaste samtal" };
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
@@ -269,20 +294,20 @@ public class MainActivity extends SecureActivity {
 				logout();
 				return false;
 			}
-		}); 
+		});
 		qosItem = menu.findItem(R.id.QoSManager);
 		qosItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
-				startQoSManager();	
+				startQoSManager();
 				return false;
 			}
 		});
 
 		qosManager.setConnectivityMarker(menu.findItem(R.id.connectionMarker));
 		qosManager.setReadyToAdjustCM(true);
-		bcr = new BroadcastReceiver() {   
-			Boolean haveConnectedWifi= false;
+		bcr = new BroadcastReceiver() {
+			Boolean haveConnectedWifi = false;
 			Boolean haveConnectedMobile = false;
 
 			public void onReceive(Context context, Intent intent) {
@@ -290,30 +315,29 @@ public class MainActivity extends SecureActivity {
 				NetworkInfo[] netInfo = cm.getAllNetworkInfo();
 				for (NetworkInfo ni : netInfo) {
 					if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-						if (ni.isConnected()){
+						if (ni.isConnected()) {
 							qosManager.tryToReconnectToServer();
-						}
-						else{
+						} else {
 							haveConnectedWifi = false;
 						}
 					if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-						if (ni.isConnected()){
+						if (ni.isConnected()) {
 							qosManager.tryToReconnectToServer();
-						}
-						else{
+						} else {
 							haveConnectedMobile = false;
 						}
 				}
-				if(!haveConnectedWifi&&!haveConnectedMobile){
-					haveServerConnection=false;
+				if (!haveConnectedWifi && !haveConnectedMobile) {
+					haveServerConnection = false;
 				}
 				qosManager.changeConnectivityMarkerStatus(haveServerConnection);
-			}};
+			}
+		};
 
+		registerReceiver(bcr, new IntentFilter(
+				"android.net.conn.CONNECTIVITY_CHANGE"));
 
-			registerReceiver(bcr, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-
-			return true;
+		return true;
 	}
 
 	@Override
@@ -333,13 +357,14 @@ public class MainActivity extends SecureActivity {
 	}
 
 	public void logout() {
-		// Avregistrera klienten från SIP-servern
-		if(RegisterWithSipSingleton.isRegistred()){
-			Log.d("SIP/MainActivity/onBackPressed/Ja","Ska stänga SIP-profilen...");
-			RegisterWithSipSingleton.closeLocalProfile();
+		// Avregistrera klienten från SIP-servern, om profilen finns
+		if (regSip != null) {
+			if (regSip.isRegistred()) {
+				Log.d("SIP/MainActivity/onBackPressed/Ja",
+						"Ska stänga SIP-profilen...");
+				regSip.endLocalProfile();
+			}
 		}
-		
-		user.setLoggedIn(false);
 		socketConnection.logout();
 		finish();
 	}

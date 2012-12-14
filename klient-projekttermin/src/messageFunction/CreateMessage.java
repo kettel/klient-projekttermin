@@ -2,6 +2,7 @@ package messageFunction;
 
 import login.User;
 import models.MessageModel;
+import models.MessageStatus;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -91,10 +92,10 @@ public class CreateMessage extends SecureActivity {
 	 * skickat mappen
 	 */
 	public boolean sendMessage(MenuItem v) {
+		System.out.println("send message i create");
 		String recievingContact = reciever.getText().toString();
 		messageObject = new MessageModel(message.getText().toString(),
-				recievingContact, currentUser);
-
+				recievingContact, currentUser, MessageStatus.SENT);
 		// Sparar messageObject i databasen
 		dataBase.addToDB(messageObject, getContentResolver());
 		// Skicka till kommunikationsmodulen

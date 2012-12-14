@@ -17,6 +17,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="sip.CallDialogue"
+            android:label="@string/title_activity_call_dialog" 
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="map.MapActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
@@ -73,17 +78,12 @@
             android:name="assignment.AddAssignment"
             android:label="@string/addAssignment"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan|adjustResize" >
         </activity>
         <activity
             android:name="assignment.AssignmentDetails"
             android:screenOrientation="portrait"
             android:label="@string/uppdrag" >
-        </activity>
-        <activity
-            android:name="sip.IncomingCallDialog"
-            android:label="@string/title_activity_incoming_call_dialog" 
-            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="login.LogInActivity"

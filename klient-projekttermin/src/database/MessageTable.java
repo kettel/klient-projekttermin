@@ -26,5 +26,6 @@ public class MessageTable {
 		public static final String SENDER = "sender";
 		public static final String TIMESTAMP = "timestamp";
 		public static final String ISREAD = "isRead";
+		public static final String STATUS = "status";
 	}
 }

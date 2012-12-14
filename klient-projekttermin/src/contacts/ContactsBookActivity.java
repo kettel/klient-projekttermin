@@ -11,7 +11,7 @@ import map.CustomAdapter;
 import messageFunction.CreateMessage;
 import models.Contact;
 import models.ModelInterface;
-import sip.RegisterWithSipSingleton;
+import sip.SipRegistrator;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
@@ -50,6 +50,8 @@ public class ContactsBookActivity extends SecureActivity {
 
 	private List<String> sortedContact;
 	private List<ModelInterface> lista;
+	
+	private SipRegistrator regSip;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -209,7 +211,8 @@ public class ContactsBookActivity extends SecureActivity {
 					if(currentUser.getAuthenticationModel().getUserName().equalsIgnoreCase(name)){
 						Toast.makeText(getApplicationContext(), "Du kan inte ringa dig själv..", Toast.LENGTH_SHORT).show();
 					}else{
-						RegisterWithSipSingleton.initiateCall(name);
+						regSip = SipRegistrator.getInstance();
+						regSip.initiateCall(name);
 					}
 					break;
 				default:

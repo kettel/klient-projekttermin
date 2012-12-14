@@ -27,7 +27,6 @@ public class AssignmentsDB {
 
 	public void addAssignment(ContentResolver contentResolver,
 			Assignment assignment) {
-		
 		ContentValues values = new ContentValues();
 		values.put(Assignments.GLOBAL_ASSIGNMENT_ID, assignment.getGlobalID());
 		values.put(Assignments.NAME, assignment.getName());

@@ -1,0 +1,16 @@
+<resources>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Användarnamn</string>
+    <string name="prompt_password">Lösenord</string>
+    <string name="action_sign_in_register"><b>Logga in</b></string>
+    <string name="action_sign_in_short">Logga in</string>
+    <string name="menu_forgot_password">Recover lost password</string>
+    <string name="login_progress_signing_in">Logga in&#8230;</string>
+    <string name="offline_login">Lyckades inte logga in online, försöker offline...</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">Du måste fylla i detta fält</string>
+
+</resources>
