@@ -12,8 +12,10 @@ import android.app.Activity;
 import android.content.Context;
 
 import android.net.wifi.WifiManager;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class QoSManager extends SecureActivity implements Observer {
@@ -137,7 +139,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * Metoden ändrar enhetens inställningar om batteriet når en låg
 	 * laddningsnivå
 	 */
-	public void adjustToLowBatteryLevel(Context context) {
+	public void adjustToLowBatteryLevel(final Context context) {
 		System.out.println("Anpassar till lågt batteri");
 		BatterySaveModeIsActivated=true;
 
@@ -148,6 +150,10 @@ public class QoSManager extends SecureActivity implements Observer {
 					if(!batterySaveModeToggle.isChecked()){
 						batterySaveModeToggle.setChecked(true);
 					}
+					
+					Toast t = Toast.makeText(context, "Energisparläge är aktiverat!", Toast.LENGTH_SHORT);
+					t.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+					t.show();
 				}
 			});
 		}
