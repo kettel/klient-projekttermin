@@ -197,6 +197,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 					AssignmentStatus.NOT_STARTED, getByteArray(), temp.get(4),
 					temp.get(2), checkPrioString(temp.get(5)), prioInteger);
 
+			System.out.println(checkPrioString(temp.get(5)));
 			String tempUnseparated = temp.get(7);
 
 			if (tempUnseparated == null) {
@@ -248,9 +249,11 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	private AssignmentPriority checkPrioString(String prioString) {
 
 		if (prioString == null) {
+			System.out.println(" BARA FÖR ATT ERIC ÄR SÄMST HAMNAR VI HÄR");
 			prioInteger = 2;
 			return AssignmentPriority.PRIO_NORMAL;
 		} else if (prioString.equals("Hög prioritet")) {
+			System.out.println("HÖG");
 			prioInteger = 1;
 			return AssignmentPriority.PRIO_HIGH;
 		} else if (prioString.equals("Normal prioritet")) {
@@ -341,9 +344,8 @@ public class AddAssignment extends SecureActivity implements Serializable,
 		final Type type = new TypeToken<WgsPoint[]>() {
 		}.getType();
 		WgsPoint[] wgs = new WgsPoint[1];
-		wgs[0] = new WgsPoint(location.getLatitude(), location.getLongitude());
 
-		final String pos = gson.toJson(wgs, type);
+		
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Koordinater");
@@ -351,6 +353,14 @@ public class AddAssignment extends SecureActivity implements Serializable,
 		CustomAdapter modeAdapter = new CustomAdapter(this,
 				android.R.layout.simple_list_item_1, android.R.id.text1,
 				coordsAlts);
+		if (location == null) {
+			modeAdapter.gpsToggle();
+		} else {
+			
+			wgs[0] = new WgsPoint(location.getLatitude(),
+					location.getLongitude());
+		}
+		final String pos = gson.toJson(wgs, type);
 		modeList.setAdapter(modeAdapter);
 		builder.setView(modeList);
 		final Dialog dialog = builder.create();
