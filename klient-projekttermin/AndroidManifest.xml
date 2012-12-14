@@ -59,6 +59,10 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name="com.klient_projekttermin.CallLog"
+            android:label="@string/title_activity_call_log" >
+        </activity>
+        <activity
             android:name="logger.LogViewer"
             android:label="@string/title_activity_log_viewer" >
             <meta-data
@@ -160,10 +164,7 @@
 
         <service android:name="com.klient_projekttermin.GCMIntentService" />
 
-        <activity
-            android:name="com.klient_projekttermin.CallLog"
-            android:label="@string/title_activity_call_log" >
-        </activity>
+        
     </application>
 
     <uses-sdk
