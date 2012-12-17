@@ -47,7 +47,9 @@ public class SecureActivity extends Activity {
 				DISPLAY_MESSAGE_ACTION));
 		qosManager = QoSManager.getInstance();
 		qosManager.setContext(this);
+		if(!qosManager.checkflagHasBeenSetOnce()){
 		qosManager.startBatteryCheckingThread(this);
+		}
 		socketConnection.setContext(getApplicationContext());
 		socketConnection.addObserver(new PullResponseHandler(
 				getApplicationContext()));
