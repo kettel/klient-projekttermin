@@ -118,7 +118,7 @@ public class SecureActivity extends Activity {
 	/**
 	 * Sätter hur lång tid timeouten är på
 	 */
-	public static final long DISCONNECT_TIMEOUT = 600000;
+	public static final long DISCONNECT_TIMEOUT = 3600000;
 
 	private Handler disconnectHandler = new Handler() {
 		@Override
