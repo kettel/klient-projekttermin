@@ -111,13 +111,13 @@ public class Cam extends Activity implements SensorEventListener {
 		} else if(s.equalsIgnoreCase("LT26w")){
 			
 		} else if(s.equalsIgnoreCase("GT-P3100")){
-			Camera.Parameters params = mCamera.getParameters();
-			// HÄlften av va de va
-			params.setPictureSize(800, 600);
-			params.setPictureFormat(PixelFormat.JPEG);
-			params.setJpegQuality(85);
-
-			mCamera.setParameters(params);
+//			Camera.Parameters params = mCamera.getParameters();
+//			// HÄlften av va de va
+//			params.setPictureSize(800, 600);
+//			params.setPictureFormat(PixelFormat.JPEG);
+//			params.setJpegQuality(85);
+//
+//			mCamera.setParameters(params);
 		}
 		
 		// Create our Preview view and set it as the content of our activity.
@@ -237,6 +237,9 @@ public class Cam extends Activity implements SensorEventListener {
 		Matrix rotateMatrix = new Matrix();
 		rotateMatrix.postRotate(degree);
 
+		// Minska storlek på bitmappen
+//		bm = bm.copy(Bitmap.Config.RGB_565, false);
+//		
 		// Rotera bitmapen BM
 		Bitmap rotateBM = bm.createBitmap(bm, 0, 0, bm.getWidth(),
 				bm.getHeight(), rotateMatrix, true);

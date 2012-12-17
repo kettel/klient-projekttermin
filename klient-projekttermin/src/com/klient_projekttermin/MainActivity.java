@@ -192,13 +192,13 @@ public class MainActivity extends SecureActivity {
 						unallowedStart.show();
 					}
 					break;
-				case 5:
-					if (qosManager.isAllowedToStartCallLog()) {
-						myIntent = new Intent(MainActivity.this, CallLog.class);
-					} else {
-						unallowedStart.show();
-					}
-					break;
+//				case 5:
+//					if (qosManager.isAllowedToStartCallLog()) {
+//						myIntent = new Intent(MainActivity.this, CallLog.class);
+//					} else {
+//						unallowedStart.show();
+//					}
+//					break;
 				default:
 					break;
 				}
@@ -269,10 +269,9 @@ public class MainActivity extends SecureActivity {
 		// Om menyn ska utökas ska man lägga till de nya valen i dessa arrayer.
 		// Notera att det krävs en subtitle till varje item.
 		String[] menuItems = { "Karta", "Meddelanden", "Uppdragshanteraren",
-				"Kamera", "Kontakter", "Samtalslogg" };
+				"Kamera", "Kontakter" };
 		String[] menuSubtitle = { "Visar en karta", "Visar Inkorgen",
-				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter",
-				"Visa senaste samtal" };
+				"Visar tillgängliga uppdrag", "Ta bilder", "Visa kontakter" };
 		// Ändra inget här under
 		for (int i = 0; i < menuItems.length; i++) {
 			HashMap<String, String> hashMap = new HashMap<String, String>();
