@@ -82,12 +82,12 @@ public class AssignmentOverview extends SecureActivity {
 	}
 
 	public void loadAssignmentList() {
-		// getAssHeadsFromDatabase();
+		 getAssHeadsFromDatabase();
 		/**
 		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
 		c = getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI,
-				null, null, null, AssignmentTable.Assignments.PRIORITY_INT);
+				null, null, null, AssignmentTable.Assignments.PRIORITY_INT + " ASC ");
 		adapter = new AssignmentCursorAdapter(this, c, false);
 		this.lv.setAdapter(adapter);
 	}
@@ -110,7 +110,7 @@ public class AssignmentOverview extends SecureActivity {
 			idInAdapter[i] = b.getId();
 			i++;
 			db = Database.getInstance(getApplicationContext());
-
+			System.out.println("PRIO INTS :" + b.getPrio_int());
 		}
 		return tempHeadArr;
 	}

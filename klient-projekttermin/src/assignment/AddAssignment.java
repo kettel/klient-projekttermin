@@ -247,23 +247,27 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {
-
+		System.out.println(prioString);
 		if (prioString == null) {
 			System.out.println(" BARA FÖR ATT ERIC ÄR SÄMST HAMNAR VI HÄR");
 			prioInteger = 2;
 			return AssignmentPriority.PRIO_NORMAL;
-		} else if (prioString.equals("Hög prioritet")) {
+		} else if (prioString.equals("Hög")) {
 			System.out.println("HÖG");
 			prioInteger = 1;
 			return AssignmentPriority.PRIO_HIGH;
-		} else if (prioString.equals("Normal prioritet")) {
+		} else if (prioString.equals("Normal")) {
+			System.out.println("Normal");
 			prioInteger = 2;
 			return AssignmentPriority.PRIO_NORMAL;
-		} else if (prioString.equals("Låg prioritet")) {
+		} else if (prioString.equals("Låg")) {
+			System.out.println("Låg");
 			prioInteger = 3;
 			return AssignmentPriority.PRIO_LOW;
-		} else
+		} else {
+			System.out.println("I ELSE PRIORITET");
 			return AssignmentPriority.PRIO_NORMAL;
+		}
 
 	}
 
