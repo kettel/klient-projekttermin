@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.klient_projekttermin"
     android:versionCode="1"
@@ -9,53 +10,57 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo" >
         <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_main" >
+            android:name="com.klient_projekttermin.MainActivity"
+            android:label="@string/title_activity_main"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </activity>
         <activity
             android:name="sip.CallDialogue"
-            android:label="@string/title_activity_call_dialog" 
+            android:label="@string/title_activity_call_dialog"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="map.MapActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_map" >
+            android:label="@string/title_activity_map"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="messageFunction.CreateMessage"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_create_new_message" >
+            android:label="@string/title_activity_create_new_message"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="messageFunction.Inbox"
-            android:screenOrientation="portrait"
-            android:label="@string/inbox" >
+            android:label="@string/inbox"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="messageFunction.DisplayOfConversation"
-            android:screenOrientation="portrait"
-            android:label="DisplayOfConversation" >
+            android:label="DisplayOfConversation"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="camera.CameraMenu"
-            android:screenOrientation="portrait"
-            android:label="Camera" >
+            android:label="Camera"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="camera.PhotoGallery"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_photo_gallery" >
+            android:label="@string/title_activity_photo_gallery"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="contacts.ContactsBookActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_contacts_book" >
+            android:label="@string/title_activity_contacts_book"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.klient_projekttermin.CallLog"
+            android:label="@string/title_activity_call_log" >
         </activity>
         <activity
             android:name="logger.LogViewer"
@@ -66,13 +71,13 @@
         </activity>
         <activity
             android:name="messageFunction.DisplayMessage"
-            android:screenOrientation="portrait"
-            android:label="display" >
+            android:label="display"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="assignment.AssignmentOverview"
-            android:screenOrientation="portrait"
-            android:label="@string/assignmentOverview" >
+            android:label="@string/assignmentOverview"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="assignment.AddAssignment"
@@ -82,8 +87,8 @@
         </activity>
         <activity
             android:name="assignment.AssignmentDetails"
-            android:screenOrientation="portrait"
-            android:label="@string/uppdrag" >
+            android:label="@string/uppdrag"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="login.LogInActivity"
@@ -98,14 +103,14 @@
         <activity
             android:name="camera.Album"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_album" >
+            android:label="@string/title_activity_album"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="qosManager.QoSInterface"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_qo_sinterface" >
+            android:label="@string/title_activity_qo_sinterface"
+            android:screenOrientation="portrait" >
         </activity>
         <!-- Database Content Providers -->
         <provider
@@ -124,7 +129,7 @@
             android:name="database.PictureContentProvider"
             android:authorities="database.PictureContentProvider" />
         <!-- GCM service -->
-        <service android:name=".GCMIntentService" />
+        <service android:name="com.klient_projekttermin.GCMIntentService" />
         <!-- SIP Receiver -->
         <receiver android:name="sip.IncomingCallReceiver" />
         <receiver
@@ -158,6 +163,8 @@
         </activity>
 
         <service android:name="com.klient_projekttermin.GCMIntentService" />
+
+        
     </application>
 
     <uses-sdk

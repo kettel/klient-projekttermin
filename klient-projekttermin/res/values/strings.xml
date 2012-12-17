@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="Mottagare"></string>
@@ -81,8 +82,8 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="title_activity_sip_main">Samtal</string>
-    <string name="title_activity_contacts_book">ContactsBookActivity</string>
-    <string name="title_activity_camera_menu">CameraMenuActivity</string>
+    <string name="title_activity_contacts_book">Kontaktbok</string>
+    <string name="title_activity_camera_menu">Kamera</string>
     <string name="title_activity_take_pictures">TakePicturesActivity</string>
     <string name="title_activity_album">Album</string>
     <string name="title_activity_cam">Kamera</string>
@@ -107,5 +108,10 @@
     <string name="denyContactBook">Inaktivera Kontaktlista</string>
     <string name="callDeny">Lägg på</string>
     <string name="callAnswer">Svara</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section1">Section 1</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_call_log">CallLog</string>
 
 </resources>

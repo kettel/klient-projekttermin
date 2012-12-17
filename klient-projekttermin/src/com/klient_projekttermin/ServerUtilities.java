@@ -62,6 +62,7 @@ public final class ServerUtilities {
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
             Log.d(TAG, "Attempt #" + i + " to register");
             try {
+            	Log.d("GCM/ServerUtilities","Försöker ansluta mot: "+serverUrl);
                 displayMessage(context, context.getString(
                         R.string.server_registering, i, MAX_ATTEMPTS));
                 post(serverUrl, params);
@@ -74,6 +75,12 @@ public final class ServerUtilities {
                 // application, it should retry only on unrecoverable errors
                 // (like HTTP error code 503).
                 Log.e(TAG, "Failed to register on attempt " + i + ":" + e);
+                
+                // Byt server när anslutningsförsöket misslyckats. 
+                // OBS! Fungerar bara ibland om man ansluter till backupservern...
+                serverUrl = toggleServer(serverUrl);
+                SERVER_URL = serverUrl;
+                
                 if (i == MAX_ATTEMPTS) {
                     break;
                 }
@@ -95,7 +102,17 @@ public final class ServerUtilities {
         CommonUtilities.displayMessage(context, message);
     }
 
-    /**
+    private static String toggleServer(String serverUrl) {
+    	String returnUrl = new String();
+    	if(serverUrl.contains("16783")){
+    		returnUrl = "http://94.254.72.38:17783/register"; 
+    	}else{
+    		returnUrl = "http://94.254.72.38:16783/register";
+    	}
+    	return returnUrl;
+	}
+
+	/**
      * Unregister this account/device pair within the server.
      */
     static void unregister(final Context context, final String regId) {

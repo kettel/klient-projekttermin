@@ -12,6 +12,7 @@ import map.MapActivity;
 import messageFunction.Inbox;
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
+import sip.CallLog;
 import sip.SipRegistrator;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -141,7 +142,7 @@ public class MainActivity extends SecureActivity {
 				android.R.layout.simple_list_item_2, from, to));
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			Toast unallowedStart = Toast.makeText(getApplicationContext(),
-					"Du har inte tillåtelse att starta denna funktion",
+					"Energisparläget har begränsat denna funktionalitet",
 					Toast.LENGTH_SHORT);
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -192,11 +193,11 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 5:
-					// if (qosManager.allowedToStartSip()) {
-					// myIntent = new Intent(MainActivity.this, SipMain.class);
-					// } else {
-					unallowedStart.show();
-					// }
+					if (qosManager.isAllowedToStartCallLog()) {
+						myIntent = new Intent(MainActivity.this, CallLog.class);
+					} else {
+						unallowedStart.show();
+					}
 					break;
 				default:
 					break;
