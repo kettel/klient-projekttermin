@@ -247,7 +247,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {
-		System.out.println(prioString);
+
 		if (prioString == null) {
 			System.out.println(" BARA FÖR ATT ERIC ÄR SÄMST HAMNAR VI HÄR");
 			prioInteger = 2;
@@ -266,6 +266,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 			return AssignmentPriority.PRIO_LOW;
 		} else {
 			System.out.println("I ELSE PRIORITET");
+			prioInteger = 2;
 			return AssignmentPriority.PRIO_NORMAL;
 		}
 
@@ -349,8 +350,6 @@ public class AddAssignment extends SecureActivity implements Serializable,
 		}.getType();
 		WgsPoint[] wgs = new WgsPoint[1];
 
-		
-
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Koordinater");
 		ListView modeList = new ListView(this);
@@ -360,7 +359,7 @@ public class AddAssignment extends SecureActivity implements Serializable,
 		if (location == null) {
 			modeAdapter.gpsToggle();
 		} else {
-			
+
 			wgs[0] = new WgsPoint(location.getLatitude(),
 					location.getLongitude());
 		}
