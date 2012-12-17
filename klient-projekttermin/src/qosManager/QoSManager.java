@@ -45,6 +45,7 @@ public class QoSManager extends SecureActivity implements Observer {
 	private Context applicationContext;
 	private MenuItem connectivityMarker;
 	private ToggleButton batterySaveModeToggle;
+	private Boolean automaticCheckFlag = false;
 	private Boolean toggleIsSet = false;
 	private Boolean readyToAdjustCM = false;
 
@@ -60,11 +61,15 @@ public class QoSManager extends SecureActivity implements Observer {
 	public void setContext(Context context){
 		applicationContext = context;
 	}
+	
+	public void setAutomaticCheckFlag(){
+		automaticCheckFlag = true;
+	}
 
 	public void setConnectivityMarker(MenuItem menuItem){
 		connectivityMarker = menuItem;
 	}
-
+	
 	public void setBatterySaveModeToggle(ToggleButton toggleButton){
 		batterySaveModeToggle = toggleButton;
 		toggleIsSet = true;
@@ -73,17 +78,29 @@ public class QoSManager extends SecureActivity implements Observer {
 	public MenuItem getConnectivityMarker(){
 		return connectivityMarker;
 	}
-
-	public void startBatteryCheckingThread(Context context) {
-		batteryCheckingFunction = new BatteryCheckingFunction(context);
-		batteryCheckingFunction.addObserver(this);
+	
+	public boolean checkflagHasBeenSetOnce(){
+		if(automaticCheckFlag){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 
-	public Boolean isBatteryCheckThreadStarted(){
+	public void startBatteryCheckingThread(Context context) {
+		System.out.println("Automatisk batterikontroll är startad");
+		batteryCheckingFunction = new BatteryCheckingFunction(context);
+		batteryCheckingFunction.addObserver(this);
+		automaticCheckFlag = true;
+	}
+
+	public Boolean batteryIsBeingChecked(){
 		return batteryCheckingFunction.isBatteryBeingChecked();
 	}
 
 	public void stopBatteryCheckThread(){
+		System.out.println("Automatisk batterikontroll är avstängd");
 		batteryCheckingFunction.stopBatteryCheckFunction();
 	}
 
@@ -130,9 +147,7 @@ public class QoSManager extends SecureActivity implements Observer {
 				}
 			});
 		}
-
 		adjustScreenBrightness(context, screenBrightnesslevelOkay);
-		adjustNetworkStatus(permissionToUseWiFiOkay);
 	}
 
 	/**
@@ -150,10 +165,6 @@ public class QoSManager extends SecureActivity implements Observer {
 					if(!batterySaveModeToggle.isChecked()){
 						batterySaveModeToggle.setChecked(true);
 					}
-					
-					Toast t = Toast.makeText(context, "Energisparläge är aktiverat!", Toast.LENGTH_SHORT);
-					t.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-					t.show();
 				}
 			});
 		}
@@ -168,7 +179,6 @@ public class QoSManager extends SecureActivity implements Observer {
 	 * @param value kan vara ett valfritt float-värde mellan 0.0-1.0;
 	 */
 	public void adjustScreenBrightness(final Context context, float brightnessValue) {
-		System.out.println("Korrigerar ljusstyrkan till: "+brightnessValue);
 		final WindowManager.LayoutParams layout = ((Activity) context).getWindow().getAttributes();
 		layout.screenBrightness = brightnessValue;
 
@@ -296,10 +306,8 @@ public class QoSManager extends SecureActivity implements Observer {
 	 */
 	public void setScreenBrightnessValueLow(Context context,float newScreenBrightnessLevel){
 		screenBrightnesslevel = newScreenBrightnessLevel;
-		System.out.println("Nytt värde på skärmstyrkan är sparat");
 		if(BatterySaveModeIsActivated){
 			adjustScreenBrightness(context, screenBrightnesslevel);
-			System.out.println("Nu skärmstyrka är satt");
 		}
 	}
 

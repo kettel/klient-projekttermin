@@ -17,7 +17,7 @@ import com.klient_projekttermin.SecureActivity;
 public class QoSInterface extends SecureActivity implements OnSeekBarChangeListener, OnCheckedChangeListener {
 	private QoSManager qosManager;
 	private ToggleButton batterySaveToggle;
-	private ToggleButton automaticSaveModeToggel;
+	private ToggleButton automaticSaveModeToggle;
 	private SeekBar screenBrightnessBar;
 	private SeekBar batterylevelBar;
 	private CheckBox mapPermission;
@@ -38,7 +38,7 @@ public class QoSInterface extends SecureActivity implements OnSeekBarChangeListe
 		qosManager.setContext(this);
 		batterySaveToggle = (ToggleButton) findViewById(id.toggleForManualActivationOfBatterySaveMode);
 		qosManager.setBatterySaveModeToggle(batterySaveToggle);
-		automaticSaveModeToggel = (ToggleButton) findViewById(id.automaticQos);
+		automaticSaveModeToggle = (ToggleButton) findViewById(id.automaticQos);
 		screenBrightnessBar = (SeekBar) findViewById(id.screenBrihgtnessSeekBar);
 		screenBrightnessBar.setOnSeekBarChangeListener(this);
 		batterylevelBar = (SeekBar) findViewById(id.lowBatteyLevelSeekBar);
@@ -55,6 +55,9 @@ public class QoSInterface extends SecureActivity implements OnSeekBarChangeListe
 
 		if(qosManager.batterySaveModeIsActivated()){
 			batterySaveToggle.setChecked(true);
+		}
+		if(qosManager.batteryIsBeingChecked()){
+			automaticSaveModeToggle.setChecked(true);
 		}
 
 		setCurrentValues();
@@ -82,9 +85,9 @@ public class QoSInterface extends SecureActivity implements OnSeekBarChangeListe
 	/**
 	 * Metoden aktiverar det automatiska QoS-läget som justerar enheten baserat på batterinivå
 	 */
-	public void startAutomaticAdjustments(View v){
-		if(automaticSaveModeToggel.isChecked()){
-			if(!qosManager.isBatteryCheckThreadStarted()){
+	public void adjustAutomaticAdjustments(View v){
+		if(automaticSaveModeToggle.isChecked()){
+			if(!qosManager.batteryIsBeingChecked()){
 				qosManager.startBatteryCheckingThread(getApplicationContext());
 			}
 		}

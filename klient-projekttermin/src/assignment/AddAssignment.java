@@ -247,7 +247,6 @@ public class AddAssignment extends SecureActivity implements Serializable,
 	}
 
 	private AssignmentPriority checkPrioString(String prioString) {
-
 		if (prioString == null) {
 			System.out.println(" BARA FÖR ATT ERIC ÄR SÄMST HAMNAR VI HÄR");
 			prioInteger = 2;

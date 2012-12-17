@@ -38,8 +38,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/toggleForManualActivationOfBatterySaveMode"
             android:layout_marginTop="5dp"
-            android:checked="true"
-            android:onClick="startAutomaticAdjustments" />
+            android:onClick="adjustAutomaticAdjustments" />
 
         <TextView
             android:id="@+id/turnOnQosText"

@@ -75,6 +75,7 @@ public final class ServerUtilities {
                 // application, it should retry only on unrecoverable errors
                 // (like HTTP error code 503).
                 Log.e(TAG, "Failed to register on attempt " + i + ":" + e);
+
                 
                 // Byt server när anslutningsförsöket misslyckats. 
                 // OBS! Fungerar bara ibland om man ansluter till backupservern...
