@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 
 public class CustomAdapter extends ArrayAdapter<String> {
 	private boolean enabled = true;
+	private boolean gps = true;
 
 	public CustomAdapter(Context context, int textViewResourceId) {
 		super(context, textViewResourceId);
@@ -61,12 +62,19 @@ public class CustomAdapter extends ArrayAdapter<String> {
 	public void navigationToggle() {
 		enabled = !enabled;
 	}
+	
+	public void gpsToggle(){
+		gps = !gps;
+	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		System.out.println(enabled);
 		if (position==0&&!enabled&&convertView!=null) {
+			convertView.setAlpha((float)0.5);
+		}
+		if (position==1&&!gps&&convertView!=null) {
 			convertView.setAlpha((float)0.5);
 		}
 		return super.getView(position, convertView, parent);

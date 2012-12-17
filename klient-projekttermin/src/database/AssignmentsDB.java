@@ -202,7 +202,7 @@ public class AssignmentsDB {
 						+ "\"" + assignment.getGlobalID() + "\"", null);
 //				Assignments.ASSIGNMENT_ID + " = "
 //						+  assignment.getId() , null);
-
+		System.out.println("Updated id = " + updated);
 		return updated;
 	}
 
