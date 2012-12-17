@@ -10,17 +10,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.klient_projekttermin.ActivityConstants;
 import com.klient_projekttermin.R;
@@ -82,12 +81,12 @@ public class AssignmentOverview extends SecureActivity {
 	}
 
 	public void loadAssignmentList() {
-		// getAssHeadsFromDatabase();
+		 getAssHeadsFromDatabase();
 		/**
 		 * MÅSTE FIXA EN BÄTTRE CURSOR
 		 */
 		c = getContentResolver().query(AssignmentTable.Assignments.CONTENT_URI,
-				null, null, null, AssignmentTable.Assignments.PRIORITY_INT);
+				null, null, null, AssignmentTable.Assignments.PRIORITY_INT + " ASC ");
 		adapter = new AssignmentCursorAdapter(this, c, false);
 		this.lv.setAdapter(adapter);
 	}
@@ -110,7 +109,6 @@ public class AssignmentOverview extends SecureActivity {
 			idInAdapter[i] = b.getId();
 			i++;
 			db = Database.getInstance(getApplicationContext());
-
 		}
 		return tempHeadArr;
 	}

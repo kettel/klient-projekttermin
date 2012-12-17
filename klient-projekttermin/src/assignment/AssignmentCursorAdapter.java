@@ -44,6 +44,7 @@ public class AssignmentCursorAdapter extends CursorAdapter {
 		final String PRIO_LOW = "PRIO_LOW";
 		final String PRIO_NONEEXISTANT = "Ej satt";
 
+//		System.out.println(assignmentPrio + " PROP I JASDKFOL ");
 		if (assignmentPrio == null) {
 			return PRIO_NONEEXISTANT;
 		} else if (assignmentPrio.equals(PRIO_HIGH)) {

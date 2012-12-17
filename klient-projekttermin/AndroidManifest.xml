@@ -23,6 +23,11 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name="sip.CallLog"
+            android:label="@string/title_activity_call_log"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="map.MapActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_map"
@@ -164,7 +169,6 @@
 
         <service android:name="com.klient_projekttermin.GCMIntentService" />
 
-        
     </application>
 
     <uses-sdk
