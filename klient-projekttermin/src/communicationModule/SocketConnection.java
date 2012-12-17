@@ -80,9 +80,9 @@ public class SocketConnection extends Observable {
 		 * 
 		 * Nedan följer servrarna:
 		 */
-		String[] i = { "94.254.72.38", "17234", "16783" };
+		String[] i = { "94.254.72.38", "18234", "17783" };
 		servers.add(i);
-		String[] j = { "94.254.72.38", "18234", "17783" };
+		String[] j = { "94.254.72.38", "17234", "16783" };
 		servers.add(j);
 		/**
 		 * --Slut på serverlistan--
@@ -238,7 +238,7 @@ public class SocketConnection extends Observable {
 	}
 
 	public void pullFromServer() {
-		// System.out.println("Sending pullrequest");
+		System.out.println("Sending pullrequest");
 		new Thread(new Runnable() {
 
 			public void run() {
@@ -387,7 +387,7 @@ public class SocketConnection extends Observable {
 						socket = (SSLSocket) socketFactory.createSocket(ip,
 								port);
 						socket.startHandshake();
-						// System.out.println("Socketen lyckades ansluta");
+						System.out.println("Socketen lyckades ansluta");
 					} catch (UnknownHostException e) {
 						loadNextServer();
 					} catch (IOException e) {

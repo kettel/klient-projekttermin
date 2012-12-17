@@ -12,6 +12,7 @@ import map.MapActivity;
 import messageFunction.Inbox;
 import qosManager.QoSInterface;
 import qosManager.QoSManager;
+import sip.CallLog;
 import sip.SipRegistrator;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -192,11 +193,11 @@ public class MainActivity extends SecureActivity {
 					}
 					break;
 				case 5:
-					// if (qosManager.allowedToStartSip()) {
-					// myIntent = new Intent(MainActivity.this, SipMain.class);
-					// } else {
-					unallowedStart.show();
-					// }
+					if (qosManager.isAllowedToStartCallLog()) {
+						myIntent = new Intent(MainActivity.this, CallLog.class);
+					} else {
+						unallowedStart.show();
+					}
 					break;
 				default:
 					break;
