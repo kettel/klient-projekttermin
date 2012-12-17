@@ -558,10 +558,10 @@ public class MapActivity extends SecureActivity implements Observer,
 	public boolean gpsStatus(MenuItem m) {
 		gpsOnOff = !gpsOnOff;
 		if (!gpsOnOff) {
-			m.setTitle("Sluta följ");
+			m.setTitle("Följ position");
 			activateGPS(gpsOnOff);
 		} else {
-			m.setTitle("Följ position");
+			m.setTitle("Sluta följa position");
 			activateGPS(gpsOnOff);
 		}
 		return true;

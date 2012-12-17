@@ -3,6 +3,7 @@ package camera;
 import java.io.ByteArrayOutputStream;
 
 import models.PictureModel;
+import android.R.anim;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +48,7 @@ public class Cam extends Activity implements SensorEventListener {
 	private int degrees = -1;
 	private int callingactivity;
 	private boolean allowedToTakePicture = true;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -96,14 +98,28 @@ public class Cam extends Activity implements SensorEventListener {
 		mCamera = getCameraInstance();
 		System.out.println(mCamera);
 		// Setting the right parameters in the camera
-		// Camera.Parameters params = mCamera.getParameters();
-		// // HÄlften av va de va
-		// params.setPictureSize(800, 600);
-		// params.setPictureFormat(PixelFormat.JPEG);
-		// params.setJpegQuality(85);
-		//
-		// mCamera.setParameters(params);
+		String s = android.os.Build.MODEL;
+		System.out.println(s);
+		if (s.equalsIgnoreCase("Nexus S")) {
+			Camera.Parameters params = mCamera.getParameters();
+			// HÄlften av va de va
+			params.setPictureSize(800, 600);
+			params.setPictureFormat(PixelFormat.JPEG);
+			params.setJpegQuality(85);
 
+			mCamera.setParameters(params);
+		} else if(s.equalsIgnoreCase("LT26w")){
+			
+		} else if(s.equalsIgnoreCase("GT-P3100")){
+			Camera.Parameters params = mCamera.getParameters();
+			// HÄlften av va de va
+			params.setPictureSize(800, 600);
+			params.setPictureFormat(PixelFormat.JPEG);
+			params.setJpegQuality(85);
+
+			mCamera.setParameters(params);
+		}
+		
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this, mCamera);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);

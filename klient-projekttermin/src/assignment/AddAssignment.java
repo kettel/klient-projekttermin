@@ -359,8 +359,8 @@ public class AddAssignment extends SecureActivity implements Serializable,
 			modeAdapter.gpsToggle();
 		} else {
 
-			wgs[0] = new WgsPoint(location.getLatitude(),
-					location.getLongitude());
+			wgs[0] = new WgsPoint(location.getLongitude(),
+					location.getLatitude());
 		}
 		final String pos = gson.toJson(wgs, type);
 		modeList.setAdapter(modeAdapter);
